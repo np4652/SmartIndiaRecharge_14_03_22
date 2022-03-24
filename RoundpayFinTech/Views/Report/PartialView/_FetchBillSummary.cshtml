@@ -1,0 +1,25 @@
+﻿@model IEnumerable<RoundpayFinTech.Models.UserBillFetchReport>
+
+
+@if (Model.Any() && Model != null)
+{
+    int i = 0;
+    foreach (var item in Model)
+    {
+        i++;
+        <tr>
+            <td>@i</td>
+            <td>@item.UserID</td>
+            <td>@item.Name</td>
+            <td>@item.MobileNo</td>
+            <td>@item.Success</td>
+            <td>@item.Failed</td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="6" style="text-align:center;">No Record Found</td>
+    </tr>
+}

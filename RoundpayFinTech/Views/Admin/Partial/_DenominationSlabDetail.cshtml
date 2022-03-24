@@ -1,0 +1,142 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model DenominationDetailModal
+@{
+    var opList = Model.Operator;
+    var denomList = Model.DenomList;
+}
+@*<style>
+
+    </style>*@
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5>Denomination Commission Detail for Slab <i>[{SLAB}]</i></h5>
+    <div class="row">
+        <div class="col-sm-4">
+            <input class="form-control-sm" id="txtSearchRSD" type="text" placeholder="Search" />
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            @{
+                var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+            }
+            <select id="ddlOType" class="form-control-sm" asp-items="@Oplist" asp-for="@Model.OpTypeID"></select>
+        </div>
+    </div>
+    <div class="table-responsive" style="height:80vh;overflow:auto">
+        <input type="hidden" id="hslabId" value="@Model.SlabID" />
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+            <thead class="bg-cyan text-white">
+                <tr>
+                    <th>#</th>
+                    <th>Operator</th>
+                    <th>Denomination</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < opList.Count; i++)
+                {
+                    <tr data-item-id="@opList[i].OID" data-item-slabType="@Model.IsAdminDefined">
+                        <th style="width:1em;" scope="row" class="align-middle">@(i+1)</th>
+                        <td class="align-middle" style="width:20%">
+                            @opList[i].Name
+                            <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                                @opList[i].OperatorType
+                            </small>
+                        </td>
+                        <td class="align-middle">
+                            @for (int j = 0; j < denomList.Count; j++)
+                            {
+                                <div class="box box-info denom">
+                                    <label data-item-id="@denomList[j].ID" class="pl-2 pr-2">@denomList[j].Amount</label>
+                                </div>
+                            }
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+    $('.denom').on('click', function () {
+        var param = {
+            denomID: $(this).find('label').data().itemId,
+            denomRangeID: -1,
+            OID: $(this).closest('tr').data().itemId,
+            IsAdminDefined: $(this).closest('tr').data().itemSlabtype,
+            SlabID: $('#hslabId').val()
+        }
+        CallDenomFunc(param, this);
+    });
+    $('.denomRange').on('click', function () {
+        var param = {
+            denomID: -1,
+            denomRangeID: $(this).find('label').data().itemId,
+            OID: $(this).closest('tr').data().itemId,
+            IsAdminDefined: $(this).closest('tr').data().itemSlabtype,
+            SlabID: $('#hslabId').val()
+        }
+        CallDenomFunc(param, this);
+    });
+    function CallDenomFunc(param, sender) {
+
+        preloader.load();
+        $.post("DenomSlabDetailRole", { param: param })
+            .done(function (result) {
+                preloader.remove();
+                resultReload(result);
+                mdlA.content = result.replace('{DENOM}', $(sender).find('label').html());
+                mdlA.id = 'denomDetail';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('#' + mdlA.id).css('background-color', 'rgba(0,0,0,0.7)')
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').click(function () {
+                    $('#' + mdlA.id).remove();
+                    $($('#mymodal').find('.close')).on('click', function () {
+                        mdlA.id = 'mymodal';
+                        mdlA.dispose();
+                    })
+                });
+                $('.btn-toggle').on('click', function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                    param.denomID = param.denomID < 1 ? 0 : param.denomID;
+                    param.denomRangeID = param.denomRangeID < 1 ? 0 : param.denomRangeID;
+                    param.RoleID = $(this).closest('tr').data().roleId;
+                    param.Comm = $(this).closest('tr').find('input.RDtxtcomm').val();
+                    param.AmtType = $($(this).closest('tr').find('.btn-toggle .active')).text() == 'PER' ? 0 : 1;
+                    debugger;
+                    callUpdate(param);
+                })
+                $('.RDtxtcomm').on('change', function () {
+                    param.denomID = param.denomID < 1 ? 0 : param.denomID;
+                    param.denomRangeID = param.denomRangeID < 1 ? 0 : param.denomRangeID;
+                    param.RoleID = $(this).closest('tr').data().roleId;
+                    param.Comm = $(this).val();
+                    param.AmtType = $($(this).closest('tr').find('.btn-toggle .active')).text() == 'PER' ? 0 : 1;
+                    debugger;
+                    callUpdate(param);
+                });
+            });
+    }
+    function callUpdate(param) {
+        $.post('/Denom-Incentive-Edit', { param: param })
+            .done(function (result) {
+                if (result.statuscode == 1) {
+                    an.title = result.statuscode == 1 ? 'Success' : 'Opps!';
+                    an.content = result.msg;
+                    an.alert(result.Statuscode);
+                    $('[data-role-id="' + param.RoleID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                }
+            });
+    }
+</script>

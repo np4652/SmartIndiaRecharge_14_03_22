@@ -1,0 +1,520 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@model UserListModel
+@{
+    int RowCount = 0;
+    int PageNumber = 1;
+    int TopRows = 10;
+}
+
+@if (Model != null)
+{
+    if (Model.PegeSetting != null)
+    {
+        var pageSetting = Model.PegeSetting;
+        RowCount = pageSetting.Count == null ? 0 : (int)pageSetting.Count;
+        PageNumber = pageSetting.PageNumber;
+        TopRows = pageSetting.TopRows;
+    };
+    @if (Model.userList.userReports != null)
+    {
+        @for (int i = 0; i < Model.userList.userReports.Count; i++)
+        {
+            <tr data-item-id="@Model.userList.userReports[i].ID" data-User-Mobile="@Model.userList.userReports[i].MobileNo">
+                <td scope="row">@((PageNumber - 1) * TopRows + (i + 1))</td>
+                <td>
+                    <div class="btn-group dropup">
+                        <a href="#" id="act@(i + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="act">
+                            <h6 class="dropdown-header">Action Menu</h6>
+                            @if (Model.userList.CanEdit)
+                            {
+                                <a href="/EditUser/@Model.userList.userReports[i].ID" class="dropdown-item">Edit</a>
+                            }
+
+                            @if (Model.IsAdmin)
+                            {
+                                @if (ApplicationSetting.IsMultiCycle && @Model.userList.userReports[i].RoleID.In(Role.APIUser, Role.Retailor_Seller))
+                                {
+                                    <a href="#" name="@Model.userList.userReports[i].ID" class="dropdown-item">Settlement Setting</a>
+                                }
+                            }
+                            @if (Model.userList.CanFundTransfer)
+                            {
+                                <a href="#" class="dropdown-item" id="ft_@i">Fund Transfer</a>
+                            }
+                            @if ((Model.userList.CanChangeSlab && Model.userList.userReports[i].IntroID == Model.userList.LoginID) || (Model.userList.CanChangeSlab && Model.userList.LoginID == 1))
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="changeSlab_@i">Change Slab</a>
+                            }
+                            @if (Model.userList.CanChangeRole)
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="changeRole_@i">Change Role</a>
+                            }
+
+                            @if (Model.userList.CanVerifyDocs)
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="dv_@i">Verify Documents</a>
+                            }
+                            @if (Model.userList.CanAssignAvailablePackage && ApplicationSetting.IsPackageAllowed && !Model.userList.userReports[i].RoleID.In(Role.Retailor_Seller, Role.APIUser, Role.Customer) && Model.IsAdmin == true)
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="AssignPkg_@i">Assign Package</a>
+                            }
+                            @if (ApplicationSetting.IsPackageAllowed && Model.userList.userReports[i].RoleID.In(Role.Retailor_Seller, Role.APIUser, Role.Customer))
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="UpgradePkg_@i">Upgrade Package</a>
+                            }
+                            @if (ApplicationSetting.IsAdditionalService && Model.userList.userReports[i].RoleID.In(Role.Retailor_Seller, Role.APIUser))//additional service
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="addServPkg_@i">Activate Additional Service</a>
+                            }
+                            @if (ApplicationSetting.ISServiceLimitTransfer && Model.userList.userReports[i].RoleID.In(Role.MasterWL, Role.Distributor, Role.Master_Distributor, Role.APIUser))
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="addServPkg_@i">Service Limit Transfer</a>
+                            }
+                            @if (Model.userList.CanRegeneratePassword)
+                            {
+                                <a href="#" class="dropdown-item" name="@Model.userList.userReports[i].ID" id="RegeneratePassword_@i">Regenerate Password</a>
+
+                            }
+                            <a href="UserLedger/@(Model.userList.userReports[i].MobileNo)" class="dropdown-item" name="@Model.userList.userReports[i].ID" target="_blank">View Ledger</a>
+                            <a href="UDaybook/@(Model.userList.userReports[i].MobileNo)" class="dropdown-item" name="@Model.userList.userReports[i].ID" target="_blank">View Daybook</a>
+                            @if (!Model.userList.userReports[i].RoleID.In(Role.Retailor_Seller, Role.APIUser, Role.Customer) && Model.IsAdmin && ApplicationSetting.IsECommerceAllowed && ApplicationSetting.IsMultipleVedorAllowed)
+                            {
+                                <a href="javascript:void(0)" class="dropdown-item registerasvendor" target="_blank">Register as Vendor</a>
+                            }
+                            @if (ApplicationSetting.IsSalesTeam)
+                            {
+                                if (Model.IsAdmin)
+                                {
+                                    <a href="javascript:void(0)" class="dropdown-item @Html.Raw(Model.userList.userReports[i].EmpID==0?"assignEmployee":"unassignEmployee")">
+                                        @Html.Raw(Model.userList.userReports[i].EmpID == 0 ? "Assign Employee" : "Unassign Employee")
+                                    </a>
+                                }
+
+                            }
+                            @if (ApplicationSetting.MapAXISCDM)
+                            {
+                                if (Model.IsAdmin)
+                                {
+                                    <a href="javascript:void(0)" class="dropdown-item @Html.Raw("assignMapAXISCDM")">
+                                        Card Mapping
+                                    </a>
+
+                                }
+                            }
+                        </div>
+                    </div>
+
+                </td>
+                <td class="text-nowrap">
+                    @Model.userList.userReports[i].OutletName <small class="font-weight-bold text-monospace">
+                        [@(Model.userList.userReports[i].Prefix + Model.userList.userReports[i].ID)]
+                    </small>
+                </td>
+                <td>@Model.userList.userReports[i].MobileNo</td>
+                <td class="text-nowrap">
+                    <span class="fa fa-server" aria-hidden="true" style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Show Upline Users" onclick="showUplineUsers(this)"></span>
+                    <span class="fa fa fa-arrow-alt-circle-down" style="cursor:pointer" onclick="ChildPopUp(this,false)"></span>
+                    <span class="fa fa fa-arrow-alt-circle-up" style="cursor:pointer" onclick="ChildPopUp(this,true)"></span>
+                    @Model.userList.userReports[i].Role
+                </td>
+
+                <td class="text-right">@Model.userList.userReports[i].Balance</td>
+                <td class="text-right">@Model.userList.userReports[i].BCapping</td>
+                @if (Model.userBalnace.IsUBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].UBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].UCapping</td>
+                }
+                @if (Model.userBalnace.IsBBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].BBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].BBCapping</td>
+                }
+                @if (Model.userBalnace.IsIDBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].IDBalnace</td>
+                    <td class="text-right">@Model.userList.userReports[i].IDCapping</td>
+                }
+                @if (Model.userBalnace.IsPacakgeBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].PacakgeBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].PackageCapping</td>
+                }
+                @if (Model.userBalnace.IsCBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].CBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].CCapping</td>
+                }
+                @if (ApplicationSetting.IsAccountStatement)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].OSBalance</td>
+                }
+                <td class="text-right">
+                    @if (@Model.userList.userReports[i].RoleID == Role.APIUser || @Model.userList.userReports[i].RoleID == Role.Retailor_Seller)
+                    {
+                        <button class="btn btn-outline-success btn-sm" disabled style="cursor:not-allowed"><i class="fas fa-eye"></i> Show</button>
+                    }
+                    else
+                    {
+                        <button class="btn btn-outline-success btn-sm" onclick="ChildBalance(this)"><i class="fas fa-eye"></i> Show</button>
+                    }
+                </td>
+                @if (ApplicationSetting.IsAreaMaster)
+                {
+                    if (Model.userList.userReports[i].RoleID.In(Role.Retailor_Seller))
+                    {
+                        <td class="text-right">
+                            <button class="btn btn-outline-info btn-sm" data-mp="@Model.userList.userReports[i].UserArea" onclick="MapUser(this)"><i class="fas fa-thumbtack"></i> Map</button>
+                        </td>
+                    }
+                    else
+                    {
+                        <td class="text-center">@Html.Raw("NA");</td>
+                    }
+                }
+                <td class="text-nowrap">@Model.userList.userReports[i].Slab</td>
+                <td class="text-nowrap">@Model.userList.userReports[i].JoinDate </td>
+                <td class="text-nowrap">@(Model.userList.userReports[i].JoinBy.Contains("-") ? Model.userList.userReports[i].JoinBy.Split('-')[0] : Model.userList.userReports[i].JoinBy) <input type="hidden" value="@Model.userList.userReports[i].CommRate" /></td>
+                <td>@(Model.userList.userReports[i].JoinBy.Contains("-") ? Model.userList.userReports[i].JoinBy.Split('-')[1] : string.Empty)</td>
+                @if (ApplicationSetting.IsMultiLevel)
+                {
+                    <td class="text-nowrap">@(Html.Raw(string.Concat(Model.userList.userReports[i].introducerName,"<small class='d-block'>", Model.userList.userReports[i].introducerMobile,""))) </td>
+                }
+                <td>
+                    @if (Model.userList.CanChangeUserStatus)
+                    {
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" id="isact_@i" @Html.Raw(Model.userList.userReports[i].Status ? "checked='checked'" : "")>
+                            <label for="isact_@i"></label>
+                        </span>
+                    }
+                    else
+                    {
+                        @Html.Raw(Model.userList.userReports[i].Status ? "Active" : "Inactive");
+                    }
+
+                </td>
+                <td>
+                    @if (Model.userList.CanChangeOTPStatus)
+                    {
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" id="isotp_@i" checked="@Model.userList.userReports[i].IsOTP">
+                            <label for="isotp_@i"></label>
+                        </span>
+                    }
+                    else
+                    {
+                        @Html.Raw(Model.userList.userReports[i].IsOTP ? "Active" : "Inactive");
+                    }
+                </td>
+                @if (Model.IsAdmin)
+                {
+                    @if (ApplicationSetting.IsWhitelabel)
+                    {
+                        <td>
+                            <span class="switch switch-sm">
+                                <input type="checkbox" class="switch" id="isvirtual_@i" checked="@Model.userList.userReports[i].IsVirtual">
+                                <label for="isvirtual_@i"></label>
+                            </span>
+                        </td>
+                    }
+
+                    @if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.ByAdminOnly)
+                    {
+                        <td>
+                            @if (Model.userList.userReports[i].IntroID == 1)
+                            {
+                                <span class="switch switch-sm">
+                                    <input type="checkbox" class="switch" id="IsFlatCommission_@i" checked="@Model.userList.userReports[i].IsFlatCommission">
+                                    <label for="IsFlatCommission_@i"></label>
+                                </span>
+                                <span id="flatCommission_@i" class="btn btn-sm btn-outline-info">Set</span>
+                            }
+                            else
+                            {
+                                <span class="text-dark">@(Model.userList.userReports[i].IsFlatCommission ? "YES" : "NO")</span>
+                            }
+                        </td>
+                    }
+                }
+                @if (ApplicationSetting.IsAutoBilling)
+                {
+                    <td>
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" id="IsAutoBilling_@i" checked="@Model.userList.userReports[i].IsAutoBilling">
+                            <label for="IsAutoBilling_@i"></label>
+                        </span>
+                        @if (@Model.userList.userReports[i].IsAutoBilling)
+                        {
+                            <span id="IsAutoBilling_@i" class="btn btn-sm btn-outline-info">Set</span>
+                        }
+                    </td>
+                }
+                @if (Model.IsAdmin)
+                {
+                    <td>
+
+                        @if (Model.userList.CanCalculateCommissionFromCircle)
+                        {
+                            <span class="switch switch-sm">
+                                <input type="checkbox" class="switch" id="iscalCommCir_@i" @Html.Raw(Model.userList.userReports[i].IsCalculateCommissionFromCircle ? "checked='checked'" : "")>
+                                <label for="iscalCommCir_@i"></label>
+                            </span>
+                        }
+                        else
+                        {
+                            @Html.Raw(Model.userList.userReports[i].IsCalculateCommissionFromCircle ? "Active" : "Inactive");
+                        }
+
+
+                    </td>
+                }
+                <td>
+                    @if (@Model.userList.userReports[i].KYCStatus == "NOT APPLIED")
+                    {
+                        <span class="btn btn-sm dd btn-outline-info disabled" style="cursor:not-allowed" id="UsersKYCDetails_@i"> <i class="fas fa-eye"></i>  @Model.userList.userReports[i].KYCStatus</span>
+                    }
+                    else
+                    {
+
+                        var h = @Model.userList.userReports[i].KYCStatus == "COMPLETED" ? "btn btn-sm dd btn-outline-success" : @Model.userList.userReports[i].KYCStatus == "APPLIED" ? "btn btn-sm dd btn-outline-warning" : "btn btn-sm dd btn-outline-danger";
+                        <span class="@Html.Raw(h)" onclick="UsersKYCDetails(this)" id="UsersKYCDetails_@i"> <i class="fas fa-eye"></i>  @Model.userList.userReports[i].KYCStatus</span>
+                    }
+                </td>
+                @if (ApplicationSetting.ActiveFlatType != FlatTypeMaster.DisableFlat)
+                {
+                    @if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.ByAdminOnly && Model.IsAdmin)
+                    {
+                        <td><input type="text" class="form-control-sm CommRate" value="@Model.userList.userReports[i].CommRate" style="width:50px;" /></td>
+                    }
+                    else if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.FlatToAll || ApplicationSetting.ActiveFlatType == FlatTypeMaster.FlatToAllByDifference)
+                    {
+                        <td><input type="text" class="form-control-sm CommRate" value="@Model.userList.userReports[i].CommRate" style="width:50px;" /></td>
+                    }
+                }
+                <td class="text-nowrap">
+                    @if (ApplicationSetting.IsShowPassword && Model.IsAdmin)
+                    {
+                        <span class="btn btn-sm btn-outline-danger" id="showp_@i"><i class="fas fa-low-vision"></i> Show</span>
+                    }
+                    <span class="btn btn-sm btn-outline-info" id="Resend_@i"><i class="fa fa-paper-plane"></i> Resend</span>
+                </td>
+                @if (ApplicationSetting.IsAddMoneyEnable && ApplicationSetting.IsUPI && ApplicationSetting.IsUPIQR)
+                {
+                    <td class="text-nowrap">
+                        <a href="#" id="usrQrCode_@i" data-nm="@Model.userList.userReports[i].OutletName" data-mb="@Model.userList.userReports[i].MobileNo" data-toggle="tooltip" data-placement="top" data-original-title="Download QR Code"><i class="fas fa-2x fa-qrcode text-center d-block"></i></a>
+                    </td>
+                }
+                @if (ApplicationSetting.IsInvoiceByAdmin)
+                {
+                    <td>
+                        @if (Model.IsAdmin)
+                        {
+                            <span class="switch switch-sm">
+                                <input type="checkbox" class="switch" id="isIByAdmin_@i" @Html.Raw(Model.userList.userReports[i].InvoiceByAdmin ? "checked='checked'" : string.Empty)>
+                                <label for="isIByAdmin_@i"></label>
+                            </span>
+                        }
+                        else
+                        {
+                            @Html.Raw(Model.userList.userReports[i].InvoiceByAdmin ? "Yes" : "No");
+                        }
+                    </td>
+                }
+                @if (Model.IsAdmin && ApplicationSetting.IsFraudPrevention)
+                {
+                    var isMarkedGreen = Model.userList.userReports[i].IsMarkedGreen;
+                    <td>
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" style='@Html.Raw(@isMarkedGreen ? "background-color: green" : "background-color: red")' id="chkIsMarkedGreen_@i" @Html.Raw(isMarkedGreen ? "checked='checked'" : string.Empty)>
+                            <label for="chkIsMarkedGreen_@i"></label>
+                        </span>
+                    </td>
+                }
+                @if (Model.IsAdmin && ApplicationSetting.IsAddMoneyEnable)
+                {
+                    var IsPaymentGateway = Model.userList.userReports[i].IsPaymentGateway;
+                    <td>
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" style='@Html.Raw(IsPaymentGateway ? "background-color: green" : "background-color: red")' id="chkPGActive_@i" @Html.Raw(IsPaymentGateway ? "checked='checked'" : string.Empty)>
+                            <label for="chkPGActive_@i"></label>
+                        </span>
+                    </td>
+                }
+                @if (Model.IsAdmin && ApplicationSetting.IsAddMoneyEnable)
+                {
+                    if (!Model.userList.userReports[i].RoleID.In(Role.Retailor_Seller, Role.APIUser))
+                    {
+                        var IsDownLinePG = Model.userList.userReports[i].IsDownLinePG;
+                        <td>
+                            <span class="switch switch-sm">
+                                <input type="checkbox" class="switch" style='@Html.Raw(IsDownLinePG ? "background-color: green" : "background-color: red")' id="chkIsDownLinePG_@i" @Html.Raw(IsDownLinePG ? "checked='checked'" : string.Empty)>
+                                <label for="chkIsDownLinePG_@i"></label>
+                            </span>
+                        </td>
+                    }
+                    else
+                    {
+                        <td>@Html.Raw("NA")</td>
+                    }
+                }
+                <td>
+                    <span class="switch switch-sm">
+                        <input type="checkbox" class="switch" id="chkCandebit_@i" @Html.Raw(Model.userList.userReports[i].Candebit == true ? "checked='checked'" : string.Empty)>
+                        <label for="chkCandebit_@i"></label>
+                    </span>
+                </td>
+
+                <td>
+                    <span class="switch switch-sm">
+                        <input type="checkbox" class="switch" id="chkCandebitDownline_@i" @Html.Raw(Model.userList.userReports[i].CandebitDownline == true ? "checked='checked'" : string.Empty)>
+                        <label for="chkCandebitDownline_@i"></label>
+                    </span>
+                </td>
+                <td class="text-nowrap">
+                    @if (!string.IsNullOrEmpty(Model.userList.userReports[i].AccountSecretKey))
+                    {
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch enableGAuth" id="chkGAuth_@i" @Html.Raw(Model.userList.userReports[i].IsGoogle2FAEnable ? "checked='checked'" : "")>
+                            <label for="chkGAuth_@i"></label>
+                        </span>
+                    }
+                    else
+                    {
+                        <small class="text-nowrap text-danger text-monospace">Not Configured Yet</small>
+                    }
+                </td>
+            </tr>
+        }
+    }
+}
+@Html.AntiForgeryToken()
+<script>
+    RowCount = @RowCount
+    $('.CommRate').on('change', function () {
+        let element = $(this);
+        let comm = element.val();
+        if (comm != undefined && comm != "") {
+            $.post('/UpdateFlatComm', { comm: comm, UserID: element.closest('tr').data().itemId })
+                .done(function (result) {
+                    an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                });
+        }
+    });
+
+    $('.assignEmployee').unbind().click(e => {
+        $('#hfdUMob').remove();
+        let mob = $(e.currentTarget).closest('tr').data().userMobile;
+        $('body').append('<input type="hidden" value="' + mob + '" id="hfdUMob"/>');
+        preloader.load();
+        e.preventDefault();
+        let UserID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/_AssignEmployee', { UserID: UserID }).done(result => {
+            mdlA.id = 'assignEmpWin';
+            mdlA.title = 'Assign Employee';
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.large);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('.unassignEmployee').unbind().click(e => {
+        let _this = $(e.currentTarget);
+        preloader.load();
+        let UserID = _this.closest('tr').data().itemId;
+        $.post('/UnAssignEmployee', { UserID: UserID }).done(result => {
+            an.id = 'unassignEmp';
+            an.title = result.statuscode === an.type.success ? 'Well done : ' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === an.type.success)
+                _this.removeClass('unassignEmployee').addClass('assignEmployee').text('Assign Employee');
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    })
+
+    $('.registerasvendor').unbind().click(e => {
+        preloader.load();
+        e.preventDefault();
+        let UserID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/RegisterasVendor', { UserID: UserID }).done(result => {
+            an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('.assignMapAXISCDM').unbind().click(e => {
+        $('#hfdUMob').remove();
+        preloader.load();
+        e.preventDefault();
+        let UserID = $(e.currentTarget).closest('tr').data().itemId;
+        _loadCardDedtil(UserID)
+    });
+
+    function _loadCardDedtil(UserID) {
+        $.post('/MapCardTouser', { ID: UserID }).done(result => {
+            mdlA.id = 'assignMapAXISCDM';
+            mdlA.title = 'Assign Card';
+            mdlA.content = '';
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.large);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    }
+
+    var changeGAuthStatus = (userId, isEnable) => {
+        let request = {
+            __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val(),
+            isEnable: isEnable,
+            userId: userId,
+            otp: $('#txtOTP').val()
+        };
+        $.post('/EnableGoogleAuthentication', request)
+            .done(result => {
+                if (result.statuscode === 2) {
+                    let _html = `<div class="form-group"><div class="input-group"><input type="text" class="form-control" placeholder="${result.msg}" id="txtOTP"/>
+                                 <div class="input-group-append"><button class="btn btn-dark" onclick="changeGAuthStatus(${userId},'${isEnable}')">Submit</button></div></div></div>`;
+                    mdlA.title = "OTP";
+                    mdlA.id = "otpWin";
+                    mdlA.content = _html;
+                    mdlA.modal(mdlA.size.small);
+                    return
+                }
+                an.title = result.statuscode === 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === 1)
+                    $('[data-dismiss="modal"]').click();
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    };
+    $('.enableGAuth').click((e) => {
+        let ele = $(e.currentTarget);
+        changeGAuthStatus(ele.closest('tr').data().itemId, ele.is(':checked'));
+    });
+</script>

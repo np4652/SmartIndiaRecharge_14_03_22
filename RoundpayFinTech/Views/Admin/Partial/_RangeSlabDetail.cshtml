@@ -1,0 +1,276 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.RangeDetailModel
+@{
+    var mdl = Model.SlabDetails;
+    var mdlParent = Model.ParentSlabDetails;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <div class="row">
+        <div class="col-md-8">
+            <h5>Commission Detail</h5>
+        </div>
+        <div class="col-md-4">
+            @{
+                var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                //var OpTypeID = @Model.OpTypeID == 0 ? 1 : @Model.OpTypeID;
+            }
+            <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@Model.OpTypeID">
+                <option value="">:: Operator Type ::</option>
+            </select>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Operator</th>
+                    <th scope="col">Max Comm</th>
+                    <th scope="col">CommAmt</th>
+                    <th scope="col">CommType</th>
+                    <th scope="col">AmtType</th>
+                    <th scope="col">FixedCharge</th>
+                    <th scope="col"> Real Max Comm</th>
+                    <th scope="col">RealCommAmt</th>
+                    <th scope="col">RealCommType</th>
+                    <th scope="col">RealAmtType</th>
+                    <th scope="col">RealFixedCharge</th>
+                </tr>
+                <tr>
+                    <th colspan="2" class="pb-1">
+
+                    </th>
+                    <th colspan="5" class="pb-1 text-center text-uppercase">
+                        <h6 class="text-info">Genral Slab</h6>
+                    </th>
+                    <th colspan="5" class="pb-1 text-center text-uppercase">
+                        <h6 class="text-info">Real Slab</h6>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th colspan="6" class="pb-1">
+                        <input class="form-control-sm-sm col-md-4" id="txtSearchRSD" type="text" placeholder="Search" />
+                    </th>
+                </tr>
+               
+                @{int i = 1; }
+                @foreach (var item in mdl)
+                {
+                    if (Model.IsChannel)
+                    {
+            <tr data-item-id="@item.OID">
+                <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                <td style="width:25em;" class="align-middle">
+                    <input type="hidden" id="hid" value="@item.SlabID" class="d-none" />
+                    <input type="hidden" id="hidrng_@i" value="@item.RangeId" class="d-none" />
+                    @Html.DisplayFor(modelItem => item.Operator)
+                    <small id="nameHelp_@i" class="form-text text-muted mt-0" style="font-size:70%">@Html.Raw(item.IsBBPS ? item.OperatorType + ", BBPS" : item.OperatorType)</small>
+                    <input type="hidden" id="@(i+"hidOpType_"+item.OpType)" value="@item.OpType" />
+                    <label class="font-weight-bold text-monospace mb-0 text-nowrap">
+                        Range(@item.MinRange-@item.MaxRange)
+                    </label>
+                    @if (Model.IsAdmin && item.OpType == 14)
+                    {
+                        var slabDetailFOrModel = Model.SlabDetails.Where(x => x.OID == item.OID && x.RangeId == item.RangeId).FirstOrDefault();
+                        var DMRModelID = slabDetailFOrModel.DMRModelID;
+                        <div class="form-group">
+                            <select class="form-control-sm" id="ddlDMRModel_@i" aria-describedby="ddlDMRModelH_@i" tabindex="14" asp-for=@(DMRModelID) asp-items="@Model.DMRModelSelect" data-oid="@item.OID" data-slabid="@item.SlabID">
+                                <option value="0">:: Choose DMTModel ::</option>
+                            </select>
+                        </div>
+                    }
+                </td>
+                @{
+                    var parentItem = mdlParent.Where(x => x.OID == item.OID && x.SlabID == item.SlabID && x.RangeId == item.RangeId).FirstOrDefault();
+                }
+                <td style="width:20em;" class="align-middle">
+                    <div class="form-inline">
+                        @Html.TextBoxFor(modelItem => item.MaxComm, new { @id = "txtRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRMComAmt_" + i })
+
+                        <small id="helpRMPComAmt_@i" class="mt-0 text-right text-monospace">@parentItem.MaxComm (Received)</small>
+
+                    </div>
+                    <small id="helpRMComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                    @Html.HiddenFor(modelItem => item.MaxComm, new { @id = "hidRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                </td>
+
+                <td style="width:20em;" class="align-middle">
+                    <div class="form-inline">
+                        @Html.TextBoxFor(modelItem => item.Comm, new { @id = "txtRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRComAmt_" + i })
+                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                        @Html.HiddenFor(modelItem => item.Comm, new { @id = "hidRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                    </div>
+                    <small id="helpRPComAmt_@i" class="mt-0 text-right text-monospace">@parentItem.Comm (Received)</small>
+                    <small id="helpRComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                </td>
+                <td class="align-middle">
+                    <div class="btn-group">
+                        <span class="btn btn-dark active">@Html.Raw(parentItem.CommType == 0 ? "COM" : "SUR")</span>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <div class="btn-group">
+                        <span class="btn btn-dark active">@Html.Raw(parentItem.AmtType == 0 ? "PER" : "FIX")</span>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <input type="hidden" id="txtFixedCharge_@i" value="0" />
+                    @item.FixedCharge
+                </td>
+                @*Real*@
+                
+                <td style="width:20em;" class="align-middle">
+                    <div class="form-inline">
+                        @Html.TextBoxFor(modelItem => item.RMaxComm, new { @id = "txtRRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRRMComAmt_" + i })
+
+                        <small id="helpRRMPComAmt_@i" class="mt-0 text-right text-monospace">@parentItem.RMaxComm (Received)</small>
+
+                    </div>
+                    <small id="helpRRMComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                    @Html.HiddenFor(modelItem => item.RMaxComm, new { @id = "hidRRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                </td>
+
+                <td style="width:20em;" class="align-middle">
+                    <div class="form-inline">
+                        @Html.TextBoxFor(modelItem => item.RComm, new { @id = "txtRRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRRComAmt_" + i })
+                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                        @Html.HiddenFor(modelItem => item.RComm, new { @id = "hidRRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                    </div>
+                    <small id="helpRRPComAmt_@i" class="mt-0 text-right text-monospace">@parentItem.RComm (Received)</small>
+                    <small id="helpRRComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                </td>
+                <td class="align-middle">
+                    <div class="btn-group">
+                        <span class="btn btn-dark active">@Html.Raw(parentItem.RCommType == 0 ? "COM" : "SUR")</span>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <div class="btn-group">
+                        <span class="btn btn-dark active">@Html.Raw(parentItem.RAmtType == 0 ? "PER" : "FIX")</span>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <input type="hidden" id="txtRFixedCharge_@i" value="0" />
+                    @item.RFixedCharge
+                </td>
+            </tr>
+                        i++;
+                    }
+                    else
+                    {
+                        <tr data-item-id="@item.OID">
+                            <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                            <td style="width:25em;" class="align-middle">
+                                <input type="hidden" id="hid" value="@item.SlabID" class="d-none" />
+                                <input type="hidden" id="hidrng_@i" value="@item.RangeId" class="d-none" />
+                                @Html.DisplayFor(modelItem => item.Operator)
+                                <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@Html.Raw(item.IsBBPS ? item.OperatorType + ", BBPS" : item.OperatorType)</small>
+                                <input type="hidden" id="@(i+"hidOpType_"+item.OpType)" value="@item.OpType" />
+                                <label class="font-weight-bold text-monospace mb-0 text-nowrap">
+                                    Range(@item.MinRange-@item.MaxRange)
+                                </label>
+                                @if (Model.IsAdmin && item.OpType == 14)
+                                {
+                                    var slabDetailFOrModel = Model.SlabDetails.Where(x => x.OID == item.OID && x.RangeId == item.RangeId).FirstOrDefault();
+                                    var DMRModelID = slabDetailFOrModel.DMRModelID;
+                                    <div class="form-group">
+                                        <select class="form-control-sm" id="ddlDMRModel_@i" aria-describedby="ddlDMRModelH_@i" tabindex="14" asp-for=@(DMRModelID) asp-items="@Model.DMRModelSelect" data-oid="@item.OID" data-slabid="@item.SlabID">
+                                            <option value="0">:: Choose DMTModel ::</option>
+                                        </select>
+                                    </div>
+                                }
+                            </td>
+                            <td style="width:20em;" class="align-middle">
+                                <div class="form-inline">
+                                    @Html.TextBoxFor(modelItem => item.MaxComm, new { @id = "txtRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRMComAmt_" + i })
+                                    @Html.HiddenFor(modelItem => item.MaxComm, new { @id = "hidRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                </div>
+                                <small id="helpRMComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+
+                            </td>
+                            <td style="width:20em;" class="align-middle">
+                                <div class="form-inline">
+                                    @Html.TextBoxFor(modelItem => item.Comm, new { @id = "txtRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRComAmt_" + i })
+                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                    @Html.HiddenFor(modelItem => item.Comm, new { @id = "hidRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                </div>
+                                <small id="helpRComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                            </td>
+                            <td class="align-middle">
+                                <div class="btn-group btn-toggle" id="btnRGroupComType_@i">
+                                    <button class="btn @Html.Raw(item.CommType==0?"btn-dark active":"btn-outline-dark")">COM</button>
+                                    <button class="btn  @Html.Raw(item.CommType==1?"btn-dark active":"btn-outline-dark")">SUR</button>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <div class="btn-group btn-toggle" id="btnRGroupAmtType_@i">
+                                    <button class="btn  @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                                    <button class="btn @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                                </div>
+                            </td>
+                            <td style="width:20em;" class="align-middle">
+                                <div class="form-inline">
+                                    @Html.TextBoxFor(modelItem => item.FixedCharge, new { @id = "txtFixedCharge_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "txtFixedChargeH_" + i })
+                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                    @Html.HiddenFor(modelItem => item.FixedCharge, new { @id = "hidRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                </div>
+                                <small id="txtFixedChargeH_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                            </td>
+                            @*Real*@
+                            <td style="width:20em;" class="align-middle">
+                                <div class="form-inline">
+                                    @Html.TextBoxFor(modelItem => item.RMaxComm, new { @id = "txtRRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRRMComAmt_" + i })
+                                    @Html.HiddenFor(modelItem => item.RMaxComm, new { @id = "hidRRMComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                </div>
+                                <small id="helpRRMComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+
+                            </td>
+                            <td style="width:20em;" class="align-middle">
+                                <div class="form-inline">
+                                    @Html.TextBoxFor(modelItem => item.RComm, new { @id = "txtRRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpRRComAmt_" + i })
+                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                    @Html.HiddenFor(modelItem => item.RComm, new { @id = "hidRRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                </div>
+                                <small id="helpRRComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                            </td>
+                            <td class="align-middle">
+                                <div class="btn-group btn-toggle" id="btnRRGroupComType_@i">
+                                    <button class="btn @Html.Raw(item.RCommType==0?"btn-dark active":"btn-outline-dark")">COM</button>
+                                    <button class="btn  @Html.Raw(item.RCommType==1?"btn-dark active":"btn-outline-dark")">SUR</button>
+                                </div>
+                            </td>
+                            <td class="align-middle">
+                                <div class="btn-group btn-toggle" id="btnRRGroupAmtType_@i">
+                                    <button class="btn  @Html.Raw(item.RAmtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                                    <button class="btn @Html.Raw(item.RAmtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                                </div>
+                            </td>
+                            <td style="width:20em;" class="align-middle">
+                                <div class="form-inline">
+                                    @Html.TextBoxFor(modelItem => item.RFixedCharge, new { @id = "txtRFixedCharge_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "txtRFixedChargeH_" + i })
+                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                    @Html.HiddenFor(modelItem => item.RFixedCharge, new { @id = "hidRRComAmt_" + i, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                </div>
+                                <small id="txtRFixedChargeH_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $('#ddlOType').on('change', function () {
+        var value = $(this).val();
+        value = value != undefined ? "hidOpType_" + value : '';
+        $('#tblRNG tbody tr').filter(function () {
+            $(this).toggle($(this).html().indexOf(value) > -1)
+        });
+    });
+</script>

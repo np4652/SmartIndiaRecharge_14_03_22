@@ -1,0 +1,32 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.MasterRole>
+@{ 
+
+}
+@if (Model.Any())
+{
+    int i = 1;
+    @foreach (var item in Model)
+    {
+        <tr data-item-id="@item.Id">
+            <td>@i</td>
+            <td>@item.RoleName</td>
+            <td><input type="text" class="form-control RegCharge" value="@item.RegCharge"/></td>
+        </tr>
+        i++;
+    }
+}
+<script>
+    $('.RegCharge').change(e => {        
+        $.post('/UpdateMasterRole', { id: $(e.currentTarget).closest('tr').data().itemId,RegCharge: parseInt($(e.currentTarget).val())}).done(result => {
+            an.id = "alert";
+            an.title = result.statuscode == an.type.error ? 'Oops!' : 'Well done';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        });
+    })
+</script>
+

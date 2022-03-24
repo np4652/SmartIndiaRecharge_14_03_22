@@ -1,0 +1,18 @@
+﻿@using Fintech.AppCode.StaticModel
+@model MessageTemplate
+@{
+
+}
+@if (Model.MessageTemp != null)
+    {
+        @foreach (var item in Model.MessageTemp)
+        {
+            <div class="input-group cmb-0">
+                <span type="button" class="btn btn-cyan btn-sm form-control" aria-describedby="spnMob_@item.ID">@item.Name</span>
+                <div class="input-group-append">
+                    <span class="input-group-text cursor-pointer" id="spnMob_@item.ID" data-toggle="tooltip" data-placement="top" title="@item.Keyword" data-original-title="@item.Keyword"><i class="far fa-clone"></i></span>
+                </div>
+            </div>
+        }
+    }
+

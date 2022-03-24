@@ -1,0 +1,24 @@
+﻿@model bool
+@{
+    Layout = null;
+}
+@if (Model)
+{
+    <center>
+        <img src="/Image/success.gif" style="margin-top:5em" />
+        <h2 style="color:green">Transaction Successfull</h2>
+    </center>
+}
+else
+{
+    <center>
+        <img src="/Image/iconMsg/2.png" style="margin-top:5em" />
+        <h2 style="color:red">Transaction Canceled</h2>
+    </center>
+}
+<script>
+setTimeout(function(){
+window.close();
+},2000);
+</script>
+

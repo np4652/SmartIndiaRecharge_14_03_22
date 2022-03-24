@@ -1,0 +1,75 @@
+﻿@using Fintech.AppCode.Model;
+@model GetinTouctListModel
+@{ int i = 0;}
+@if (Model != null)
+{
+    @if (Model.GetIntouchList != null)
+    {
+        @foreach (var data in Model.GetIntouchList)
+        {
+            var isMobM = data.IsMobileMultiple;
+    <tr data-item-id="@Model.GetIntouchList[i].ID" @(isMobM == true ? "class=trBG" : "")>
+        <th scope="row">@(i + 1)</th>
+        <td class="">@data.Name</td>
+        <td class="">@data.RequestPage</td>
+
+        <td>
+            @data.MobileNo
+        </td>
+        <td><textarea class="form-control" rows="2" cols="30" style="border-style: None;" disabled="disabled">@data.Message</textarea></td>
+        <td>
+            @if (data.RequestStatus == "Transfer")
+            {
+                <span class="badge badge-info">@data.RequestStatus</span>
+            }
+            else if (data.RequestStatus == "Request")
+            {
+                <span class="badge badge-danger">@data.RequestStatus</span>
+            }
+            else if (data.RequestStatus == "FollowUP")
+            {
+                <span class="badge badge-secondary">@data.RequestStatus</span>
+            }
+            else if (data.RequestStatus == "Matured")
+            {
+                <span class="badge badge-success">@data.RequestStatus</span>
+            }
+
+
+
+        </td>
+
+        <td class="">@data.EntryData</td>
+        <td class="">@data.ModifyDate</td>
+        <td class="">@data.NextFollowupdate</td>
+        <td><textarea class="form-control" rows="2" cols="35" style="border-style:None;" disabled="disabled">@data.Remarks</textarea></td>
+        <td>
+            <select class="form-control" id="ddlcustomerCareList_@i" data-item-id="data.ID">
+                <option value="0">:: Choose Customer Care ::</option>
+                @foreach (var item in Model.CustomerCareDetail)
+                {
+                    var chkVal = data.CustomercareID == item.CustomercareID ? true : false;
+                    <!option value="@item.CustomercareID" @(chkVal == true ? "selected" : "")>@item.CustomerCareName</!option>
+                }
+            </select>
+        </td>
+        <td>
+            @{
+                if (isMobM)
+                {
+                    <button id="btn_Remove_@i" class="btn btn-dark btn-outline-dark btn-xs">Remove</button>
+                }
+            }
+        </td>
+    </tr>
+            i++;
+        }
+    }
+}
+
+
+
+
+
+
+

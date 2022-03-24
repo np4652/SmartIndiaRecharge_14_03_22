@@ -1,0 +1,182 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel
+@{
+    int ThemeID = Convert.ToInt32(ViewData["Theme"]);
+    int WID = Convert.ToInt32(ViewData["WID"]);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["HTitle"]</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="~/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="~/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="~/images/favicons/favicon.ico">
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/table-loader.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.css" />
+        <link href="~/css/reseller.css" rel="stylesheet" />
+        <link href="~/css/new-custom-css/main.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.min.css" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/table-loader.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.min.css" />
+        <link href="~/css/reseller.min.css" rel="stylesheet" />
+        <link href="~/css/new-custom-css/main.min.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+</head>
+<body>
+    <div style="position: fixed; right: -24px;top: 50%;background: black;transform: rotate(90deg);z-index: 1;">
+        <a href="/support" class="nav-link text-white font-bold">Support</a>
+    </div>
+    <div class="top-navbar">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-1 col-xs-12">
+                    <div class="mobile-only-brand float-left">
+                        <div class="nav-header float-left">
+                            <div class="logo-wrap">
+                                <a asp-area="" asp-controller="Admin" asp-action="Employee" class="navbar-brand"><img src="@ViewData["Host"]/Image/Website/@ViewData["WID"]/white-logo.png" height="26" class="d-inline-block align-top" alt="@ViewData["CName"]" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-11 d-none d-sm-block d-md-block">
+                    <ul class="nav navbar-right top-nav float-right" style="font-size:12px">
+                        <li>
+                            <div class="dropdown" id="UINFO">
+                                <button class="btn btn-link btn-link-top dropdown-toggle" type="button" id="drpdn_LoginInfo" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="drpdn_LoginInfo">
+                                    <span class="dropdown-item-text"></span>
+                                    <a class="dropdown-item" href="#" id="changepass">Change Password</a>
+                                    <a href="javascript:Two_FA_Win()" class="dropdown-item" target="_top">Two Factor Authentication</a>
+                                    <div class="dropdown-divider"></div>
+
+                                    <a class="dropdown-item" id="bntlogout" asp-controller="Employee" asp-action="logout">Logout</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-greenhead">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a asp-area="" asp-controller="Employee" asp-action="Index" class="nav-link">Dashboard</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuUserMgmt" data-toggle="dropdown">Employee Management</a>
+                    <div class="dropdown-menu" area-labelledby="drpdnMenuUserMgmt">
+                        <a href="/Employee/List" class="dropdown-item">Employee List</a>
+                        <a href="/EmpUserList" class="dropdown-item">User List</a>
+                        <div class="dropdown-divider"></div>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuMaster" data-toggle="dropdown">Reports</a>
+                    <div class="dropdown-menu" area-labelledby="drpdnMenuMaster">
+                        <a asp-action="PSTReport" asp-controller="Employee" class="dropdown-item">PST</a>
+                        <a asp-action="TertiaryReport" asp-controller="Employee" class="dropdown-item">Tertiary</a>
+                        <a asp-action="EmpTargetReport" asp-controller="Employee" class="dropdown-item">Employee Target</a>
+                        <a asp-action="RechargeReport" asp-controller="Report" class="dropdown-item">Transaction History</a>
+                        <a asp-action="UserLedger" asp-controller="Report" class="dropdown-item">Account Ledger</a>
+                        <a asp-action="PSTComparisionTable" asp-controller="Employee" class="dropdown-item">PST Calender</a>
+                        <a asp-action="UserDaybook" asp-controller="Report" class="dropdown-item">Day Book</a>
+                        <a asp-action="DMRTransactionReport" asp-controller="Report" class="dropdown-item">DMT Report</a>
+                        <a asp-action="MeetingReport" asp-controller="Employee" class="dropdown-item">Meeting Report</a>
+                        <a asp-action="AttendanceReport" asp-controller="Employee" class="dropdown-item">Attendance Report</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuMaster" data-toggle="dropdown">Lead</a>
+                    <div class="dropdown-menu" area-labelledby="drpdnMenuMaster">
+                        <a asp-controller="Employee" asp-action="LeadDetail" class="dropdown-item">Leads Detail</a>
+                        <a href="javascript:void(0)" id="btnCreateLeadWin" class="dropdown-item">Create Lead</a>
+                    </div>
+                </li>
+                <li class="nav-item"><a asp-controller="Employee" asp-action="MeetingDetail" class="nav-link">Meeting</a></li>
+            </ul>
+        </div>
+    </nav>
+    <div class="main-wrapper body-content">
+        <div id="alertmsg"></div>
+        @RenderBody()
+        <hr />
+    </div>
+    <footer>
+        <div class="container-fluid text-center">
+            <p>&copy;2012-@ViewData["CName"]</p>
+        </div>
+    </footer>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery/dist/popper.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.js"></script>
+        <script src="~/lib/jquery/dist/moment.js"></script>
+        <script src="~/js/validator.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script src="~/js/EmpUtility.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery/dist/popper.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.min.js"></script>
+        <script src="~/lib/jquery/dist/moment.min.js"></script>
+        <script src="~/js/validator.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script src="~/js/EmpUtility.min.js" asp-append-version="true"></script>
+    </environment>
+    <script>
+        var $$host = '@(ViewData["Host"])';
+    </script>
+    @RenderSection("Scripts", required: false)
+
+    @*@if (ApplicationSetting.IsRPOnly)
+    {
+        <script charset="UTF-8" src="//web.webpushs.com/js/push/9b2b97541217dbc110d8cb05816349a4_1.js" async></script>
+    }*@
+</body>
+</html>

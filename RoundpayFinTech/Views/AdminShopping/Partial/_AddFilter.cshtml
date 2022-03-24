@@ -1,0 +1,52 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.Filter
+@{
+
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            Filter Name
+            <input type="text" placeholder="Filter Name" class="form-control" id="textFilter" value="@Model.FilterName" data-Filter-Id="@Model.ID" />
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "") />
+                <label for="chkActive" class="font-weight-bold lbl">IsActive</label>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button class="btn btn-outline-success" id="btnSaveFilter">@Html.Raw(Model.ID == 0 ? "Save" : "Update")</button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#btnSaveFilter').unbind().click(() => {
+        btnLdr.Start($('#btnSaveFilter'), 'Add Filter');
+        let param = {
+            CommonInt: $('#textFilter').data().filterId,
+            CommonStr: $('#textFilter').val(),
+            CommonBool: $('#chkActive').is(':checked')
+        };
+        $.post('/updateFilter', param)
+            .done(result => {
+                an.id="ssalert"
+                an.title = result.statuscode==1?'Well done':'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                $('button.close:last').click();
+                if (result.statuscode == 1) {
+                    loadFilterGrid();
+                }
+            })
+            .fail(xhr => {
+                an.id = "ssalert"
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => btnLdr.Stop());
+    })
+</script>

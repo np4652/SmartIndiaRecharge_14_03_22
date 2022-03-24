@@ -1,0 +1,54 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.InvoiceSettings>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Invoice Setting Master</h5>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm" id="tbl_ISet">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col" style="width:1%">#</th>
+                    <th scope="col">InvoiceMonth</th>
+                    <th scope="col">IsDisable</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int i = 1; }
+                @foreach (var item in Model)
+                {
+                    <tr data-item-id="@item.ID">
+                        <th scope="row" class="align-middle">@i</th>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.InvoiceMonth)
+                        </td>
+                        <td class="align-middle">
+                            <div class="form-inline">
+                                <span class="switch switch-sm">
+                                    <input type="checkbox" class="switch" id="isactinvoice_@i" @Html.Raw(item.IsDisable ? "checked='checked'":"")>
+                                    <label for="isactinvoice_@i"></label>
+                                </span>
+                                <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="right" title="Last Modified: @item._ModifyDate"></i>
+                            </div>                            
+                        </td>                        
+                    </tr>
+                    i++;
+                }
+                <tr>
+                    <th colspan="3">
+                        <div class="offset-2 col-md-10">
+                            <span class="switch switch-sm" data-toggle="tooltip" title="Active Sign">
+                                <input type="checkbox" class="switch" id="isexReq">
+                                <label for="req" class="text-danger">Active</label>
+                            </span>
+                            <span class="switch switch-sm" data-toggle="tooltip" title="Disable Sign">
+                                <input type="checkbox" class="switch" id="isexReq" checked="checked">
+                                <label for="op" class="text-info"> Disabled </label>
+                            </span>
+                        </div>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

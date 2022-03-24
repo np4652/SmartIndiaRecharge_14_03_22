@@ -1,0 +1,47 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.MyPlanApi
+<div class="row">
+        <div class="col-md-12">
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h3>R OFFER</h3>
+            <hr />
+        </div>
+        @if (Model.status == "true")
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="scroll-content">
+                    <table class="table table-striped">
+                        <thead class="bg-tableth">
+                            <tr>
+                              
+                                <th>Offer</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model.result!=null)
+                            {
+
+                                @foreach (var item in Model.result.records)
+                                {
+                                    <tr>
+                                        <td><span class="btn btn-outline-success" id="spnOferAmt_@item.rs" style="margin-right: 0.5rem;">@item.rs</span></td>
+                                        <td>@item.rs</td>
+                                        <td>@item.desc</td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <h1 class="text-danger">Oops no any roffer found!</h1>
+        }
+    </div>
+

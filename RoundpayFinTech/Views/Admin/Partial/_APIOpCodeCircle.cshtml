@@ -1,0 +1,78 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.APIOpCode>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode_C">
+            <thead class="bg-tableth">
+                <tr>
+                    <th class="text-center text-uppercase">Circle wise API Operator Code</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <div class="row">
+                            @foreach (var item in Model)
+                            {
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <small class="font-weight-bold text-monospace" for="txtOpC_@(item.APIID+"_"+item.OID+"_"+item.CircleID)">@item.Circle</small>
+                                        <i class="fas fa-info-circle ml-1 text-dark cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                        <input type="text" id="txtOpC_@(item.APIID+"_"+item.OID+"_"+item.CircleID)" data-o="@item.OID" data-a="@item.APIID" data-c="@item.CircleID" class="form-control" placeholder="OpCode" value="@(item.OpCode)" />
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $('[id^=txtOpC_]').change(function () {
+        var a = $(this).data().a;
+        var o = $(this).data().o;
+        var c = $(this).data().c;
+        preloader.load();
+        var APIOpCode = { OID: o, APIID: a, CircleID:c, OpCode: $(this).val() }
+        $.ajax({
+            type: 'POST',
+            url: '/API-Op-Code-circle',
+            data: JSON.stringify(APIOpCode),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            },
+            statusCode: {
+                500: function () {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                },
+                0: function () {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops";
+                an.content = result;
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: function () {
+                preloader.remove();
+            }
+        });
+    });
+</script>

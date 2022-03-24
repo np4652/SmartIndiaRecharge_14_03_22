@@ -1,0 +1,146 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.DebitFundrequest>
+@{ 
+    int counter = 0;
+}
+<div class="table-responsive table-sm tblrecord table-mh">
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblFA">
+        <thead class="bg-tableth">
+            <tr>
+                <th style="width:1%">#</th>
+                <th>Action</th>
+                <th>User</th>
+                <th>From User</th>
+                <th>Amount </th>
+                <th>Remark</th>
+                <th>Status</th>
+                <th>Is Account Statment Entry</th>
+                <th>Request Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Any())
+            {
+                @foreach (var mdl in Model)
+                {
+                    counter++;
+
+                    <tr data-item-id="@mdl.ID">
+
+                        <td>
+                            @counter
+                        </td>
+                        <td>
+                            <div class="btn-group dropup">
+                                <a href="#" id="act_@(counter + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                <div class="dropdown-menu" aria-labelledby="act">
+                                    <h6 class="dropdown-header">Action Menu</h6>
+                                    @if (mdl.Status == "1")
+                                    {
+                                        <a href="#" onclick="ApproveReject(@mdl.ID,2)" class="dropdown-item">Approve</a>
+                                        <a href="#" onclick="ApproveReject(@mdl.ID,3)" class="dropdown-item Recharge" id="RCS@(counter)">Reject</a>
+                                    }
+
+                                </div>
+                            </div>
+                        </td>
+
+                        <td>
+                            @mdl.FromName <br> <small class="font-weight-bold text-monospace"> [@mdl.MobileNo1]</small>
+                        </td>
+                        <td>
+                            @mdl.ToName<br> <small class="font-weight-bold text-monospace"> [@mdl.MobileNo]</small>
+                        </td>
+                        <td>@mdl.Amount</td>
+                        <td>@mdl.Remark</td>
+                        @{
+
+                            string a = @mdl.Status == "1" ? "<span class='badge badge-secondary'>Requested</span>" : @mdl.Status == "2" ? "<span class='badge badge-success'>Accepted</span>" : "<span class='badge badge-danger'>Rejected</span>";
+                        }
+                        <td>@Html.Raw(a)</td>
+                        <td>@mdl.IsAccountStatmentEntry</td>
+                        <td>@mdl.RequetedDate</td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="13" rowspan="2">
+                        <center>No Record Found</center>
+                    </td>
+                </tr>
+            }
+
+
+
+
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+    function ApproveReject(a, b)
+    {
+        let confirmModel = `<div class="text-center">`
+        if (b == 2) {
+            confirmModel = confirmModel + `<h3>Approval Confirmation</h3><p><input type="checkbox" id="chbMarkPaid"/>IsMarkPaid</p>`;
+        } else {
+            confirmModel = confirmModel + `<h3>Rejection Confirmation</h3><p><textarea id="txtRemark" class="form-control"></textarea></p>`;
+        }
+        confirmModel = confirmModel + `<button class="btn btn-outline-success w-75 mt-3 mb-2" id="btnConfitm">Confirm</button><button class="btn btn-outline-primary w-75 mt-3 mb-2" id="mdlCancel">Close</button></div>`;
+        mdlA.id = "Model";
+        mdlA.title = "  ";
+        mdlA.content = confirmModel;
+        mdlA.modal(mdlA.size.default);
+        $('#Model .modal-header').remove();
+        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+        $('#btnConfitm').click(function () {
+            let IsMarkPaid = false;
+            if ($('#txtRemark').length > 0)
+            {
+                Remark = $('#txtRemark').val();
+            }
+            else
+            {
+                IsMarkPaid=$('#chbMarkPaid').is(':checked');
+            }
+
+            $.post('/DebitRquesttStatus', { ID: a, Status: b, IsMarkPaid, Remark })
+                .done(function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    search();
+                    setTimeout(function () {
+                        $('button.close span,#mdlCancel').click();
+                    }, 1000);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        });
+
+    }
+
+
+
+</script>

@@ -1,0 +1,94 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.PartnerListResp
+
+@{
+    var list = Model.list;
+    var i = 1;
+}
+@if (Model.RoleID != 1)
+{
+    <div class="text-right form-group"><a id="btnNew" href="/addnewpartner" class="btn btn-outline-dark btn-sm">New</a></div>
+}
+<table class="table table-sm table-hover" id="tblCCList">
+    <thead class="bg-tableth">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Actions</th>
+            <th scope="col">PartnerName</th>
+            <th scope="col">UserName</th>
+            <th scope="col">MobileNo</th>
+            <th scope="col">Email</th>
+            <th scope="col">Outlet</th>
+            <th scope="col">Pan</th>
+            <th scope="col">Aadhar</th>
+            <th scope="col">IsActive</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+
+            foreach (var item in Model.list)
+            {
+                <tr data-item-id="1000">
+                    <th scope="row">@i</th>
+                    <td>
+                        <div class="btn-group dropup">
+                            <a href="#" id="act1" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                            <div class="dropdown-menu" aria-labelledby="act">
+                                <h6 class="dropdown-header">Action Menu</h6>
+                                <a href="#" class="dropdown-item" onclick="ViewData(@item.ID)">View</a>
+                                @if (Model.RoleID != 1 && item.IsActive == false)
+                                {
+                                    <a href="/modifypartner?id=@item.ID" class="dropdown-item">Edit</a>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                    <td>@item.Name <small class="font-weight-bold text-monospace"> [@item.ID]</small></td>
+                    <td>@item.APIUserName</td>
+                    <td>@item.MobileNo</td>
+                    <td>@item.EmailID</td>
+                    <td>@item.OutletName</td>
+                    <td>@item.PAN</td>
+                    <td>@item.AADHAR</td>
+                    <td>
+                        <span class="switch switch-sm">
+                            @if (Model.RoleID == 1)
+                            {
+                                @*@if (item.Status == 2)
+                                    {*@
+                                <input type="checkbox" class="switch" onchange="ChangeStatus(@item.ID)" id="isact_@i" @Html.Raw(item.IsActive ? "checked='checked'" : "")>
+                                <label for="isact_@i"></label>
+                                @*}
+                                    else
+                                    { @Html.Raw(item.IsActive ? "<span class='text-success'>Active</span>" : "<span class='text-danger'>Inactive</span>")}*@
+                            }
+                            else
+                            {
+                                @Html.Raw(item.IsActive ? "<span class='text-success'>Active</span>" : "<span class='text-danger'>Inactive</span>")
+                            }
+                        </span>
+                    </td>
+                    <td>
+                        @if (item.Status == 2)
+                        {
+                            <span class='text-success'>Approved</span>
+                        }
+                        else if (item.Status == 3)
+                        {
+                            <span class='text-danger'>Rejected</span>
+                        }
+                        else
+                        {
+                            <span class='text-warning'>Pending</span>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        }
+
+
+    </tbody>
+</table>

@@ -1,0 +1,91 @@
+﻿@{
+    Layout = null;
+    ViewData["Title"] = "Shipping Detail";
+}
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"]</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="~/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="~/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="~/images/favicons/favicon.ico">
+    <environment include="Development">
+
+    </environment>
+    <environment exclude="Development">
+
+    </environment>
+</head>
+<body>
+    <div id="printData"></div>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    </environment>
+
+    <script>
+        $(document).ready(function () {
+            var queries = {};
+            $.each(document.location.search.substr(1).split('&'), function (c, q) {
+                var i = q.split('=');
+                queries[i[0]] = i[1];
+            });
+            var OID = queries.Oid !== undefined ? queries.Oid : '';
+            ShippingDetailReciept(OID);
+        });
+
+        function ShippingDetailReciept(OID) {
+            $.post('/ShippingDetail-Receipt', {ID:OID, IsPrint: true }, function (result) {
+                $('#printData').html(result);
+                $('#btnPrint').click(function () {
+                    $(this).hide();
+                    window.print();
+                    setTimeout(function () {
+                        window.top.close();
+                    }, 600)
+                    $(this).show();
+                });
+                setTimeout(function () {
+                    $('#btnPrint').click();
+                }, 1000);
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                
+            });
+        }
+    </script>
+</body>
+</html>

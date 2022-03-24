@@ -1,0 +1,115 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+@{
+    int counter = 1;
+}
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>ProductDetailID</th>
+            <th>Vendor</th>
+            <th>BrandName</th>
+            <th>ProductCode</th>
+            <th>Batch</th>
+            <td>Quantity</td>
+            <th>MRP</th>
+            <th>Discount</th>
+            <th>Commission</th>
+            <th>Description</th>
+            <th>Images</th>
+            <th>IsDeleted</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+            foreach (var d in Model)
+            {
+                <tr data-productDetail-ID="@d.ProductDetailID" data-product-ID="@d.ProductID">
+                    <td><a href="/AddProduct/@d.ProductDetailID" class="btn-link">@d.ProductDetailID</a></td>
+                    <td><a href="/AddProduct/@d.ProductDetailID" class="btn-link">@d.VendorName</a></td>
+                    <td><a href="/AddProduct/@d.ProductDetailID" class="btn-link">@d.BrandName</a></td>
+                    <td><a href="/AddProduct/@d.ProductDetailID" class="btn-link">@d.ProductCode</a></td>
+                    <td>@d.Batch</td>
+                    <td>@d.Quantity <span class="pl-2 text-danger btnEditStock"><i class="fa fa-edit"></i></span></td>
+                    <td>@d.MRP</td>
+                    <td>@d.Discount @Html.Raw(d.DiscountType ? "%" : "")</td>
+                    <td>@d.Commission @Html.Raw(d.CommissionType ? "%" : "")</td>
+                    <td>@Html.Raw(d.Description)</td>
+                    <td class="text-center"><span class="btnShowImage"><i class="text-info fa fa-images"></i></span></td>
+                    <td class="text-center align-middle">
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch isDeleted" id="chbIsDeleted_@d.ProductDetailID" @Html.Raw(d.IsDeleted ? "checked=checked" : "") />
+                            <label for="chbIsDeleted_@d.ProductDetailID" class="font-weight-bold lbl"></label>
+                        </span>
+                    </td>
+                </tr>
+                counter++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="12" class="text-danger text-center">No Data Found</td>
+            </tr>
+        }
+    </tbody>
+</table>
+<script>
+    $('.btnShowImage').unbind().click(() => {
+        let ele = $(event.target).closest('tr').data();
+        showImages(ele.productId, ele.productdetailId);
+    });
+
+    $('.switch.isDeleted').unbind().click(e => {
+        let _ele = $(e.currentTarget);
+        console.log(_ele.closest('tr').data())
+        let param = {
+            ProductDetailID: _ele.closest('tr').data().productdetailId,
+            IsDeleted: _ele.is(':checked')
+        };
+        $.post('/DeletedProductDetail', param)
+            .done(result => {
+                an.id = "alert1";
+                an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode)
+            });
+    });
+
+    $('span.btnEditStock').unbind().click(e => {
+        let _ele = $(e.currentTarget);
+        let _html = `<div class="row">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <input type="text" id="txtStockQuantity" class="form-control" placeholder="Enter QUantity"/>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="txtRemark" class="form-control" placeholder="Remark"/>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn btn-outline-successfull" id="btnStockUpdation">Update</button>
+                            </div>
+                        </div>
+                      </div>`;
+        mdlA.id = "StockUpdation";
+        mdlA.title = "Stock Updation";
+        mdlA.content = _html;
+        mdlA.modal(mdlA.size.default);
+        $('#btnStockUpdation').click(() => {
+            let param = {
+                ProductDetailID: _ele.closest('tr').data().productdetailId,
+                Quantity: $('#txtStockQuantity').val(),
+                Remark: $('#txtRemark').val(),
+            };
+            console.log(param);
+            $.post('/StockUpdation', param)
+                .done(result => {
+                    an.id = "alert1";
+                    an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    mdlA.dispose();
+                });
+        })
+    })
+</script>

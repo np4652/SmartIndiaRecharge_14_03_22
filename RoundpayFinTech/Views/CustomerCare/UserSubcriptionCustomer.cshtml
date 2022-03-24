@@ -1,0 +1,204 @@
+﻿@using Fintech.AppCode.Model
+@using RoundpayFinTech.AppCode.StaticModel
+@model GetinTouctListModel;
+@{
+    ViewData["Title"] = "User Subscription List";
+
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Master</a></li>
+            <li class="breadcrumb-item active">User Subscription Report</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> User Subscription Report
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row mb-1 form-group">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <input id="txtMobile" class="form-control text-left" placeholder="Enter Mobile No." />
+                            </div>
+                            <div class="col-md-3 col-xs-3">
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                    </select>
+                            </div>
+                            <div class="col-md-3 col-xs-3">
+                             
+                                    <select id="ddlStatus" tabindex="1" class="form-control">
+                                        <option value="">Select Status</option>
+                                        <option value="Transfer">Transfer </option>
+                                        <option value="FollowUP">FollowUP</option>
+                                        <option value="Matured">Matured</option>
+                                    </select>
+                               
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="input-group-append">
+                                    <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                    <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-responsive-sm" id="tblOPD">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th scope="col">Sr. No.</th>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Email</th>
+                                    <th scope="col">Mobile No</th>
+                                    <th scope="col">Message</th>
+                                    <th scope="col">EntryDate</th>
+                                    <th scope="col">Remarks</th>
+                                    <th scope="col">Update Remarks</th>
+                                    <th scope="col">Request Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/table2excel.js"></script>
+    <script>
+        $(document).ready(function () {
+            _load('50', '', '');
+            $("#btnSearch").click(function () {
+                _load($('#ddlTop').val(), $('#ddlStatus').val(), $("#txtMobile").val());
+            });
+        });
+        var _load = function (top, request, mobileNo) {
+
+            preloader.load();
+            $.post('/_UserSubcriptionCustomer', { TopRows: top, Request: request, MobileNo: mobileNo })
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    
+                    $('#btnExport').unbind().click(function () {
+                        $("#__p").table2excel({
+                            exclude: ".table table-hover .table-responsive-sm .table-bordered .table-striped",
+                            name: "Worksheet Name",
+                            filename: "UserSubscriptionCustomer.xls"
+                        });
+                    });
+
+                    $('select[id^=ddlReqStatus_]').on('change', function () {
+                        UpdateStatus($(this).val(), $(this).closest('tr').data().itemId);
+                    });
+                    $('textarea[id^=txtRemarks]').on('blur', function () {
+
+                        preloader.load();
+                        var id = $(this).closest('tr').data().itemId;
+
+                        var Remarks = $('[data-item-id="' + id + '"] textarea[id^="txtRemarks"]').val();
+                      
+                        $.post('/UpdateCustomerRemark', { ID: id, Remarks: Remarks })
+                            .done(function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                              _load($('#ddlTop').val(), $('#ddlStatus').val(), $("#txtMobile").val());
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                    });
+                    preloader.remove();
+                })
+                .catch(function (xhr, e, msg) {
+                })
+                .fail(function () {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+
+                });
+        }
+
+        var UpdateStatus = function (status, itemID) {
+            preloader.load();
+            $.post('/UpdateStatus/' + status + '/' + itemID)
+                .done(function (result) {
+                    resultReload(result);
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    _load($('#ddlTop').val(), $('#ddlStatus').val(), $("#txtMobile").val());
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+}
+

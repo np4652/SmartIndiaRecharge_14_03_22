@@ -1,0 +1,125 @@
+﻿@model Fintech.AppCode.Model.Membership
+<style>
+    .form-group {
+        margin-bottom: 10px !important;
+    }
+</style>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Membership Master</h5>
+
+    <div class="form-group mb-3">
+        <label class="lbl" for="txtMembershipName"> Membership Name</label>
+        <input aria-describedby="slbNameHelp1" class="form-control col-md-12" id="txtMembershipName" name="txtMembershipName" placeholder="Enter Membership Name" tabindex="1" type="text" value="@Model.membershipMaster.MemberShipType">
+        <small id="slbNameHelp1" class="form-text text-muted d-none"></small>
+        <input type="hidden" id="hid" value="@Model.membershipMaster.ID" class="d-none" />
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-6">
+            @{
+                var list = new SelectList(Model.slabMasters, "ID", "Slab");
+            }
+            <label class="lbl" for="ddlSlabName">Choose Slab</label>
+            <select aria-describedby="helpBL" class="form-control" id="ddlSlabName" tabindex="4" asp-items="@list" asp-for="@Model.membershipMaster.SlabID">
+                <option value="0"> :: Select Slab :: </option>
+            </select>
+            <small id="helpBL" class="form-text text-muted d-none"></small>
+        </div>
+        <div class="col-md-6">
+            <label class="lbl" for="CouponValue"> Package Validity(In Days)</label>
+            <input aria-describedby="slbNameHelppv" onkeypress="return isNumber(event,this)" class="form-control col-md-12" id="txtPackageValidity" name="txtPackageValidity" placeholder="Enter txtPackage Validity." tabindex="6" type="text" value="@Model.membershipMaster.PackageValidity">
+            <small id="slbNameHelppv" class="form-text text-muted d-none"></small>
+        </div>
+
+    </div>
+
+    <div class="form-group row">
+        <div class="col-md-6">
+            <label class="lbl" for="txtCostOfMembership">Membership Cost</label>
+            <input aria-describedby="slbNameHelpcost" onkeypress="return isNumber(event,this)" class="form-control col-md-12" id="txtCostOfMembership" pattern="^\d*(\.\d{0,2})?$" name="txtCostOfMembership" placeholder="Enter Membership Name" tabindex="2" type="text" value="@Model.membershipMaster.Cost">
+            <small id="slbNameHelpcost" class="form-text text-muted d-none"></small>
+        </div>
+        <div class="col-md-6">
+            <label class="lbl" for="">&nbsp;</label>
+            <span class="input-group-text switch switch-sm bg-white align">
+                <input type="checkbox" class="switch" id="chbIsReal" tabindex="3" @Html.Raw(Model.membershipMaster.IsCouponAllowed ? "checked='checked'" : "")>
+                <label for="chbIsReal" class="font-weight-bold lbl">Is CouponAllowed</label>
+            </span>
+        </div>
+        <div>
+        </div>
+    </div>
+
+
+    <div id="_membershipHide" @Html.Raw(Model.membershipMaster.IsCouponAllowed ? "" : "style='display: none;'")>
+
+        <div class="form-group row">
+            <div class="col-md-6">
+                <label class="lbl" for="txtCouponCount" @*style="position: relative; bottom: 0px; right: 218px;"*@> Coupon Count</label>
+
+                <input aria-describedby="slbNameHelp2" class="form-control col-md-12" onkeypress="return isNumberwithoutdecimal(event)" id="txtCouponCount" name="txtCouponCount" placeholder="Enter CouponCount" tabindex="5" type="text" value="@Model.membershipMaster.CouponCount">
+
+            </div>
+            <div class="col-md-6">
+                <label class="lbl" for="CouponValue"> Coupon Value</label>
+                <input aria-describedby="slbNameHelp3" onkeypress="return isNumber(event,this)" class="form-control col-md-12" id="txtCouponValue" name="txtCouponValue" placeholder="Enter Coupon Value" tabindex="6" type="text" value="@Model.membershipMaster.CouponValue">
+                <small id="slbNameHelp3" class="form-text text-muted d-none"></small>
+            </div>
+
+        </div>
+
+        <div class="form-group row">
+            <div class="col-md-6">
+                <label class="lbl" for="CouponValue"> Coupon Validity Days</label>
+                <input aria-describedby="slbNameHelp4" onkeypress="return isNumberwithoutdecimal(event)" class="form-control col-md-12" id="txtCouponValidityDays" name="CouponValidityDays" placeholder="Enter Coupon Validit Days" tabindex="7" maxlength="5" type="text" value="@Model.membershipMaster.CouponValidityDays">
+                <small id="slbNameHelp4" class="form-text text-muted d-none"></small>
+            </div>
+            <div class="col-md-6">
+                <label class="lbl" for="CouponValue"> Coupon Interval Days</label>
+                <input aria-describedby="slbNameHelp5" onkeypress="return isNumberwithoutdecimal(event)" class="form-control col-md-12" id="txtCouponInterval" name="CouponInterval" placeholder="Enter Coupon Interval Days" tabindex="7" maxlength="8" type="text" value="@Model.membershipMaster.MinInterval">
+                <small id="slbNameHelp5" class="form-text text-muted d-none"></small>
+            </div>
+
+        </div>
+        <div class="form-group row">
+            <div class="col-md-12">
+                <label class="lbl" for="CouponValue"> Referral Income </label>
+                <input aria-describedby="slbNameHelp6" onkeypress="return isNumber(event,this)" class="form-control col-md-12" id="txtReferralIncome" name="txtReferralIncome" placeholder="Enter Referral Income" tabindex="7" maxlength="8" type="text" value="@Model.membershipMaster.ReferralIncome">
+                <small id="slbNameHelp6" class="form-text text-muted d-none"></small>
+            </div>
+        </div>
+        <div class="form-group row">
+            <div class="col-md-12">
+                <label class="lbl" for="txtRemark">Remark</label>
+                <textarea aria-describedby="remHelp" class="form-control" id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="8" type="text">@Model.membershipMaster.Remark</textarea>
+                <small id="remHelp" class="form-text text-muted d-none"></small>
+            </div>
+        </div>
+    </div>
+
+
+
+
+    <div class="col-sm-6">
+        <button class="btn btn-info btn-sm" id="btnSlbSave" tabindex="9">Save</button>
+        <button class="btn btn-danger btn-sm " id="mdlCancel" tabindex="10">Cancel</button>
+    </div>
+    <div class="col-sm-6">
+
+
+
+    </div>
+    @*<div class="col-md-2">
+
+        </div>
+        <div class="col-md-2" style="padding-left:0">
+
+        </div>*@
+
+
+
+
+</div>

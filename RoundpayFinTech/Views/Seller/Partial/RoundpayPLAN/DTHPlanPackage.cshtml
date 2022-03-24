@@ -1,0 +1,138 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.RPDTHPlansSimpleOfPackages
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Plans</h3>
+        <hr />
+    </div>
+    @if (Model != null)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    @if (Model.Package != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active mr-1" data-toggle="pill" href="#contPackage">Top Plan</a>
+                        </li>
+                    }
+                    @if (Model.Language != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active mr-1" data-toggle="pill" href="#contLanguage">Language</a>
+                        </li>
+                    }
+                    @if (Model.Response != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active mr-1" data-toggle="pill" href="#contResponse">Monthly Pack</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    <div id="contPackage" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Package != null)
+                                {
+                                    foreach (var ftt in Model.Package)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rechargeAmount">@ftt.rechargeAmount</span></td>
+                                            <td>@ftt.details</td>
+                                            <td>@ftt.RechargeValidity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contLanguage" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>Operator</th>
+                                    <th>Languange</th>
+                                    <th>Package Available</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Language != null)
+                                {
+                                    foreach (var ftt in Model.Language)
+                                    {
+                                        <tr>
+                                            <td>@ftt.Opname</td>
+                                            <td>@ftt.Language</td>
+                                            <td>@ftt.PackageCount</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contResponse" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Response != null)
+                                {
+                                    foreach (var ftt in Model.Response)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rechargeAmount">@ftt.rechargeAmount</span></td>
+                                            <td>@ftt.details</td>
+                                            <td>@ftt.RechargeValidity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>

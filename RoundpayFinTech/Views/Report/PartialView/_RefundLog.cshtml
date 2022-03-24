@@ -1,0 +1,84 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.Model
+@model CommonModel;
+
+@{
+    var couter = 1;
+    decimal TotalAmount = 0;
+    RefundAPITransactios refundAPITransactios = (RefundAPITransactios)Model.obj;
+    IEnumerable<RefundTransaction> refundTrans = refundAPITransactios.RefundTransaction;
+    var colSpan = Model.IsAdmin == true ? 6 : 5;
+}
+@if (refundTrans.Any())
+{
+    foreach (var item in refundTrans)
+    {
+        <tr data-item-id="@item.TID">
+            <th>@couter</th>
+            <td>
+                @if (Model.IsAdmin)
+                {
+                    @item.TID <small class="font-weight-bold text-monospace"> [@item.TransactionID]</small>
+                }
+                else
+                {
+                    @item.TransactionID
+                }
+            </td>
+            @if (Model.IsAdmin)
+            {
+                <td>@item.OutletName <small class="font-weight-bold text-monospace"> [@item.OutletMobile]</small></td>}
+            }
+            <td>@item.EntryDate</td>
+            <td>@item.RefundActionDate</td>
+            <td><span class="badge badge-dark">@item.AccountNo</span></td>
+            <td class="text-right">@item.RequestedAmount</td>
+            @if (Model.IsAdmin)
+            {
+                <td><span class="badge badge-light">@item.APIName</span></td>
+            }
+            <td><span class="badge badge-light">@item.Operator</span></td>
+            <td>
+                @if (item.RStatus == RechargeRespType._SUCCESS)
+                {
+                    <span class="badge badge-success">@item.RStatus</span>
+                }
+                else
+                {
+                    <span class="badge badge-info">@item.RStatus</span>
+                }
+            </td>
+            <td>
+                @if (item.RefundType_ == RefundType._REQUESTED)
+                {
+                    <span class="badge badge-warning">@item.RefundType_</span>
+                }
+                else if (item.RefundType_ == RefundType._REFUNDED)
+                {
+                    <span class="badge badge-info">@item.RefundType_</span>
+                }
+                else
+                {
+                    <span class="badge badge-danger">@item.RefundType_</span>
+                }
+            </td>
+            <td>@item.LiveID</td>
+            <td>@item.RefundRequestDate</td>
+        </tr>
+        couter = couter + 1;
+        TotalAmount += item.RequestedAmount;
+    }
+    <tr>
+        <td colspan="@colSpan" class="text-right text-white bg-blue">Total</td>
+        <td>@TotalAmount</td>
+        <td colspan="6"></td>
+    </tr>
+}
+else
+{
+    <tr>
+        <td colspan="13" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}

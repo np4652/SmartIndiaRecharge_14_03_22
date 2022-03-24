@@ -1,0 +1,79 @@
+﻿@model RoundpayFinTech.AppCode.Model.ASAreaMaster
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+        <input type="hidden" id="hdnAreaID" value="@Model.AreaID" />
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> Add Area</h3>
+        <hr />
+
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    <label class="lbl" for="txtBankUTR">Select Area</label>
+                    <div class="input-group">
+                        <input aria-describedby="AreaHelp" class="form-control" id="txtArea" placeholder="Enter Area Name" tabindex="1" type="text" value="@Model.Area">
+                    </div>
+                    <small id="AreaHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <button type="button" class="btn btn-dark" id="btnSave" tabindex="7">Save</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $('#btnSave').on('click', () => {
+        var AID = $('#hdnAreaID').val();
+        var area = $('#txtArea').val();
+        if (area.trim() == '') {
+            $v.showErrorFor($('#txtArea'), 'Please Fill Area', true);
+            return false;
+        }
+        preloader.load();
+        $.post('/amcu', { AreaID: AID, Area: area })
+            .done(function (result) {
+                resultReload(result);
+                if (result.statuscode === -1) {
+                    an.title = 'Oops';
+                    an.content = message;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }
+                else {
+                    an.title = 'Welldone!';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                    loadArea();
+                }
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    });
+
+
+</script>

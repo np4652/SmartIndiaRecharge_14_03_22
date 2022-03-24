@@ -1,0 +1,13 @@
+﻿@model IEnumerable<BannerImage>
+@{ var counter = 1;}
+
+@foreach (var item in Model)
+
+{
+    <tr id="_111">
+        <td>@counter</td>
+        <td class="text-center"><button class="btn btn-danger" id="@item.SiteFileName">Remove</button></td>
+        <td><div class="text-center"><img class="img-thumbnail" src="@Url.Content(item.SiteResourceUrl)" style="width:400px;height:200px" alt="@item.SiteFileName" /></div></td>
+    </tr>
+    counter = counter + 1;
+}

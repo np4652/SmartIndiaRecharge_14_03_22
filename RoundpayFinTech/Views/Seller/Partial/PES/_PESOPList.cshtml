@@ -1,0 +1,25 @@
+﻿<!--public e services operator list-->
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>
+
+    <link href="~/lib/bootstrap/dist/css/bootstrap-select.css" rel="stylesheet" />
+
+    <div class="container">
+        @if (Model != null && Model.Count() > 0)
+        {
+            <div class="row">
+                <div class="col-md-2">
+                    <div class="h6 mt-2">Select E-Service :</div>
+                </div>
+                <div class="col-md-4 form-group">
+                    @{
+                        var pService = Model.Where(x => x.IsActive == true).OrderByDescending(p => p.Name);
+                        var list = new SelectList(pService, "OID", "Name");
+                    }
+                    <select class="selectpicker" data-live-search="true" id="ddlop" asp-items="@list" aria-describedby="nameOperator">
+                        <option value="0">--Select-E-Service</option>
+                    </select>
+                </div>
+              
+            </div>
+        }
+    </div>

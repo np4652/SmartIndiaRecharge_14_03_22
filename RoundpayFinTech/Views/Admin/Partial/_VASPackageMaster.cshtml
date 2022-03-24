@@ -1,0 +1,71 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model PackageModel
+@{
+    int i = 1;
+}
+
+@foreach (var item in Model.Slabs)
+{
+    <tr data-item-id="@item.ID">
+        <th class="align-middle">@i</th>
+        @if (ApplicationSetting.IsVASAPIResale)
+        {
+            <td class="align-middle">
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item">Edit</a>
+                    </div>
+                </div>
+            </td>
+        }
+        <td class="align-middle">
+            @item.Slab
+        </td>
+        <td class="align-middle">
+            <div class="row mr-0">
+                @foreach (var service in Model.Services)
+                {
+                    var IsActive = Model.Packages.Any(x => x.ID == item.ID && x.ServiceID == service.ServiceID && x.IsServiceActive == true);
+                    var IschbVOpChActive = Model.Packages.Any(x => x.ID == item.ID && x.ServiceID == service.ServiceID && x.IsActive == true);
+                    <div class="col-md-3 text-nowrap chkBndgCls">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text plr-1-9">
+                                    <input type="checkbox" id="chbService_@Html.Raw(i+"_"+service.ServiceID+'_'+item.ID)" @Html.Raw(IsActive ? "checked='checked'" : "")>
+                                </div>
+                            </div>
+                            <label class="form-control" for="chbService_@Html.Raw(i+"_"+service.ServiceID+'_'+item.ID)">@service.ServiceName</label>
+                        </div>
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <span class="switch switch-sm">
+                                        <input type="checkbox" id="chbVOpCh_@Html.Raw(i+"_"+service.ServiceID+'_'+item.ID)" @Html.Raw(IschbVOpChActive ? "checked='checked'" : "")>
+                                        @*<input type="checkbox" class="switch" id="isact_1" checked="checked">*@
+                                        <label for="chbVOpCh_@Html.Raw(i+"_"+service.ServiceID+'_'+item.ID)" class=""></label>
+                                    </span>
+                                </div>
+                            </div>
+                            <input type="text" id="txtCharge_@i" value="@service.Charge" class="form-control">
+                        </div>
+                    </div>
+                }
+            </div>
+        </td>
+        <td class="align-middle">
+            @(item.PackageCost)
+        </td>
+        <td class="align-middle">
+            @(item.ValidityInDays)
+        </td>
+        <td class="align-middle">
+            @(item.DailyHitCount)
+        </td>
+        <td class="align-middle">
+            @(item.IsActive ? "Active" : "De-active")
+        </td>
+    </tr>
+    i++;
+}

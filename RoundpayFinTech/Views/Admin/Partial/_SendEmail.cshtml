@@ -1,0 +1,78 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model EmailAPIDetail
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> Send Email</h3>
+        <hr />
+        <div class="scroll-content">
+            <div class="container">
+
+
+                <div class="form-group">
+                    @Html.Label("txtsendEmail", "Email", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtsendEmail", Model.SendEmail, new { @class = "form-control", @placeholder = "Enter Email", @aria_describedby = "emailHelp" })
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted d-none">Email is mandatory</small>
+                </div>
+
+                <button type="button" class="btn btn-dark" id="btnsendEmail" data-eid="@Model.ID" tabindex="7">Send E-Mail</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+
+
+    $('button[id^=btnsendEmail]').on('click', function () {
+        preloader.load();
+        var EID = $(this).data().eid;
+        var ToMail = $('#txtsendEmail').val();
+        //console.log(ToMail);
+        //alert(ToMail);
+        $.post('/Sendingmail', { EmailID: EID, ToMail: ToMail })
+            .done(result => {
+                $('#' + an.id).remove();
+                mdlA.id = 'sendEmail';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.options.keyboard = false;
+                if (result.msg =='Mail Send Succesfully;') {
+
+                    an.title = "Well done";
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose()
+                }
+                else {
+                    an.title = "Oops";
+                    an.content = result.msg;
+                    an.alert(an.type.failed);
+                }
+                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        return false;
+     
+    });
+
+
+
+
+
+</script>

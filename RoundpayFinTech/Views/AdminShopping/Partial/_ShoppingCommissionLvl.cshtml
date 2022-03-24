@@ -1,0 +1,92 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ShoppingCommissionModel
+@{
+    var cList = new SelectList(Model.ShoppingCategories, "SubCategoryId", "Name");
+}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+<input type="hidden" value="@ApplicationSetting.ECommerceDistributionCommissionType" id="CommDistributionType" />
+<input type="hidden" value="@Model.SlabID" id="hfSlabID" />
+<input type="hidden" value="@Model.IsAdminDefined" id="hfIsAdminDefined" />
+<div class="row">
+    <div class="col-sm-4">
+        @{
+            var catList = new SelectList(Model.ShoppingCategories, "SubCategoryId", "Name");
+            var catID = @Model.SubCatLvl2Id == 0 ? 0 : @Model.SubCatLvl2Id;
+        }
+        <select id="ddlCat" class="form-control" asp-items="@catList" asp-for="@catID">
+            <option value="0">:: All ::</option>
+        </select>
+    </div>
+    <div class="col-sm-8">
+        <div class="input-group">
+            <input type="text" id="txtAmtForAll" class="form-control" value="0" />
+            <div class="input-group-append" id="btnComTypeForAll">
+                <div class="btn-group btn-toggle">
+                    <button class="btn btn-sm btn-dark active" style="border-radius:0" onclick="changeType(this)">C</button>
+                    <button class="btn btn-sm btn-outline-dark" style="border-radius:0">S</button>
+                </div>
+                <div class="btn-group btn-toggle" id="btnAmtTypeForAll">
+                    <button class="btn btn-sm btn-dark btnAmtType active" style="border-radius:0">P</button>
+                    <button class="btn btn-sm btn-outline-dark btnAmtType" style="border-radius:0">F</button>
+                </div>
+            </div>
+            <div class="input-group-append">
+                <div id="ddlRole">
+                    @{
+                        var roles = new SelectList(Model.Roles, "Id", "RoleName");
+                        var roleId = @Model.RoleId == 0 ? 0 : @Model.RoleId;
+                    }
+                    <select id="ddlRoles" class="form-control" asp-items="@roles" asp-for="@roleId">
+                        <option value="0">:: All Role ::</option>
+                    </select>
+                </div>
+            </div>
+            <div class="input-group-append">
+                <button class="btn btn-sm btn-success text-monospace" id="btnSetAll">SET</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <label class="text-danger text-monospace">
+            <small>
+                <strong>
+                    <sup>*</sup>Note :   Commission Shareing : Commission will be calculated on selling Price | Revenue Shareing :  Commission will be calculated over admin Profit
+                </strong>
+            </small>
+        </label>
+        <div class="form-group table-responsive">
+            <table class="table" id="tblGrid">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th style="width:8%">#</th>
+                        <th>Sub Category</th>
+                        <th>Commission</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    (() => {
+        preloader.load();
+         let param = {
+                SlabID: $('#hfSlabID').val(),
+                IsAdminDefined: '@Model.IsAdminDefined'
+        };
+        $.post('_ShoppingCommissionDetail', param).done(result => $('#tblGrid tbody').html(result)).always(() => preloader.remove());
+    })();
+
+    var loadGrid = function () {
+        preloader.load();
+        let param = {
+            SlabID: $('#hfSlabID').val(),
+            IsAdminDefined: '@Model.IsAdminDefined'
+        };
+        $.post('_ShoppingCommissionDetail', param).done(result => $('#tblGrid tbody').html(result)).always(() => preloader.remove());
+    };
+</script>

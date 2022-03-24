@@ -1,0 +1,34 @@
+﻿@model RoundpayFinTech.AppCode.Model.Report.BCAgentSummary
+<h6>BC Agent Summary</h6>
+<table class="table table-hover" id="Table3">
+    <tbody>
+        <tr class="bg-grey text-white">
+            <th>Total Users</th>
+            <th>Approve</th>
+            <th>Reject</th>
+            <th>Pending</th>
+        </tr>
+        <tr>
+            <td>
+                <span>
+                    <a href="/OutletList">@Model.Total</a>
+                </span>
+            </td>
+            <td>
+                <span>
+                    <a href="/OutletList?kycstatus=COMPLETED">@Model.Approve</a>
+                </span>
+            </td>
+            <td >
+                <span>
+                    <a href="/OutletList?kycstatus=REJECTED">@Model.Reject</a>
+                </span>
+            </td>
+            <td>
+                <span>
+                    <a href="/OutletList?kycstatus=APPLIED">@Model.Pending</a>
+                </span>
+            </td>
+        </tr>
+    </tbody>
+</table>

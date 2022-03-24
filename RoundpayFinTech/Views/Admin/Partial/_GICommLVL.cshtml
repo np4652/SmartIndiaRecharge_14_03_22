@@ -1,0 +1,212 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model SlabDetailModel
+
+
+<style>
+    .text-orientation-vertical {
+        writing-mode: vertical-lr;
+        text-orientation: mixed;
+        transform: rotate(180deg);
+    }
+</style>
+<div class="col-md-12">
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead class="shadow">
+                <tr>
+                    <th>#</th>
+                    <th>Operator</th>
+                    <th>
+                        <div class="row">
+                            <label id="IsRole" style="display:none">RoleWise</label>
+                            <div class="col-md-3">
+                                 @{
+                                    var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                                    var OpTypeID = @Model.OpTypeID == 0 ? 1 : @Model.OpTypeID;
+                                }
+                                <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OpTypeID">
+                                    <option value="">:: Operator Type ::</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control text-left" id="txtSearchRSD" type="text" placeholder="Search">
+                            </div>
+                            <div class="col-sm-6 input-group">
+                                <input type="text" id="txtAmtForAll" class="form-control" value="0" />
+                                <div class="input-group-append" id="btnComTypeForAll">
+                                    <div class="btn-group btn-toggle">
+                                        <button class="btn btn-dark active" style="border-radius:0">C</button>
+                                        <button class="btn btn-outline-dark" style="border-radius:0">S</button>
+                                    </div>
+                                    <div class="btn-group btn-toggle" id="btnAmtTypeForAll">
+                                        <button class="btn btn-dark active" style="border-radius:0">P</button>
+                                        <button class="btn btn-outline-dark" style="border-radius:0">F</button>
+                                    </div>
+                                    <div class="btn-group btn-toggle" id="btnComOnAmtTypeForAll">
+                                        <button class="btn btn-dark active" style="border-radius:0">OD</button>
+                                        <button class="btn btn-outline-dark" style="border-radius:0">NET</button>
+                                    </div>
+                                </div>
+                                <div class="input-group-addon">
+                                    <select id="ddlRole" class="form-control">
+                                        @foreach (var Role in Model.Roles)
+                                        {
+                                            <option value="@Role.ID">@Role.Role</option>
+                                        }
+                                    </select>
+                                </div>
+                                <div class="input-group-append">
+                                    <button class="btn btn-success" id="btnSetAll">SET</button>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.IsAdminDefined)
+                {
+                    int i = 0;
+                    @foreach (var Operator in Model.SlabDetails)
+                    {
+                        i++;
+                        <tr data-item-id="@Operator.OID">
+                            <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                            <td class="align-middle" style="width:15%">
+                                @Operator.Operator
+                                <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@Html.Raw(Operator.OpType == 28 ? "Bike Insurance" : "Four Wheeler Insurance")</small>                                
+                            </td>
+                            <td class="align-middle">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-1 text-orientation-vertical" style="padding: 0px;max-width: 3px;">
+                                            <strong class="h6 text-info">Comprehensive</strong>
+                                        </div>
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            var slabDetails = Model.SlabDetails.Where(x => x.RoleID == role.ID && x.OID == Operator.OID).ToList();
+                                            var slabDetail = new SlabCommission();
+                                            if (slabDetails.Count > 0)
+                                            {
+                                                slabDetail = slabDetails[0];
+                                            }
+                                            <div class="col-md">
+                                                <div class="btn-group btn-toggle" id="btnGroupComOnAmtType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.ComOnAmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">OD</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.ComOnAmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">NET</button>
+                                                </div>
+                                                <label class="font-weight-bold text-monospace mb-0" for="chbSlab_@Html.Raw(i+"_"+role.ID)">
+                                                    @role.Prefix
+                                                </label>
+                                                <div class="form-inline">
+                                                    @Html.TextBoxFor(modelItem => slabDetail.Comm, new { @id = "txtComAmt_" + i + "_" + role.ID, @value= slabDetail.Comm ,@placeholder = "0.0", @style = "width:6em;border-radius:0px;", @aria_describedby = "helpComAmt_" + i + "_" + role.ID })
+
+                                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @Html.Raw(slabDetail.ModifyDate==null?"Not yet":slabDetail.ModifyDate)"></i>
+                                                    @Html.HiddenFor(modelItem => slabDetail.Comm, new { @id = "hidComAmt_" + i + "_" + role.ID, })
+                                                </div>
+                                                <small id="helpComAmt_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                                <div class="btn-group btn-toggle" id="btnGroupComType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.CommType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">C</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.CommType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">S</button>
+                                                </div>
+                                                <div class="btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">P</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">F</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    @*TP Slab*@
+                                    <hr class="style14" />
+                                    <div class="row">
+                                        <div class="col-md-1 text-orientation-vertical" style="padding: 0px;max-width: 3px;">
+                                            <strong class="h6 text-info">TP&nbsp;&nbsp;&nbsp;&nbsp;</strong>
+                                            <hr class="style14">
+                                        </div>
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            var slabDetails = Model.SlabDetails.Where(x => x.RoleID == role.ID && x.OID == Operator.OID).ToList();
+                                            var slabDetail = new SlabCommission();
+                                            if (slabDetails.Count > 0)
+                                            {
+                                                slabDetail = slabDetails[0];
+                                            }
+                                            <div class="col-md">
+                                                <div class="btn-group btn-toggle" id="btnGroupTPComOnAmtType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.TPComOnAmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">OD</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.TPComOnAmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">NET</button>
+                                                </div>
+                                                <div class="form-inline">
+                                                    @Html.TextBoxFor(modelItem => slabDetail.TPComm, new { @id = "txtTPComAmt_" + i + "_" + role.ID, @placeholder = "0.0", @style = "width:6em;border-radius:0px;", @aria_describedby = "helpTPComAmt_" + i + "_" + role.ID })
+
+                                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @Html.Raw(slabDetail.ModifyDate==null?"Not yet":slabDetail.ModifyDate)"></i>
+                                                    @Html.HiddenFor(modelItem => slabDetail.Comm, new { @id = "hidComAmt_" + i + "_" + role.ID, })
+                                                </div>
+                                                <small id="helpComAmt_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                                <div class="btn-group btn-toggle" id="btnGroupTPComType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.TPCommType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">C</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.TPCommType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">S</button>
+                                                </div>
+                                                <div class="btn-group btn-toggle" id="btnGroupTPAmtType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.TPAmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">P</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.TPAmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">F</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+        @if (Model != null)
+        {
+            <input type="hidden" value="@Model.SlabID" id="hid" />
+        }
+    </div>
+</div>
+
+<script>
+    $(document).ready(()=>{
+        $('#ddlOType').on('change', () => GiComm(@Model.SlabID));
+        
+        setTimeout(function () {
+            $('#txtSearchRSD').focus();
+            $("#txtSearchRSD").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        }, 500);
+
+        $('#btnSetAll').on('click', () => {
+            if ($('#txtAmtForAll').val() == '' || $('#txtAmtForAll').val() == undefined) {
+                $('#txtAmtForAll').focus();
+                return false
+            }
+            const trCount = $('#tblRSD tbody tr').length;
+            $('tbody tr').each(function (i) {
+                var param = {
+                    OID: parseInt($(this).data().itemId),
+                    SlabID: parseInt($('#hid').val()),
+                    Comm: parseFloat($('#txtAmtForAll').val()),
+                    CommType: $('#btnComTypeForAll button.active').text()[0] === 'S' ? 1 : 0,
+                    AmtType: $('#btnAmtTypeForAll button.active').text()[0] === 'F' ? 1 : 0,
+                    ComOnAmtType: $('#btnComOnAmtTypeForAll button.active').text()[0] === 'N' ? 1 : 0,
+                    //RComm: parseFloat(Rcomm),
+                    //RCommType: RcommType === 'S' ? 1 : 0,
+                    //RAmtType: RamtType === 'F' ? 1 : 0,
+                    RoleID: parseInt($('#ddlRole').val())
+                }
+                _updateBulkCommisionGI(param);
+                if (trCount == (i + 1)) {
+                $('button.close span,#mdlCancel').click();
+            }
+            });
+        });
+    });
+</script>

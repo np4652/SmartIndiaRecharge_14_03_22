@@ -1,0 +1,352 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel.MoneyTransfer;
+@model APIDetailModel
+@{
+    var counter = 0;
+}
+@foreach (var mdl in Model.APIs)
+{
+    <tr data-item-id="@mdl.ID">
+        <th style="width:1em;" scope="row">@(counter + 1)</th>
+        <td style="width:5em;">
+            <div class="btn-group dropup">
+                <a href="#" id="act@(counter + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#Edit@(counter + 1)" class="dropdown-item">Edit</a>
+                    <a href="#API Commission@(counter + 1)" class="dropdown-item">API Commission</a>
+                    @if (!Model.IsWLAPIAllowed)
+                    {
+                        @if (ApplicationSetting.IsCircleSlabShow) //
+                        {
+                            <a href="#" class="dropdown-item btnCircleSlab">Circle Slab</a>
+                            <a href="#" class="dropdown-item SpecialComm">Special Comm.</a>
+                        }
+
+                    }
+                    <a href="#" class="dropdown-item btnAPIRangeCom">API Range Commission</a>
+                    @if (ApplicationSetting.IsRPOnly)
+                    {
+                        if (mdl.APICode == APICode.AXISBANK && mdl.IsBBPS)
+                        {
+                            <a href="#" class="dropdown-item openUpdateBillerOpType" data-apicode="@mdl.APICode">Update Biller OpType</a>
+                        }
+                    }
+                </div>
+            </div>
+        </td>
+        <td style="width:6em">
+            @mdl.Name
+            <small class="form-text text-muted mt-0">/Callback/@Html.Raw(mdl.ID)</small>
+        </td>
+        <td style="width:6em">
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="inSwi_@counter" @Html.Raw(mdl.InSwitch ? "checked" : "")>
+                <label for="inSwi_@counter"></label>
+            </span>
+        </td>
+        <td class="word-break-wrap" style="width:10em">@mdl.URL</td>
+        <td class="word-break-wrap" style="width:10em">@mdl.StatusCheckURL</td>
+        <td class="word-break-wrap" style="width:10em">@mdl.BalanceURL</td>
+        <td class="word-break-wrap" style="width:10em">@mdl.DisputeURL</td>
+    </tr>
+    counter++;
+}
+@if (ApplicationSetting.IsRPOnly)
+{
+    <script>
+        $('.openUpdateBillerOpType').unbind().click(e => {
+            var APICode = $(e.currentTarget).data().apicode;
+            $.post('/open-apioptype', { APICode })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'apiOpTypeModel';
+                    mdlA.alert(mdlA.size.xlarge);
+                    $('button.close span').unbind().click(() => mdlA.dispose());
+                    $('[id^=spnAPIOpType_]').click(function () {
+                        var _this = this;
+                        $(_this).addClass('d-none');
+                        $.post('/update-apioptype', {
+                            APICode: $(_this).data().optypedetail.apiOpType, OpTypeID: $(_this).data().optypedetail.id
+                        }).done(result => {
+                                an.id = 'apiOpTypeModelAN';
+                                an.autoClose = 5;
+                                an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }).fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => $(_this).removeClass('d-none'));
+                    });
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                });
+        });
+    </script>
+}
+<script>
+    $('.btnCircleSlab').unbind().click(e => {
+        var APIID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/CircleSlab-A', { APIID })
+            .done(result => {
+                mdlA.content = result;
+                mdlA.id = 'circleSlab';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    });
+    $('.btnAPIRangeCom').unbind().click(e => {
+        var APIID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/API-Range-Slab-Detail', { APIID: APIID, OTypeID: $('#ddlOType option:selected').val() })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodalSlabRange';
+                mdlA.options.backdrop = 'static';
+                if (result.indexOf('RoleWise') > -1) {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                else {
+                    mdlA.alert(mdlA.size.xlarge);
+                }
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRNG tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                $('input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"], input[id^="txtFixedCharge"],input[id^="txtMaxComm"]').on('blur click', function () {
+                    UpdateRCommAPI(this, event);
+                });
+                $('[id^="ddlDMRModel_"]').change(function () {
+                    updateDMRModelFOrRange(this);
+                });
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+
+    $('.SpecialComm').unbind().click(e => {
+        preloader.load();
+        var APIID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/Special-APIID-Detail', { APIID: APIID, OpTypeID: 1 })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result.replace('{APIID}', APIID);
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('#ddlOType').on('change', function () {
+                    callSpecialCommSlab(sender, $(this).val());
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRNG tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                $('input[id^="txtRMComAmt"],input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"]').on('blur click', function () {
+                    UpdateRComm(this, event);
+                });
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });
+
+    var updateDMRModelFOrRange = function (sender) {
+        var a = $(sender).closest('tr').data().apiid;
+        var o = $(sender).data().oid;
+        var d = $(sender).val();
+        if (d == undefined || d == "0")
+            return false;
+        preloader.load();
+        $.post('/update-dmodid-range-api', { a, o, d })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+    var UpdateRCommAPI = function (_t, _e) {
+        if (_e.type == "click" && ($(_t).is(':input[id^="txtRComAmt"]') || $(_t).is(':input[id^="txtRMComAmt"]'))) {
+            return true;
+        }
+        var IstxtComAmt = false;
+        if ($(_t).is(':input[id^="txtRComAmt"]') || $(_t).is(':input[id^="txtRMComAmt"]')) {
+
+            IstxtComAmt = true;
+        }
+        var oId = $(_t).closest('tr').data().itemId;
+        var slabId = $(_t).closest('tr').data().apiid;
+
+        var _tid = $(_t).attr('id');
+        var _sfx = '';
+        if (_tid) {
+            _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+        }
+        var hidcomm = $('[data-item-id="' + oId + '"] #hidRComAmt' + _sfx).val();
+        var hidrng = $('[data-item-id="' + oId + '"] #hidrng' + _sfx).val();
+        var comm = $('[data-item-id="' + oId + '"] #txtRComAmt' + _sfx).val();
+        var selectedTr = $('[data-item-id="' + oId + '"]:eq(0)');
+        var FixedCharge = $('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx).val() != undefined ? $('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx).val() : selectedTr.find('td:eq(5)').text();
+        var MaxComm = $('[data-item-id="' + oId + '"] #txtMaxComm' + _sfx).val() != undefined ? $('[data-item-id="' + oId + '"] #txtMaxComm' + _sfx).val() : selectedTr.find('td:eq(6)').text();
+        FixedCharge = FixedCharge.trim();
+        MaxComm = MaxComm.trim();
+        var commType = $('[data-item-id="' + oId + '"] #btnRGroupComType' + _sfx + ' button.active').text();
+        var amtType = $('[data-item-id="' + oId + '"] #btnRGroupAmtType' + _sfx + ' button.active').text();
+
+        var dotLen = comm.split('.').length - 1;
+
+        var IsE = { comm: ((comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1])))), FixedCharge: ((FixedCharge.trim() == '' || isNaN(FixedCharge) || FixedCharge.indexOf(' ') > -1 && !$v.$IsNum(FixedCharge))), MaxComm: ((MaxComm.trim() == '' || isNaN(MaxComm) || MaxComm.indexOf(' ') > -1 && !$v.$IsNum(MaxComm))) }
+
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtRComAmt' + _sfx), 'Invalid amount.', IsE.comm);
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx), 'Invalid Fixed Charge.', IsE.FixedCharge);
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtMaxComm' + _sfx), 'Invalid Max Comm.', IsE.MaxComm);
+        IsE.err = IsE.comm || IsE.FixedCharge || IsE.MaxComm;
+        if (IsE.err) {
+            return false;
+        }
+        if (parseFloat(comm) === parseFloat(hidcomm) && IstxtComAmt) {
+            return true;
+        }
+        let Slab = { OID: parseInt(oId), SlabID: parseInt(slabId), Comm: parseFloat(comm), CommType: commType === 'SUR' ? 1 : 0, AmtType: amtType === 'FIX' ? 1 : 0, RangeID: parseInt(hidrng), FixedCharge: parseFloat(FixedCharge), MaxComm: parseFloat(MaxComm) }
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/RangeAPICommSave',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + oId + '"] #ITAG' + _sfx).attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + oId + '"] #hidRComAmt' + _sfx).val(comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+
+            },
+            complete: () => preloader.remove()
+        });
+    }
+
+    $("[id^=inSwi_]").on("change", function () {
+        preloader.load();
+        var id = $(this).closest('tr').data().itemId;
+        $.post('/api-sw-sts', { ID: id })
+            .done(function (result) {
+                if (result.statuscode == an.type.failed) {
+                    an.title = "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }
+                else if (result.statuscode == an.type.success) {
+                    an.title = "Well done";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }
+                loadError('', 0);
+            })
+            .catch(function (xhr, e, msg) {
+            })
+            .fail(function () {
+                $(this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    })
+
+</script>

@@ -1,0 +1,58 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.CoupanReq
+@{
+    int i = 1;
+
+}
+@foreach (var item in Model.CoupanDetail)
+{
+<tr data-item-id="@item.ID" data-item-slabType="@item.IsAdmin">
+    <th style="width:1em;" scope="row">@i</th>
+    <td>
+        <div class="btn-group dropup">
+            <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+            <div class="dropdown-menu" aria-labelledby="act">
+                <h6 class="dropdown-header">Action Menu</h6>
+                <a href="#" class="dropdown-item">Edit</a>
+                <a href="#" class="dropdown-item CouponVoucher">Coupon Voucher</a>
+               @{ if (item.Max == 0)
+                   {
+                    <a href="#" class="dropdown-item CouponSetting">Coupon Setting</a>
+                       }
+                   }
+            </div>
+        </div>
+    </td>
+    <td>@item.OpName</td>
+    <td>
+        @item.VoucherType
+    </td>
+    <td>
+        @item.Min
+    </td>
+    <td>
+        @item.Max
+    </td>
+
+    <td>
+        @item.Remark
+</td>
+<td>
+    <div class="input-group-append">
+        <span class="input-group-text switch switch-sm bg-white align">
+
+            <input type="checkbox" class="switch" onchange="ActveDeactveMaster(@item.ID,this)" id="CouponMaster@(i+1)" @Html.Raw(@item.IsActive ? "checked='checked'" : "")>
+            <label for="CouponMaster@(i+1)" class="font-weight-bold lbl"></label>
+        </span>
+
+        
+    </div>
+    
+    </td>
+
+<td>@item.LastModifyDate</td>
+
+
+</tr>
+    i++;
+}

@@ -1,0 +1,51 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.BrandEdit
+<div class="row">
+    <div class="col-sm-12">
+        @if (Model.Categories.Any())
+        {
+            <div class="form-group">
+                @{
+                    var CatList = new SelectList(Model.Categories, "MainCategoryID", "Name", Model.CategoryID);
+                    <select class="form-control" asp-items="@CatList" id="ddlCategoryEdit">
+                        <option value="0">:: Select Category ::</option>
+                    </select>
+                }
+            </div>
+        }
+        <div class="form-group">
+            <input type="hidden" id="brandId" value="@Model.BrandId" />
+            <input type="text" value="@Model.BrandName" class="form-control" id="BrandName" placeholder="Brand Name" />
+        </div>
+        <div class="form-group">
+            <label>IsActive</label>
+            <input type="checkbox" @Html.Raw(Model.IsActive ? "checked='checked'" : "") id="cbxActive" />
+        </div>
+        <div class="form-group">
+            <button class="btn btn-outline-dark" id="btnSaveBrand">Save</button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#btnSaveBrand').click(() => {
+        let param = {
+            CategoryID: $('#ddlCategoryEdit').val(),
+            BrandId: @Model.BrandId,
+            BrandName: $('#BrandName').val(),
+            IsActive: $('#cbxActive').is(':checked') ? true : false
+        }
+        $.post('/SaveBrand', param)
+            .done(result => {
+                an.title = result.statuscode == 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == 1) {
+                    mdlA.dispose();
+                    _loadGridBrand();
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    });
+</script>

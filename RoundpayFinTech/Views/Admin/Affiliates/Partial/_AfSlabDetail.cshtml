@@ -1,0 +1,157 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ASlabDetailModel
+@{
+    var mdlParent = Model.ParentDetail;
+    decimal comm = 0;
+    string modifyDate = "";
+    //    int commType = 0;
+    int amtType = 0;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Commission Detail</h5><hr />
+    <input type="hidden" id="hfid" value="@Model.SlabID" class="d-none" />
+</div>
+<div class="col-sm-12">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">
+                        <div class="row">
+                            <div class="col-sm-5">
+                                Commission
+                            </div>
+                            <div class="col-sm-7">
+                                @*<input type="text" class="form-control" id="textSearch" placeholder="search text" />*@
+                            </div>
+                        </div>
+
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Operators.Any())
+                {
+                    int i = 1;
+
+                    @foreach (var O in Model.Operators)
+                    {
+                        <tr data-Category-Id="@O.OID">
+                            <td class="align-middle">@i</td>
+                            <td class="align-middle">@O.Name</td>
+                            <td>
+                                <div class="row">
+                                    @if (Model.RoleID != Role.Admin)
+                                    {
+                                        @foreach (var vendor in Model.Vendors)
+                                        {
+                                            <div class="col-md-3 form-group" data-Vendor-Id="@vendor.Id">
+                                                <b>@vendor.VendorName</b>
+                                                @foreach (var item in Model.CommissitionDetail.Where(x => x.OID == O.OID && x.VendorID == vendor.Id))
+                                                {
+                                                    comm = item.CommAmount;
+                                                    modifyDate = item.ModifyDate;
+                                                    // commType = item.CommType;
+                                                    amtType = item.AmtType;
+                                                }
+                                                @{
+                                                    var parentItem = Model.ParentDetail.Where(x => x.OID == O.OID && x.VendorID == vendor.Id).FirstOrDefault();
+                                                }
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(modelItem => comm, new { @id = "txtComAmt_" + i, @class = "form-control text-right", @placeholder = "0.0", @aria_describedby = "helpComAmt_" + i })
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm btn-toggle btnAmtType" id="btnGroupAmtType_@i">
+                                                            <button class="btn  @Html.Raw(amtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                                                            @if (!ApplicationSetting.IsAffiliateRevenue)
+                                                            {
+                                                                <button class="btn @Html.Raw(amtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                                                            }
+                                                            <span class="btn"><i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @modifyDate"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <label class="text-danger">Received : @parentItem.CommAmount</label>>
+                                            </div>
+                                            comm = 0;
+                                            modifyDate = "";
+                                            //commType = 0;
+                                            amtType = 0;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @foreach (var vendor in Model.Vendors)
+                                        {
+                                            <div class="col-md-3 form-group" data-Vendor-Id="@vendor.Id">
+                                                <b>@vendor.VendorName</b>
+                                                @foreach (var item in Model.CommissitionDetail.Where(x => x.OID == O.OID && x.VendorID == vendor.Id))
+                                                {
+                                                    comm = item.CommAmount;
+                                                    modifyDate = item.ModifyDate;
+                                                    amtType = item.AmtType;
+                                                }
+                                                <div class="input-group">
+                                                    @Html.TextBoxFor(modelItem => comm, new { @id = "txtComAmt_" + i, @class = "form-control text-right", @placeholder = "0.0", @aria_describedby = "helpComAmt_" + i })
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm btn-toggle btnAmtType" id="btnGroupAmtType_@i">
+                                                            <button class="btn  @Html.Raw(amtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                                                            @if (!ApplicationSetting.IsAffiliateRevenue)
+                                                            {
+                                                                <button class="btn @Html.Raw(amtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                                                            }
+                                                            <span class="btn"><i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @modifyDate"></i></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            comm = 0;
+                                            modifyDate = "";
+                                            amtType = 0;
+                                        }
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var updateAfSlabComm = e => {
+        let element = $(e.currentTarget).closest('.form-group');
+        let param = {
+            VendorID: element.data().vendorId,
+            OID: $(e.currentTarget).closest('tr').data().categoryId,
+            SLABID: $('#hfid').val(),
+            AmtType: element.find('.btnAmtType button.active').text() == 'PER' ? 0 : 1,
+            // CommType: element.find('.btnCommType button.active').text() == 'COM' ? 0 : 1,
+            CommAmount: element.find('input').val()
+        };
+        console.log(param)
+        $.post('/UpdateAfSlabComm', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.success ? "Success" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    }
+    $('input').change(e => updateAfSlabComm(e));
+    $('.btnCommType,.btnAmtType').unbind().click(e => {
+        $(e.currentTarget).children('button').toggleClass('btn-dark active btn-outline-dark');
+        updateAfSlabComm(e)
+    });
+</script>

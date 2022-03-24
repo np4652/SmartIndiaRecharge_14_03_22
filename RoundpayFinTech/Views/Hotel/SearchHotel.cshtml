@@ -1,0 +1,335 @@
+﻿@{
+    ViewData["Title"] = "Search Hotel";
+    ViewData["HTitle"] = "Hotel";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="TechyDevs">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <!-- Favicon -->
+    <link rel="icon" href="website-assets/images/favicon.png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+    <!-- Template CSS Files -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
+
+    <link href="~/css/Hotel/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery.fancybox.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/daterangepicker.css" rel="stylesheet" />
+    <link href="~/siteadmin/css/animate.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/animated-headline.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery-ui.css" rel="stylesheet" />
+    <link href="~/css/Hotel/flag-icon.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/style.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-autocomplete.css" rel="stylesheet" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+
+
+
+    <style>
+        .btn-link-top {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero-box:after {
+            opacity: 0;
+            background-color: #0d233e;
+        }
+
+        .navbar {
+            padding: 0 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        #HotelLoader {
+            display: block;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 9999;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            background-color: rgba(0, 0, 0, 0.8);
+            -webkit-transition: 0.5s;
+            overflow: auto;
+            transition: all 0.3s linear;
+        }
+    </style>
+    @*<style>
+            .bg-greenhead {
+                background: #4f5e71;
+            }
+            #menu .navbar-nav .show .nav-link {
+                color: #fff !important;
+            }
+            .navbar.navbar-expand-lg.sticky-top .mr-auto {
+                margin-right: auto !important;
+                margin: 0 auto;
+            }
+
+            #menu .navbar-nav .nav-link {
+                color: #fff !important;
+            }
+
+            .contact-form-action .form-control {
+                box-shadow: 0 0 10px #f1f1f1;
+            }
+            ::-webkit-scrollbar {
+                width: 8px;
+            }
+        </style>*@
+</head>
+<body>
+    <!-- start cssload-loader -->
+    <div class="preloader" id="preloader">
+        <div class="loader">
+            <svg class="spinner" viewBox="0 0 50 50">
+                <circle class="path" cx="25" cy="25" r="20" fill="none" stroke-width="5"></circle>
+            </svg>
+        </div>
+    </div>
+    <!-- end cssload-loader -->
+    <!-- ================================
+        START HERO-WRAPPER AREA
+    ================================= -->
+    <section class="hero-wrapper">
+        <div class="hero-box hero-bg searchhotel-bg">
+            @*<span class="line-bg line-bg1"></span>
+                <span class="line-bg line-bg2"></span>
+                <span class="line-bg line-bg3"></span>
+                <span class="line-bg line-bg4"></span>
+                <span class="line-bg line-bg5"></span>
+                <span class="line-bg line-bg6"></span>*@
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12 responsive--column-l">
+                        <div class="hero-content pb-5 text-center">
+                            <div class="section-heading">
+                                <h2 class="sec__title cd-headline zoom">
+                                    Amazing <span class="cd-words-wrapper">
+                                        <b class="is-visible">Tours</b>
+                                        <b>Adventures</b>
+                                        <b>Flights</b>
+                                        <b>Hotels</b>
+                                        <b>Cars</b>
+                                        <b>Cruises</b>
+                                        <b>Package Deals</b>
+                                        <b>Fun</b>
+                                        <b>People</b>
+                                    </span>
+                                    Waiting for You
+                                </h2>
+                            </div>
+                        </div>
+                        <div class="tab-content search-fields-container" id="myTabContent">
+                            <div class="tab-pane fade show active" id="hotel" role="tabpanel" aria-labelledby="hotel-tab">
+                                <div class="contact-form-action ">
+                                    <form action="/Hotel/SearchHotel" method="post" class="align-items-center" id="frmSearch">
+                                        <input type="hidden" id="searchJsonlist" name="searchJson" />
+                                        <div class="row">
+                                            <div class="col-lg-5">
+                                                <div class="input-box">
+                                                    <label class="label-text">Destination / Hotel Name</label>
+                                                    <div class="form-group ">
+                                                        <span class="la la-map-marker form-icon"></span>
+                                                        <input class="form-control" id="txthotel" type="text" autocomplete="off" placeholder="Enter city or property">
+                                                        @*<input class="form-control" id="txthotel" type="text" placeholder="Enter city or property" autocomplete="off" onkeyup="return BindCityDropdown($(this).val())">*@
+                                                        <select class="form-control" id="ddlhotelsearch" style="display:none"></select>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-3 -->
+                                            <div class="col-lg-2 pr-0">
+                                                <div class="input-box">
+                                                    <label class="label-text">Check-in</label>
+                                                    <div class="form-group">
+                                                        <span class="la la-calendar form-icon"></span>
+                                                        <input class="date-range form-control"
+                                                               type="text" name="daterange-single" id="CheckInDate1" readonly>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-3 -->
+                                            <div class="col-lg-2 pr-0">
+                                                <div class="input-box">
+                                                    <label class="label-text">Check-out</label>
+                                                    <div class="form-group">
+                                                        <span class="la la-calendar form-icon"></span>
+                                                        <input class="date-range form-control" type="text" name="daterange-single" id="CheckOutDate1" readonly>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-3 -->
+                                            <div class="col-lg-3">
+                                                <div class="input-box">
+                                                    <label class="label-text">Guests & Rooms</label>
+                                                    <div class="form-group">
+                                                        <div class="dropdown dropdown-contain gty-container btnDropdownToggle">
+                                                            <a class="dropdown-toggle dropdown-btn" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                                <span class="adult" data-text="Adult" data-text-multi="Adults">1 Adult</span>
+                                                                -
+                                                                <span class="children" data-text="Child" data-text-multi="Children">0 Children</span>
+                                                            </a>
+                                                            <div class="dropdown-menu dropdown-menu-wrap" id="count-guest">
+                                                                <div class="dropdown-item">
+                                                                    <div class="qty-box d-flex align-items-center justify-content-between">
+                                                                        <div class="roomsGuests">
+                                                                            <div class="roomsGuestsTop">
+                                                                                <div class="addRoomRow pt-2 pb-0">
+                                                                                    <div class="addRoomLeft">
+                                                                                        <p class="darkText font16 latoBlack capText appendBottom10 m-0">ROOM 1</p>
+                                                                                        <small><!--Data will be here at runtime--></small>
+                                                                                    </div>
+                                                                                    <div class="addRoomRight mt-2">
+                                                                                        <div class="addRooomDetails">
+                                                                                            <div class="col-sm-12 p-0">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-sm-6">
+                                                                                                        <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                            <span class="latoBold font12 grayText">Adults <br />(Above 12 Years) </span>
+                                                                                                        </p>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-6">
+                                                                                                        <div class="input-group mb-3 adultCounter">
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                    <i class="fa fa-minus"></i>
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                            <input type="text" value="1" readonly class="form-control p-1 text-center" placeholder="0" />
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                    <i class="fa fa-plus"></i>
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                            <div>
+                                                                                                <div class="col-sm-12 p-0">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-sm-6">
+                                                                                                            <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                                <span class="latoBold font12 grayText">Children <br />(1 - 12 Years) </span>
+                                                                                                            </p>
+                                                                                                        </div>
+                                                                                                        <div class="col-sm-6">
+                                                                                                            <div class="input-group mb-3 childCounter">
+                                                                                                                <div class="input-group-prepend">
+                                                                                                                    <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                        <i class="fa fa-minus"></i>
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                                <input type="text" value="0" readonly class="form-control p-1 text-center childInput" placeholder="0" />
+                                                                                                                <div class="input-group-prepend">
+                                                                                                                    <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                        <i class="fa fa-plus"></i>
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                                <div class="divChild" style="display:none">
+                                                                                                    <ul class="childAgeList appendBottom10 mb-3">
+                                                                                                        <!--data will be here at runtime-->
+                                                                                                    </ul>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="roomsGuestsBottom">
+                                                                                <button type="button" class="btnAddRoom" id="hsw_add_another_room_btn">+ ROOM </button>
+                                                                                <button type="button" class="primaryBtn btnApply capText" id="hsw_apply_changes_btn">Apply</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- end dropdown -->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="btn-box">
+                                    <button type="button" id="btnSearch" style="cursor:pointer" class="theme-btn">Search Now    </button>
+
+                                </div>
+                            </div><!-- end tab-pane -->
+
+                        </div>
+                    </div><!-- end col-lg-12 -->
+                </div><!-- end row -->
+            </div><!-- end container -->
+            @*<svg class="hero-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 10" preserveAspectRatio="none"><path d="M0 10 0 0 A 90 59, 0, 0, 0, 100 0 L 100 10 Z"></path></svg>*@
+        </div>
+    </section><!-- end hero-wrapper -->
+    <!-- ================================
+        END HERO-WRAPPER AREA
+    ================================= -->
+
+    <div id="HotelLoader" style="display:none"></div>
+
+
+
+    <!-- end destination-area -->
+    <!-- ================================
+        END DESTINATION AREA
+    ================================= -->
+    <!-- ================================
+        START MOBILE AREA
+    ================================= -->
+    <!-- start back-to-top -->
+    <div id="back-to-top">
+        <i class="la la-angle-up" title="Go top"></i>
+    </div>
+    <!-- end back-to-top -->
+    <!-- end modal-shared -->
+    <!-- Template JS Files -->
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/Common/jquery-ui.js"></script>
+    <script src="~/lib/jquery/dist/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/js/Hotel/daterangepicker.js"></script>
+    <script src="~/js/Common/owl.carousel.min.js"></script>
+    <script src="~/js/Hotel/jquery.fancybox.min.js"></script>
+    <script src="~/js/Hotel/jquery.countTo.min.js"></script>
+    <script src="~/js/Hotel/animated-headline.js"></script>
+    <script src="~/js/Hotel/jquery.ripples-min.js"></script>
+    <script src="~/js/Hotel/quantity-input.js"></script>
+    <script src="~/js/Hotel/main.js"></script>
+    <script src="~/js/Hotel/hotel-search.js"></script>
+
+    @section scripts{
+        <script>
+
+        </script>
+    }
+
+
+</body>
+
+
+</html>

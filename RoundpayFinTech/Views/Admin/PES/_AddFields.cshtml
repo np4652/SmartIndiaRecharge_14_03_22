@@ -1,0 +1,146 @@
+﻿<!--Add Field Modal-->
+@model RoundpayFinTech.AppCode.Model.FieldMasterModel
+@using RoundpayFinTech.AppCode.StaticModel
+
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h5 class="text-center text-info font-weight-bold">Add Fields</h5>
+        <hr />
+        <input type="hidden" id="hid_opid" value="@Model._OID" />
+        <input type="hidden" id="hid_FieldID" value="@Model._ID" />
+        <input type="hidden" id="hid_VMID" value="@Model._VocabID" />
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">Field Name</div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="fieldName" value="@Model._Name" placeholder="Enter Field Name.." />
+                    <label id="errmsg1" class="text-danger"></label>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">Display Order</div>
+                <div class="col-md-6">
+                    <input type="number" class="form-control" id="fieldInd" value="@Model._IND" placeholder="Enter Display Order.." />
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">Placeholder</div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="pholder" value="@Model._Placeholder" placeholder="Enter placeholder.." />
+                    <label id="errmsg1" class="text-danger"></label>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">Label</div>
+                <div class="col-md-6">
+                    <input type="text" class="form-control" id="flabel" value="@Model._Label" placeholder="Enter label.." />
+                    <label id="errmsg1" class="text-danger"></label>
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">Select Field Type</div>
+                <div class="col-md-6">
+                    <select class="form-control" asp-for="@Model._FieldType" id="fieldType">
+                        <option value="0">::Select Data Type::</option>
+                        <option value="@(Convert.ToInt16(PESFieldType.Input))">@PESFieldType.Input</option>
+                        <option value="@(Convert.ToInt16(PESFieldType.DropDown))">@PESFieldType.DropDown</option>
+                        <option value="@(Convert.ToInt16(PESFieldType.TextArea))">@PESFieldType.TextArea</option>
+                        <option value="@(Convert.ToInt16(PESFieldType.PINCodeOnly))">@PESFieldType.PINCodeOnly</option>
+                        <option value="@(Convert.ToInt16(PESFieldType.PINCodeWithState))">@PESFieldType.PINCodeWithState</option>       
+                    </select>
+                    <label id="errmsg2" class="text-danger"></label>
+                </div>
+            </div>
+            <div class="row mt-2 d-none" id="selectvocab">
+                <div class="col-md-6">Select Vocab</div>
+                <div class="col-md-6">
+                    <select class="form-control" id="Allvocab"></select>
+                    <label id="errmsg4" class="text-danger"></label>
+                </div>
+            </div>
+            <div class="d-none" id="propdiv">
+                <div class="row mt-2">
+                    <div class="col-md-6">Max-Length</div>
+                    <div class="col-md-6">
+                        <input type="number" class="form-control" value="@Model._MaxLength" id="maxlength" placeholder="Maximum length">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">Min-Length</div>
+                    <div class="col-md-6">
+                        <input type="number" class="form-control" value="@Model._MinLength" id="minlength" placeholder="Minimum length">
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">Input Type</div>
+                    <div class="col-md-6">
+                        <select class="form-control" id="inputtype" asp-for="@Model._InputType">
+                            <option value="">::Select Input Type::</option>
+                            <option value="@FieldInputType.text">Text</option>
+                            <option value="@FieldInputType.number">Number</option>
+                            <option value="@FieldInputType.password">Password</option>
+                            <option value="@FieldInputType.email">Email</option>
+                            <option value="@FieldInputType.date">Date</option>
+                            <option value="@FieldInputType.hidden">Hidden</option>
+                            <option value="@FieldInputType.tel">Phone/Mobile Number</option>
+                            <option value="@FieldInputType.time">Time</option>
+                            <option value="@FieldInputType.url">URL</option>
+                            <option value="@FieldInputType.week">Week</option>
+                            <option value="@FieldInputType.file">File/Image</option>
+                        </select>
+                        <label id="errmsg3" class="text-danger"></label>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">Auto-Complete</div>
+                    <div class="col-md-6">
+                        <span class="switch switch-sm bg-white align">
+                            <label for="ac" class="font-weight-bold lbl">No</label>
+                            <input type="checkbox" class="switch" id="ac" @(Model._AutoComplete ? "checked=checked" : "")>
+                            <label for="ac" class="font-weight-bold lbl">Yes</label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">Is Required</div>
+                    <div class="col-md-6">
+                        <span class="switch switch-sm bg-white align">
+                            <label for="isrequired" class="font-weight-bold lbl">No</label>
+                            <input type="checkbox" class="switch" id="isrequired" @(Model._IsRequired ? "checked=checked" : "")>
+                            <label for="isrequired" class="font-weight-bold lbl">Yes</label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">Is Disabled</div>
+                    <div class="col-md-6">
+                        <span class="switch switch-sm bg-white align">
+                            <label for="isdisabled" class="font-weight-bold lbl">No</label>
+                            <input type="checkbox" class="switch" id="isdisabled" @(Model._IsDisabled ? "checked=checked" : "")>
+                            <label for="isdisabled" class="font-weight-bold lbl">Yes</label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-2">
+                    <div class="col-md-6">Is Readonly</div>
+                    <div class="col-md-6">
+                        <span class="switch switch-sm bg-white align">
+                            <label for="isreadonly" class="font-weight-bold lbl">No</label>
+                            <input type="checkbox" class="switch" id="isreadonly" @(Model._IsReadOnly ? "checked=checked" : "")>
+                            <label for="isreadonly" class="font-weight-bold lbl">Yes</label>
+                        </span>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <button class="btn btn-success btn-block" id="btnsavefield"> Save</button>
+                </div>
+                <div class="col-md-6">
+                    <button id="mdlCancel" class="btn btn-warning btn-block"> Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>

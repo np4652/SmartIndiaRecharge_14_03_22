@@ -1,0 +1,39 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+
+@if (Model.Any())
+{
+    <div id="layered-ajax-list-products" class="product-content-right">
+        <div class="wrapper grid products-grid">
+            <div class="row">
+                @foreach (var item in @Model)
+                {
+                    <div class="col-md-3 col-sm-6 pl-5 pr-5">
+                        <div class="product-grid">
+                            <div class="product-image">
+                                <a href="/Shop/Product/@item.ProductDetailID" class="image">
+                                    <img class="pic-1" src="~/image/Products/@item.ProductID/@item.ImgUrl">
+                                </a>
+                                @*<span class="product-sale-label">sale!</span>*@
+                                <ul class="social">
+                                    <li><a href="javascript: void(0);" onclick="Quickview(@item.ProductDetailID)" data-tip="Quick View"><i class="fa fa-eye"></i></a></li>
+                                    <li><a href="javascript: void(0);" onclick="AddToWishlist(@item.ProductDetailID)" data-tip="Add to wishlist"><i class="fa fa-heart"></i></a></li>
+                                </ul>
+                                <div class="product-rating">
+                                    <a class="add-to-cart" href="javascript: void(0);" onclick="AddToCart(@item.ProductDetailID,1);"> ADD TO CART </a>
+                                </div>
+                            </div>
+                            <div class="product-content">
+                                <h3 class="title"><a href="/Shop/Product/@item.ProductDetailID">@item.ProductName (@item.AdditionalTitle)</a></h3>
+                                <div class="price"><span>&#8377; @item.MRP</span>&#8377; @item.SellingPrice</div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <h2 class="text-danger">No item found</h2>
+}

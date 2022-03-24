@@ -1,0 +1,219 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@model RefundAPITransactios
+@{var counter = 1; }
+<div class="table-sm">
+    @if (Model.PendingAPI != null)
+    {
+        <table class="table table-responsive-sm border" id="tblAPICount">
+            <thead class="shadow-sm">
+                <tr>
+                    @{
+                        var total = Model.PendingAPI.Sum(x => x.Count);
+                        var cls = "success";
+                        if (total > 5)
+                        {
+                            cls = "info";
+                        }
+                        if (total > 30)
+                        {
+                            cls = "warning";
+                        }
+                        if (total > 50)
+                        {
+                            cls = "danger";
+                        }
+                    }
+                    <th class="align-items-center text-center">
+                        <div class="row">
+                            <div class="col-sm-10 justify-content-center align-self-center">
+                                Dispute counts <span class="badge badge-@cls"> @total</span> in API
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="input-group-append btn-group btn-group-sm float-xl-right">
+                                    <a href="javascript:void(0)" id="btnSendNotification" class="btn btn-dark text-monospace">
+                                        Send Notification
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-center align-content-end">
+                        <div class="row justify-content-center align-self-center">
+                            @foreach (var PAPI in Model.PendingAPI)
+                            {
+                                <div class="col-sm-1 pt-2">
+                                    <button type="button" id="btnAPI_@PAPI.APIID" class="btn btn-dark" title="<b>@PAPI.APIName</b> has <b>@PAPI.Count</b> @(PAPI.Count>1?"Transactions":"Transaction")  Pending" data-toggle="tooltip" data-html="true">
+                                        @Html.Raw(PAPI.APIName.Length > 6 ? PAPI.APIName.Substring(0, 6) + ".." : PAPI.APIName)
+                                        <span class="badge badge-light">@PAPI.Count</span>
+                                    </button>
+                                </div>
+                            }
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    }
+</div>
+<div class="table-responsive table-sm">
+    <table class="table table-bordered table-striped" id="tbl_RefundRequest">
+        <thead class="bg-tableth">
+            <tr>
+                <th scope="col">#</th>
+                <th class="text-center">Actions</th>
+                <th>TransactionIDs</th>
+                <th scope="col">Outlet</th>
+                <th scope="col">TransDate</th>
+                <th scope="col" class="text-nowrap">R-ReqDate</th>
+                <th scope="col">AccountNo</th>
+                <th scope="col" class="text-right">Amount</th>
+                <th scope="col">API</th>
+                <th scope="col">VendorID</th>
+                <th scope="col">Operator</th>
+                <th scope="col">Status</th>
+                <th scope="col">LiveID</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.RefundTransaction.Any())
+            {
+                foreach (var item in Model.RefundTransaction)
+                {
+            <tr data-item-id="@item.TID">
+                <th class="align-middle">@counter</th>
+
+                <td class="align-middle">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <input type="text" id="txtRemark_@counter" class="form-control" name="txtRemark_@counter" value="" placeholder="Enter Remark" />
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-outline-success btn-sm" title="Accept" data-toggle="tooltip" id="btnAccept_@counter"><i class="far fa-check-circle"></i></button>
+                                <button type="button" class="btn btn-outline-danger btn-sm" id="btnReject_@counter"><i class="fas fa-times-circle"></i></button>
+                                @*title="Reject" data-toggle="tooltip"*@
+                                <button type="button" class="btn btn-outline-primary btn-sm" title="Check Status" data-toggle="tooltip" id="btnStsCheck_@counter"><i class="fas fa-eye"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td class="align-middle">
+                    <span class="fa fa-info-circle text-info a_modal" name="@item.TID" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"></span>@item.TID
+                    <small class="font-weight-bold text-monospace d-none"> [@item.TransactionID]</small>
+                    <input type="hidden" id="lbltid" value="@item.TransactionID" />
+                    <input type="hidden" id="lblvid" value="@item.VendorID" />
+                    <input type="hidden" id="lblapirqid" value="@item.APIID" />
+                    <input type="hidden" id="lblmoddate" value="" />
+                    <input type="hidden" id="lbldisplay" value="" />
+                    <input type="hidden" id="lbloption" value="" />
+                    <input type="hidden" id="lblCustNo" value="" />
+                    <input type="hidden" id="hidCCName" value="" />
+                    <input type="hidden" id="lblCCMobile" value="" />
+                    <input type="hidden" id="hidTDate" value="@item.EntryDate" />
+                </td>
+                <td class="align-middle text-nowrap">@item.OutletName <br /><small class="font-weight-bold text-monospace"> [@item.OutletMobile]</small></td>
+                <td class="align-middle" style="min-width:127px">@item.EntryDate</td>
+                <td class="align-middle" style="min-width:127px">@item.RefundRequestDate</td>
+                <td class="align-middle"><span class="badge badge-dark">@item.AccountNo</span></td>
+                <td class="text-right align-middle">@item.RequestedAmount</td>
+                <td class="align-middle"><span class="badge badge-dark" title="@item.Response" data-toggle="tooltip">@item.APIName</span></td>
+                <td class="align-middle">@item.VendorID</td>
+                <td class="align-middle text-nowrap" data-doType="@item.OpType"> @item.Operator</td>
+                <td class="align-middle text-success">@item.RStatus</td>
+                @*<td class="align-middle"><p id="@item.LiveID" style="position: relative; top: 23px!important;">@item.LiveID
+        </p><span class="btn btn-sm" onclick="(copyToClipboard(@item.LiveID))"><i class="fas fa-clone"></i></span></td>*@
+                <td class="align-middle"><p id="LiveID_@counter" style="position: relative; top: 23px!important;">@item.LiveID</p><span class="btn btn-sm" onclick="(copyToClipboard(LiveID_@counter))"><i class="fas fa-clone"></i></span></td>
+
+            </tr>
+                    counter = counter + 1;
+
+                }
+            }
+            else
+            {
+                <tr rowspan="2">
+                    <td colspan="14">
+                        <center>No Record Found</center>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+<script>
+    $(".a_modal").click(function () {
+        var td = $(this).parent("td");
+        var tid = $(this).attr("name");
+        var transid = $(td).find("#lbltid").val();
+        var vendorid = $(td).find("#lblvid").val();
+        var apirequest = $(td).find("#lblapirqid").val();
+        var moddate = $(td).find("#lblmoddate").val();
+        var options = $(td).find("#lbloption").val().split('-');
+        var option1 = options[0];
+        var option2 = options[1];
+        var option3 = options[2];
+        var option4 = options[3];
+        var custNo = $(td).find('#lblCustNo').val();
+        var ccName = $(td).find('#hidCCName').val();
+        var ccMob = $(td).find('#lblCCMobile').val();
+        var tdate = $(td).find('#hidTDate').val();
+        var displays = $(td).find('#lbldisplay').val().split('-');
+        $.post('/Recharge-APiUrl', { TID: tid, T: transid })
+            .done(result => {
+                resultReload(result);
+                $('#' + an.id).remove();
+                mdlA.id = 'mdlReqResp';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                $("#lbltranid").text(transid);
+                $("#lblvendorid").text(vendorid);
+                $("#lblapirequestid").text(apirequest);
+                $("#lblmodifydate").text(moddate);
+                $("#lbloption1").text(option1);
+                $("#lbloption2").text(option2);
+                $("#lbloption3").text(option3);
+                $("#lbloption4").text(option4);
+                $("#lbldisplay1").text(displays[0] === '' ? 'Optional1' : displays[0]);
+                $("#lbldisplay2").text(displays[1] === '' ? 'Optional2' : displays[1]);
+                $("#lbldisplay3").text(displays[2] === '' ? 'Optional3' : displays[2]);
+                $("#lbldisplay4").text(displays[3] === '' ? 'Optional4' : displays[3]);
+                $('#lblCustNoShow').text(custNo);
+                $('#lblCCName').text(ccName);
+                $('#lblCCMob').text(ccMob);
+                $('#spnTDate').text(tdate);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+
+    $('#btnSendNotification').click(() => {
+        $.post('/SendPendingRefundNotification').done(result => {
+            an.title = result.statuscode == 1 ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+        });
+    });
+    function copyToClipboard(element) {
+        var $temp = $("<input>");
+        debugger;
+        $("body").append($temp);
+        $temp.val($(element).text()).select();
+        document.execCommand("copy");
+        $temp.remove();
+        an.title = 'Success';
+        an.content = 'Copied';
+        an.alert(1);
+    }
+
+</script>

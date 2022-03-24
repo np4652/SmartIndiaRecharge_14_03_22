@@ -1,0 +1,131 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.BeniRespones
+<div style="max-height:250px;overflow:auto">
+
+    <table class="custom table table-bordered">
+        <thead class="">
+            <tr>
+                <th scope="col">Bank Name</th>
+                <th scope="col">Account No</th>
+                <th scope="col">Bene Name</th>
+                <th scope="col">IFSC</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.addBeni != null)
+            {
+                @foreach (var item in Model.addBeni)
+                {
+            <tr>
+                <td class="td1">@item.BankName</td>
+                <td class="td2" data-bmobile="@item.MobileNo" data-beneid="@item.BeneID" data-bankid="@item.BankID">@item.AccountNo</td>
+                <td class="td3">@item.BeneName</td>
+                <td class="td4">@item.IFSC</td>
+                <td>
+                    @if (!item.IsVerified)
+                    {
+                        <span class="btn btn-danger btn-sm" onclick="GenerateBeneOTP(this)"><i class="fas fa-thumbs-down"></i></span>
+                    }
+                    else
+                    {
+                        <span onclick="SendMoneyPopUp(this)" class="btn btn-success btn-sm"><i class="fas fa-rupee-sign"></i></span>
+                    }
+                    <span class="btn btn-danger btn-sm" onclick="DeleteBene(this)"><i class="fa fa-trash"></i></span>
+                </td>
+            </tr>
+                }
+            }
+            else
+            {
+                <tr rowspan="2">
+                    <td colspan="6" class="text-center">@Model.Msg</td>
+                </tr>
+            }
+
+        </tbody>
+    </table>
+</div>
+<script>
+    function GenerateBeneOTP(sender) {
+        var acnum = $($(sender).closest('tr').find('td')[1]).text().trim();
+        var bmob = $($(sender).closest('tr').find('td')[1]).data().bmobile
+        preloader.load();
+        $.post('/GenerateOTPForBene', { MobileNo: $('#txtSearch').val() },
+            function (result) {
+                resultReload(result);
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodal';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.options.keyboard = false;
+                mdlA.alert(mdlA.size.small);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                $('#btnValidateBene').click(function () {
+                    ValidateBenefiaryOTP(acnum,bmob);
+                });
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    }
+    function ValidateBenefiaryOTP(acnum,bmob) {
+        var OTP = $('#txtOTP').val();
+        $('#OTPHelp').addClass('d-none');
+        if (OTP == '') {
+            $('#OTPHelp').removeClass('d-none');
+            $('#OTPHelp').html('Enter a valid OTP');
+            return true;
+        }
+        preloader.load();
+        $.post('/ValidateOTPForBene', { MobileNo: $('#txtSearch').val(),BMobile:bmob, AccountNo: acnum, OTP },
+            function (result) {
+                resultReload(result);
+                if (result.statuscode == an.type.failed) {
+                    an.title = "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    $('#OTPHelp').removeClass('d-none');
+                    $('#OTPHelp').html(result.msg);
+                }
+                else if (result.statuscode == an.type.success) {
+                    an.title = "Well done!";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    mdlA.dispose(function () {
+                        GetBeni($('#txtSearch').val());
+                    });
+                }
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    }
+</script>

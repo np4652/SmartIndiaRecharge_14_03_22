@@ -1,0 +1,37 @@
+﻿@model List<RoundpayFinTech.AppCode.Model.ProcModel.OutletsOfUsersList>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Company</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                int count = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(++count)</td>
+                        <td>@item._Name</td>
+                        <td>@item._Company</td>
+                        <td>@item._EntryDate</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4">No Records</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="button" class="btn btn-link btn-sm float-right btnViewMoreAgent">View More</button>
+</div>

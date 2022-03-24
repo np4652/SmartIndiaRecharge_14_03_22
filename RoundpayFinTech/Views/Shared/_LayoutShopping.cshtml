@@ -1,0 +1,485 @@
+﻿<!DOCTYPE html>
+<html>
+@{
+    ViewData["Title"] = "Shopping";
+    ViewData["HTitle"] = "Roundpay";
+    string WID = Convert.ToString(ViewData["WID"]);
+}
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"] - @ViewData["HTitle"]</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="~/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="~/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="~/images/favicons/favicon.ico">
+    <link rel="stylesheet" href="~/Shopping/css/bootstrap/font-awesome.min.css">
+    <link rel="apple-touch-icon" type="image/png" href="~/Shopping/img/apple-touch-icon-5ae1a0698dcc2402e9712f7d01ed509a57814f994c660df9f7a952f3060705ee.png" />
+    <link rel="stylesheet" href="~/Shopping/fonts/simple-line-icons.min.css">
+    <link rel="mask-icon" type="" href="~/Shopping/img/logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" color="#111" />
+    <link rel="stylesheet" href="~/Shopping/css/owl.carousel.min.css">
+    <link rel='stylesheet' href='~/Shopping/css/bootstrap/bootstrap.min.css'>
+    <link href="~/Shopping/css/font-awesome.min.css" />
+    <link href="~/Shopping/css/font-awsome.css" rel="stylesheet" />
+    <link href="~/Shopping/css/main.css" rel="stylesheet" />
+    <link href="~/Shopping/css/header.css" rel="stylesheet" />
+    <link href="~/Shopping/css/product-detail.css" rel="stylesheet" />
+    <link href="~/Shopping/css/listing-pro.css" rel="stylesheet" />
+    <link href="~/Shopping/css/grid_1.css" rel="stylesheet" />
+    <link href="~/Shopping/css/vendor/swiper.min.css" rel="stylesheet" />
+    <link href="~/Shopping/css/zoom/easyzoom.css" rel="stylesheet" />
+    <link href="/Shopping/css/mega-menu.css" rel="stylesheet" />
+    <link href="/Shopping/css/mega-menu/style.css" rel="stylesheet" />
+    <link rel='stylesheet' id='js_composer_front-css' href='~/Shopping/css/clevermegamenu/css/js_composer.min.css?ver=5.6' type='text/css' media='all' />
+    <link rel='stylesheet' id='dashicons-css' href='~/Shopping/css/clevermegamenu/css/dashicons.min.css?ver=5.2.1' type='text/css' media='all' />
+    <link rel='stylesheet' id='vc_typicons-css' href='~/Shopping/css/clevermegamenu/css/typicons.min.css?ver=5.6' type='text/css' media='all' />
+    <link rel='stylesheet' id='vc_material-css' href='~/Shopping/css/clevermegamenu/css/vc_material.min.css?ver=5.6' type='text/css' media='all' />
+    <link href="~/Shopping/css/grid.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/Shopping/css/zoom/foundation.css" />
+    <link rel="stylesheet" type="text/css" href="~/Shopping/css/zoom/xzoom.css" media="all" />
+    <style>
+        .navbar-toggle .icon-bar {
+            transition: all 0.2s;
+        }
+
+        .navbar-toggle .top-bar {
+            transform: rotate(-135deg);
+            margin: 6px 0 -12px 0;
+        }
+
+        .navbar-toggle .middle-bar {
+            opacity: 0;
+            width: 0;
+        }
+
+        .navbar-toggle .bottom-bar {
+            transform: rotate(135deg);
+            margin-bottom: 6px;
+        }
+
+        .navbar-toggle.collapsed .top-bar {
+            transform: rotate(0);
+            margin: 0;
+        }
+
+        .navbar-toggle.collapsed .middle-bar {
+            opacity: 1;
+            width: 100%;
+        }
+
+        .navbar-toggle.collapsed .bottom-bar {
+            transform: rotate(0);
+            margin-bottom: 0;
+        }
+    </style>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/Shopping/js/vendor/popper.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery/dist/popper.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    </environment>
+    <script type="text/javascript" src="~/js/Shopping/ShoppingJS.js"></script>
+    <style>
+        .wish-alert {
+            z-index: 99999;
+            height: auto;
+            position: fixed;
+            right: 0%;
+            top: 27%;
+        }
+
+            .wish-alert .position-fixed {
+                position: unset !important;
+            }
+
+            .wish-alert .fa {
+                padding-top: 7px;
+                padding-right: 2px;
+            }
+
+        .abc .modal {
+            z-index: 9999;
+        }
+
+            .abc .modal .modal-body {
+                overflow: scroll;
+                height: auto;
+            }
+
+        .cartimg img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .bg-info th, td.align-middle {
+            min-width: 70px;
+            text-align: center;
+        }
+
+        .modal.show .modal-dialog {
+            /*max-width: -webkit-fill-available;*/
+            max-width: fit-content;
+            left: 8px;
+            right: 0;
+        }
+
+        .modal .gallery-thumbs {
+            height: 100px;
+        }
+
+            .modal .gallery-thumbs .swiper-slide {
+                width: 100px;
+                margin: 0 5px;
+            }
+        /* .gallery-thumbs {
+            height: 100px;
+            width: 100px;
+            margin: 0;
+        }*/
+
+        .modalz {
+            z-index: 99999 !important;
+        }
+    </style>
+</head>
+<body id="ECommBody">
+    <noscript><center><h1 class="text-danger">Javascript is disabled in your browser enable to start application</h1></center></noscript>
+    <div id="alertmsg" class="abc"></div>
+    <div class="page-wrapper">
+        <div class="header-container" id="header">
+            <div class="header-content">
+                <div class="header">
+                    <div class="header_main">
+                        <div class="header-main">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="wp-header">
+                                        <div class="col-md-2 col-sm-2 col-xs-12">
+                                            <div class="logo">
+                                                <img src="@ViewData["Host"]/Image/Website/@WID/logo.png" alt="" width="147" height="29">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-10 col-sm-10 col-xs-12 top-search">
+                                            <div class="mini-cart-wrapper shadowcart" style="right: initial;">
+                                                <div class="mini-carts">
+                                                    <div class="minicart-wrapper">
+                                                        <a id="ECommCart" class="showcart header-mini-cart" href="/ECommCart">
+                                                            <i class="fa fa-shopping-bag"></i>
+                                                            <span class="counter qty empty">
+                                                                <span class="total-mini-cart-item">0</span>
+                                                            </span>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="block block-search">
+                                                <div class="block-content">
+                                                    <div class="input-group mb-3">
+                                                        <input type="text" class="form-control" placeholder="Search" aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                                        <div class="input-group-append">
+                                                            <a href="" class="input-group-text" id="basic-addon2">Search</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="hoteline_header">
+                                                <div class="image_hotline">
+                                                    <img src="~/Shopping/img/icon/2382091-200.png" />
+                                                </div>
+                                                <div class="wrap">
+                                                    <label>Customer Support:</label>@ViewData["CustomerCareMobileNos"].ToString()
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="header-control header-nav cms_home_1">
+                    <div class="container">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-3 col-sm-2 col-xs-6 menu_left_home1">
+                                <div class="vertical-menu-block">
+                                    <h3 class="block-title"><i class="fa fa-bars"></i>Shop By Categories</h3>
+                                    <div id="divECommMenu"></div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-9 col-md-9 col-sm-10 menu_primary hidden-xs">
+                                <div class="header-wrapper-sticky">
+                                    <div class="container-header-sticky container">
+                                        <div class="logo-sticky">
+                                            <a href="index.html" title="Logo"><img src="@ViewData["Host"]/Image/Website/@WID/logo.png" alt="Logo"></a>
+                                        </div>
+                                        <div class="top-menu top-menu-sticky">
+                                            <nav class="navbar navbar-expand-lg">
+                                                <button class="navbar-toggler x" type="button" data-toggle="collapse" data-target="#navbarsExample05" aria-controls="navbarsExample05" aria-expanded="false" aria-label="Toggle navigation">
+                                                    <span class="icon-bar"></span>
+                                                    <span class="icon-bar"></span>
+                                                    <span class="icon-bar"></span>
+                                                </button>
+                                                <div class="collapse navbar-collapse" id="navbarsExample05">
+                                                    <ul class="navbar-nav mr-auto">
+                                                        <li class="nav-item active">
+                                                            <a class="nav-link" href="/Shopping">Home <span class="sr-only">(current)</span></a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link" href="#">Link</a>
+                                                        </li>
+                                                        <li class="nav-item">
+                                                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
+                                                        </li>
+                                                        <li class="nav-item dropdown">
+                                                            <a class="nav-link dropdown-toggle" href="#" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Dropdown</a>
+                                                            <div class="dropdown-menu" aria-labelledby="dropdown05">
+                                                                <a class="dropdown-item" href="#">Action</a>
+                                                                <a class="dropdown-item" href="#">Another action</a>
+                                                                <a class="dropdown-item" href="#">Something else here</a>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                <div class="top-bar-right">
+                                                    <div class="top-info">
+                                                        <div class="top-account has-child">
+                                                            <ul class="menu-links">
+                                                                <li class="link wishlist">
+                                                                    <a id="ECommWishList" href="javascript:void(0);" onclick="WishlistDetail();">
+                                                                        My Wish List
+                                                                        <span class="counter qty">(0)</span>
+                                                                        <!-- /ko -->
+                                                                    </a>
+                                                                </li>
+                                                                <li id="liSignIn" class="authorization-link">
+                                                                    <a id="uInfo" title="Sign In" href="javascript:void(0);" onclick="ECommLogin();">Sign In </a>
+                                                                </li>
+                                                                <li class="cart-link" style="display: none;">
+                                                                    <div class="mini-cart-wrapper shadowcart" style="right: initial;">
+                                                                        <div class="mini-carts">
+                                                                            <div class="minicart-wrapper">
+                                                                                <a id="ECommCartSticky" class="showcart header-mini-cart" href="/ECommCart">
+                                                                                    <i class="fa fa-shopping-bag"></i>
+                                                                                    <span class="counter qty empty">
+                                                                                        <span class="total-mini-cart-item">0</span>
+                                                                                    </span>
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </nav>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @RenderBody()
+        @*FooterStart*@
+        <footer class="page-footer">
+            <!----     Footer Start         ---->
+
+            <div id="footer" class="footer-container layout2 footer">
+                <div class="container">
+                    <div class="row rowFlex rowFlexMargin">
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="vela-contactinfo velaBlock">
+                                <div class="vela-content">
+                                    <div class="contacinfo-logo clearfix">
+                                        <div class="velaFooterLogo">
+                                            <a href="/Shopping">
+                                                <img src="@ViewData["Host"]/Image/Website/@WID/logo.png" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div class="intro-footer d-flex">All the lorem ipsum generators on the Internet tend to repeat<br>predefined chunks as necessary making the first true generator on<br>the Internet.</div>
+                                    <div class="contacinfo-phone contactinfo-item clearfix">
+                                        <div class="d-flex">
+                                            <div class="image_hotline">
+                                                <img src="~/Shopping/img/icon/2382091-200.png">
+                                            </div>
+                                            <div class="wrap"><label>Customer Support:</label>@ViewData["CustomerCareMobileNos"].ToString()</div>
+                                        </div>
+                                    </div>
+                                    <div class="contacinfo-address contactinfo-item d-flex"><label>Add:</label>@ViewData["Address"]</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="row rowFlex rowFlexMargin">
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="velaFooterMenu velaBlock">
+                                        <h4 class="velaFooterTitle">Information</h4>
+                                        <div class="velaContent" style="">
+                                            <ul class="velaFooterLinks list-unstyled">
+                                                <li><a title="" href="#">Custom Service</a></li>
+                                                <li><a title="" href="#">F.A.Q.’s</a></li>
+                                                <li><a title="" href="#">Ordering Tracking</a></li>
+                                                <li><a title="" href="#">Contacts</a></li>
+                                                <li><a title="" href="#">Events</a></li>
+                                                <li><a title="" href="#">Popular</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="velaFooterMenu velaBlock">
+                                        <h4 class="velaFooterTitle">Our Services</h4>
+                                        <div class="velaContent" style="">
+                                            <ul class="velaFooterLinks list-unstyled">
+                                                <li><a title="" href="#">Sitemap</a></li>
+                                                <li><a title="" href="#">Privacy Policy</a></li>
+                                                <li><a title="" href="#">Your Account</a></li>
+                                                <li><a title="" href="#">Advanced Search</a></li>
+                                                <li><a title="" href="#">Terms &amp; Condition</a></li>
+                                                <li><a title="" href="#">Contact Us</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-12 col-md-4">
+                            <div class="row rowFlex rowFlexMargin">
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="velaFooterMenu velaBlock">
+                                        <h4 class="velaFooterTitle">My Account</h4>
+                                        <div class="velaContent" style="">
+                                            <ul class="velaFooterLinks list-unstyled">
+                                                <li><a title="" href="#">About us</a></li>
+                                                <li><a title="" href="#">Delivery Information</a></li>
+                                                <li><a title="" href="#">Privacy Policy</a></li>
+                                                <li><a title="" href="#">Discount</a></li>
+                                                <li><a title="" href="#">Custom Service</a></li>
+                                                <li><a title="" href="#">Terms &amp; Condition</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-xs-12 col-sm-6">
+                                    <div class="velaFooterMenu velaBlock">
+                                        <h4 class="velaFooterTitle">Follow us on</h4>
+                                        <div class="velaContent" style="">
+                                            <ul class="velaFooterLinks list-unstyled">
+                                                <li><a style="color: #234ea7;" title="" href="#">Facebook</a></li>
+                                                <li><a style="color: #40c1df;" title="" href="#">Twitter</a></li>
+                                                <li><a style="color: #ed3c32;" title="" href="#">Gmail +</a></li>
+                                                <li><a style="color: #eb8314;" title="" href="#">RSS</a></li>
+                                                <li><a style="color: #c619b8;" title="" href="#">Instagram</a></li>
+                                                <li><a style="color: #d6150a;" title="" href="#">Pinterestt</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <small class="copyright">
+                                <span>Copyright © <a href="new-index.html">Ayo </a>All Rights Reserved. <a href="new-index.html">The Blue Sky.</a> </span>
+                            </small>
+                        </div>
+                        <div class="col-md-6 col-sm-6 col-xs-6">
+                            <div class="payment-method">
+                                <a href="#">
+                                    <img src="https://blueskytechmage.com/ayo/media/payment_h1.png" alt="">
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+        @*FooterEnd*@
+    </div>
+    <div id="alertmodal" class="abc"></div>
+    <script src="~/lib/jquery/dist/moment.js"></script>
+    <script type='text/javascript' src='~/Shopping/js/scripts.js?ver=5.1.3'></script>
+    <script src="~/Shopping/js/owl.carousel.min.js"></script>
+    <script type='text/javascript' src='~/Shopping/js/clevermegamenu/clever-mega-menu.min.js?ver=1.0.9'></script>
+    <script type='text/javascript' src='~/Shopping/js/clevermegamenu/js_composer_front.min.js?ver=5.6'></script>
+    <script type="text/javascript" src="~/Shopping/js/zoom/xzoom.min.js"></script>
+    <script src="~/Shopping/js/zoom/setup.js"></script>
+    <script src="~/Shopping/js/zoom/easyzoom.js"></script>
+    <script src="~/Shopping/js/vendor/swiper.min.js"></script>
+    <script>
+        jQuery(document).ready(function () {
+            jQuery(window).on("scroll", (function () {
+                jQuery(this).scrollTop() > 150 ? jQuery(".header-wrapper-sticky").addClass("header-sticky") : jQuery(".header-wrapper-sticky").removeClass("header-sticky")
+            }));
+        });
+
+    </script>
+    @*<script>
+        var $$host = '@(ViewData["Host"])';
+        </script>*@
+    @RenderSection("Scripts", required: false)
+    @*@if (ApplicationSetting.IsRPOnly)
+        {
+            <script charset="UTF-8" src="//web.webpushs.com/js/push/9b2b97541217dbc110d8cb05816349a4_1.js" async></script>
+        }*@
+
+    <script>
+        jQuery(document).ready(function () {
+            var galleryThumbs = new Swiper('.gallery-thumbs', {
+                spaceBetween: 5,
+                freeMode: true,
+                watchSlidesVisibility: true,
+                watchSlidesProgress: true,
+                breakpoints: {
+                    0: {
+                        slidesPerView: 3,
+                    },
+                    992: {
+                        slidesPerView: 5,
+                    },
+                }
+            });
+            var galleryTop = new Swiper('.gallery-top', {
+                spaceBetween: 10,
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                thumbs: {
+                    swiper: galleryThumbs
+                },
+            });
+        });
+    </script>
+</body>
+</html>

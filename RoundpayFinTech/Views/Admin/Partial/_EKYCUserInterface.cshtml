@@ -1,0 +1,561 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.EKYCGetDetail
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">EKYC User Interface</h5><hr />
+    </div>
+    <div class="col-md-12">
+        <div class="container">
+
+            @if (Model.EKYCType.Count > 0)
+            {
+                bool IsAddharDone = true;
+                bool IsPANDone = true;
+                foreach (var item in Model.EKYCType)
+                {
+                    if (item.ID == EKYCTypes.GST)
+                    {
+                        if (!Model.IsGSTINEKYCDone || Model.IsGSTSkipped)
+                        {
+                            <div class="row">
+                                <div class="col-md">
+                                    <label for="gstCheckbox">Is Registered with GST?</label>
+                                    <input type="radio" name="rdoGSTAsk" value="Y" /><label>Yes</label>
+                                    <input type="radio" name="rdoGSTAsk" value="N" @(Model.IsGSTSkipped ? "checked='checked'" : "") /><label>No</label>
+
+                                    <div id="dv_GSTIN" class="d-none">
+                                        <label for="txtEGSTIN">Choose Company Type and Enter GSTIN</label>
+                                        <div class="input-group">
+                                            <select class="form-control" id="ddlcompanytypeE" aria-describedby="CompanyTypeHelp" tabindex="15" asp-for=@(Model.CompanyTypeID) asp-items="@Model.CompanyTypeSelect">
+                                                <option value="">:: Choose Company Type ::</option>
+                                            </select>
+
+                                            <input type="text" id="txtEGSTIN" class="form-control " placeholder="Enter GSTIN e.g.:29GGGGG1314R9Z6" aria-describedby="txtGSTINDataH" />
+                                            <div class="input-group-append">
+                                                <button id="btnVerifyGST" class="btn btn-sm btn-outline-primary d-none">Verify GST</button>
+                                            </div>
+                                        </div>
+                                        <small id="ddlcompanytypeE" class="form-text text-muted d-none"></small>
+                                        <small id="txtGSTINDataH" class="form-text text-danger d-none"></small>
+                                        <input type="checkbox" id="consentCheckbox" />
+                                        <label for="consentCheckbox"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <label>GSTIN: </label>
+                            <div class="input-group">
+                                <span class="form-control" id="txtEGSTIN">@Model.GSTIN</span>
+                                <div class="input-group-append">
+                                    <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                    @if (Model.IsEKYCDone)
+                                    {
+
+                                        <span class="text-danger form-control"><i class="fas fa-ban"></i></span>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-sm btn-outline-primary" onclick="EditEKYCStep(@(EKYCTypes.GST))">Edit</button>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        @if (Model.Directors != null && Model.IsGSTINEKYCDone)
+                        {
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @if (string.IsNullOrEmpty(Model.SelectedDirector))
+                                    {
+                                        <select class="form-control" id="ddlDirectors" asp-for="@(Model.SelectedDirector)" asp-items="@(Model.Directors)" aria-describedby="ddlDirectorsH">
+                                            <option value="">:: Choose Directors::</option>
+                                        </select>
+                                        <small id="ddlDirectorsH" class="form-text text-danger d-none"></small>
+                                    }
+                                    else
+                                    {
+                                        <label>Director: </label>
+                                        <div class="input-group">
+                                            <span class="form-control" id="txtSelectedDirector">@Model.SelectedDirector</span>
+                                            <div class="input-group-append">
+                                                <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                                <span class="text-danger form-control"><i class="fas fa-ban"></i></span>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                    if ((item.ID == EKYCTypes.AADHAR && (Model.IsGSTINEKYCDone || Model.IsGSTSkipped)))
+                    {
+                        <hr />
+                        <div class="row">
+                            <div class="col-md">
+                                <div id="dv_Aadhaar">
+                                    @if (string.IsNullOrEmpty(Model.AadharNo) && !Model.IsAadharEKYCDone)
+                                    {
+                                        IsAddharDone = false;
+                                        <label for="txtEAadhar">Enter Aadhar Number</label>
+                                        <div class="input-group">
+                                            <input type="text" id="txtEAadhar" class="form-control " placeholder="Enter Aadhar e.g.:542136985478" aria-describedby="txtEAadharH" />
+                                            <div class="input-group-append">
+                                                <button id="btnVerifyAadhar" class="btn btn-sm btn-outline-primary d-none">Verify Aadhar</button>
+                                            </div>
+                                        </div>
+                                        <small id="txtEAadharH" class="form-text text-danger d-none"></small>
+                                        <input type="checkbox" id="consentCheckboxAadhar" />
+                                        <label for="consentCheckboxAadhar"></label>
+                                    }
+                                    else
+                                    {
+                                        <label>Aadhar: </label>
+                                        <div class="input-group">
+                                            <span class="form-control" id="txtEAadhar">@Model.AadharNo</span>
+                                            <div class="input-group-append">
+                                                <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                                @if (Model.IsEKYCDone)
+                                                {
+
+                                                    <span class="text-danger form-control"><i class="fas fa-ban"></i></span>
+                                                }
+                                                else
+                                                {
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="EditEKYCStep(@(EKYCTypes.AADHAR))">Edit</button>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (item.ID == EKYCTypes.PAN && (IsAddharDone && (Model.IsGSTINEKYCDone || Model.IsGSTSkipped)))
+                    {
+                        <hr />
+                        <div class="row">
+                            <div class="col-md">
+                                <div id="dv_PAN">
+                                    @if ((string.IsNullOrEmpty(Model.PAN) || (!Model.IsGSTSkipped && string.IsNullOrEmpty(Model.PanOfDirector))) && !Model.IsPANEKYCDone)
+                                    {
+                                        IsPANDone = false;
+                                        <label for="txtEPAN">Enter PAN</label>
+                                        <div class="input-group">
+                                            <input type="text" id="txtEPAN" class="form-control " placeholder="Enter PAN e.g.:XXXXX1234X" aria-describedby="txtEPANH" />
+                                            <div class="input-group-append">
+                                                <button id="btnVerifyPAN" class="btn btn-sm btn-outline-primary d-none">Verify PAN</button>
+                                            </div>
+                                        </div>
+                                        <small id="txtEPANH" class="form-text text-danger d-none"></small>
+                                        <input type="checkbox" id="consentCheckboxPAN" />
+                                        <label for="consentCheckboxPAN"></label>
+                                    }
+                                    else
+                                    {
+                                        if (Model.IsGSTSkipped)
+                                        {
+                                            <label>PAN: </label>
+                                            <div class="input-group">
+                                                <span class="form-control" id="txtEPAN">@Model.PAN</span>
+                                                <div class="input-group-append">
+                                                    <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                                    <button class="btn btn-sm btn-outline-primary" onclick="EditEKYCStep(@(EKYCTypes.PAN))">Edit</button>
+                                                </div>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <label>PAN: </label>
+                                            <div class="input-group">
+                                                <span class="form-control" id="txtEPAN">@Model.PAN</span>
+                                                <div class="input-group-append">
+                                                    <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                                    <span class="text-danger form-control"><i class="fas fa-ban"></i></span>
+                                                </div>
+                                            </div>
+                                            <label> PAN of @(Model.SelectedDirector) :</label>
+                                            <div class="input-group">
+                                                <span class="form-control" id="txtEPAN">@Model.PanOfDirector</span>
+                                                <div class="input-group-append">
+                                                    <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                                    @if (Model.IsEKYCDone)
+                                                    {
+
+                                                        <span class="text-danger form-control"><i class="fas fa-ban"></i></span>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button class="btn btn-sm btn-outline-primary" onclick="EditEKYCStep(@(EKYCTypes.PAN))">Edit</button>
+                                                    }
+
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    if (item.ID == EKYCTypes.ACOUNTVerification && (IsPANDone && IsAddharDone && (Model.IsGSTINEKYCDone || Model.IsGSTSkipped)))
+                    {
+                        <hr /><div class="row">
+                            <div class="col-md">
+                                <div id="dv_BankAccount">
+                                    @if (string.IsNullOrEmpty(Model.AccountNumber) && !Model.IsBanckAccountEKYCDone)
+                                    {
+                                        <label for="txtAccountNo">Enter Bank Account & IFSC</label>
+                                        <div class="input-group">
+                                            <select id="ddlEBank" class="form-control " aria-describedby="txtAccountNoH" asp-items="@Model.BankList">
+                                                <option value="0">:: CHOOSE BANK ::</option>
+                                            </select>
+                                            <input type="text" id="txtAccountNo" class="form-control " placeholder="Enter Bank Account" aria-describedby="txtAccountNoH" />
+                                            <input type="text" id="txtEIFSC" class="form-control " placeholder="Enter IFSC" aria-describedby="txtAccountNoH" />
+                                            <div class="input-group-append">
+                                                <button id="btnVerifyEAccount" class="btn btn-sm btn-outline-primary d-none">Verify Bank Account</button>
+                                            </div>
+                                        </div>
+                                        <small id="txtAccountNoH" class="form-text text-danger d-none"></small>
+                                        <input type="checkbox" id="consentCheckboxAccount" />
+                                        <label for="consentCheckboxAccount"></label>
+                                    }
+                                    else
+                                    {
+                                        <label>Bank A/C No. / IFSC /Account Holder :</label>
+                                        <div class="input-group">
+                                            <span class="form-control" id="txtAccountNo">@Model.AccountNumber</span>
+                                            <span class="form-control" id="txtEIFSC">@Model.IFSC</span>
+                                            <span class="form-control" id="txtAccountHolder">@Model.AccountHolder</span>
+                                            <div class="input-group-append">
+                                                <span class="text-success form-control"><i class="fas fa-check-circle"></i></span>
+                                                <span class="text-danger form-control"><i class="fas fa-ban"></i></span>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            }
+
+        </div>
+    </div>
+</div>
+<script>
+    var ISEKYCDONE = "@(Model.IsEKYCDone)";
+    var btnGsTINText = '';
+    var btnAadharText = $('#btnVerifyAadhar').html();
+    var btnPANText = $('#btnVerifyPAN').html();
+    var btnVerifyEAccountText = $('#btnVerifyEAccount').html();
+    $('label[for^="consentCheckbox"]').html(`I hear by declare my consent agreement for fetching my information via  ${CName}`);
+    $('[name="rdoGSTAsk"]').on('change', function () {
+        $('#dv_GSTIN').addClass('d-none');
+        $('#dv_Aadhaar').removeClass('d-none');
+        if ($(this).val() == 'Y') {
+            $('#dv_GSTIN').removeClass('d-none');
+            $('#dv_Aadhaar').addClass('d-none');
+        } else {
+            CallVerifyGST(true);
+        }
+        btnGsTINText = $('#btnVerifyGST').html();
+
+    });
+
+    $('#txtEGSTIN').on('keyup', function () {
+        var reggst = /^([0-9]){2}([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}([0-9]){1}([a-zA-Z]){1}([0-9a-zA-Z]){1}?$/;
+        let _this = $(this);
+        $('#btnVerifyGST').removeClass('d-none');
+        let IsErr = !reggst.test(_this.val()) || _this.val() == '';
+        $v.showErrorFor(_this, 'GST Identification Number is not valid. It should be in this "11AAAAA1111Z1A1" format', IsErr);
+        if (IsErr == true) {
+            $('#btnVerifyGST').addClass('d-none');
+        }
+    });
+
+    $('#btnVerifyGST').click(function () {
+        var reggst = /^([0-9]){2}([a-zA-Z]){5}([0-9]){4}([a-zA-Z]){1}([0-9]){1}([a-zA-Z]){1}([0-9a-zA-Z]){1}?$/;
+        let IsErr = !reggst.test($('#txtEGSTIN').val()) || $('#txtEGSTIN').val() == '';
+        $v.showErrorFor($('#txtEGSTIN'), 'GST Identification Number is not valid. It should be in this "11AAAAA1111Z1A1" format', IsErr);
+        if ($('#consentCheckbox').is(':checked') == false && IsErr == false) {
+            IsErr = true;
+            $v.showErrorFor($('#txtEGSTIN'), 'Please accept consent', IsErr);
+        }
+        if ($('#ddlcompanytypeE').val() == "" && IsErr == false) {
+            IsErr = true;
+            $v.showErrorFor($('#txtEGSTIN'), 'Choose Company Type', IsErr);
+        }
+        if (IsErr == true) {
+            return false;
+        }
+        if (btnGsTINText !== $(this).html())
+            return false;
+        btnLdr.addClass = 'btn-primary';
+        btnLdr.removeClass = 'btn-outline-primary';
+        btnLdr.Start($('#btnVerifyGST'), 'Verifying GSTIN..');
+        CallVerifyGST(false, function () {
+            btnLdr.Stop($('#btnVerifyGST'));
+        });
+    });
+    var CallVerifyGST = function (IsSkip, f) {
+        $.post('/validate-gstin', { GSTIN: $('#txtEGSTIN').val(), IsConcent: $('#consentCheckbox').is(':checked'), IsSkip, CompanyType: $('#ddlcompanytypeE').val() }, function (result) {
+            resultReload(result);
+            an.title = result.statuscode == 1 ? "Wow" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == 1) {
+                setTimeout(function () {
+                    reload();
+                }, 500);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(function () {
+            if (f != undefined) {
+                f();
+            }
+        });
+    }
+
+    $('#txtEAadhar').on('keyup', function () {
+        var regexp = /^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$/;
+        let _this = $(this);
+        $('#btnVerifyAadhar').removeClass('d-none');
+        let IsErr = !regexp.test(_this.val()) || _this.val() == '';
+        $v.showErrorFor(_this, 'Aadhar Number is not valid. It should be in this "222222222222" format', IsErr);
+        if (IsErr == true) {
+            $('#btnVerifyAadhar').addClass('d-none');
+        }
+    });
+    $('#btnVerifyAadhar').click(function () {
+        if (btnAadharText !== $(this).html())
+            return false;
+        var DirectorName = '';
+        let IsDirectErr = false;
+        if ($('#txtSelectedDirector').length) {
+            DirectorName = $('#txtSelectedDirector').html();
+        }
+        if ($('#ddlDirectors').length) {
+            if ($('#ddlDirectors').val() == '') {
+                IsDirectErr = true;
+                $v.showErrorFor($('#ddlDirectors'), 'Choose Director', IsDirectErr);
+                return false;
+            } else {
+                DirectorName = $('#ddlDirectors').val();
+            }
+        }
+        var regexp = /^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}$/;
+        let IsErr = !regexp.test($('#txtEAadhar').val()) || $('#txtEAadhar').val() == '';
+        $v.showErrorFor($('#txtEAadhar'), 'Aadhar Number is not valid. It should be in this "222222222222" format', IsErr);
+        if ($('#consentCheckboxAadhar').is(':checked') == false && IsErr == false) {
+            IsErr = true;
+            $v.showErrorFor($('#txtEAadhar'), 'Please accept consent', IsErr);
+        }
+        if (IsErr == true || IsDirectErr == true) {
+            return false;
+        }
+        btnLdr.addClass = 'btn-primary';
+        btnLdr.removeClass = 'btn-outline-primary';
+        btnLdr.Start($('#btnVerifyAadhar'), 'Verifying Aadhar..');
+        CallVerifyAadhar(DirectorName,function () {
+            btnLdr.Stop($('#btnVerifyAadhar'));
+        });
+    });
+    var CallVerifyAadhar = function (Director,f) {
+        $.post('/validate-aadhar', { Aadhar: $('#txtEAadhar').val(), IsConcent: $('#consentCheckboxAadhar').is(':checked'), Director }, function (result) {
+            resultReload(result);
+            mdlA.id = 'mdl';
+            mdlA.content = result;
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.default);
+            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose(function () {
+
+            }));
+            var btnVerifyAadharText = $('#btnVerifyAadharOTP').html();
+            $('#btnVerifyAadharOTP').unbind().click(function () {
+                if (btnVerifyAadharText !== $(this).html())
+                    return false;
+                btnLdr.addClass = 'btn-primary';
+                btnLdr.removeClass = 'btn-outline-primary';
+                btnLdr.Start($('#btnVerifyAadharOTP'), 'Verifying Aadhar OTP..');
+                CallVerifyAadharOTP(function () {
+                    btnLdr.Stop($('#btnVerifyAadharOTP'));
+                });
+            });
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(function () {
+            if (f != undefined) {
+                f();
+            }
+        });
+    }
+    var CallVerifyAadharOTP = function (f) {
+        $.post('/validate-aadhar-otp', { OTP: $('#txtOTP').val(), ReffID: $('#refID').val() }, function (result) {
+            resultReload(result);
+            an.title = result.statuscode == 1 ? "Wow" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == 1) {
+                setTimeout(function () {
+                    reload();
+                }, 500);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(function () {
+            if (f != undefined) {
+                f();
+            }
+        });
+    }
+    $('#txtEPAN').on('keyup', function () {
+        var regexp = /^([A-Z]){3}(C|P|H|F|A|T|B|L|J|G){1}([A-Z]){1}([0-9]){4}([A-Z]){1}?$/;
+        let _this = $(this);
+        $('#btnVerifyPAN').removeClass('d-none');
+        let IsErr = !regexp.test(_this.val()) || _this.val() == '';
+        $v.showErrorFor(_this, 'PAN is not valid. It should be in this "XXXX6543X" format', IsErr);
+        if (IsErr == true) {
+            $('#btnVerifyPAN').addClass('d-none');
+        }
+    });
+    $('#btnVerifyPAN').click(function () {
+        if (btnPANText !== $(this).html())
+            return false;
+        let IsDirectErr = false;
+        var DirectorName = '';
+        if ($('#txtSelectedDirector').length) {
+            DirectorName = $('#txtSelectedDirector').html();
+        }
+        if ($('#ddlDirectors').length) {
+            if ($('#ddlDirectors').val() == '') {
+                IsDirectErr = true;
+                $v.showErrorFor($('#ddlDirectors'), 'Choose Director', IsErr);
+            } else {
+                DirectorName = $('#ddlDirectors').val();
+            }
+        }
+        var regexp = /^([A-Z]){3}(C|P|H|F|A|T|B|L|J|G){1}([A-Z]){1}([0-9]){4}([A-Z]){1}?$/;
+        let IsErr = !regexp.test($('#txtEPAN').val()) || $('#txtEPAN').val() == '';
+        $v.showErrorFor($('#txtEPAN'), 'PAN is not valid. It should be in this "XXXX6543X" format', IsErr);
+        if ($('#consentCheckboxPAN').is(':checked') == false && IsErr == false) {
+            IsErr = true;
+            $v.showErrorFor($('#txtEPAN'), 'Please accept consent', IsErr);
+        }
+        if (IsErr == true || IsDirectErr == true) {
+            return false;
+        }
+        btnLdr.addClass = 'btn-primary';
+        btnLdr.removeClass = 'btn-outline-primary';
+        btnLdr.Start($('#btnVerifyPAN'), 'Verifying PAN..');
+        CallVerifyPAN(DirectorName,function () {
+            btnLdr.Stop($('#btnVerifyPAN'));
+        });
+    });
+    var CallVerifyPAN = function (Director,f) {
+        $.post('/validate-pan', { PAN: $('#txtEPAN').val(), IsConcent: $('#consentCheckboxPAN').is(':checked'), Director }, function (result) {
+            resultReload(result);
+            an.title = result.statuscode == 1 ? "Wow" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == 1) {
+                setTimeout(function () {
+                    reload();
+                }, 500);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(function () {
+            if (f != undefined) {
+                f();
+            }
+        });
+    }
+
+    $('#txtAccountNo').on('keyup', function () {
+        let _this = $(this);
+        $('#btnVerifyEAccount').removeClass('d-none');
+        let IsErr = _this.val() == '';
+        $v.showErrorFor(_this, 'Account Number is not valid.', IsErr);
+        if (IsErr == true) {
+            $('#btnVerifyEAccount').addClass('d-none');
+        }
+    });
+    $('#btnVerifyEAccount').click(function () {
+        if (btnVerifyEAccountText !== $(this).html())
+            return false;
+        var regexp = /^[A-Za-z]{4}[A-Z\d]{7}$/;
+        let IsErr = !regexp.test($('#txtEIFSC').val());
+
+
+        let bError = $('#ddlEBank').val() == '0';
+        $v.showErrorFor($('#ddlEBank'), 'Please select bank', bError);
+        $v.showErrorFor($('#txtEIFSC'), 'IFSC is not valid.', IsErr);
+        if ($('#consentCheckboxAccount').is(':checked') == false && IsErr == false) {
+            IsErr = true;
+            $v.showErrorFor($('#txtEIFSC'), 'Please accept consent', IsErr);
+        }
+
+        if (IsErr == true || bError==true) {
+            return false;
+        }
+        btnLdr.addClass = 'btn-primary';
+        btnLdr.removeClass = 'btn-outline-primary';
+        btnLdr.Start($('#btnVerifyEAccount'), 'Verifying Bank..');
+        CallVerifyBankAccount(function () {
+            btnLdr.Stop($('#btnVerifyEAccount'));
+        });
+    });
+    var CallVerifyBankAccount = function (f) {
+        $.post('/validate-bank-account', { BankID: $('#ddlEBank').val(),AccounNo: $('#txtAccountNo').val(), IFSC: $('#txtEIFSC').val(), IsConcent: $('#consentCheckboxAccount').is(':checked') }, function (result) {
+            resultReload(result);
+            an.title = result.statuscode == 1 ? "Wow" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == 1) {
+                setTimeout(function () {
+                    reload();
+                }, 500);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(function () {
+            if (f != undefined) {
+                f();
+            }
+        });
+    }
+    var EditEKYCStep = function (StepID) {
+        $.post('/editekyc-step', { StepID}, function (result) {
+            resultReload(result);
+            an.title = result.statuscode == 1 ? "Wow" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == 1) {
+                setTimeout(function () {
+                    reload();
+                }, 500);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(function () {
+        });
+    }
+</script>
+
+

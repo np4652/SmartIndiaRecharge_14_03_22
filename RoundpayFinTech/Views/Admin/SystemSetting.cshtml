@@ -1,0 +1,678 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.SystemSetting;
+@{
+    ViewData["Title"] = "System Setting";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">System Setting</li>
+        </ol>
+    </div>
+</div>
+<div id="alertmsg"></div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="row">
+                    <div class="card mt-4 pl-1">
+                        <div class="card-header bg-gradientorange text-white"><i class="fas fa-link"></i> SYSTEM SETTING</div>
+                        <div class="card-body" style="">
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtIntervalFund" class="lbl">
+                                            <i class="fas fa-clock text-info"></i> Fund Interval(Minute)
+                                        </label>
+                                        @Html.TextBox("txtIntervalFund", Model.IntervalFundTransfer, new { @class = "form-control", @placeholder = "Enter interval fund transfer in minute", @aria_describedby = "iftHelp", @tabindex = 1, @type = "number" })
+                                        <small id="iftHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtMinFundTransfer">
+                                            <i class="fas fa-rupee-sign text-success"></i> Minimum Fund Transfer
+                                        </label>
+                                        @Html.TextBox("txtMinFundTransfer", Model.MinFundTransfer, new { @class = "form-control", @placeholder = "Enter minimum fund transfer amount", @aria_describedby = "minfHelp", @tabindex = 1, @type = "number" })
+                                        <small id="minfHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtAdminPEDays">
+                                            <i class="fas fa-unlock text-danger"></i> Admin PasswordExpiry(Days)
+                                        </label>
+                                        @Html.TextBox("txtAdminPEDays", Model.AdminPasswordExpiry, new { @class = "form-control", @placeholder = "Enter Password Expiry for admin", @aria_describedby = "AEPHelp", @tabindex = 1, @type = "number" })
+                                        <small id="AEPHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label>
+                                            <i class="fas fa-exclamation-circle text-warning"></i> Wrong Login Attempt
+                                        </label>
+                                        @Html.TextBox("txtWLA", Model.WrongLoginAttempt, new { @class = "form-control", @placeholder = "Enter Password Expiry for admin", @aria_describedby = "txtWLAHelp", @tabindex = 1, @type = "number" })
+                                        <small id="txtWLAHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtIntervalRecharge">
+                                            <i class="fas fa-clock text-info"></i> Interval Recahrge(Minute)
+                                        </label>
+                                        @Html.TextBox("txtIntervalRecharge", Model.IntervalRecharge, new { @class = "form-control", @placeholder = "Enter interval recharge in minute", @aria_describedby = "irHelp", @tabindex = 1, @type = "number" })
+                                        <small id="irHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtMaxFundTransfer">
+                                            <i class="fas fa-rupee-sign text-success"></i> Maximum Fund Transfer
+                                        </label>
+                                        @Html.TextBox("txtMaxFundTransfer", Model.MaxFundTransfer, new { @class = "form-control", @placeholder = "Enter maximum fund transfer amount", @aria_describedby = "maxfHelp", @tabindex = 1, @type = "number" })
+                                        <small id="maxfHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtPEDays">
+                                            <i class="fas fa-unlock text-danger"></i> User PasswordExpiry(Days)
+                                        </label>
+                                        @Html.TextBox("txtPEDays", Model.PasswordExpiry, new { @class = "form-control", @placeholder = "Enter Password Expiry for user", @aria_describedby = "EPHelp", @tabindex = 1, @type = "number" })
+                                        <small id="EPHelp" class="form-text text-muted d-none">Enter correct value</small>
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtAppVersion">
+                                            <i class="fab fa-android text-success"></i> App Version
+                                        </label>
+                                        @Html.TextBox("txtAppVersion", Model.AppVersion, new { @class = "form-control", @placeholder = "Enter Android App Version", @aria_describedby = "appHelp", @tabindex = 1 })
+                                        <small id="appHelp" class="form-text text-muted d-none">Enter correct value</small>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtBalanceAlertInterval">
+                                            <i class="fas fa-clock text-info"></i> Balance Alert Interval(Minutes)
+                                        </label>
+                                        @Html.TextBox("txtBalanceAlertInterval", Model.BalanceAlertInterval, new { @class = "form-control", @placeholder = "Enter Android App Version", @aria_describedby = "balanceHelp", @tabindex = 1 })
+                                        <small id="balanceHelp" class="form-text text-muted d-none">Enter correct value</small>
+
+                                    </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label for="txtFlatSignupCommission">
+                                            <i class="fas fa-rupee-sign text-success"></i> Flat Signup Commission
+                                        </label>
+                                        @Html.TextBox("txtFlatSignupCommission", Model.FlatSignupCommission, new { @class = "form-control", @placeholder = "Flat Signup Commission", @aria_describedby = "balanceHelp", @tabindex = 1 })
+                                        <small id="balanceHelp" class="form-text text-muted d-none">>Enter correct value</small>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    @if (ApplicationSetting.IsRofferAutoCall)
+                                    {
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbIsRoffer" @(Model.IsRoffer ? "checked='checked'" : "")>
+                                            <label for="chbIsRoffer" class="font-weight-bold lbl">IsRoffer</label>
+                                        </span>
+                                    }
+                                    @if (ApplicationSetting.IsDTHInfoCall)
+                                    {
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbIsDTHInfo" @(Model.IsDTHInfo ? "checked='checked'" : "")>
+                                            <label for="chbIsDTHInfo" class="font-weight-bold lbl">IsDTHInfo</label>
+                                        </span>
+                                    }
+                                    @if (ApplicationSetting.LookUpType != "")
+                                    {
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbIsLookupFromAPI" @(Model.IsLookUpFromAPI ? "checked='checked'" : "")>
+                                            <label for="chbIsLookupFromAPI" class="font-weight-bold lbl">IsLookup FromAPI</label>
+                                        </span>
+                                    }
+                                    @if (ApplicationSetting.IsRealSettlement)
+                                    {
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbMoveToWalletInReal" @(Model.MoveToWalletInReal ? "checked='checked'" : "")>
+                                            <label for="chbMoveToWalletInReal" class="font-weight-bold lbl">MoveToWalletInReal</label>
+                                        </span>
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbMTRWRetail" @(Model.MTRWRetail ? "checked='checked'" : "")>
+                                            <label for="chbMTRWRetail" class="font-weight-bold lbl">MTRWRetail</label>
+                                        </span>
+                                    }
+
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <span class="switch switch-sm">
+                                        <input type="checkbox" class="switch" id="chbIsSignupUserActive" @(Model.IsSignupUserActive ? "checked='checked'" : "")>
+                                        <label for="chbIsSignupUserActive" class="font-weight-bold lbl">IsSignupUserActive</label>
+                                    </span>
+                                    @if (ApplicationSetting.IsAddMoneyEnable)
+                                    {
+
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbIsPGActiveByAdmin" @(Model.IsPGActiveByAdmin ? "checked='checked'" : "")>
+                                            <label for="chbIsPGActiveByAdmin" class="font-weight-bold lbl">IsPGActiveByAdmin</label>
+                                        </span>
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" class="switch" id="chbIsPGActiveByUpline" @(Model.IsPGActiveByUpline ? "checked='checked'" : "")>
+                                            <label for="chbIsPGActiveByUpline" class="font-weight-bold lbl">IsPGActiveByUpline</label>
+                                        </span>
+                                    }                                   
+                                </div>
+                                <div class="mt-2" style="">
+                                    <button type="button" class="btn btn-outline-danger" id="btnSaveSetting"> Save Setting</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 pl-1 pr-1">
+                        <div class="card mt-4">
+                            <div class="card-header bg-gradientorange text-white">
+                                <i class="fas fa-link"></i> ADD MONEY CHARGE SETTING
+                            </div>
+                            <div class="card-body p-0 table-responsive" style="">
+                                <table class="table table-bordered table-striped table-responsive-sm mb-0" id="tblAddMoney">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th>Mode </th>
+                                            <th class="text-right">Charge</th>
+                                            <th class="text-center">IsFixed</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 pl-1 pr-0">
+                        <div class="card mt-4">
+                            <div class="card-header bg-gradientorange text-white">
+                                <i class="fas fa-link"></i> TRANSACTION MODE SETTING
+                            </div>
+                            <div class="card-body p-0" style="">
+                                <table class="table table-bordered table-striped table-responsive-sm mb-0">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th>Action</th>
+                                            <th>Mode</th>
+                                            <th>Charge</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+
+                                        @foreach (var item in Model.TransactionModes)
+                                        {
+                                            var counter = 0;
+                                            <tr data-item-id="@item.Code">
+                                                <td style="width:5em;">
+                                                    <div class="btn-group dropup">
+                                                        <a href="#" id="act@(counter + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                                        <div class="dropdown-menu" aria-labelledby="act">
+                                                            <h6 class="dropdown-header">Action Menu</h6>
+                                                            <a href="#Edit@(counter + 1)" class="dropdown-item">Edit</a>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    @item.TransMode
+                                                    <small id="nameHelp" class="form-text text-monospace mt-0" style="font-size:70%">@Html.Raw("(" + item.Min + "-" + item.Max + ")")</small>
+                                                </td>
+                                                <td>@item.Charge</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        @if (ApplicationSetting.IsReferral)
+                        {
+                            <div class="card mt-4">
+                                <div class="card-header bg-gradientorange text-white">
+                                    <i class="fas fa-link"></i> Sign Up Referral Setting
+                                </div>
+                                <div class="card-body">
+                                    <h5>Referral To Downline</h5>
+                                    <div class="col-md-12">
+                                        <!-- Group of default radios - option 1 -->
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" id="rdbToDownline" name="IsReferralToDownline" checked value="true">
+                                            <label class="custom-control-label" for="rdbToDownline">Referral Same Role To Downline</label>
+                                        </div>
+
+                                        <!-- Group of default radios - option 2 -->
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" id="rdbAnyRole" name="IsReferralToDownline" value="false">
+                                            <label class="custom-control-label" for="rdbAnyRole">Referral Any Role</label>
+                                        </div>
+                                    </div>
+                                    <hr />
+                                    <h5>Upline Under Admin</h5>
+                                    <div class="col-md-12 mt-2">
+                                        <!-- Group of default radios - option 1 -->
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" id="rdbUnderAdmin" name="IsUplineUnderAdmin" checked value="true">
+                                            <label class="custom-control-label" for="rdbUnderAdmin">Above Role or Same Role Under Admin</label>
+                                        </div>
+
+                                        <!-- Group of default radios - option 2 -->
+                                        <div class="custom-control custom-radio">
+                                            <input type="radio" class="custom-control-input" id="rdbUnderUpline" name="IsUplineUnderAdmin" value="false">
+                                            <label class="custom-control-label" for="rdbUnderUpline">Above Role or Same Role Under Upline</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <div class="mt-2" style="">
+                                            <button type="button" class="btn btn-outline-danger" id="btnRefOptSave">Save Setting</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white"><i class="fas fa-wallet"></i> API BALANCE</div>
+                    <div class="card-body p-0">
+                        <table class="table table-bordered table-striped table-responsive-sm mb-0" id="tableAPIBalance">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>#</th>
+                                    <th>APIName</th>
+                                    <th class="text-right">Balance</th>
+                                    <th class="text-center">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.id = 'myalert';
+            var ct = {
+                tAll: $('#txtIntervalFund,#txtIntervalRecharge,#txtMinFundTransfer,#txtMaxFundTransfer,#txtAdminPEDays,#txtWLA, #txtPEDays'),
+                txtAdminPEDays: $('#txtAdminPEDays'),
+                txtWLA: $('#txtWLA'),
+                txtPEDays: $('#txtPEDays'),
+                tIF: $('#txtIntervalFund'),
+                tIR: $('#txtIntervalRecharge'),
+                tMinF: $('#txtMinFundTransfer'),
+                tMaxF: $('#txtMaxFundTransfer'),
+                btn: $('#btnSaveSetting'),
+                statuscode: { SUCCESS: 1, ERROR: -1 },
+                txtAppVersion: $('#txtAppVersion'),
+                islookupfromapi: $("#chbIsLookupFromAPI"),
+                isroffer: $("#chbIsRoffer"),
+                isdthinfo: $("#chbIsDTHInfo"),
+                BalanceAlertInterval: $('#txtBalanceAlertInterval'),
+                MoveToWalletInReal: $("#chbMoveToWalletInReal"),
+                IsSignupUserActive: $("#chbIsSignupUserActive"),
+                IsPGActiveByAdmin: $("#chbIsPGActiveByAdmin"),
+                IsPGActiveByUpline: $("#chbIsPGActiveByUpline"),
+                MTRWRetail: $("#chbMTRWRetail")
+            };
+            ct.btnTxt = ct.btn.html();
+            ct.tAll.on('change keyup blur', function () {
+                $(this).val($v.$numOnly($(this).val()));
+                if ($(this).val() == '') {
+                    $(this).val(0);
+                } else {
+                    $(this).val(parseInt($(this).val()));
+                }
+            });
+            ct.btn.click(function () {
+                if (ct.btnTxt !== ct.btn.html())
+                    return false;
+                var SystemSetting = {
+                    intervalFundTransfer: ct.tIF.val(),
+                    intervalRecharge: ct.tIR.val(),
+                    minFundTransfer: ct.tMinF.val(),
+                    maxFundTransfer: ct.tMaxF.val(),
+                    appVersion: ct.txtAppVersion.val(),
+                    IsLookUpFromAPI: ct.islookupfromapi.is(':checked'),
+                    AdminPasswordExpiry: ct.txtAdminPEDays.val(),
+                    WrongLoginAttempt: ct.txtWLA.val(),
+                    PasswordExpiry: ct.txtPEDays.val(),
+                    IsRoffer: ct.isroffer.is(':checked'),
+                    IsDTHInfo: ct.isdthinfo.is(':checked'),
+                    BalanceAlertInterval: ct.BalanceAlertInterval.val(),
+                    MoveToWalletInReal: ct.MoveToWalletInReal.is(':checked'),
+                    IsSignupUserActive: ct.IsSignupUserActive.is(':checked'),
+                    IsPGActiveByAdmin: ct.IsPGActiveByAdmin.is(':checked'),
+                    IsPGActiveByUpline: ct.IsPGActiveByUpline.is(':checked'),
+                    MTRWRetail: ct.MTRWRetail.is(':checked')
+                }
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start(ct.btn, 'Updating...');
+                $.ajax({
+                    type: 'POST',
+                    url: '/SystemSetting/Save',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(SystemSetting),
+                    success: function (result) {
+                        if (result.statuscode == an.type.ERROR) {
+                            an.title = "Oops";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        } else if (result.statuscode == an.type.success) {
+                            an.title = "Well done";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (result) {
+                        if (result.responseText.indexOf('login.js') > -1) {
+                            rel(0);
+                            return false;
+                        }
+                        an.title = 'Oops';
+                        an.content = 'An error occured!';
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        btnLdr.Stop(ct.btn);
+                    }
+                });
+            });
+            $('tr div.dropdown-menu a.dropdown-item').click(function () {
+                if ($.inArray($(this).text(), ['Edit', 'New']) < 0) {
+                    return true;
+                }
+                preloader.load();
+
+                if ($(this).text() === 'Edit') {
+                    var Code = $(this).closest('tr').data().itemId;
+                }
+                $.post('/Trans-Mode-Code/' + Code).done(function (result) {
+                    resultReload(result);
+                    mdlA.id = 'mymodel';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.small);
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    $('[data-toggle="tooltip"]').tooltip();
+
+                    $("#btnSaveTM").click(function () {
+                        btnLdr.addClass = 'btn-dark';
+                        btnLdr.removeClass = 'btn-outline-dark';
+                        var Detail =
+                        {
+                            CommonStr: Code,
+                            CommonInt: parseInt($("#txtMin").val()),
+                            CommonInt2: parseInt($("#txtMax").val()),
+                            CommonDecimal: parseFloat($("#txtCharge").val() == "" ? 0 : $("#txtCharge").val()),
+                        }
+                        an.autoClose = 5;
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Update-Trans-Mode',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify(Detail),
+                            success: function (result) {
+                                resultReload(result);
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    location.reload();
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (result) {
+                                checkError(result);
+                                an.title = 'Oops';
+                                an.content = 'An error occured!';
+                                an.alert(an.type.failed);
+                            },
+                            complete: function () {
+                            }
+                        });
+                    });
+                }).catch(function (xhr, ex, message) {
+                    an.title = 'Oops';
+                    an.content = message;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            });
+            GetAPI();
+            GetModeAddMoney();
+            GetReferralSetting();
+        });
+        $('#btnRefOptSave').click(function () {
+            var IsReferralToDownline = $("input[name='IsReferralToDownline']:checked").val();
+            var IsUplineUnderAdmin = $("input[name='IsUplineUnderAdmin']:checked").val();
+            UpdateReferralSetting(IsReferralToDownline, IsUplineUnderAdmin);
+        });
+
+
+        var GetAPI = function () {
+            preloader.load();
+            $.post('/APIForBalance').
+                done(function (result) {
+                    $('#tableAPIBalance tbody').html(result);
+                }).catch(function (err) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+        var GetModeAddMoney = function () {
+            preloader.load();
+            $.post('/AMoney-mode').
+                done(function (result) {
+                    $('#tblAddMoney tbody').html(result);
+                }).catch(function (err) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+        var UpdateCharge = function (sender) {
+            var o = $(sender).closest('tr').data().itemId;
+            var c = $(sender).val();
+            var Is = $('#chbChargeAmtType_' + o).is(':checked');
+            preloader.load();
+            $.post('/AMoney-Charge', { o, c, Is }).
+                done(function (result) {
+                    resultReload(result);
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).catch(function (err) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+
+    </script>
+    @if (ApplicationSetting.IsReferral)
+    {
+        <script>
+            var GetReferralSetting = function () {
+                $.post('/get-ref-setting')
+                    .done(function (result) {
+                        console.log(result);
+                        if (result.statuscode == an.type.success) {
+                            if (result.isReferralToDownline) {
+                                console.log('true')
+                                $('#rdbToDownline').attr('checked', true);
+                                $('#rdbAnyRole').attr('checked', false);
+                            }
+                            else {
+                                $('#rdbToDownline').attr('checked', false);
+                                $('#rdbAnyRole').attr('checked', true);
+                            }
+
+                            if (result.isUplineUnderAdmin) {
+                                $('#rdbUnderAdmin').attr('checked', true);
+                                $('#rdbUnderUpline').attr('checked', false);
+                            }
+                            else {
+                                $('#rdbUnderAdmin').attr('checked', false);
+                                $('#rdbUnderUpline').attr('checked', true);
+                            }
+
+                        }
+                    }).catch(function (err) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    }).fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    }).always(function () {
+                        preloader.remove();
+                    });
+            }
+            var UpdateReferralSetting = function (r, u) {
+                preloader.load();
+                $.post('/ref-setting', { r: r, u: u })
+                    .done(function (result) {
+                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }).catch(function (err) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    }).fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    }).always(function () {
+                        preloader.remove();
+                    });
+            }
+        </script>
+    }
+}

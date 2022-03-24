@@ -1,0 +1,192 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.FilterForEndUser
+@{
+    int count = 0;
+    bool IsViewMore = false;
+}
+
+@if (Model.FilterWithOptions.Any())
+{
+    <div class="drop-table">
+        <table class="table">
+            @foreach (var item in Model.FilterWithOptions)
+            {
+
+                <tr>
+                    <td>
+                        <div class="container">
+                            <h5 class="mt-2 mr-4 pl-4">@item.FilterName</h5>
+                            <div class="row FilterOptionsDiv">
+                                @if (item.FilterOption.Any())
+                                {
+                                    IsViewMore = false;
+                                    count = 0;
+                                    @foreach (var option in item.FilterOption)
+                                    {
+                                        <div class="col-sm-12">
+                                            <div class="form-inline pl-3 FilterData">
+                                                <input type="checkbox" class="btnFilterData cusfilter" data-Filter-Id="@item.FilterID" data-Option-Id="@option.ID" /> <span class="pl-2 fliter-input-data">@option.Option</span>
+                                                @if (count > 5 && !IsViewMore)
+                                                    {
+                                                        IsViewMore = true;
+                                                        <span style="position: absolute;top: 0px;right: 25px" class="btn-link cursor-pointer expandFilter">View More</span>
+                                                    }
+                                            </div>
+                                        </div>
+                                        count++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Model.Brands.Any())
+            {
+                <tr>
+                    <td>
+                        <div class="container">
+                            <h5 class="mt-2 mr-4 pl-4">Brands</h5>
+                            <div class="row FilterOptionsDiv">
+                                @foreach (var brand in Model.Brands)
+                                {
+                                    <div class="col-sm-12">
+                                        <div class="form-inline pl-3 BrandData">
+                                            <input type="checkbox" class="btnBrand cusfilter" data-Brand-Id="@brand.BrandId" /> <span class="pl-2 fliter-input-data">@brand.BrandName</span>
+                                            @*@if (count > 3 && !IsViewMore)
+                                                {
+                                                    IsViewMore = true;
+                                                    <span style="position: absolute;top: 0px;right: 25px" class="btn-link cursor-pointer expandFilter">View More</span>
+                                                }*@
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+        <div class="filter-categ border-bottom">
+            <h6 class="font-weight-bold">Price</h6>
+            <div id="Div5" class="cat-bor"><span class="fa fa-minus"></span></div>
+            <div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div id="slider-range"></div>
+                    </div>
+                </div>
+                <div class="row slider-labels">
+                    <div class="col-md-6 caption">
+                        <strong> </strong> <span data-priceRange="0" id="slider-range-value1"></span>
+                    </div>
+                    <div class="col-md-6 text-right caption">
+                        <strong></strong> <span data-priceRange="0" id="slider-range-value2"></span>
+                    </div>
+                </div>
+                <!--<div class="row">
+                    <div class="col-sm-12">-->
+                        @*<form>*@
+                            <!--<input type="hidden" name="min-value" value="">
+                            <input type="hidden" name="max-value" value="">-->
+                        @*</form>*@
+                    <!--</div>
+                </div>-->
+            </div>
+        </div>
+    </div>
+}
+<script>
+    $(document).ready(function () {
+        $('.noUi-handle').on('click', function () {
+            $(this).width(50);
+        });
+        var rangeSlider = document.getElementById('slider-range');
+        var moneyFormat = wNumb({
+            decimals: 0,
+            thousand: ',',
+            prefix: '<i class="fa fa-inr"></i>'
+        });
+
+        noUiSlider.create(rangeSlider, {
+            start: [100, 100000],
+            step: 1,
+            range: {
+                'min': [100],
+                'max': [100000]
+            },
+            format: moneyFormat,
+            connect: true
+        });
+
+        rangeSlider.noUiSlider.on('update', function (values, handle) {
+            //console.log(values);
+            document.getElementById('slider-range-value1').innerHTML = values[0];
+            document.getElementById('slider-range-value2').innerHTML = values[1];
+            $('#slider-range-value1').data('pricerange', moneyFormat.from(values[0]));
+            $('#slider-range-value2').data('pricerange', moneyFormat.from(values[1]));
+        });
+        // Set visual min and max values and also update value hidden form inputs
+        rangeSlider.noUiSlider.on('change', function (values, handle) {
+            document.getElementById('slider-range-value1').innerHTML = values[0];
+            document.getElementById('slider-range-value2').innerHTML = values[1];
+            $('#slider-range-value1').data('pricerange', moneyFormat.from(values[0]));
+            $('#slider-range-value2').data('pricerange', moneyFormat.from(values[1]));
+            FilterProductList();
+        });
+    });
+
+    var FilterDetail = [], BrandIDs = [];
+    $('.btnFilterData,.btnBrand').unbind().click(e => {
+        FilterProductList();
+    });
+
+    var FilterProductList = () => {
+        FilterDetail = []; BrandIDs = []; PriceRange = [];
+        $.when(
+            $('.FilterData').find('input[type="checkbox"]:checked').each(function (i) {
+                FilterDetail.push($(this).data().filterId + "_" + $(this).data().optionId);
+            }),
+            $('.BrandData').find('input[type="checkbox"]:checked').each(function (i) {
+                BrandIDs.push($(this).data().brandId);
+            }),
+            PriceRange.push($('#slider-range-value1').data().pricerange),
+            PriceRange.push($('#slider-range-value2').data().pricerange)
+        ).done(function () {
+            let param = {
+                CategoryID: 0,
+                SubCategoryID1: 0,
+               // SubCategoryID2: _ele.subcategory2Id,
+                SubCategoryID2: $('#divFilters').data().subcategory2Id,
+                Filters: FilterDetail,
+                BrandIDs: BrandIDs.join(','),
+                PriceRange: PriceRange.join(',')
+            };
+            $.post('/GetFilteredProduct', param).done(result => {
+                $('#renderProducts').html(result);
+            }).fail(xhr => {
+                anEC.title = 'Oops';
+                anEC.content = xhr.status === 0 ? "Check your internet connection" : "Server Error";
+                anEC.alert(-1);
+            }).always(function () {
+                // preloader.remove();
+                //$('.info_shopping_icon').unbind().mouseover(function () {
+                //    shoppingMoouseOver(this);
+                //});
+            });
+        });
+    };
+
+    $('.expandFilter').unbind().click(e => {
+        let ele = $(e.currentTarget)
+        if (ele.text() !== 'Less') {
+            ele.text('Less')
+            ele.css({ 'top': '-109px' });
+            ele.parents('.FilterOptionsDiv').css({ 'height': '198px', 'overflow-y': 'auto', 'overflow-x': 'hidden' });
+        }
+        else {
+            ele.text('View More');
+            ele.css({ 'top': '0px' });
+            ele.parents('.FilterOptionsDiv').css({ 'height': '135px', 'overflow-y': 'hidden', 'overflow-x': 'hidden' });
+        }
+    })
+</script>

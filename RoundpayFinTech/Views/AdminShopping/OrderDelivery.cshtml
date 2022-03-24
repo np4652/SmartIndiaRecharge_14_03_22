@@ -1,0 +1,124 @@
+﻿@*@{
+        var cList = Model.Any() ? Model : new List<RoundpayFinTech.AppCode.Model.Shopping.ShoppingCategory>();
+        var categoris = new SelectList(cList, "CategoryID", "CategoryName");
+    }*@
+@{
+    ViewData["Title"] = "Order Delivery";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-1">
+                <div class="card-header bg-gradientorange text-white">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <i class="fas fa-link"></i> @ViewData["Title"]
+                        </div>
+                        <div class="col-sm-3 text-right">
+                            @*<button class="btn btn-sm btn-outline-light font-bold btnNew" data-Item-id="0"><i class="fa fa-plus-square"></i> New</button>*@
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-1">
+                    <div class="row">
+                        <div class="table-responsive" style="max-height:calc(100vh - 290px)">
+                            <table class="table table-striped table-condensed" id="tblGrid">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th colspan="1"></th>
+                                        <th class="text-center" colspan="5">Delivery Personnel</th>
+                                        <th class="text-center" colspan="2">Product</th>
+                                        <th class="text-center" colspan="4">Customer</th>
+                                        <th class="text-center" colspan="4">Vendor</th>
+                                    </tr>
+                                    <tr>
+                                        <th>#</th>
+                                        @*<th>Action</th>*@
+                                        <th>DP Name</th>
+                                        <th>DP Mobile</th>
+                                        <th>DP Location</th>
+                                        <th>IsPicked</th>
+                                        <th>IsDelivered</th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Customer Name</th>
+                                        <th>Customer Mobile</th>
+                                        <th>Customer Address</th>
+                                        <th>Customer Location</th>
+                                        <th>Vendor Outlet</th>
+                                        <th>Vendor Mobile</th>
+                                        <th>Vendor Address</th>
+                                        <th>Vendor Location</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+        $('table').fixTableHeader();
+        var loadGrid = () => {
+            preloader.load();
+            $.post('/_OrderDelivery')
+                .done(result => $("#tblGrid tbody").html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var AUEntity = ID => {
+            preloader.load();
+            $.post('/PersonnelById', { id: ID })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'AUEntity';
+                    mdlA.title = 'Delivery Personnel';
+                    mdlA.modal(mdlA.size.large);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var UpdateStatus = (ID, IsActive, IsDelete = false) => {
+            preloader.load();
+            $.post('/DeliveryPersonnelStatus', { ID: ID, IsActive: IsActive })
+                .done(result => {
+                    preloader.remove();
+                    an.title = result.status === an.type.success ? 'Well done' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.status);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        $('.btnNew').unbind().click(() => AUEntity(0));
+        (() => {
+            loadGrid();
+        })();
+    </script>
+}

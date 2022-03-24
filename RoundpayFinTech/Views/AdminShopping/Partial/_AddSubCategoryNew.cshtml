@@ -1,0 +1,186 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel.ShoppingCategoryLvl1
+@{
+
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            Category Name
+            <input type="text" placeholder="Category Name" class="form-control" id="textCategory" value="@Model.Name" data-Category-Id="@Model.Id" data-Subcategory-Id="@Model.ParentId"  />
+        </div>
+    </div>
+    @*<div class="col-sm-12">
+            <div class="form-group">
+                <span class="text-monospace">Category<sup class="text-danger">*</sup></span>
+                <select class="form-control" id="ddlCategory" required="required" value="0" tabindex="1">
+                    <option value="0">:: Choose Category ::</option>
+                </select>
+            </div>
+        </div>*@
+    <div class="col-sm-6 text-left">
+        <div class="form-group">
+            Icon Type
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="IconType" id="fa-fa-icon" value="icon" @Html.Raw(Model.IconeType == "F" ? "checked='checked'" : "")>
+                <label class="form-check-label" for="fa-fa-icon">
+                    fa-fa-icon
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="IconType" id="Image" value="Image" @Html.Raw(Model.IconeType == "I" ? "checked='checked'" : "")>
+                <label class="form-check-label" for="Image">
+                    Image
+                </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <div class="input-group">
+                <input type="text" class="form-control" id="txtCommission" placeholder="Admin Commission" value="@Model.Commission" required />
+                <div class="input-group-append">
+                    <div class="btn-group btn-group-sm CommType">
+                        <button class="btn pl-3 pr-3 @Html.Raw(Model.CommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14">Per</button>
+                        <button class="btn pl-3 pr-3 @Html.Raw(!Model.CommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="0" tabindex="15">Fix</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group icon" id="icon" style="display:none">
+            Fa Fa Icon
+            <input type="text" placeholder="Fa Fa Icon" class="form-control" id="texticon" value="@Model.icon" />
+        </div>
+        <div class="form-group Image" id="Image" style="display:none">
+            <div class="input-group-append">
+                <input type="file" class="form-control d-none" id="ImageIcon" placeholder="Category Image" accept=".png,.jpeg,.jpg" tabindex="17" />
+                <label for="ImageIcon" class="btn btn-info" tabindex="17"><i class="fa fa-upload"></i> Icone Image</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <div class="input-group-append">
+                <input type="file" class="form-control d-none" id="fileImageBanner" placeholder="Category Banner Image" multiple accept=".png,.jpeg,.jpg" tabindex="18" />
+                <label for="fileImageBanner" class="btn btn-info" tabindex="18"><i class="fa fa-upload"></i> Banner Image </label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "") />
+                <label for="chkActive" class="font-weight-bold lbl">IsActive</label>
+            </span>
+        </div>
+    </div>
+
+
+    <div class="col-sm-12">
+        <div id="imagePreview"></div>
+    </div>
+    <div class="col-sm-12">
+        <div id="IconePreview"></div>
+    </div>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button class="btn btn-outline-success" id="btnSave">@Html.Raw(Model.SubCategoryID == 0 ? "Save" : "Update")</button>
+        </div>
+    </div>
+</div>
+<script>
+    $("input[name$='IconType']").click(function () {
+        var test = $(this).val();
+        if (test == 'icon') {
+            $("." + test).show();
+            $(".Image").hide();
+            $("#IconePreview").hide();
+
+        }
+        else {
+            $("." + test).show();
+            $(".icon").hide();
+        }
+    });
+    $('#txtCommission').numeric({
+        numericType: 'decimal',
+        maxLength: 6
+    });
+    $('.CommType button').click(e => {
+        $('.CommType button').removeClass('btn-dark active').addClass('btn-outline-dark');
+        $(e.currentTarget).removeClass('btn-outline-dark').addClass('btn-dark active')
+    });
+
+    $('#btnSave').click(() => {
+        if (newFileList.length < 1) {
+            an.title = 'Oops';
+            an.content = "Image required";
+            an.alert(an.type.failed);
+            return;
+        }
+        preloader.load();
+        let cid = $('#textCategory').data().subcategoryId;
+        let param = {
+            CommonInt: $('#textCategory').data().categoryId,
+            CommonInt2: cid,
+            CommonStr: $('#textCategory').val(),
+            CommonStr2: $('#texticon').val(),
+            CommonBool: $('#chkActive').is(':checked'),
+            CommonStr4: $('#Image').is(':checked') ? "I" : "F",
+            CommonInt3: $('#txtCommission').val(),
+            CommonInt4: 0,
+            CommonBool1: $('.CommType button.active').text() === 'Per' ? true : false,
+        },
+            formData = new FormData();
+        if (newFileList.length > 0) {
+            for (let i = 0; i < newFileList.length; i++) {
+                formData.append('file', newFileList[i]);
+            }
+        }
+        formData.append('detail', JSON.stringify(param));
+        $.ajax({
+            type: 'POST',
+            url: '/updatesubCategoryNew',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: result => {
+                preloader.remove();
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === an.type.success) {
+                    $('span').removeClass('active');
+                    $('#imagePreview').empty();
+                    newFileList = [];
+                    $('.close').button().click();
+                    loadGrid();
+                }
+            },
+            error: xhr => {
+                preloader.remove();
+                console.log(xhr);
+                an.title = 'Oops';
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+            }
+        });
+    });
+    (() => {
+        $('#fileImage').change(e => previewImage(e, 'imagePreview'));
+        var id = $('#textCategory').data().categoryId;
+        console.log(id);
+        if (id > 0) {
+            preloadedImages(id, 'S1');
+        }
+    })();
+    (() => {
+        $('#fileImageBanner').change(e => previewImage(e, 'imagePreview'));
+        var id = $('#textCategory').data().categoryId;
+
+        if (id > 0) {
+            preloadedImages(id, 'S1Banner');
+        }
+    })();
+</script>

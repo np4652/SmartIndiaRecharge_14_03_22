@@ -1,0 +1,57 @@
+﻿@model RoundpayFinTech.AppCode.Model.APIDenomination
+@{
+    var Denomination = Model.DenomDetail;
+    var DenominationRange = Model.DenomRangeDetail;
+}
+
+<div class="card">
+    <div class="card-header text-white bg-dark">
+        <span>Denomination Range</span>
+    </div>
+    <div class="card-body bg-info text-white">
+        @if (DenominationRange != null)
+        {
+            <div class="row">
+                @foreach (var item in DenominationRange)
+                {
+                    <div class="col-md-2 text-nowrap">
+                        <label class="lbl" for="chbDRange_@item.DRangeID">@item.DRange</label>
+                        <div class="input-group input-group-sm mb-2">
+                            <input type="text" class="form-control MaxCount" for="txtDRange_@item.DRangeID" value="@item.MaxCountDR" />
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="checkbox" id="chbDRange_@item.DRangeID" data-item-DRangeID="@item.DRangeID" @Html.Raw(item.IsDRangeActive ? "checked='checked'" : "") />
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+    <div class="card-header text-white bg-dark mt-2">
+        <span>Denomination</span>
+    </div>
+    <div class="card-body bg-secondary text-white">
+        @if (Denomination != null)
+        {
+            <div class="row">
+                @foreach (var item in Denomination)
+                {
+                    <div class="col-md-2 text-nowrap">
+                        <label class="lbl" for="chbDenom_@item.DnomID">@item.Amount</label>
+                        <div class="input-group mb-2">
+                            <input class="form-control MaxCount" for="textD_@item.DnomID" value="@item.MaxCountD" />
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="checkbox" id="chbDenom_@item.DnomID" data-item-DenomID="@item.DnomID" checked="@item.IsDnomActive">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

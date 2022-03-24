@@ -1,0 +1,86 @@
+﻿namespace RoundpayFinTech.Models
+{
+    public class ApplicationSettingModel
+    {
+        public int ID { get; set; }
+        public bool IsMultipleMobileAllowed { get; set; }
+        public byte RegChargeType { get; set; }
+        public bool IsDoubleWallet { get; set; }
+        public decimal CCFFixedCharge { get; set; }
+        public bool IsCCFApplicable { get; set; }
+        public bool IsRoleFixed { get; set; }
+        public bool IsTDSnGSTApplicableRoles { get; set; }
+        public bool IsGSTEnable { get; set; }
+        public bool IsRoleHierarchyFixed { get; set; }
+        public bool IsAPIUserByAll { get; set; }
+        public bool IsRoleCommissionDisplay { get; set; }
+        public bool IsPINRequired { get; set; }
+        public bool IsDTHInfo { get; set; }
+        public bool IsRoffer { get; set; }
+        public bool IsHeavyRefresh { get; set; }
+        public bool IsWhiteLabel { get; set; }
+        public bool IsPackageAllowed { get; set; }
+        public bool IsSingleDB { get; set; }
+        public byte TargetType { get; set; }
+        public bool IsRealAPIPerTransaction { get; set; }
+        public bool IsPasswordOnly { get; set; }
+        public bool IsCommissionByJob { get; set; }
+        public bool IsAdminFlatComm { get; set; }
+        public bool IsMoveToPrepaid { get; set; }
+        public bool IsMoveToUtility { get; set; }
+        public bool IsMoveToBank { get; set; }
+        public bool IsAPISwitchAfterCircleFailed { get; set; }
+        public bool IsAPISwitchAfterUserFailed { get; set; }
+        public bool IsDeductFromPackage { get; set; }
+        public bool IsPINBlankByDefault { get; set; }
+        public bool IsRealSettlement { get; set; }
+        public bool IsDisableDebit { get; set; }
+        public bool IsFlatCommission { get; set; }
+        public bool IsDefaultOTPDisabled { get; set; }
+        public bool IsCommissionOnTopUp { get; set; }
+        public bool IsGSTDOCTypeEnabled { get; set; }
+        public bool IsCommissionOnRegistration { get; set; }
+        public byte IsApproveRequestedAmount { get; set; }
+        public bool IsDMTWithPIPE { get; set; }
+        public bool IsProductWiseWalletSet { get; set; }
+        public bool InvoicePrefix { get; set; }
+        public bool IsCircleSwitchingFirst { get; set; }
+        public bool IsLookupFromAPIOnly { get; set; }
+        public bool IsFlatDisallow { get; set; }
+        public bool IsGenerateOrderForUPI { get; set; }
+        public bool IsReferral { get; set; }
+        public byte FlatID { get; set; }
+        public bool IsPGLive { get; set; }
+        public bool IsECommerceCommissionSetByAdmin { get; set; }
+        public decimal ECommerceCommission { get; set; }
+        public bool ECommerceCommissionType { get; set; }
+        public int MinimumBillForFreeShipping { get; set; }
+        public bool IsAutoBilling { get; set; }
+        public bool WithCustomLoginID { get; set; }
+        public bool InDynamicSwitching { get; set; }
+        public bool IsWLAPIAllowed { get; set; }
+        public bool IsVirtualAccountInternal { get; set; }
+        public bool IsWalletForAEPSDynamic { get; set; }
+        public byte FailoverAPIPriorityID { get; set; }
+        public byte SettleIDInRegistration { get; set; }
+        public bool IsMultiCycleInSettle { get; set; }
+        public bool IsSignupFromAPI { get; set; }
+        public byte BackupMonth { get; set; }
+        public bool IsMultiMonthDB { get; set; }
+        public decimal CertainAmountRedUser { get; set; }
+        public decimal IsFraudPrevention { get; set; }
+        public string ICICICustomerCode { get; set; }
+        public bool ECommerceDistributionCommissionType { get; set; }
+        public bool IsAccountStatement { get; set; }
+        public bool IsB2BAllowed { get; set; }
+        public bool IsPriceDiffForB2B { get; set; }
+        public bool RPOnly { get; set; }
+        public bool IsCashCollectionOnly { get; set; }
+        public bool IsTDSOfSurchargeUserUpline { get; set; }
+        public bool IsLowBalanceAlert { get; set; }
+        public byte MenuBindingLvl { get; set; }
+        public bool IsRPOnly { get; set; }
+        public bool IsRechargePlansAPIOnly { get; set; }
+
+    }
+}

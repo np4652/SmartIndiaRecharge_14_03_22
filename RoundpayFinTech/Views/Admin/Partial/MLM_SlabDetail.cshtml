@@ -1,0 +1,287 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model MLM_SlabDetailModel
+<style>
+
+    hr.style14 {
+        border: 0;
+        height: 1px;
+        background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+    }
+
+    input[type="text"] {
+        text-align: right;
+        padding-right: 2px;
+    }
+
+    .btn-sm, .btn-group-sm > .btn {
+        padding: 0.25rem 0.3rem !important;
+    }
+
+    .ml-1, .mx-1 {
+        margin-left: 1px !important;
+    }
+</style>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5 class="text-info">MLM Commission Detail</h5><hr />
+
+    <div class="table-responsive">
+        <table class="table table-hover" id="MLM-tblRSD">
+            <thead class="shadow">
+                <tr>
+                    <th>#</th>
+                    <th>Operator</th>
+                    <th>
+                        <div class="row">
+                            <label id="IsLevel" style="display:none">LevelWise</label>
+                            <div class="col-md-3">
+                                @{
+                                    var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                                    var OpTypeID = @Model.OpTypeID == 0 ? 1 : @Model.OpTypeID;
+                                }
+                                <select id="MLM-ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OpTypeID">
+                                    <option value="">:: Operator Type ::</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <input class="form-control text-left" id="MLM-txtSearchRSD" type="text" placeholder="Search">
+                            </div>
+                            <div class="col-sm-6 input-group">
+                                <input type="text" id="MLM-txtAmtForAll" class="form-control" value="0" />
+                                <div class="input-group-append" id="MLM-btnComTypeForAll">
+                                    <div class="btn-group btn-toggle">
+                                        <button class="btn btn-dark active" style="border-radius:0">C</button>
+                                        <button class="btn btn-outline-dark" style="border-radius:0">S</button>
+                                    </div>
+                                    <div class="btn-group btn-toggle" id="MLM-btnAmtTypeForAll">
+                                        <button class="btn btn-dark active" style="border-radius:0">P</button>
+                                        <button class="btn btn-outline-dark" style="border-radius:0">F</button>
+                                    </div>
+                                </div>
+                                <div class="input-group-addon">
+                                    @{
+                                        var roleList = new SelectList(Model.Roles, "ID", "Role");
+                                        <select id="MLM-ddllevel" class="form-control" asp-items="@roleList">
+                                        </select>
+                                    }
+                                </div>
+                                <div class="input-group-append">
+                                    <button class="btn btn-success" id="MLM-btnSetAll">SET</button>
+                                </div>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.IsAdminDefined)
+                {
+                    var i = 1;
+                    foreach (var item in Model.Operators)
+                    {
+                        <tr data-item-id="@item.OID">
+                            <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                            <td class="align-middle" style="width:15%">
+                                @item.Operator
+                                <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@Html.Raw(item.IsBBPS ? item.OperatorType + ",BBPS" : item.OperatorType)</small>
+                            </td>
+                            <td class="align-middle">
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        @foreach (var role in Model.Roles)
+                                        {
+                                            var slabDetails = Model.mlmSlabDetails.Where(x => x.LevelID == role.ID && x.OID == item.OID).ToList();
+                                            var slabDetail = new MLM_SlabCommission();
+                                            if (slabDetails.Count > 0)
+                                            {
+                                                slabDetail = slabDetails[0];
+                                            }
+                                            <div class="col-md">
+                                                <label class="font-weight-bold text-monospace mb-0" for="chbSlab_@Html.Raw(i+"_"+role.ID)">
+                                                    @role.Prefix
+                                                </label>
+                                                <div class="form-inline">
+                                                    @Html.TextBoxFor(modelItem => slabDetail.Comm, new { @id = "MLM-txtComAmt_" + i + "_" + role.ID, @placeholder = "0.0", @style = "width:6em;border-radius:0px;", @aria_describedby = "MLM_helpComAmt_" + i + "_" + role.ID })
+
+                                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @Html.Raw(slabDetail.ModifyDate==null?"Not yet":slabDetail.ModifyDate)"></i>
+                                                    @Html.HiddenFor(modelItem => slabDetail.Comm, new { @id = "MLM-hidComAmt_" + i + "_" + role.ID, })
+                                                </div>
+                                                <small id="helpComAmt_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                                <div class="btn-group btn-toggle" id="MLM-btnGroupComType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.CommType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">C</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.CommType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">S</button>
+                                                </div>
+                                                <div class="btn-group btn-toggle" id="MLM-btnGroupAmtType_@Html.Raw(i+"_"+role.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">P</button>
+                                                    <button class="btn btn-sm @Html.Raw(slabDetail.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">F</button>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+                        i++;
+                    }
+
+                }
+
+            </tbody>
+        </table>
+
+        @if (Model != null)
+        {
+            <input type="hidden" value="@Model.SlabID" id="hid" />
+        }
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    $(document).ready(() => {
+
+        $('#MLM-ddlOType').on('change', () => btnMultiLevel(@Model.SlabID));
+
+        $('#MLM-txtAmtForAll').keydown((e) => {
+            var k = e.which;
+            if (k == 110 || k == 46 || k == 17 || k == 123 || k == 18 || k == 116 || k == 8) {
+                return true
+            }
+            else if ((k < 48 || k > 57) && (k < 96 || k > 105)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        $('#MLM-btnSetAll').on('click', () => {
+
+            if ($('#MLM-txtAmtForAll').val() == '' || $('#MLM-txtAmtForAll').val() == undefined) {
+                $('#MLM-txtAmtForAll').focus();
+                return false;
+            };
+
+            const trCount = $('#MLM-tblRSD tbody tr').length;
+
+            $('#MLM-tblRSD tbody tr').each(function (i) {
+
+                var param = {
+                    OID: parseInt($(this).data().itemId),
+                    SlabID: parseInt($('#hid').val()),
+                    Comm: parseFloat($('#MLM-txtAmtForAll').val()),
+                    CommType: $('#MLM-btnComTypeForAll button.active').text()[0] === 'S' ? 1 : 0,
+                    AmtType: $('#MLM-btnAmtTypeForAll button.active').text()[0] === 'F' ? 1 : 0,
+                    LevelId: parseInt($('#MLM-ddllevel').val())
+                }
+                MLM_UpdateBulkCommision(param);
+
+                if (trCount == (i + 1)) {
+                    $('button.close span,#mdlCancel').click();
+                }
+            });
+
+        });
+
+
+        $('div[id^="MLM-btnGroupComType"], div[id^="MLM-btnGroupAmtType"]').on('blur click', function () {
+            MLM_UpdateComm(this, event);
+        });
+
+        $('input[id^="MLM-txtComAmt"]').on('change', function () {
+            MLM_UpdateComm(this, event);
+        });
+
+        var MLM_UpdateBulkCommision = (Slab) => {
+
+            $.post('/MLM_RSlabDetail', Slab).done(result => {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + Slab.OID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + Slab.OID + '"] input[id^="MLM-hidComAmt"]').val(Slab.Comm);
+                }
+
+            }).fail(xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            }).always(() => preloader.remove());
+        }
+
+        var MLM_UpdateComm = function (_t, _e) {
+
+            if (_e.type == "click" && ($(_t).is(':input[id^="MLM-txtComAmt"]'))) {
+                return true;
+            }
+            var IstxtComAmt = false;
+            if ($(_t).is(':input[id^="MLM-txtComAmt"]')) {
+                IstxtComAmt = true;
+            }
+            var oId = $(_t).closest('tr').data().itemId;
+            var slabId = $('#hid').val();
+
+            var _tid = $(_t).attr('id');
+            var _sfx = '';
+            if (_tid) {
+                _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+            }
+
+            var LevelId = '0';
+            if ($('#IsLevel').text().trim() == "LevelWise") {
+                LevelId = _tid.split('_').length == 3 ? _tid.split('_')[2] : LevelId;
+            }
+            var hidcomm = $('[data-item-id="' + oId + '"] #MLM-hidComAmt' + _sfx).val();
+            var comm = $('[data-item-id="' + oId + '"] #MLM-txtComAmt' + _sfx).val();
+            var commType = $('[data-item-id="' + oId + '"] #MLM-btnGroupComType' + _sfx + ' button.active').text()[0];
+            var amtType = $('[data-item-id="' + oId + '"] #MLM-btnGroupAmtType' + _sfx + ' button.active').text()[0];
+
+            //Real Slab
+            var Rcomm = ""; //$('[data-item-id="' + oId + '"] #txtRComAmt' + _sfx).val();
+            var RcommType = ""; //$('[data-item-id="' + oId + '"] #btnGroupRComType' + _sfx + ' button.active').text()[0];
+            var RamtType = ""; //$('[data-item-id="' + oId + '"] #btnGroupRAmtType' + _sfx + ' button.active').text()[0];
+
+            var dotLen = comm.split('.').length - 1;
+            var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+
+            $v.showErrorFor($('[data-item-id="' + oId + '"] #MLM-txtComAmt' + _sfx), 'Invalid amount.', IsE.comm);
+            IsE.err = IsE.comm;
+            if (IsE.err) {
+                return false;
+            }
+
+            var mlmslabCommission = { OID: parseInt(oId), SlabID: parseInt(slabId), Comm: parseFloat(comm), CommType: commType === 'S' ? 1 : 0, AmtType: amtType === 'F' ? 1 : 0, RComm: parseFloat(Rcomm), RCommType: RcommType === 'S' ? 1 : 0, RAmtType: RamtType === 'F' ? 1 : 0, LevelId: parseInt(LevelId) }
+
+            preloader.load();
+
+            $.post('/MLM_RSlabDetail', mlmslabCommission).done(result => {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + oId + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + oId + '"] input[id^="MLM-hidComAmt"]').val(comm);
+                }
+            }).fail(xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            }).always(() => preloader.remove());
+        };
+
+    });
+</script>
+

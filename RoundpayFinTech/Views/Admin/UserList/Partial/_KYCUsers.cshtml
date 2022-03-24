@@ -1,0 +1,42 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.GetEditUser>
+@{
+    var c = 1;
+}
+@if (Model.Any())
+{
+    @foreach (var mdl in Model)
+    {
+        <tr data-item-id="@mdl.UserID" data-outlet-id="@mdl.OutletID">
+            <th scope="row">@c</th>
+            <td>
+                <button class="btn btn-sm btn-outline-dark" id="btn_ShowDoc@(mdl.OutletID) ">Show</button>
+            </td>
+            <td>@mdl.OutletID</td>
+            <td><span class="text-nowrap">@mdl.PartnerName</span><small class="font-weight-bold text-monospace"> [@(mdl.Prefix + mdl.UserID)]</small></td>
+            <td><span class="text-nowrap">@mdl.Name </span><small class="font-weight-bold text-monospace"> [@mdl.OutletID]</small></td>
+            <td><span class="text-nowrap">@mdl.OutletName</span><small class="font-weight-bold text-monospace"> [@mdl.MobileNo]</small></td>
+            @*<td>@mdl.KYCStatus</td>*@
+            <td><span class="text-nowrap">@mdl.DOB</span></td>
+            <td>@mdl.PAN</td>
+            <td>@mdl.AADHAR</td>
+            <td>@mdl.IsRegisteredWithGST</td>
+            <td>@mdl.GSTIN</td>
+            <td class="word-break-wrap" style="width:10%">@mdl.Address</td>
+            <td>@mdl.City</td>
+            <td>@mdl.StateName </td>
+            <td>@mdl.Pincode</td>
+            <td>@mdl.Landmark</td>
+            <td>@mdl.LocationType</td>
+            <td>@mdl.ShopType</td>
+            <td>@mdl.Qualification</td>
+            <td>@mdl.BankName</td>
+            <td>@mdl.IFSC</td>
+            <td>@mdl.AccountNumber</td>
+            <td>@mdl.AccountName</td>
+            <td>@mdl.Role</td>
+            <td>@mdl.KYCStatus</td>
+        </tr>
+        c = c + 1;
+    }
+}

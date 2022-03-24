@@ -1,0 +1,20 @@
+﻿@model Fintech.AppCode.Model.UserDetail
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3><small class="text-muted">Change Token</small></h3>
+    <div class="form-group mt-3">
+        <label class="lbl" for="txtUserID"> UserID</label>
+        <input class="form-control" id="txtUserID" name="txtToken" tabindex="1" type="text" value="@Model.UserID" disabled="disabled">
+    </div>
+    <div class="form-group">
+        <label class="lbl" for="txtToken"> Token</label>
+        <input aria-describedby="amountHelp" class="form-control" id="txtToken" name="txtToken" tabindex="1" type="text" value="@Model.Token" disabled="disabled">
+        <small id="amountHelp" class="form-text text-muted d-none"></small>
+    </div>
+    <button class="btn btn-outline-dark" id="btnChangetoken">Change Token</button>
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>
+

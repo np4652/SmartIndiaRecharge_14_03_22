@@ -1,0 +1,235 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>
+@{
+    ViewData["Title"] = "PES";
+    Layout = "~/Views/Shared/_Layout_Seller.cshtml";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Operator Management</li>
+            <li class="breadcrumb-item active">Public-E-Services</li>
+        </ol>
+    </div>
+</div>
+
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i>
+                        Public-E-Services
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="container-fluid" id="lstopeartors">
+                            @Html.Partial("Partial/PES/_PESOPList", Model)
+                        </div>
+                        <div id="PESFields">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <!--on service change load fields-->
+    <script>
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.selectpicker').selectpicker('refresh');
+
+        $("#ddlpes").change(function () {
+            _ShowForm();
+        })
+
+        var _ShowForm = function () {
+
+            preloader.load();
+            $.post('/ShowForm.php', { OID: $("#ddlpes").val() }, function (result) {
+                resultReload(result);
+                $("#PESFields").html(result);
+                $("#btnSavePESForm").unbind().click(function () {
+                    _SavPESForm();
+                });
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var _SavPESForm = function () {
+            var Iserror = false; var Errmsg = '';
+            if ($("#ddlpes").val() != '0') {
+                if ($('#cname').val().trim() == '') {
+                    var msg = '<div class="text-center"><h4 class="text-danger">Customer name is required !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                    mdlA.content = msg;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('#btnmsgclose').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    return;
+                }
+                if ($('#cmobno').val().trim() == '') {
+                    var msg = '<div class="text-center"><h4 class="text-danger">Customer mobileno. is required !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                    mdlA.content = msg;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('#btnmsgclose').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    return;
+                }
+                var frmdata = new FormData();
+                frmdata.append('OID', $("#ddlpes").val());
+                $('form').find("input").each(function () {/*getting values of input fields*/
+                    if ($(this).attr('type') == 'file') {/*getting only file type fields values*/
+
+                        if ($(this).attr('required') != undefined) {
+                            if ($(this)[0].files[0] == undefined) {
+
+                                Iserror = true;
+                                Errmsg = $($(this).siblings()[0]).text();
+                            }
+                        }
+                        frmdata.append($(this).attr('id'), $(this)[0].files[0]);
+                    }
+                    else {/*getting non file type fileds values*/
+
+                        if ($(this).attr('required') !== undefined) {
+                            if ($(this).val() == '') {
+
+                                Iserror = true;
+                                Errmsg = $($(this).siblings()[0]).text();
+                            }
+                        }
+                        frmdata.append($(this).attr('id'), $(this).val());
+                    }
+                })
+                $('form').find("select").each(function () {/*getting values of dropdown fields*/
+                    if ($(this).attr('required') !== undefined) {
+                        if ($(this).val() == '') {
+
+                            Iserror = true;
+                            Errmsg = $($(this).siblings()[0]).text();
+                        }
+                    }
+                    frmdata.append($(this).attr('id'), $(this).val());
+                })
+                $('form').find("textarea").each(function () {/*getting values of textarea fields*/
+                    if ($(this).attr('required') !== undefined) {
+                        if ($(this).val() == '') {
+
+                            Iserror = true;
+                            Errmsg = $($(this).siblings()[0]).text();
+                        }
+
+                    }
+                    frmdata.append($(this).attr('id'), $(this).val());
+                })
+
+                //////////////////////////////////////
+                if (Iserror === true) {
+                    var msg = '<div class="text-center"><h4 class="text-danger">' + Errmsg + ' is required !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                    mdlA.content = msg;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('#btnmsgclose').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    return;
+                }
+                if (Iserror !== true) {
+                    preloader.load();
+                    $.ajax({
+                        type: 'POST',
+                        url: '/SavePESForm.php',
+                        processData: false,
+                        contentType: false,
+                        data: frmdata,
+                        success: function (result) {
+                            resultReload(result);
+                            if (result.statuscode == an.type.failed) {
+                                an.title = "Oops";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }
+                            else if (result.statuscode == an.type.success) {
+                                $('form').find("input, textarea, select").val("");
+                                var msg = '<div class="text-center"><h4 class="text-info"><img src="/Image/success.gif" /><br/><span class="text-success font-weight-bold">Yay !</span> Your Application has been submitted successfuly !</h4><br/><h6>You can track your application with transaction id: ' + result.commonStr + '</h5><br/><button class="btn btn-warning btn-block font-weight-bold" id="btnmsgclose">Close</button></div>';
+                                mdlA.content = msg;
+                                mdlA.id = 'mymodal';
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.default);
+                                $('#btnmsgclose').unbind().click(function () {
+                                    mdlA.dispose();
+                                });
+                            }
+                        },
+                        statusCode: {
+                            500: function () {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            },
+                            0: function () {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        },
+                        error: function (result) {
+                            checkError(result);
+                            an.title = 'Oops';
+                            an.content = 'An error occured!';
+                            an.alert(an.type.failed);
+                        },
+                        complete: function () {
+                            preloader.remove();
+                        }
+                    });
+                }
+            }
+
+            else {
+                var msg = '<div class="text-center"><h4 class="text-danger">Please select service first !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                mdlA.content = msg;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('#btnmsgclose').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            }
+        }
+
+    </script>
+}

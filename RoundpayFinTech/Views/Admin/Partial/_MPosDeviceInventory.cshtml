@@ -1,0 +1,102 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.MPosDeviceInventoryModel>
+
+@{ int i = 1;}
+@if (Model.Any())
+{
+    @foreach (var item in Model)
+    {
+        <tr data-item-id="@item.ID">
+            <th>@i</th>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@i">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item">Edit</a>
+                        @if (item.UserId == 1)
+                        {
+                            <a href="#" class="dropdown-item">Assign Device</a>
+                        }
+                        else
+                        {
+                            <a href="#" class="dropdown-item">Un-Assign Device</a>
+                        }
+                        @if (@item.OutletId == 0)
+                        {
+                            <a href="#" class="dropdown-item">Map Device</a>
+                        }
+                        else
+                        {
+                            <a href="#" class="dropdown-item">Un-Map Device</a>
+                        }
+                    </div>
+                </div>
+            </td>
+            <td>@item.VendorName<small class="form-text text-muted mt-0"> [@item.VendorId]</small></td>
+            <td>@item.DeviceModelName<small class="form-text text-muted mt-0"> [@item.DeviceModelId]</small></td>
+            <td>@item.DeviceSerial</td>
+            <td>@item.UserName<small class="form-text text-muted mt-0"> [@item.UserId]</small></td>
+            <td>@item.AssignedDate</td>
+            <td>
+                @if (@item.OutletName.Trim() != "")
+                {@item.OutletName<small class="form-text text-muted mt-0"> [@item.OutletId]</small>}
+            else
+            { @item.OutletName}
+            </td>
+            <td>@item.MappedDate</td>
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch" id="isact_@i" @Html.Raw(item.IsActive == true ? "checked='checked'" : "")>
+                    <label for="isact_@i"></label>
+                </span>
+            </td>
+        </tr>
+        i++;
+    }
+}
+else
+{
+    <tr><td colspan="10"><p>No Record found</p></td></tr>
+}
+
+<script>
+    $('#tblMPosDevice tr :checkbox').change(function () {
+        let id = $(this).closest('tr').data().itemId;
+        var IsChecked = false;
+        if ($(this).is(':checked')) {
+            IsChecked = true;
+        }
+        let param = {
+            ID: $(this).closest('tr').data().itemId,
+            IsActive: IsChecked
+        };
+        preloader.load();
+        $.post('/ToggleMPos', param, function (result) {
+            resultReload(result);
+            if (result.statuscode == 1) {
+                an.title = IsChecked == true ? 'Activated' : 'Deactivated';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                an.autoClose = 5;
+            }
+            else {
+                an.title = 'Error';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                an.autoClose = 5;
+
+            }
+        })
+            .fail(xhr => {
+                //$(_this).attr('checked', Is == false);
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => {
+                preloader.remove();
+                location.reload();
+            });
+    });
+
+
+</script>

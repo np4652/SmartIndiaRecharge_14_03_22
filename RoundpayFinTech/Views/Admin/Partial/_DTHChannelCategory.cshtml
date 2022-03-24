@@ -1,0 +1,21 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.DTHChannelCategory>
+@{
+    int i = 1;
+    foreach (var item in Model)
+    {
+        <tr data-Package-ID="@item.ID">
+            <td>@i</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@i">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item Edit"><span class="fa fa-edit text-success"></span> Edit</a>
+                    </div>
+                </div>
+            </td>
+            <td>@item.Category</td>
+        </tr>
+        i = i + 1;
+    }
+}

@@ -1,0 +1,104 @@
+﻿@model RoundpayFinTech.AppCode.Model.DTHSubscriptionModel;
+@{
+
+}
+@if (Model != null && Model.Report.Any())
+{
+    int counter = 1;
+    foreach (var item in Model.Report)
+    {
+<tr data-Item-Id="@item.ID" data-Item-Tid="@item.TID" data-Transaction-Id="@item.TransactionID">
+    <td>@counter</td>
+    <td>
+        <div class="row">
+            <div class=" col-sm-12">
+                <div class="input-group">
+                    <button id="btnstatus" class="btn btn-primary">Update Status</button>
+                </div>
+            </div>
+        </div>
+    </td>
+    <td>@item.TransactionID</td>
+    <td>@item.EntryDate</td>
+    <td>@item.OutletName <br /><span>[@item.MobileNo]</span></td>
+    <td>@item.Account</td>
+    <td class="text-right">@item.Opening</td>
+    <td class="text-right">@item.RequestedAmount</td>
+    <td class="text-right">@item.Amount</td>
+    <td class="text-right">@item.Balance</td>
+    <td class="text-right">@item.Commission</td>
+    <td>@item.Status_</td>
+    <td>@item.BookingStatus_</td>
+    <td>@item.CustomerNumber</td>
+    <td>@item.CustomerName</td>
+    <td>@item.Address</td>
+    <td>@item.Pincode</td>
+    <td>@item.PackageName</td>
+    <td>@item.Operator</td>
+    @if (Model.IsAdmin || Model.IsAPIUser)
+            {
+    <td>@item.API</td>
+    <td>@item.APIRequestID</td>
+            }
+    <td>@item.LiveID</td>
+</tr>
+        counter++;
+    }
+}
+else
+{
+<tr>
+    <td colspan="@Html.Raw(Model.IsAdmin?"22":"19")">No Data Found</td>
+</tr>
+}
+<script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/js/datepickerHelper.js"></script>
+<script>
+    $(document).ready(function () {
+        an.autoClose = 5;
+        var FDate = DTPicker($('#dtapprovaltime'), new Date().toDateString(), function () { }, function () {
+            $('dp').addClass('d-none');
+            var fdate = new Date($('#dtapprovaltime').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+        });
+    });
+
+
+    var UpdateStatus = (id, TransactionID, TID) => {
+        console.log(id, TransactionID, TID);
+        var date = $('#dtapprovaltime').val()
+        var time = $('#dtapprovaltimeOnly').val()
+        var installdate = $('#dtinstalldate').val()
+        var installtime = $('#dtinstalltime').val()
+        console.log(time);
+        var dateTime = `${date} ${time}`;
+        var installdateTime = `${installdate} ${installtime}`;
+
+        console.log(time, date, dateTime);
+        var dth = {
+            ApprovalTime: dateTime,
+            BookingStatus: $('#ddlstatus').val(),
+            TID: TID,
+            TransactionID: TransactionID,
+            TechnicianName: $('#txttechname').val(),
+            TechnicianMobile: $('#txttechmobile').val(),
+            CustomerID: $('#txtcustid').val(),
+            STBID: $('#txtstbid').val(),
+            VCNO: $('#txtvcno').val(),
+            InstallationTime: installdateTime,
+            InstalltionCharges: $('#txtinstallcharge').val(),
+            Remark: $('#txtremark').val()
+        };
+        $.post('/U-booking', dth).done(result => {
+            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == an.type.success) {
+                loadGrid();
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    }
+</script>

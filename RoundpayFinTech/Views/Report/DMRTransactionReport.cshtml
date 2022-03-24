@@ -1,0 +1,817 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model DMRReportModel
+@{
+    ViewData["Title"] = "DMT Transaction Report";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> DMR Report</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> DMT Report
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlStatus">Choose Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="@RechargeRespType.SUCCESS">@RechargeRespType._SUCCESS </option>
+                                        <option value="@RechargeRespType.FAILED">@RechargeRespType._FAILED </option>
+                                        <option value="@RechargeRespType.REFUND">@RechargeRespType._REFUND </option>
+                                        <option value="@RechargeRespType.PENDING">@RechargeRespType._PENDING </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlOperator">Choose Operator</label>
+                                    @{
+                                        var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" tabindex="7" class="form-control" asp-items="@listOperator">
+                                        <option value="0">:: Select Operator :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            @if (Model.IsAdmin)
+                            {
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlAPI">Choose API</label>
+                                        @{
+                                            var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                                        }
+                                        <select id="ddlAPI" tabindex="7" class="form-control" asp-items="@listAPI">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlDMRModelID">Choose DMRModel</label>
+                                        <select id="ddlDMRModelID" tabindex="7" class="form-control">
+                                            <option value="0">:: Select DMRModel :: </option>
+                                            <option value="1">SURCHARGE</option>
+                                            <option value="2">CCF</option>
+                                            <option value="3">CCF WITH GST</option>
+                                            <option value="4">RCM</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlRMode">Choose RequestMode</label>
+                                        <select id="ddlRMode" tabindex="2" class="form-control">
+                                            <option value="0">:: Select RequestMode :: </option>
+                                            <option value="@RequestMode.PANEL">PANEL</option>
+                                            <option value="@RequestMode.APPS">APPS</option>
+                                            @if (Model.IsAdmin || Model.IsAPIUser)
+                                            {
+                                                <option value="@RequestMode.API">API</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlOpType">Choose Type</label>
+                                    @{
+                                        var listOpType = new SelectList(Model.OpTypes, "ID", "OpType");
+                                    }
+                                    <select id="ddlOpType" tabindex="7" class="form-control" asp-items="@listOpType">
+
+                                        <option value="0">:: Select Type :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlBank">Choose Bank</label>
+                                    @{
+                                        var listBank = new SelectList(Model.Banks, "BankName", "BankName");
+                                    }
+                                    <select id="ddlBank" tabindex="7" class="form-control" asp-items="@listBank">
+                                        <option value=""> :: Select Bank :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <option value="@Criteria.UserID">UserID</option>
+                                            <option value="@Criteria.OutletMobile">Outlet Mobile</option>
+                                            <option value="@Criteria.TID">TID</option>
+                                            <option value="@Criteria.VendorID">Vendor ID</option>
+                                            <option value="@Criteria.CCID">Customerare ID</option>
+                                            <option value="@Criteria.CCMobileNo">Customercare MobileNo</option>
+                                        }
+                                        <option value="@Criteria.AccountNo">Account No.</option>
+                                        <option value="@Criteria.TransactionID">Transaction ID</option>
+                                        <option value="@Criteria.OutletMobile">User Outlet Mobile</option>
+                                        <option value="@Criteria.SenderMobile">Sender Mobile</option>
+                                        @if (Model.IsAdmin || Model.IsAPIUser)
+                                        {
+                                            <option value="@Criteria.APIRequestID">APIRequest ID</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append"><button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button> <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span></div>
+                                    </div>
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row" id="t-summary" style="margin-top:-15px;">
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-success" title="<b>Number of SUCCESS Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-tachometer-alt"></i> <span id="sc">0</span></span></div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-success" title="<b>Amount of SUCCESS Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-rupee-sign"></i> <span id="sa">0</span></span></div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-danger" title="<b>Number of FAILED Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-tachometer-alt"></i> <span id="fc">0</span></span></div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-danger" title="<b>Amount of FAILED Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-rupee-sign"></i> <span id="fa">0</span></span></div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-secondary" title="<b>Number of PENDING Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-tachometer-alt"></i> <span id="pc">0</span></span></div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-secondary" title="<b>Amount of PENDING Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-rupee-sign"></i> <span id="pa">0</span></span></div>
+                        </div>
+                        <div class="table-responsive table-sm table-mh">
+                            <table class="table table-bordered table-striped table-responsive-sm fixedHeader" id="tblRechReport">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col">TransactionID</th>
+                                        @if (!Model.IsEndUser)
+                                        {
+                                            <th scope="col">Outlet</th>
+                                        }
+                                        <th scope="col">Bank</th>
+                                        <th scope="col">Sender</th>
+                                        <th scope="col">Mode</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">AccountNo</th>
+                                        <th scope="col">Operator</th>
+                                        <th scope="col">DateTime</th>
+                                        <th scope="col" class="text-right">OpeningBalance</th>
+                                        <th scope="col" class="text-right">Amount</th>
+                                        <th scope="col" class="text-right">CCF</th>
+                                        <th scope="col" class="text-right">Surcharge</th>
+                                        <th scope="col" class="text-right">RefundGST</th>
+                                        <th scope="col" class="text-right">AmtWithTDS</th>
+                                        <th scope="col" class="text-right">Credited</th>
+                                        <th scope="col" class="text-right">Debit</th>
+                                        <th scope="col" class="text-right">Comm</th>
+                                        <th scope="col" class="text-right">ClosingBalance</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th scope="col">API</th>
+                                        }
+                                        <th scope="col">RefundStatus</th>
+                                        <th scope="col">Live ID</th>
+                                        @if (Model.IsAdmin || Model.IsAPIUser)
+                                        {
+                                            <th scope="col">APIRequestID</th>
+                                        }
+                                        <th>RequestMode</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script src="~/lib/jquery/table2excel.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+            $("#btnSearch").click();
+        });
+        var search = function (sender) {
+            var RechargeReportFilter = {
+                TopRows: $('#ddlTop').val(),
+                Status: $('#ddlStatus').val(),
+                OID: $('#ddlOperator').val(),
+                OPTypeID: $('#ddlOpType').val(),
+                BankName: $('#ddlBank').val(),
+                APIID: $('#ddlAPI').val() != undefined ? $('#ddlAPI').val() : 0,
+                FromDate: $('#dtFromDate').val(),
+                ToDate: $('#dtToDate').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtSearch').val(),
+                IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false,
+                RequestModeID: $('#ddlRMode').val() != undefined ? $('#ddlRMode').val() : 0,
+                DMRModelID: $('#ddlDMRModelID').val() != undefined ? $('#ddlDMRModelID').val() : 0
+            };
+            if (RechargeReportFilter.TopRows > 4000 && sender.id.indexOf('Export') < 0) {
+                an.title = 'Exporting to excel';
+                an.content = 'Because you have selected all record!';
+                an.alert(an.type.info);
+                an.autoClose = 10;
+            }
+            if (RechargeReportFilter.IsExport) {
+                window.location = "/DMR-Report?" + $.param(RechargeReportFilter);
+            } else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/DMR-Report',
+                    contentType: 'application/json',
+                    data: JSON.stringify(RechargeReportFilter),
+                    success: function (result) {
+                        resultReload(result);
+                        $('.__p tbody').html(result);
+                        $(".dropdown-toggle").dropdown();
+                        $(".a_modal").click(function () {
+                            var td = $(this).parent("td");
+                            var tid = $(this).attr("name");
+                            var transid = $(td).find("#lbltid").val();
+                            var vendorid = $(td).find("#lblvid").val();
+                            var apirequest = $(td).find("#lblapirqid").val();
+                            var moddate = $(td).find("#lblmoddate").val();
+                            var options = $(td).find("#lbloption").val().split('-');
+                            var option1 = options[0];
+                            var option2 = options[1];
+                            var option3 = options[2];
+                            var option4 = options[3];
+                            var ccName = $(td).find('#hidCCName').val();
+                            var ccMob = $(td).find('#lblCCMobile').val();
+                            var tdate = $(td).find('#hidTDate').val();
+                            $.post('/Recharge-APiUrl', { TID: tid, T: transid }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'myalert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').unbind().click(function () {
+                                    mdlA.dispose();
+                                });
+                                $("#lbltranid").text(transid);
+                                $("#lblvendorid").text(vendorid);
+                                $("#lblapirequestid").text(apirequest);
+                                $("#lblmodifydate").text(moddate);
+                                $("#lbloption1").text(option1);
+                                $("#lbloption2").text(option2);
+                                $("#lbloption3").text(option3);
+                                $("#lbloption4").text(option4);
+                                $('#lblCCName').text(ccName);
+                                $('#lblCCMob').text(ccMob);
+                                $('#spnTDate').text(tdate);
+                            }).fail(function (xhr) {
+                                if (xhr.status === 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status === 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        });
+                        $('.aupComm').click(function () {
+                            var t = $(this).attr('id');
+                            var tr = $(this).attr('name');
+                            $.post('/u-comm', { t: t, tr: tr }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'uplineAlert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').click(function () {
+                                    mdlA.dispose();
+                                });
+                            }).fail(function (xhr) {
+                                if (xhr.status === 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status === 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        });
+                        $('tr div.dropdown-menu a.dropdown-item').click(function () {
+                            var id = $(this).closest('tr').data().itemId;
+                            var gid = $(this).closest('tr').data().groupId;
+                            var status = this.id.toUpperCase()[0];
+                            var td = $(this).closest('tr').children()[2];
+                            var tdSts = $(this).closest('tr').children()[7];
+                            var tdRSts = $(this).closest('tr').children()[24];
+                            var transid = $(td).find("#lbltid").val();
+                            var tdLive = $(this).closest('tr').children()[25];
+                            var IsTdStsUndefined = false;
+                            if (tdSts != undefined) {
+                                IsTdStsUndefined = $(tdSts).html().indexOf('badge') < 0 ? true : false;
+                            }
+                            else {
+                                IsTdStsUndefined = true;
+                            }
+                            if (IsTdStsUndefined) {
+                                tdRSts = $(this).closest('tr').children()[22];
+                                tdLive = $(this).closest('tr').children()[23];
+                            }
+                            if (status === 'S' || status === 'F') {
+                                preloader.load();
+                                $.post('/USF', { Status: status })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        mdlA.content = result;
+                                        mdlA.id = 'mymodalUSF';
+                                        mdlA.options.backdrop = 'static';
+                                        mdlA.alert(mdlA.size.small);
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                        $('button.close span,#mdlCancel').unbind().click(function () {
+                                            mdlA.dispose();
+                                        });
+                                        setTimeout(function () {
+                                            $('#txtRemark').focus();
+                                        }, 500);
+                                        $('#btnUpdateStatus').click(function () {
+                                            btnLdr.addClass = 'btn-dark';
+                                            btnLdr.removeClass = 'btn-outline-dark';
+                                            var selfBtn = $(this);
+                                            btnLdr.Start(selfBtn, 'Requesting');
+                                            var rem = $('#txtRemark').val();
+                                            USF(id, status, transid, rem,
+                                                function () {
+                                                    btnLdr.Stop(selfBtn);
+                                                    mdlA.dispose();
+                                                },
+                                                function () {
+                                                    try {
+
+                                                        $(tdSts).html(status === 'S' ? '<span class="badge badge-success">SUCCESS</span>' : '<span class="badge badge-danger">FAILED</span>');
+                                                        $(tdLive).html(rem);
+                                                    } catch (e) {
+
+                                                    }
+                                                });
+                                        });
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                    });
+                            }
+                            if (status === 'D') {
+                                preloader.load();
+                                $.post('/r-r', { TID: id, TransactionID: transid })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        if (result.statuscode == undefined || result.statuscode == "undefined" || result.statuscode == null) {
+                                            $('#' + an.id).remove();
+                                            mdlA.id = 'mymodalRR';
+                                            mdlA.content = result;
+                                            mdlA.options.backdrop = 'static';
+                                            mdlA.options.keyboard = false;
+                                            mdlA.alert(mdlA.size.small);
+                                            $('button.close span,#mdlCancel').click(function () {
+                                                mdlA.dispose();
+                                            });
+                                        }
+                                        else {
+                                            if (result.statuscode == an.type.failed) {
+                                                an.title = "Oops";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            }
+                                            else if (result.statuscode == an.type.success) {
+                                                an.title = "Well done";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                                try {
+                                                    $(tdRSts).html('REQUESTED');
+                                                } catch (e) {
+
+                                                }
+                                            }
+                                        }
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                    });
+                            }
+                            if (status === 'R') {
+                                convenientFee(gid);
+                            }
+                        });
+                        var USF = function (id, sts, tranid, rem, fnc, fn_suc) {
+                            preloader.load();
+                            $.post('/U-S-F', { Status: sts, TID: id, TransactionID: tranid, Remark: rem })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    if (result.statuscode !== undefined) {
+                                        if (result.statuscode == an.type.failed) {
+                                            an.title = "Oops";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                        }
+                                        else if (result.statuscode == an.type.success) {
+                                            an.title = "Well done";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            fn_suc();
+                                        }
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+                                    an.title = 'Oops';
+                                    an.content = 'An error has been occured during request.Reload again!'
+                                    an.alert(an.type.failed);
+                                })
+                                .fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    fnc();
+                                    preloader.remove();
+                                });
+                        }
+                        var DMRReceipt = function (GroupID, convenientFee = 0) {
+                            preloader.load();
+                            $.post('/DMR-Receipt', { GroupID: GroupID, IsInvoice: true, convenientFee: convenientFee }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'mymodal';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.options.keyboard = false;
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').click(function () {
+                                    mdlA.dispose();
+                                });
+                                $('#hddGroupID').val(GroupID);
+                                $('#btnPrint').click(function () {
+                                    var win = window.open('/DMRReceipt/?GroupID=' + GroupID + '&IsInvoice=true&convenientFee=' + convenientFee, "_blank", "toolbar=0,width=900,height=650,left=0,top=0");
+                                    win.focus();
+                                });
+                            }).catch(function () {
+                                console.clear();
+                            }).fail(function (xhr) {
+                                $(_this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        }
+
+                        var convenientFee = function (GID) {
+                            var _html = '<div class="col-md-12 mb-3"> <button type="button" class="close pull-right" aria-label="Close">'
+                                + '<span aria-hidden="true">&times;</span></button></div><div class="col-md-12">'
+                                + '<label>Enter Convenient Fee</label>'
+                                + '<input class="form-control mb-3" value = "0" id="txtconvenientFee"/>'
+                                + '<button class="btn btn-success mb-3" id="bntGo">GO</button></div>';
+
+                            mdlA.content = _html;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.small);
+                            $('button.close').click(function () {
+                                mdlA.dispose();
+                            });
+
+                            $('#bntGo').on('click', function () {
+                                DMRReceipt(GID, $('#txtconvenientFee').val())
+                            })
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops";
+                        an.content = xhr;
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });
+
+                $.post('/t-summary', { s: 2 })
+                    .done(function (result) {
+                        resultReload(result);
+                        if (result.totalSuccessNo != undefined) {
+                            $('[data-toggle="tooltip"]').tooltip('dispose');
+                            $('#sc').html(result.totalSuccessNo);
+                            $($('#sc').parent()).attr('title', '<b>Number of SUCCESS Transaction is ' + result.totalSuccessNo + '</b>')
+                            $('#sa').html(result.totalSuccessAmount);
+                            $($('#sa').parent()).attr('title', '<b>Amount of SUCCESS Transaction is ' + result.totalSuccessAmount + ' INR</b>')
+                            $('#fc').html(result.totalFailedNo);
+                            $($('#fc').parent()).attr('title', '<b>Number of FAILED Transaction is ' + result.totalFailedNo + '</b>')
+                            $('#fa').html(result.totalFailedAmount);
+                            $($('#fa').parent()).attr('title', '<b>Amount of FAILED Transaction is ' + result.totalFailedAmount + ' INR</b>')
+                            $('#pc').html(result.totalPendingNo);
+                            $($('#pc').parent()).attr('title', '<b>Number of PENDING Transaction is ' + result.totalPendingNo + '</b>')
+                            $('#pa').html(result.totalPendingAmount);
+                            $($('#pa').parent()).attr('title', '<b>Amount of PENDING Transaction is ' + result.totalPendingAmount + ' INR</b>')
+                            $('[data-toggle="tooltip"]').tooltip();
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                    });
+            }
+        };
+        var ResendRefundOTP = function () {
+            var TID = $('#refTID').val();
+            var TransactionID = $('#refTrID').val();
+            an.id = 'verifyROTAlert';
+            preloader.load();
+            $.post('/r-r', { TID, TransactionID, Is: true })
+                .done(function (result) {
+                    resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var VerifyRefundOTP = function () {
+            an.id = 'verifyROTAlert';
+            var TID = $('#refTID').val();
+            var TransactionID = $('#refTrID').val();
+            var o = $('#txtOTP').val();
+            if (o.length < 2) {
+                an.title = "Oops";
+                an.content = 'Enter valid OTP';
+                an.alert(an.type.failed);
+                return true;
+            }
+            preloader.load();
+            $.post('/r-r', { TID, TransactionID, o })
+                .done(function (result) {
+                    resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        mdlA.dispose();
+                    }
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+}
+

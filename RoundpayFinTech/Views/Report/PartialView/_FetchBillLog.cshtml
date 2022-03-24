@@ -1,0 +1,39 @@
+﻿@model IEnumerable<FetchBillLog>
+@{
+    var i = 1;
+}
+<table class="table table-bordered table-striped table-responsive-sm">
+    <thead class="bg-tableth">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Entry Date</th>
+            <th scope="col">Request URL</th>
+            <th scope="col">Request</th>
+            <th scope="col">Response</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Any())
+        {
+
+            @foreach (var item in Model)
+            {
+        <tr>
+            <th>@i</th>
+            <td>@item.EntryDate</td>
+            <td><textarea class="form-control bg-transparent border-0" cols="70" readonly="readonly">@item.RequestURL</textarea></td>
+            <td><textarea class="form-control bg-transparent border-0" cols="70" readonly="readonly">@item.Request</textarea></td>
+            <td><textarea class="form-control bg-transparent border-0" cols="70" readonly="readonly">@item.Response</textarea></td>
+        </tr>
+                i = i + 1;
+            }
+
+        }
+        else
+        {
+            <tr>
+                <td colspan="5" rowspan="2" class="text-center">No record found!</td>
+            </tr>
+        }
+    </tbody>
+</table>

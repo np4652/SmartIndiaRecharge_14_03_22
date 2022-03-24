@@ -1,0 +1,1510 @@
+﻿@model RoundpayFinTech.AppCode.ThirdParty.HotelAPI.TekTvlHotelSingleResponse
+@{
+    var _hotel = Model != null && Model.HotelInfoResult != null && Model.HotelInfoResult.HotelDetails != null ? Model.HotelInfoResult.HotelDetails : new RoundpayFinTech.AppCode.ThirdParty.HotelAPI.TekTvlHotelDetails();
+    ViewData["Title"] = "Hotel Single";
+    ViewData["HTitle"] = "Hotel";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="TechyDevs">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Roundpay - Hotel</title>
+    <!-- Favicon -->
+    <link rel="icon" href="website-assets/images/favicon.png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+    <!-- Template CSS Files -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
+
+    @*<link href="~/css/Hotel/line-awesome.css" rel="stylesheet" />*@
+    <link href="~/css/Hotel/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery.fancybox.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/daterangepicker.css" rel="stylesheet" />
+    <link href="~/siteadmin/css/animate.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/animated-headline.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery-ui.css" rel="stylesheet" />
+    <link href="~/css/Hotel/flag-icon.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/style.css" rel="stylesheet" />
+    <link href="~/css/Hotel/search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/tooltip.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-autocomplete.css" rel="stylesheet" />
+   <style type="text/css">
+
+            /*.bg-greenhead {
+                background: #fff;
+            }
+
+            #menu .navbar-nav .show .nav-link {
+                color: #fff !important;
+            }*/
+
+           /* .sticky-top {
+                z-index: 999 !important;
+            }
+
+            .navbar.navbar-expand-lg.sticky-top .mr-auto {
+                margin-right: auto !important;
+                margin: 0 auto;
+            }
+
+            #menu .navbar-nav .nav-link {
+                color: #3c3c3c !important;
+            }
+
+            .contact-form-action .form-control {
+                box-shadow: 0 0 10px #f1f1f1;
+            }*/
+
+            
+
+
+            .input-box label.text-white {
+                color: #0d233e !important;
+                font-weight: 600;
+            }
+
+            
+            .contact-form-action .form-group .form-icon {
+                top: 10px !important;
+            }
+
+           /* .contact-form-action .form-control {
+                box-shadow: 0 0 10px #f1f1f1;
+            }
+*/
+            .sidebar.mt-0 {
+                position: sticky;
+                top: 60px;
+                bottom: 0;
+                z-index: 0;
+                align-self: flex-start;
+                max-height: 570px;
+            }
+
+
+
+            .input-box label.text-white {
+                color: #ffffff !important;
+               font-weight: 600;
+               padding: 10px;
+            }
+
+            
+
+            .contact-form-action .form-group .form-icon {
+                top: 10px !important;
+            }
+
+            
+       
+        .btn-link-top {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero-box:after {
+            opacity: 0;
+            background-color: #0d233e;
+        }
+
+        .navbar {
+            padding: 0 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+        ._RoomType .roomLeft {
+            width: 25%;
+        }
+
+        ._RoomType .roomRight {
+            width: 75%;
+        }
+
+        ._RoomType .titleWidth {
+            width: 33.38%;
+        }
+
+        .price1 {
+            width: 100%;
+            column-span: all;
+            column-count: 2;
+            padding: 15px;
+        }
+
+        .makeFlex.appendTop40.roomTypePrice {
+            display: block;
+        }
+
+        .price1 .p2 {
+            padding-left: 15px;
+        }
+
+        .room-flex {
+            display: inline-flex;
+        }
+
+        .roomcombo1 {
+            width: 80%;
+        }
+
+        .comboPrice {
+            width: 20%;
+            border-right: solid 1px #bababa;
+            border-bottom: solid 9px #bababa;
+            background: #fff6e7;
+        }
+
+        .makeFlex.column.perfectCenter.noShrink {
+            padding-top: 22%;
+        }
+
+            .makeFlex.column.perfectCenter.noShrink.OpenCombinationSelect {
+                padding-top: 25%;
+            }
+
+        .info-area {
+            clear: both;
+        }
+
+        .sidebar.mt-0 {
+            position: sticky;
+            top: 60px;
+            bottom: 0;
+            z-index: 0;
+            align-self: flex-start;
+            max-height: 570px;
+        }
+    </style>
+</head>
+<body>
+    @Html.Hidden("hdnObject")
+    <form action="/ProceedBooking" method="post" id="frmProceedBooking">
+        @Html.Hidden("searchJson", Model.searchJson)
+        <input type="hidden" name="HotelCode" value="@Model.HotelInfoResult.HotelDetails.HotelCode" />
+        <input type="hidden" name="HotelName" value="@Model.HotelInfoResult.HotelDetails.HotelName" />
+        <input type="hidden" name="ResultIndex" value="@Model.HotelInfoResult.HotelDetails.ResultIndex" />
+        <input type="hidden" name="TraceId" value="@Model.HotelInfoResult.TraceId" />
+        <input type="hidden" name="NoOfRooms" value="@Model.HotelInfoResult.HotelDetails.NoOfRooms" />
+        <input type="hidden" name="CheckInDate" value="@Model.HotelInfoResult.HotelDetails.CheckInDate" />
+        <input type="hidden" name="CheckOutDate" value="@Model.HotelInfoResult.HotelDetails.CheckOutDate" />
+        <input type="hidden" name="NoOfChild" value="@Model.HotelInfoResult.HotelDetails.NoOfChild" />
+
+        <input type="hidden" name="NoOfPerson" value="@Model.HotelInfoResult.HotelDetails.NoOfPersons" />
+        <input type="hidden" name="RoomIndexes" value="" />
+    </form>
+    <!-- start cssload-loader -->
+    <!-- ================================
+                START HEADER AREA
+    ================================= -->
+    <header class="header-area">
+
+
+        <div class="header-menu-wrapper padding-right-100px padding-left-100px box-shadow">
+            <div class="contact-form-action">
+                <form method="post" action="/Hotel/SearchHotel" class="row align-items-center" id="frmSearch">
+                    <input type="hidden" id="searchJsonlist" name="searchJson" />
+                    <div class="search-widget-uistyles__OuterWrapDiv-f6e3g4-0 bhdKLn">
+                        <div class="container">
+                            <div class="dweb-commonstyles__CenteredSpaceWrap-sc-13fxsy5-0 search-widget-uistyles__WrapperStyle-f6e3g4-6 cgGKLF cPwTXt padt10">
+                                <div class="row nwbgfrhlist">
+
+                                    <div class="col-sm-10">
+                                        <div class="dweb-commonstyles__FlexItem-sc-13fxsy5-3 eaRCts">
+                                            <div class="col-lg-3 pr-0">
+                                                <div class="input-box">
+                                                    <label class="text-white">Destination / Hotel Name</label>
+                                                    <div class="form-group autocomplete">
+                                                        <span class="la la-map-marker form-icon"></span>
+                                                        <input class="form-control" id="txthotel" type="text" autocomplete="off" placeholder="Enter city or property">
+
+                                                        <select class="form-control" id="ddlhotelsearch" style="display:none"></select>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-3 -->
+                                            <div class="col-lg-3 pr-0">
+                                                <div class="input-box">
+                                                    <label class="text-white">Check-in</label>
+                                                    <div class="form-group">
+                                                        <span class="la la-calendar form-icon"></span>
+                                                        <input class="form-control" type="text" name="daterange-single" id="CheckInDate1" readonly>
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-3 -->
+                                            <div class="col-lg-3 pr-0">
+                                                <div class="input-box">
+                                                    <label class="text-white">Check-out</label>
+                                                    <div class="form-group">
+                                                        <span class="la la-calendar form-icon"></span>
+                                                        <input class="date-range form-control" type="text" name="daterange-single" id="CheckOutDate1" readonly>
+
+                                                    </div>
+                                                </div>
+                                            </div><!-- end col-lg-3 -->
+                                            <div class="col-lg-3">
+                                                <div class="input-box">
+                                                    <label class="text-white">Guests & Rooms</label>
+                                                    <div class="form-group">
+                                                        <div class="dropdown dropdown-contain gty-container btnDropdownToggle">
+                                                            <a class="dropdown-toggle dropdown-btn" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                                <span class="adult" data-text="Adult" data-text-multi="Adults">0 Adult</span>
+                                                                -
+                                                                <span class="children" data-text="Child" data-text-multi="Children">0 Children</span>
+                                                            </a>
+                                                            <div class="dropdown-menu dropdown-menu-wrap" id="count-guest">
+                                                                <div class="dropdown-item">
+                                                                    <div class="qty-box d-flex align-items-center justify-content-between">
+                                                                        <div class="roomsGuests">
+                                                                            <div class="roomsGuestsTop">
+                                                                                <div class="addRoomRow pt-2 pb-0">
+                                                                                    <div class="addRoomLeft">
+                                                                                        <p class="darkText font16 latoBlack capText appendBottom10 m-0">ROOM 1</p>
+                                                                                        <small><!--Data will be here at runtime--></small>
+                                                                                    </div>
+                                                                                    <div class="addRoomRight mt-2">
+                                                                                        <div class="addRooomDetails">
+                                                                                            <div class="col-sm-12 p-0">
+                                                                                                <div class="row">
+                                                                                                    <div class="col-sm-6">
+                                                                                                        <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                            <span class="latoBold font12 grayText">Adults <br />(Above 12 Years) </span>
+                                                                                                        </p>
+                                                                                                    </div>
+                                                                                                    <div class="col-sm-6">
+                                                                                                        <div class="input-group mb-3 adultCounter">
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                    <i class="fa fa-minus"></i>
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                            <input type="text" value="1" readonly class="form-control p-1 text-center" placeholder="0" />
+                                                                                                            <div class="input-group-prepend">
+                                                                                                                <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                    <i class="fa fa-plus"></i>
+                                                                                                                </button>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+
+
+
+
+                                                                                            <div>
+                                                                                                <div class="col-sm-12 p-0">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-sm-6">
+                                                                                                            <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                                <span class="latoBold font12 grayText">Children <br />(1 - 12 Years) </span>
+                                                                                                            </p>
+                                                                                                        </div>
+                                                                                                        <div class="col-sm-6">
+                                                                                                            <div class="input-group mb-3 childCounter">
+                                                                                                                <div class="input-group-prepend">
+                                                                                                                    <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                        <i class="fa fa-minus"></i>
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                                <input type="text" value="0" readonly class="form-control p-1 text-center childInput" placeholder="0" />
+                                                                                                                <div class="input-group-prepend">
+                                                                                                                    <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                        <i class="fa fa-plus"></i>
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+
+                                                                                                <div class="divChild" style="display:none">
+                                                                                                    <ul class="childAgeList appendBottom10 mb-3">
+                                                                                                        <!--data will be here at runtime-->
+                                                                                                    </ul>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                            <div class="roomsGuestsBottom">
+                                                                                <button type="button" class="btnAddRoom" id="hsw_add_another_room_btn">+ ROOM </button>
+                                                                                <button type="button" class="primaryBtn btnApply capText" id="hsw_apply_changes_btn">Apply</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <!-- end dropdown -->
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div>
+                                            <label class="text-white" style="padding:11px"></label>
+                                            <div class="form-group">
+                                                <label class="text-white"></label>
+                                                <button type="button" id="btnSearch" class="theme-btn">Update Search</button>
+                                                @*<button type="button" id="btnSearch" class="btn btn-info btn-sm mt-2">Update Search</button>*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <!-- end container-fluid -->
+        </div>
+        <!-- end header-menu-wrapper -->
+    </header>
+    <!-- ================================
+             END HEADER AREA
+    ================================= -->
+    <!-- ================================
+        END BREADCRUMB AREA
+    ================================= -->
+    @*<section class="Breadcrumbstyles__OuterWrapperDiv-ily95m-1 vJtaS">
+            <div class="Breadcrumbstyles__BreadCrumbContainer-ily95m-2 edrRQE container">
+                <ol class="Breadcrumbstyles__BreadCrumbList-ily95m-3 gewTwe">
+                    <li itemscope="" itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+                        <a href="/" itemprop="item" class="dwebCommonstyles__PrimaryLink-sc-112ty3f-8 npTjr font12">
+                            <span itemprop="name">Goibibo</span>
+                        </a>
+                        <meta itemprop="position" content="1">
+                    </li>
+                    <li itemscope="" itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+                        <a itemprop="item" class="Breadcrumbstyles__BreadCrumbItemLink-ily95m-4 cJzSzB font12" href="/hotels/">
+                            <span itemprop="name">
+                                <span class="Breadcrumbstyles__ArrowWrapper-ily95m-0 hWCXGO">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1rem" fill="#46484d">
+                                        <title>arrow-right</title>
+                                        <path d="M31.983 16v0c-0.002-0.918-0.397-1.792-1.085-2.4l-14.905-13.119c-0.821-0.672-2.030-0.551-2.702 0.269-0.639 0.78-0.565 1.921 0.169 2.613l11.516 10.133c0.138 0.122 0.15 0.333 0.028 0.471-0.063 0.071-0.153 0.112-0.248 0.112h-22.819c-1.060 0-1.92 0.86-1.92 1.92s0.86 1.92 1.92 1.92h22.815c0.185 0.002 0.333 0.153 0.331 0.338-0.001 0.094-0.041 0.183-0.111 0.246l-11.516 10.133c-0.825 0.666-0.954 1.875-0.287 2.7s1.875 0.953 2.7 0.287c0.042-0.034 0.082-0.069 0.12-0.106l14.908-13.119c0.689-0.608 1.084-1.481 1.087-2.4z"></path>
+                                    </svg>
+                                </span>
+                                <span>Hotel Booking</span>
+                            </span>
+                        </a>
+                        <meta itemprop="position" content="2">
+                    </li>
+                    <li itemscope="" itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+                        <a href="https://www.goibibo.com/hotels/india/" itemprop="item" class="Breadcrumbstyles__BreadCrumbATagItemLink-ily95m-5 heXUcv font12">
+                            <span itemprop="name">
+                                <span class="Breadcrumbstyles__ArrowWrapper-ily95m-0 hWCXGO">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1rem" fill="#46484d">
+                                        <title>arrow-right</title>
+                                        <path d="M31.983 16v0c-0.002-0.918-0.397-1.792-1.085-2.4l-14.905-13.119c-0.821-0.672-2.030-0.551-2.702 0.269-0.639 0.78-0.565 1.921 0.169 2.613l11.516 10.133c0.138 0.122 0.15 0.333 0.028 0.471-0.063 0.071-0.153 0.112-0.248 0.112h-22.819c-1.060 0-1.92 0.86-1.92 1.92s0.86 1.92 1.92 1.92h22.815c0.185 0.002 0.333 0.153 0.331 0.338-0.001 0.094-0.041 0.183-0.111 0.246l-11.516 10.133c-0.825 0.666-0.954 1.875-0.287 2.7s1.875 0.953 2.7 0.287c0.042-0.034 0.082-0.069 0.12-0.106l14.908-13.119c0.689-0.608 1.084-1.481 1.087-2.4z"></path>
+                                    </svg>
+                                </span>
+                                <span>India</span>
+                            </span>
+                        </a>
+                        <meta itemprop="position" content="3">
+                    </li>
+                    <li itemscope="" itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+                        <a href="https://www.goibibo.com/hotels/india/" itemprop="item" class="Breadcrumbstyles__BreadCrumbATagItemLink-ily95m-5 heXUcv font12">
+                            <span itemprop="name">
+                                <span class="Breadcrumbstyles__ArrowWrapper-ily95m-0 hWCXGO">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1rem" fill="#46484d">
+                                        <title>arrow-right</title>
+                                        <path d="M31.983 16v0c-0.002-0.918-0.397-1.792-1.085-2.4l-14.905-13.119c-0.821-0.672-2.030-0.551-2.702 0.269-0.639 0.78-0.565 1.921 0.169 2.613l11.516 10.133c0.138 0.122 0.15 0.333 0.028 0.471-0.063 0.071-0.153 0.112-0.248 0.112h-22.819c-1.060 0-1.92 0.86-1.92 1.92s0.86 1.92 1.92 1.92h22.815c0.185 0.002 0.333 0.153 0.331 0.338-0.001 0.094-0.041 0.183-0.111 0.246l-11.516 10.133c-0.825 0.666-0.954 1.875-0.287 2.7s1.875 0.953 2.7 0.287c0.042-0.034 0.082-0.069 0.12-0.106l14.908-13.119c0.689-0.608 1.084-1.481 1.087-2.4z"></path>
+                                    </svg>
+                                </span>
+                                <span>Delhi</span>
+                            </span>
+                        </a>
+                        <meta itemprop="position" content="3">
+                    </li>
+                    <li itemscope="" itemprop="itemListElement" itemtype="http://schema.org/ListItem">
+                        <a href="https://www.goibibo.com/hotels/india/" itemprop="item" class="Breadcrumbstyles__BreadCrumbATagItemLink-ily95m-5 heXUcv font12">
+                            <span itemprop="name">
+                                <span class="Breadcrumbstyles__ArrowWrapper-ily95m-0 hWCXGO">
+                                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1rem" fill="#46484d">
+                                        <title>arrow-right</title>
+                                        <path d="M31.983 16v0c-0.002-0.918-0.397-1.792-1.085-2.4l-14.905-13.119c-0.821-0.672-2.030-0.551-2.702 0.269-0.639 0.78-0.565 1.921 0.169 2.613l11.516 10.133c0.138 0.122 0.15 0.333 0.028 0.471-0.063 0.071-0.153 0.112-0.248 0.112h-22.819c-1.060 0-1.92 0.86-1.92 1.92s0.86 1.92 1.92 1.92h22.815c0.185 0.002 0.333 0.153 0.331 0.338-0.001 0.094-0.041 0.183-0.111 0.246l-11.516 10.133c-0.825 0.666-0.954 1.875-0.287 2.7s1.875 0.953 2.7 0.287c0.042-0.034 0.082-0.069 0.12-0.106l14.908-13.119c0.689-0.608 1.084-1.481 1.087-2.4z"></path>
+                                    </svg>
+                                </span>
+                                <span>Hotel Name</span>
+                            </span>
+                        </a>
+                        <meta itemprop="position" content="3">
+                    </li>
+                </ol>
+            </div>
+        </section>*@
+    <section class="Breadcrumbstyles__OuterWrapperDiv-ily95m-1 vJtaS pt-3">
+        <section class="HotelDetailsMain__HotelDetailsContainer-sc-2p7gdu-0 hcyUbD container">
+            <div>
+                <div class="HotelInfostyles__CenterDiv-sc-1k29ep1-0 bdWrPS">
+                    <span itemscope="" itemprop="starRating" itemtype="http://schema.org/Rating">
+                        <meta itemprop="ratingValue" content="5">
+                        @for (var i = 0; i < _hotel.StarRating; i++)
+                        {
+                            <span class="HotelRatingStars__StarWrapper-hkz5fp-1 eLwlwg">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="14" class="RatingStarIcon-sc-1lv0lb2-0 HotelRatingStars__StarIcon-hkz5fp-0 lipJu hLINmt">
+                                    <g fill="none" fill-rule="evenodd">
+                                        <path d="M-5-5h24v24H-5z"></path>
+                                        <path fill="#FDBA00" d="M7.15 11.622l3.469 2.13c.635.39 1.412-.187 1.245-.917l-.92-4.004 3.068-2.699c.56-.492.259-1.425-.477-1.484L9.5 4.3 7.92.515a.831.831 0 00-1.537 0l-1.58 3.776-4.036.348C.031 4.7-.27 5.632.29 6.124l3.067 2.698-.92 4.005c-.166.73.61 1.307 1.246.916l3.468-2.12z"></path>
+                                    </g>
+                                </svg>
+                            </span>
+                        }
+                    </span>
+                </div>
+                <div class="HotelInfostyles__CenterDiv-sc-1k29ep1-0 bdWrPS">
+                    <h1 itemprop="name" class="dwebCommonstyles__SectionHeaderSEO-sc-112ty3f-5 HotelName__HotelNameText-sc-1bfbuq5-0 YBhMQ iOrRvR">
+                        @_hotel.HotelName
+
+                    </h1>
+                </div>
+                <div class="HotelInfostyles__CenterDiv-sc-1k29ep1-0 bdWrPS">
+                    <a href="#" display="flex" width="42vw" class="TriggerActionText__TriggerAnchorText-sc-1vbd2op-0 iatjsI">
+                        <span class="HotelAddressText__HotelAddressTextSpan-sc-8u04y3-0 jkjZxJ">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="LocationInfoIcon-vwm4pc-0 hojSeI">
+                                <g fill="none" fill-rule="evenodd">
+                                    <path fill="#2276E3" d="M9.333 6a.667.667 0 001.334 0V2.21a.167.167 0 01.263-.134l2.933 2.093a.334.334 0 01.137.27v1.56A.666.666 0 1015.333 6V4.095c0-.323-.156-.626-.418-.814L10.582.187a.995.995 0 00-1.163 0L5.552 2.949a.333.333 0 01-.4-.007L1.618.214A1.002 1.002 0 00.563.1 1.002 1.002 0 000 1v9.924c0 .314.149.61.4.8l4.338 3.254a1 1 0 001.18.013l2.917-2.084a.666.666 0 00-.774-1.084l-1.794 1.284a.166.166 0 01-.172.012.167.167 0 01-.092-.145V4.438c0-.108.052-.209.14-.271l2.933-2.093a.167.167 0 01.263.133L9.333 6zm-4.666 6.924c0 .063-.036.12-.092.149a.168.168 0 01-.175-.016l-2.933-2.2a.334.334 0 01-.134-.266V2.018c0-.063.036-.12.092-.15a.17.17 0 01.175.017L4.533 4.15a.334.334 0 01.134.267v8.506z"></path>
+                                    <path fill="#FF3A5C" d="M12.667 7.333a3.339 3.339 0 00-3.334 3.334c0 2.114 2.972 5.109 3.098 5.236a.335.335 0 00.472 0c.126-.127 3.097-3.122 3.097-5.236a3.337 3.337 0 00-3.333-3.334zm0 4.5a1.166 1.166 0 11-.002-2.332 1.166 1.166 0 01.002 2.332z"></path>
+                                </g>
+                            </svg>
+                            <label itemscope="" itemprop="address" itemtype="http://schema.org/PostalAddress" class="HotelAddressText__HotelAddressStyled-sc-8u04y3-1 cqBnrr">
+                                <span itemprop="streetAddress" class="font12">
+                                    @(_hotel.Address.Contains(',') ? _hotel.Address.Split(',')[0] + "," + _hotel.Address.Split(',')[1] : _hotel.Address)
+                                </span>
+                            </label>
+                        </span>
+                    </a>
+                </div>
+            </div>
+            <a href="#" class="TriggerActionText__TriggerAnchorText-sc-1vbd2op-0 gagOGS cancellationContainer">
+                <!--Data will be bind here at runtime-->
+            </a>
+        </section>
+    </section>
+    <section class="Breadcrumbstyles__OuterWrapperDiv-ily95m-1 vJtaS">
+        <section class="PriceNBookingButtonNPersuasionstyles__Container-sc-9xv89l-0 cyMThk container">
+            <div class="CaptivateBannerGallerystyles__CaptivateBannerGallery-tn8zc4-1 jBwGwC">
+                <div class="CaptivateBannerGallerystyles__CaptivateBannerOuterContainer-tn8zc4-11 glFsyM is-draggable">
+                    <div class="CaptivateBannerGallerystyles__CaptivateBannerGalleryContainer-tn8zc4-0 hrbWoy">
+                        <div id="demo" class="carousel slide hrbWoy" data-ride="carousel">
+                            <!-- The slideshow -->
+                            <div class="carousel-inner">
+                                @for (var i = 0; i < _hotel.Images.Count; i++)
+                                {
+                                    if (i == 0)
+                                    {
+                                        <div class="carousel-item active">
+                                            <img src="@_hotel.Images[i]" width="100%" class="CaptivateBannerGallerystyles__CaptivateGalleryImage-tn8zc4-8 hxYQvo" alt="@_hotel.HotelName">
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="carousel-item">
+                                            <img src="@_hotel.Images[i]" width="100%" class="CaptivateBannerGallerystyles__CaptivateGalleryImage-tn8zc4-8 hxYQvo" alt="@_hotel.HotelName">
+                                        </div>
+                                    }
+                                }
+                            </div>
+
+                            <!-- Left and right controls -->
+                            <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                                <span class="carousel-control-prev-icon"></span>
+                            </a>
+                            <a class="carousel-control-next" href="#demo" data-slide="next">
+                                <span class="carousel-control-next-icon"></span>
+                            </a>
+
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="PriceNBookingButtonNPersuasionstyles__UGCPersuasionsAndBookingWidget-sc-9xv89l-1 jnicsN">
+
+                <div class="UGCCardChipsstyles__UGCPersuasions-sc-1j1eixv-0 deLBED">
+                    <div class="UGCCardChipsstyles__UGCPersuasionsInnerWrap-sc-1j1eixv-1 JXPzv">
+                        <div class="UGCChipsCardstyles__UGCCardContainer-sc-6j2rv6-0 dPcuCv">
+                            <div class="UGCChipsCardstyles__UGCPersuasionHeadingContainer-sc-6j2rv6-1 gIzyWQ">
+                                <h3 class="UGCChipsCardstyles__Text_Heading_UGCPersuasion-sc-6j2rv6-2 cSpbeM">Hotel Facilities &amp; Services</h3>
+                            </div>
+                            <div class="dwebCommonstyles__BaseColumnWrap-sc-112ty3f-2 fVGWFo">
+                                <ul class="UGCChipsCardstyles__AmenitiesList-sc-16j2rv6-5 iGsTCk">
+                                    @for (var i = 0; i < _hotel.HotelFacilities.Count; i++)
+                                    {
+                                        if (i > 3)
+                                        {
+                                            break;
+                                        }
+
+                                        <li>
+                                            <svg viewBox="0 0 16 16" class="RoundedCheckbox-sc-4skzta-0 bXdlCp">
+                                                <g fill="none" fill-rule="evenodd">
+                                                    <path d="M-4-4h24v24H-4z"></path>
+                                                    <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                                </g>
+                                            </svg>
+                                            <span class="UGCChipsCardstyles__AmenitiesText-sc-6j2rv6-7 eimiBe">@_hotel.HotelFacilities[i]</span>
+                                        </li>
+                                    }
+                                </ul>
+                                <button type="button" class="dwebCommonstyles__PrimaryLink-sc-112ty3f-8 UGCChipsCardstyles__ViewAllAmenities-sc-6j2rv6-11 npTjr fQzHyv font12 btnViewAllAmenities btn btn-link"
+                                        data-toggle="modal" data-target="#amenities">
+                                    View all
+                                </button>
+                                <div class="UGCChipsCardstyles__CheckInCheckOutContainer-sc-6j2rv6-8 cwYHCj">
+                                    <div class="PriceNBookingButtonNPersuasionstyles__ColorBackgroundFromHermes-sc-9xv89l-4 PriceNBookingButtonNPersuasionstyles__FBOFCADText-sc-9xv89l-5 hWVVWz iiiACy">
+                                        <span class="PersuasionHoverTextstyles__WrapperDiv-sc-1c06rw1-13 csdwmX">
+                                            <span type="" class="PersuasionHoverTextstyles__HoverTargetWrapperDiv-sc-1c06rw1-2 cnDklP starterContainer">
+                                                <div color="#2bac36" type="" class="PersuasionHoverTextstyles__TextWrapperSpan-sc-1c06rw1-14 cBIBLs">
+                                                    <span class="PersuasionHoverTextstyles__TextLabelIconContainer-sc-1c06rw1-19 iWHTRO">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" height="1.6rem" width="1.6rem" fill="#2bac36" class="FreeBreakfast__FreeBreakfastIcon-sc-5mryup-0 emCTpD">
+                                                            <g fill="none" fill-rule="evenodd">
+                                                                <path d="M-4-4h24v24H-4z"></path>
+                                                                <path fill="#2bac36" d="M13.667 14.667a.667.667 0 010 1.333h-13a.667.667 0 010-1.333zm-9-9.334c.092 0 .166.075.166.167v1.16a.168.168 0 01-.092.15A1.325 1.325 0 004 8v1.667c0 .184.15.333.333.333h2c.184 0 .334-.15.334-.333V8a1.335 1.335 0 00-.741-1.192.167.167 0 01-.093-.15V5.5c0-.092.075-.167.167-.167h6.333a3.333 3.333 0 110 6.667h-1.786a.167.167 0 00-.12.051 5.182 5.182 0 01-3.406 1.604 5.333 5.333 0 01-5.688-5.322V6c0-.368.299-.667.667-.667zm7.664 1.334a.333.333 0 00-.333.333v1.15c0 .787-.165 1.564-.483 2.283a.167.167 0 00.152.234h.664a2 2 0 100-4zM3.191.204a.667.667 0 01.935-.009 1.849 1.849 0 010 2.61c-.2.2-.2.524 0 .724a.667.667 0 01-.943.942 1.847 1.847 0 010-2.609c.2-.2.2-.524 0-.724a.667.667 0 01.008-.934zm3 0a.667.667 0 01.935-.009 1.849 1.849 0 010 2.61c-.2.2-.2.524 0 .724a.667.667 0 01-.943.942 1.847 1.847 0 010-2.609c.2-.2.2-.524 0-.724a.667.667 0 01.008-.934zM9.183.195c.26-.26.683-.26.943 0a1.849 1.849 0 010 2.61c-.2.2-.2.524 0 .724a.667.667 0 01-.943.942 1.847 1.847 0 010-2.609.514.514 0 000-.724.667.667 0 010-.943z"></path>
+                                                            </g>
+                                                        </svg>
+                                                    </span>
+                                                    <span class="font-size-12"></span>
+                                                </div>
+                                            </span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <section class="PriceNBookingButtonNPersuasionstyles__SignUpPersuasionEMIBookingWidgetContainer-sc-9xv89l-2 iqxHjp">
+
+                    <div style="line-height: 1.3;">
+                        <div class="LocationPersuasionWithoutPricestyles__Container-c8zeco-0 joruLI">
+                            <a href="https://www.google.com/maps/search/?api=1&query=@_hotel.Latitude,@_hotel.Longitude" target="_blank">
+                                @*<img src="~/images/Hotel/mapBgSmall.png" class="curve-shape img-fluid" />*@
+                            </a>
+                        </div>
+                    </div>
+                    <div class="BookingWidgetstyles__BookingWidgetStyleContainer-sc-1tsb1-0 dgYyfz priceContainer">
+                        <p class="BookingWidgetstyles__PriceStartsAtText-sc-1tsb1-1 kUvMXU font11">price starts at</p>
+                        <div class="BookingWidgetstyles__PriceInfo-sc-1tsb1-2 jyqvHA">
+                            <div class="BookingWidgetstyles__Column-sc-1tsb1-3 eHNNyP">
+                                <div class="dwebCommonstyles__FlexCentered-sc-112ty3f-4 fkOjQZ">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="1.4rem" height="1.4rem" fill="#141823" class="RupeeIcon-sc-5hlwf0-0 guwrRX">
+                                        <path d="M21.482 7.945h3.536c.982 0 1.786.818 1.786 1.818s-.804 1.818-1.786 1.818h-3.536a9.429 9.429 0 01-2.625 5.109 9.509 9.509 0 01-6.75 2.891h-.679l9.661 9.255c0 .018.018.018.036.036.679.673.696 1.782.036 2.473a1.742 1.742 0 01-2.518.091L5.714 19a1.78 1.78 0 01-.554-1.364c.036-.964.839-1.727 1.786-1.691h5.179a5.902 5.902 0 004.214-1.836 6.327 6.327 0 001.482-2.527H6.946c-.982 0-1.786-.818-1.786-1.818s.804-1.818 1.786-1.818h10.875C17 5.455 14.714 3.782 12.125 3.764H6.946c-.982 0-1.786-.818-1.786-1.818S5.964.128 6.946.128h18.071c.982 0 1.786.818 1.786 1.818s-.804 1.818-1.804 1.818h-5.464a8.504 8.504 0 011.946 4.182z"></path>
+                                    </svg>
+                                    <p class="BookingWidgetstyles__PriceValueStyled-sc-1tsb1-4 gpxhWi publishedRoomPrice"></p>
+                                </div>
+                                <div class="dwebCommonstyles__FlexCentered-sc-112ty3f-4 fkOjQZ font11">
+                                    +
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width=".8rem" height=".8rem" fill="#141823" class="RupeeIcon-sc-5hlwf0-0 kjxuYv"><path d="M21.482 7.945h3.536c.982 0 1.786.818 1.786 1.818s-.804 1.818-1.786 1.818h-3.536a9.429 9.429 0 01-2.625 5.109 9.509 9.509 0 01-6.75 2.891h-.679l9.661 9.255c0 .018.018.018.036.036.679.673.696 1.782.036 2.473a1.742 1.742 0 01-2.518.091L5.714 19a1.78 1.78 0 01-.554-1.364c.036-.964.839-1.727 1.786-1.691h5.179a5.902 5.902 0 004.214-1.836 6.327 6.327 0 001.482-2.527H6.946c-.982 0-1.786-.818-1.786-1.818s.804-1.818 1.786-1.818h10.875C17 5.455 14.714 3.782 12.125 3.764H6.946c-.982 0-1.786-.818-1.786-1.818S5.964.128 6.946.128h18.071c.982 0 1.786.818 1.786 1.818s-.804 1.818-1.804 1.818h-5.464a8.504 8.504 0 011.946 4.182z"></path></svg>
+                                    <p class="BookingWidgetstyles__PlusPriceValueText-sc-1tsb1-5 kXa-DyS font10 roomTax"></p>
+                                </div>
+                                <p class="BookingWidgetstyles__PerRoomPerNightLabel-sc-1tsb1-6 kaZjev font13">per room / night</p>
+                            </div>
+                            <div class="BookingWidgetstyles__Column-sc-1tsb1-3 eHNNyP">
+                                @*<div class="dwebCommonstyles__FlexCentered-sc-112ty3f-4 BookingWidgetstyles__NoOfGuestsContainer-sc-1tsb1-7 fkOjQZ hSjZuk">
+                                        <svg viewBox="0 0 32 32" width="2rem" height="2rem" fill="#777777" class="UserIcon__UserIconSVG-xqeqn3-0 cyvlGX">
+                                            <path d="M21.185 3.148a7.333 7.333 0 11-10.37 10.371 7.333 7.333 0 0110.37-10.371zM16 17.667c-6.992.008-12.659 5.674-12.667 12.667 0 .368.298.667.667.667h24a.667.667 0 00.667-.667C28.659 23.342 22.993 17.675 16 17.667z"></path>
+                                        </svg><p class="BookingWidgetstyles__NoOfGuestsAndRoomsTextStyles-sc-1tsb1-8 krdDso noOfGuest">2 x Guests</p>
+                                    </div>*@
+                                <div class="dwebCommonstyles__FlexCentered-sc-112ty3f-4 BookingWidgetstyles__NoOfGuestsContainer-sc-1tsb1-7 fkOjQZ hSjZuk">
+                                    <svg viewBox="0 0 32 32" width="2rem" height="2rem" fill="#777777" class="DoubleBedIcon__DoubledBedIconSVG-sc-1hxyafg-0 jZiQuq">
+                                        <path d="M30 15.667H2a2 2 0 00-2 2V23a1.998 1.998 0 001.5 1.933.667.667 0 01.5.644V27a1.333 1.333 0 002.666 0v-1.333c0-.368.298-.667.667-.667h21.333c.368 0 .667.298.667.667V27a1.333 1.333 0 002.666 0v-1.419a.667.667 0 01.5-.644 2 2 0 001.5-1.937v-5.333a2 2 0 00-2-2zm-26.667-2c0 .368.298.667.667.667h24a.667.667 0 00.667-.667V7a3.333 3.333 0 00-3.333-3.333H6.667A3.333 3.333 0 003.334 7zm5.334-4h2.667c1.191 0 2.292.635 2.888 1.667a.667.667 0 01-.577 1H6.357a.667.667 0 01-.578-1 3.335 3.335 0 012.888-1.667zm12 0h2.667c1.191 0 2.292.635 2.888 1.667a.667.667 0 01-.577 1h-7.288a.667.667 0 01-.578-1 3.335 3.335 0 012.888-1.667z"></path>
+                                    </svg>
+                                    <p class="BookingWidgetstyles__NoOfGuestsAndRoomsTextStyles-sc-1tsb1-8 krdDso noOfRoom"></p>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="proceedBooking dwebCommonstyles__ButtonBase-sc-112ty3f-10 BookingWidgetstyles__ViewRoomOptionsButton-sc-1tsb1-10 KETBj iiLDmi" style="display:none">
+                            <div class="TextFieldExpt__Tag-sc-7a7pro-0 bxWEDo">
+                                <span class="">PROCEED BOOKING</span>
+                                <div class="BookingWidgetstyles__RightDoubleArrowIconContainer-sc-1tsb1-9 duCWZw">
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="transform: rotate(-90deg);" viewBox="0 0 12 15" width="2rem" height="2rem" fill="#FFFFFF" class="RightDoubleArrow__RightDoubleArrowIcon-sc-1tk0dpe-0 fvCjGY">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-6-5h24v24H-6z"></path>
+                                            <path fill="#2276E3" fill-rule="nonzero" d="M6.345 14.399l-.114-.003a.864.864 0 01-.637-1.354l3.95-5.678a.288.288 0 000-.329l-3.95-5.68A.864.864 0 017.013.37l3.949 5.678c.479.692.479 1.61 0 2.302l-3.95 5.678a.864.864 0 01-.781.367zm-5.77-.288a.576.576 0 01-.472-.902l3.95-5.678a.579.579 0 000-.66L.103 1.193A.576.576 0 01.576.288h1.928c.188 0 .365.092.472.247l3.95 5.678c.411.594.411 1.38 0 1.973l-3.95 5.678a.576.576 0 01-.472.247z"></path>
+                                        </g>
+                                    </svg>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                </section>
+            </div>
+            @*<label id="catid" style="display:none" > @Model.CategoryId</label>*@
+        </section>
+    </section>
+
+
+
+    @*facility modal show hotel facility details start here*@
+
+    <div class="modal" id="amenities">
+        <div class="modal-dialog modal-xlg">
+            <div class="modal-content">
+
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h4 class="modal-title">Hotel Facilities &amp; Services</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+
+                <!-- Modal body -->
+                <div class="modal-body p-0">
+                    <div class="Amenitiesstyles__AmenitiesWrapper-sc-10opy4a-2 dgjwzz container">
+                        <div class="Amenitiesstyles__AmenitiesListBlock-sc-10opy4a-4 hsQmmV">
+                            <ul class="row Amenitiesstyles__AmentiesHorizontalListof4-sc-10opy4a-7 cJfnDm">
+                                @foreach (var item in _hotel.HotelFacilities)
+                                {
+                                    <div class="col-sm-4 p-0">
+                                        <svg viewBox="0 0 16 16" class="RoundedCheckbox-sc-4skzta-0 bXdlCp">
+                                            <g fill="none" fill-rule="evenodd">
+                                                <path d="M-4-4h24v24H-4z"></path>
+                                                <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                            </g>
+                                        </svg>
+                                        <span class="Amenitiesstyles__AmenityItemText-sc-10opy4a-8 jMSGOV" style="font-size:12px">@item</span>
+                                    </div>
+                                }
+                            </ul>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    @*facility modal show hotel facility details End here*@
+
+    <div class="page-section bottom35 roomContainerSection mt-5">
+        <section id="RoomType" class="page-section bottom35">
+            <div class="_RoomType">
+                <div class="gap"></div>
+                <div class="comboRoomsSection">
+                    <div class="roomheader">
+                        <span class="font12 latoBold capText titleWidth" style="width: 20%;">Room Type</span>
+                        <span class="font12 latoBold capText titleWidth" style="width: 20%;">Options</span>
+                        <span class="font12 latoBold capText titleWidth" style="width: 20%;">Included in this Price</span>
+                        <span class="font12 latoBold capText titleWidth" style="width: 20%;">Price</span>
+                        <span class="font12 latoBold capText titleLastWidth" style="width: 20%;">Proceed</span>
+                    </div>
+                    <section class="roomWrapperSection">
+                        <!--Data will be bind here at runtime-->
+                    </section>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div id="aboutHotel">
+        <div class="Policystyles__PolicyStyledWrapper-sc-1vd94lq-0 kFhbqu">
+            <div class="Policystyles__PolicyHeaderStyled-sc-1vd94lq-1 iXhHFr">
+                <div class="Policystyles__PolicyHeaderTextStyled-sc-1vd94lq-2 duMtah">About Hotel</div>
+            </div>
+            <ul class="Policystyles__PolicyListBlock-sc-1vd94lq-3 hdPrep">
+                <div class="ContentContainerstyles__MainContentWrapperStyle-jinyls-0 ljmoMI">
+                    <ul class="ContentContainerstyles__ContentWrapper-jinyls-2 ugUYi">
+                        @{
+                            if (_hotel.Description != null)
+                            {
+                                var des = _hotel.Description;
+                                string[] desArr = des.Replace("<p>", "").Split("</p>");
+                                for (int i = 0; i < desArr.Length; i++)
+                                {
+                                    var itemArr = desArr[i].Split(new[] { ':' }, 2);
+
+                                    <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                        @if (!itemArr[0].ToLower().Contains("disclaimer"))
+                                        {
+                                            <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                                <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                                    <g fill="none" fill-rule="evenodd">
+                                                        <path d="M-4-4h24v24H-4z"></path>
+                                                        <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                                    </g>
+                                                </svg>
+                                            </span>
+                                        }
+
+                                        <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">
+                                            @if (itemArr.Length > 0)
+                                            {
+                                                <strong>@Html.Raw(itemArr[0]) : </strong>
+                                            }
+
+                                            @if (itemArr.Length > 1)
+                                            {
+                                                <span>@Html.Raw(itemArr[1])</span>
+                                            }
+                                        </span>
+                                    </li>
+                                }
+                            }
+
+
+
+                        }
+                    </ul>
+                    <a class="ContentContainerstyles__ViewMoreTextStyled-jinyls-1 ialKVS" data-toggle="collapse" href="#hotel-policy" role="button" aria-expanded="false" aria-controls="collapseExample">View More</a>
+                </div>
+            </ul>
+        </div>
+    </div>
+
+    @if (_hotel.HotelPolicy != null)
+    {
+        <div id="hotel-policies">
+            <div class="Policystyles__PolicyStyledWrapper-sc-1vd94lq-0 kFhbqu">
+                <div class="Policystyles__PolicyHeaderStyled-sc-1vd94lq-1 iXhHFr">
+                    <div class="Policystyles__PolicyHeaderTextStyled-sc-1vd94lq-2 duMtah">Hotel Policies</div>
+                </div>
+                <ul class="Policystyles__PolicyListBlock-sc-1vd94lq-3 hdPrep">
+                    <div class="ContentContainerstyles__MainContentWrapperStyle-jinyls-0 ljmoMI">
+                        <ul class="ContentContainerstyles__ContentWrapper-jinyls-2 ugUYi">
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">According to government regulations, a valid Photo ID has to be carried by every person above the age of 18 staying at Mehra Residency at The Airport. The identification proofs accepted are Drivers License, Voters Card, Passport, Ration Card. Without valid ID the guest will not be allowed to check in.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">The primary guest checking in to the bnb must be at least 18 years of age.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">The standard check-in time is 12 PM and the standard check-out time is 11 AM. After booking you will be sent an email confirmation with bnb phone number. You can contact the bnb directly for early check-in or late check-out. Early check-in or late check-out is subject to availability and may be chargeable by Mehra Residency at The Airport.</span>
+                            </li>
+                            <div class="collapse" id="hotel-policy">
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">Unmarried/Unrelated couples will not be allowed to check-in. Mehra Residency at The Airport reserves the right of admission. Accommodation can be denied to guests posing as a 'couple' if suitable proof of identification is not presented at check-in. This is at the full discretion of the bnb management. No refund would be applicable in case the bnb denies check-in under such circumstances.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">Customers with Local IDs will not be allowed to check-in. Mehra Residency at The Airport reserves the right of admission for local residents. Accommodation can be denied to guests residing in the same city.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">The room tariff includes all taxes. The amount paid for the room does not include charges for optional services and facilities (such as room service, mini bar, snacks or telephone calls). These will be charged by the bnb at the time of check-out from the bnb.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">For any update, the customer shall pay applicable cancellation/modification charges.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">Modified bookings will be subject to availability and revised booking policy of the bnb.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">The cancellation/modification charges are standard and any waiver is entirely on the bnb's discretion.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">Number of modifications possible on a booking will be on the discretion of Goibibo.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">Selective offers of Goibibo will not be valid on cancellation or modification of a booking.</span>
+                            </li>
+                            <li class="Policystyles__PolicyListItemTextStyled-sc-1vd94lq-4 emCUFO">
+                                <span class="Policystyles__CheckedIconWrapperStyled-sc-1vd94lq-6 eNhnFg">
+                                    <svg viewBox="0 0 16 16" height="20px" fill="#46484d" class="RoundedCheckbox-sc-4skzta-0 fChtXh">
+                                        <g fill="none" fill-rule="evenodd">
+                                            <path d="M-4-4h24v24H-4z"></path>
+                                            <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335 3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556 2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                        </g>
+                                    </svg>
+                                </span>
+                                <span class="Policystyles__PolicyTextStyled-sc-1vd94lq-7 eEjiXn">Any e-coupon discount on the original booking shall be forfeited in the event of cancellation or modification.</span>
+                            </li>
+                    
+                            </div>
+                </ul>
+
+                <a class="ContentContainerstyles__ViewMoreTextStyled-jinyls-1 ialKVS" data-toggle="collapse" href="#hotel-policy" role="button" aria-expanded="false" aria-controls="collapseExample">View More</a>
+            </div>
+            </ul>
+        </div>
+        </div>
+    }
+
+
+    <!-- start back-to-top -->
+    <div id="back-to-top">
+        <i class="la la-angle-up" title="Go top"></i>
+    </div>
+    <!-- end back-to-top -->
+    <!-- Template JS Files -->
+    <!--Fixed Div For Selected Rooms-->
+    <section class="roomCartSection">
+        <!--Data will be bind here at runtime-->
+    </section>
+
+    <!--//End-->
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/Common/jquery-ui.js"></script>
+    <script src="~/lib/jquery/dist/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/js/Hotel/daterangepicker.js"></script>
+    <script src="~/js/Common/owl.carousel.min.js"></script>
+    <script src="~/js/Hotel/jquery.fancybox.min.js"></script>
+    <script src="~/js/Hotel/jquery.countTo.min.js"></script>
+    <script src="~/js/Hotel/animated-headline.js"></script>
+    <script src="~/js/Hotel/jquery.ripples-min.js"></script>
+    <script src="~/js/Hotel/quantity-input.js"></script>
+    <script src="~/js/Hotel/main.js"></script>
+    <script src="~/js/Hotel/hotel-search.js"></script>
+
+    <script>
+        isThisArray = function (a) {
+            return (!!a) && (a.constructor === Array);
+        };
+
+        isThisObject = function (a) {
+            return (!!a) && (a.constructor === Object);
+        };
+
+        $(document).ready(function () {
+            let reqRoom =
+            {
+                TraceId: "@Model.HotelInfoResult.TraceId",
+                HotelCode: "@Model.HotelInfoResult.HotelDetails.HotelCode",
+                ResultIndex: "@Model.HotelInfoResult.HotelDetails.ResultIndex",
+                HotelName: "@Model.HotelInfoResult.HotelDetails.HotelName",
+                NoOfRoom: "@Model.HotelInfoResult.HotelDetails.NoOfRooms",
+                CheckInDate: "@Model.HotelInfoResult.HotelDetails.CheckInDate",
+                CheckOutDate: "@Model.HotelInfoResult.HotelDetails.CheckOutDate",
+                NoOfPerson: "@Model.HotelInfoResult.HotelDetails.NoOfPersons",
+                NoOfChild: "@Model.HotelInfoResult.HotelDetails.NoOfChild",
+                CategoryId: "@Model.CategoryId"
+            };
+
+            if (reqRoom.HotelCode != "" && reqRoom.HotelCode != "" && reqRoom.ResultIndex != "") {
+
+                $.post("/Get-Hotel-Room", reqRoom)
+
+                    .done(function (result) {
+                        console.log(result);
+                        $("#hdnObject").val(JSON.stringify(result));
+
+                        if (result.getHotelRoomResult.hotelRoomsDetails.length > 0 && result.getHotelRoomResult.hotelRoomsDetails[0].amenity.length > 0) {
+
+
+                            let starterDiv = `<div color="#2bac36" type="" class="PersuasionHoverTextstyles__TextWrapperSpan-sc-1c06rw1-14 cBIBLs">
+                                        <span class="PersuasionHoverTextstyles__TextLabelIconContainer-sc-1c06rw1-19 iWHTRO">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" height="1.6rem" width="1.6rem" fill="#2bac36" class="FreeBreakfast__FreeBreakfastIcon-sc-5mryup-0 emCTpD">
+                                                <g fill="none" fill-rule="evenodd">
+                                                    <path d="M-4-4h24v24H-4z"></path>
+                                                    <path fill="#2bac36" d="M13.667 14.667a.667.667 0 010 1.333h-13a.667.667 0 010-1.333zm-9-9.334c.092 0 .166.075.166.167v1.16a.168.168 0 01-.092.15A1.325 1.325 0 004 8v1.667c0 .184.15.333.333.333h2c.184 0 .334-.15.334-.333V8a1.335 1.335 0 00-.741-1.192.167.167 0 01-.093-.15V5.5c0-.092.075-.167.167-.167h6.333a3.333 3.333 0 110 6.667h-1.786a.167.167 0 00-.12.051 5.182 5.182 0 01-3.406 1.604 5.333 5.333 0 01-5.688-5.322V6c0-.368.299-.667.667-.667zm7.664 1.334a.333.333 0 00-.333.333v1.15c0 .787-.165 1.564-.483 2.283a.167.167 0 00.152.234h.664a2 2 0 100-4zM3.191.204a.667.667 0 01.935-.009 1.849 1.849 0 010 2.61c-.2.2-.2.524 0 .724a.667.667 0 01-.943.942 1.847 1.847 0 010-2.609c.2-.2.2-.524 0-.724a.667.667 0 01.008-.934zm3 0a.667.667 0 01.935-.009 1.849 1.849 0 010 2.61c-.2.2-.2.524 0 .724a.667.667 0 01-.943.942 1.847 1.847 0 010-2.609c.2-.2.2-.524 0-.724a.667.667 0 01.008-.934zM9.183.195c.26-.26.683-.26.943 0a1.849 1.849 0 010 2.61c-.2.2-.2.524 0 .724a.667.667 0 01-.943.942 1.847 1.847 0 010-2.609.514.514 0 000-.724.667.667 0 010-.943z"></path>
+                                                </g>
+                                            </svg>
+                                        </span>
+                                        <span class="font-size-12">${result.getHotelRoomResult.hotelRoomsDetails[0].amenity[0]}</span>
+                                    </div>`;
+
+                            let _starterContainer = $(".starterContainer");
+                            _starterContainer.html(starterDiv);
+                        }
+
+                        if (result.getHotelRoomResult.hotelRoomsDetails.length > 0) {
+                            setRoomPriceContainer(result.getHotelRoomResult);
+                        }
+
+                        createCancellationContainer(result.getHotelRoomResult);
+                        createAllRooms(result);
+                    })
+
+            }
+
+            let setRoomPriceContainer = (_getHotelRoomResult) => {
+                let _totalPrice = 0, _totalTax = 0, _noOfRoom = 1, _CategoryId="";
+                if (_getHotelRoomResult.roomCombinationsArray != null) {
+                    _CategoryId = _getHotelRoomResult.roomCombinationsArray[0].categoryId;
+                    let _FirstComboArr = _getHotelRoomResult.roomCombinationsArray[0].roomCombination;
+                    let _FirstComboRoomIndex = _FirstComboArr[0].roomIndex;
+
+                    _noOfRoom = _FirstComboRoomIndex.length;
+                    for (var i = 0; i < _FirstComboRoomIndex.length; i++) {
+                        let _singleRoom = _getHotelRoomResult.hotelRoomsDetails.filter(x => x.roomIndex == _FirstComboRoomIndex[i]);
+                        let _priceOb = _singleRoom[0].price;
+                        _totalPrice += _priceOb.publishedPriceRoundedOff;
+                        _totalTax += _priceOb.tax;
+                    }
+                }
+                else {
+                    let _hotelRoomDetails = _getHotelRoomResult.hotelRoomsDetails;
+                    _totalPrice = _noOfRoom * _hotelRoomDetails[0].price.publishedPriceRoundedOff;
+                    _totalTax = _noOfRoom * _hotelRoomDetails[0].price.tax;
+                }
+
+                let _priceCon = $(".priceContainer");
+                _priceCon.find(".publishedRoomPrice").text(_totalPrice);
+                _priceCon.find(".roomTax").text(_totalTax + " taxes & fees");
+                _priceCon.find(".noOfRoom").text(_noOfRoom + " x " + (_noOfRoom > 1 ? "Rooms" : "Room"));
+
+                //reqRoom.NoOfRoom = _noOfRoom;
+                reqRoom.CategoryId = _CategoryId;
+            }
+
+            let createCancellationContainer = (_getHotelRoomResult) => {
+                if (_getHotelRoomResult.isUnderCancellationAllowed && _getHotelRoomResult.hotelRoomsDetails.length > 0) {
+                    let lastCanDate = "Last Cancellation Date: " + (_getHotelRoomResult.hotelRoomsDetails[0].lastCancellationDate || "");
+                    let candiv = ` <div>
+                            <div style="width: 22rem" itemprop="aggregateRating" itemscope="" itemtype="http://schema.org/aggregateRating" class="dwebCommonstyles__FlexCentered-sc-112ty3f-4 ReviewInfostyles__RatingContainer-sc-1hepu7p-2 fkOjQZ lefDLr">
+                                <span>
+                                    <span color="#008a93" class="ReviewInfostyles__ReviewNumber-sc-1hepu7p-3 vmmxn">
+                                        <span itemprop="ratingValue" style="font-size: 14px;">${lastCanDate}</span>
+                                    </span>
+                                </span>
+                            </div>
+                            <div class="dwebCommonstyles__FlexCentered-sc-112ty3f-4 ReviewInfostyles__PersuasionContainer-sc-1hepu7p-0 fkOjQZ kOZOGB"></div>
+                        </div>`;
+
+                    $(".cancellationContainer").append(candiv);
+                }
+            }
+
+            let createAllRooms = (result) => {
+
+                let _hotelRoomsDetails = result.getHotelRoomResult.hotelRoomsDetails;
+                let _tableContainer = $(".roomContainerSection"),
+                    _roomTable = _tableContainer.find(".roomWrapperSection");
+                result.getHotelRoomResult.roomCombinationsArray = result.getHotelRoomResult.roomCombinationsArray || result.getHotelRoomResult.roomCombinations;
+                if (result.getHotelRoomResult.roomCombinationsArray != null) {
+                    if (_hotelRoomsDetails.length > 0) {
+                        if (isThisArray(result.getHotelRoomResult.roomCombinationsArray)) {
+                            _bindRoomCombinationArray(result.getHotelRoomResult.roomCombinationsArray, _roomTable, _hotelRoomsDetails)
+                        }
+                        else if (isThisObject(result.getHotelRoomResult.roomCombinationsArray)) {
+                            _bindRoomCombinations(result.getHotelRoomResult.roomCombinationsArray, _roomTable, _hotelRoomsDetails);
+                        }
+
+
+                    }
+                }
+
+                let _arrOpenCombination = _hotelRoomsDetails.filter(x => x.infoSource == "OpenCombination");
+                if (_arrOpenCombination.length > 0) {
+                    _arrOpenCombination.forEach(function (item, index) {
+                        let row = `<div class="room-flex mb-4 comboParent" style='border:1px solid black'>`;
+                        row += `<div class="roomcombo1">`;
+
+                        row += `<div class="roomWrap bg-white singleRoom" data-roomindex="${item.roomIndex}" data-categoryId="${item.categoryId}">
+                                <div class="roomLeft">
+                                    <div class="sticky">
+                                        <h2>${item.roomTypeName}</h2>
+                                        <ul class="appendBottom10 line-height_1">
+                                            ${createAmenitiesForRoom(item.amenities)}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="roomRight">
+                                    <div class="multiRoomRow makeFlex bdrBottom  recRoom">
+                                        <div class="makeFlex column titleWidth">
+                                            <div class="makeFlex  appendBottom15">
+                                                <div class="makeFlex column flexOne appendLeft10">
+                                                    <p class="appendBottom4">${item.roomDescription}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="makeFlex  appendBottom15">
+                                                <div class="makeFlex column flexOne appendLeft10">
+                                                    <strong>Cancellation Policy: </strong><p class="appendBottom4">${item.cancellationPolicy}</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="titleWidth">
+                                            <ul class="includeList">
+                                                ${createInclusionForRoom(item.inclusion)}
+                                            </ul>
+                                        </div>
+                                        <div class="makeFlex column titleLastWidth ">
+                                            <div class="dealOfDay" style='width:85%'>
+                                                <p class="dealTitle">
+                                                    <span class="latoBold">Last Cancellation Date: </span>
+                                                    <br/>
+                                                    <span class="font12">${item.lastCancellationDate}</span>
+                                                </p>
+                                            </div>
+                                            <div class="makeFlex appendTop40 roomTypePrice">
+                                                <div class="makeFlex column font12 appendRight10 flexOne width-270">
+                                                    <div class="font22 latoBold appendBottom5 relative makeFlex column">
+                                                        <span class="bxNegotiate appendBottom5">
+                                                            <span>₹ ${item.price.publishedPriceRoundedOff}</span>
+                                                        </span>
+                                                    </div>
+                                                    <span class="font12 appendRight10 darkGreyText">+₹ ${item.price.tax} taxes &amp; fees</span><p class="font12 grayText appendBottom5">Per Night</p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+
+
+                        row += `</div>`;
+                        row += `<div class="comboPrice">
+                                    <div class="makeFlex column perfectCenter noShrink OpenCombinationSelect">
+                                        <div class="makeFlex appendTop40 roomTypePrice">
+                                            <div class="makeFlex column font12 appendRight10 flexOne width-200">
+                                                <div class="font22 latoBold appendBottom5 relative makeFlex column">
+                                                    <span class="bxNegotiate appendBottom5"><span>₹ ${item.price.publishedPriceRoundedOff}</span>
+                                                </div>
+                                             <span class="font12 appendRight10 darkGreyText">+₹ ${item.price.tax} taxes &amp; fees</span><p class="font12 grayText appendBottom5">Per Night</p>
+                                            </div>
+                                        </div>
+                                        <button type='button' data-toggle="modal" data-target="#modalCookie1" class="primaryBtn appendBottom15 capText mt-3 selectRoom" data-actiontype="open">SELECT</button>
+                                    </div>
+                                </div>`;
+                        row += `</div>`;
+
+                        _roomTable.append(row);
+                    })
+                }
+            }
+
+            let _bindRoomCombinationArray = (RoomCombinationArray, _roomTable, _hotelRoomsDetails) => {
+
+                RoomCombinationArray.forEach(function (_item, _index) {
+                    let _roomCombination = _item.roomCombination;
+                    _roomCombination.forEach(function (it, i) {
+                        let itemData = [];
+                        for (var i = 0; i < it.roomIndex.length; i++) {
+                            itemData.push(_hotelRoomsDetails.filter(x => x.roomIndex == it.roomIndex[i]));
+                        }
+
+                        let _totalPrice = 0, _totalTax = 0;
+                        let row = `<div class="room-flex mb-4 comboParent" style='border:1px solid black'>`;
+                        row += `<div class="roomcombo1">`;
+
+                        itemData.forEach(function (it2, index) {
+                            let item = it2[0];
+                            _totalPrice += item.price.publishedPriceRoundedOff;
+                            _totalTax += item.price.tax;
+
+                            row += `<div class="roomWrap bg-white singleRoom" data-roomindex="${item.roomIndex}" data-categoryId="${item.categoryId}">
+                                <div class="roomLeft">
+                                    <div class="sticky">
+                                        <h2>${item.roomTypeName}</h2>
+                                        <ul class="appendBottom10 line-height_1">
+                                            ${createAmenitiesForRoom(item.amenities)}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="roomRight">
+                                    <div class="multiRoomRow makeFlex bdrBottom  recRoom">
+                                        <div class="makeFlex column titleWidth">
+                                            <div class="makeFlex  appendBottom15">
+                                                <div class="makeFlex column flexOne appendLeft10">
+                                                    <p class="appendBottom4">${item.roomDescription}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="makeFlex  appendBottom15">
+                                                <div class="makeFlex column flexOne appendLeft10">
+                                                    <strong>Cancellation Policy: </strong><p class="appendBottom4">${item.cancellationPolicy}</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="titleWidth">
+                                            <ul class="includeList">
+                                                ${createInclusionForRoom(item.inclusion)}
+                                            </ul>
+                                        </div>
+                                        <div class="makeFlex column titleLastWidth ">
+                                            <div class="dealOfDay" style='width:85%'>
+                                                <p class="dealTitle">
+                                                    <span class="latoBold">Last Cancellation Date: </span>
+                                                    <br/>
+                                                    <span class="font12">${item.lastCancellationDate}</span>
+                                                </p>
+                                            </div>
+                                            <div class="makeFlex appendTop40 roomTypePrice">
+                                                <div class="makeFlex column font12 appendRight10 flexOne width-270">
+                                                    <div class="font22 latoBold appendBottom5 relative makeFlex column">
+                                                        <span class="bxNegotiate appendBottom5">
+                                                            <span>₹ ${item.price.publishedPriceRoundedOff}</span>
+                                                        </span>
+                                                    </div>
+                                                    <span class="font12 appendRight10 darkGreyText">+₹ ${item.price.tax} taxes &amp; fees</span><p class="font12 grayText appendBottom5">Per Night</p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                        })
+
+                        row += `</div>`;
+                        row += `<div class="comboPrice">
+                                    <div class="makeFlex column perfectCenter noShrink">
+                                        <div class="makeFlex M★ HotelDetailNoOfRoomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsNoOfRoomssHotelDetailseHotelDetailslp★ HotelInfoResultpendTop40 roomTypePrice">
+                                            <div class="makeFlex column font12 appendRight10 flexOne width-200">
+                                                <div class="font22 latoBold appendBottom5 relative makeFlex column">
+                                                    <span class="bxNegotiate appendBottom5"><span>₹ ${_totalPrice}</span>
+                                                </div>
+                                             <span class="font12 appendRight10 darkGreyText">+₹ ${_totalTax.toFixed(2)} taxes &amp; fees</span><p class="font12 grayText appendBottom5">Per Night</p>
+                                            </div>
+                                        </div>
+                                        <button type='button' class="primaryBtn appendBottom15 capText mt-3 bookCombo" data-actiontype="combo">Book This Combo</button>
+                                    </div>
+                                </div>`;
+                        row += `</div>`;
+                        _roomTable.append(row);
+                    })
+                })
+
+            }
+
+            let _bindRoomCombinations = (RoomCombinations, _roomTable, _hotelRoomsDetails) => {
+                let _roomCombination = RoomCombinations.roomCombination;
+                _roomCombination.forEach(function (it, i) {
+                    let itemData = [];
+                    for (var i = 0; i < it.roomIndex.length; i++) {
+                        itemData.push(_hotelRoomsDetails.filter(x => x.roomIndex == it.roomIndex[i]));
+                    }
+
+                    let _totalPrice = 0, _totalTax = 0;
+                    let row = `<div class="room-flex mb-4 comboParent" style='border:1px solid black'>`;
+                    row += `<div class="roomcombo1">`;
+
+                    itemData.forEach(function (it2, index) {
+                        let item = it2[0];
+                        _totalPrice += item.price.publishedPriceRoundedOff;
+                        _totalTax += item.price.tax;
+
+                        row += `<div class="roomWrap bg-white singleRoom" data-roomindex="${item.roomIndex}" data-categoryId="${item.categoryId}">
+                                <div class="roomLeft">
+                                    <div class="sticky">
+                                        <h2>${item.roomTypeName}</h2>
+                                        <ul class="appendBottom10 line-height_1">
+                                            ${createAmenitiesForRoom(item.amenities)}
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="roomRight">
+                                    <div class="multiRoomRow makeFlex bdrBottom  recRoom">
+                                        <div class="makeFlex column titleWidth">
+                                            <div class="makeFlex  appendBottom15">
+                                                <div class="makeFlex column flexOne appendLeft10">
+                                                    <p class="appendBottom4">${item.roomDescription}</p>
+                                                </div>
+                                            </div>
+
+                                            <div class="makeFlex  appendBottom15">
+                                                <div class="makeFlex column flexOne appendLeft10">
+                                                    <strong>Cancellation Policy: </strong><p class="appendBottom4">${item.cancellationPolicy}</p>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="titleWidth">
+                                            <ul class="includeList">
+                                                ${createInclusionForRoom(item.inclusion)}
+                                            </ul>
+                                        </div>
+                                        <div class="makeFlex column titleLastWidth ">
+                                            <div class="dealOfDay" style='width:85%'>
+                                                <p class="dealTitle">
+                                                    <span class="latoBold">Last Cancellation Date: </span>
+                                                    <br/>
+                                                    <span class="font12">${item.lastCancellationDate}</span>
+                                                </p>
+                                            </div>
+                                            <div class="makeFlex appendTop40 roomTypePrice">
+                                                <div class="makeFlex column font12 appendRight10 flexOne width-270">
+                                                    <div class="font22 latoBold appendBottom5 relative makeFlex column">
+                                                        <span class="bxNegotiate appendBottom5">
+                                                            <span>₹ ${item.price.publishedPriceRoundedOff}</span>
+                                                        </span>
+                                                    </div>
+                                                    <span class="font12 appendRight10 darkGreyText">+₹ ${item.price.tax} taxes &amp; fees</span><p class="font12 grayText appendBottom5">Per Night</p>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>`;
+                    })
+
+                    row += `</div>`;
+                    row += `<div class="comboPrice">
+                                    <div class="makeFlex column perfectCenter noShrink">
+                                        <div class="makeFlex M★ HotelDetailNoOfRoomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsomsNoOfRoomssHotelDetailseHotelDetailslp★ HotelInfoResultpendTop40 roomTypePrice">
+                                            <div class="makeFlex column font12 appendRight10 flexOne width-200">
+                                                <div class="font22 latoBold appendBottom5 relative makeFlex column">
+                                                    <span class="bxNegotiate appendBottom5"><span>₹ ${_totalPrice}</span>
+                                                </div>
+                                             <span class="font12 appendRight10 darkGreyText">+₹ ${_totalTax.toFixed(2)} taxes &amp; fees</span><p class="font12 grayText appendBottom5">Per Night</p>
+                                            </div>
+                                        </div>
+                                        <button type='button' class="primaryBtn appendBottom15 capText mt-3 bookCombo" data-actiontype="combo">Book This Combo</button>
+                                    </div>
+                                </div>`;
+                    row += `</div>`;
+                    _roomTable.append(row);
+                })
+            }
+
+            let createAmenitiesForRoom=(arrAmenities) => {
+                if (arrAmenities.length > 0) {
+                    let li = "";
+                    for (var i = 0; i < arrAmenities.length; i++) {
+                        li += `<li class="makeFlex appendBottom5"><span class="oval"></span>${arrAmenities[i]}</li>`;
+                    }
+
+                    return li;
+                }
+                return "";
+            }
+
+            let createInclusionForRoom = (arrInclusion) => {
+                if (arrInclusion.length > 0) {
+                    let li = "";
+                    for (var i = 0; i < arrInclusion.length; i++) {
+                        li += `<li>${arrInclusion[i]}</li>`;
+                    }
+
+                    return li;
+                }
+                return "";
+            }
+
+            //Booking process
+            $(".comboRoomsSection").on("click", ".selectRoom", function () {
+
+
+                if ($(this).parents(".comboParent").find(".singleRoom").hasClass("selected")) {
+                    $(this).parents(".comboParent").find(".singleRoom").removeClass("selected");
+                    $(this).attr("title","Click to Select").html(`SELECT`);
+                }
+                else {
+                    $(this).parents(".comboParent").find(".singleRoom").addClass("selected");
+                    $(this).attr("title","Remove Selection").html(`<i class="fa fa-check-circle"></i> SELECTED`);
+                }
+
+                let _selectedRooms = $(this).parents(".roomWrapperSection").find(".singleRoom.selected").length;
+                if (_selectedRooms >= reqRoom.NoOfRoom) {
+                    //$(this).parents(".comboParent").find(".singleRoom").removeClass("selected");
+                    //$(this).attr("title", "Click to Select").html(`SELECT`);
+
+                    $(".comboRoomsSection").find(".singleRoom:not(.selected)").each(function () {
+                        $(this).parents(".comboParent").find(".selectRoom").prop("disabled", true);
+                    })
+                    //return;
+                }
+                else {
+                    $(".comboRoomsSection").find(".singleRoom:not(.selected)").each(function () {
+                        $(this).parents(".comboParent").find(".selectRoom").prop("disabled", false);
+                    })
+                }
+
+                let _object = $("#hdnObject"),
+                    res = $.parseJSON(_object.val()),
+                    _actionType = $(this).attr("data-actiontype");
+
+                let _totalPrice = 0, _totalTax = 0, _noOfRoom = 0;
+                $(this).parents(".roomWrapperSection").find(".singleRoom.selected").each(function () {
+                    let _roomIndex = $(this).parents(".comboParent").find(".singleRoom").attr("data-roomindex");
+                    let _roomItem = res.getHotelRoomResult.hotelRoomsDetails.filter(x => x.roomIndex == _roomIndex);
+
+                    //_totalPrice += reqRoom.NoOfRoom * _roomItem[0].price.publishedPriceRoundedOff;
+                    //_totalTax += reqRoom.NoOfRoom * _roomItem[0].price.tax;
+
+                    _totalPrice += _roomItem[0].price.publishedPriceRoundedOff;
+                    _totalTax += _roomItem[0].price.tax;
+                    _noOfRoom++;
+                })
+
+                if (_actionType == "open") {
+                    let _roomCartSection = $(".roomCartSection");
+                    if (_selectedRooms > 0) {
+                        let roomCartTemplate = `<div class="col-sm-12 roomCartOuter" style="position:fixed;bottom:0px;z-index: 100;">
+                                            <div class="row">
+                                                <div class="col-sm-3"></div>
+                                                <div class="col-sm-6 text-center p-2 pt-3 bg-danger text-white" style="background-color: #4f97dc !important;border-radius: 5px 5px 0px 0px;">
+                                                    <h4>
+                                                        <span>${_noOfRoom} x ${_noOfRoom > 1 ? "Rooms" : "Room"} selected | ₹ ${_totalPrice} <small style="font-size: 11px;">+₹ ${_totalTax} taxes &amp; fees</small></span>
+                                                        <button class="btn btn-light btn-sm ml-5 proceedBooking">Proceed Booking</button>
+                                                    </h3>
+                                                </div>
+                                                <div class="col-sm-3"></div>
+                                            </div>
+                                        </div>`;
+                        _roomCartSection.empty();
+                        _roomCartSection.html(roomCartTemplate);
+                    }
+                    else {
+                        _roomCartSection.empty();
+                    }
+                }
+            })
+
+            $(".comboRoomsSection").on("click", ".bookCombo", function () {
+                preloader.load();
+                let roomIndexes = getComboRoomIndex($(this));
+
+                frmProceedBooking(roomIndexes);
+            })
+
+            $(".iqxHjp").on("click", ".proceedBooking", function () {
+                preloader.load();
+            var catid = reqRoom.CategoryId;
+                if (catid != '') {
+                    let arrRoomIndexes = new Array();
+                    arrRoomIndexes.push({ roomIndex: 1, categoryId: catid });
+                    frmProceedBooking(arrRoomIndexes);
+                }
+            })
+
+            let getSelectedRoomIndexes = () => {
+                let arrRoomIndexes = new Array();
+                $(".roomWrapperSection").find(".singleRoom.selected").each(function () {
+                    arrRoomIndexes.push({ roomIndex: $(this).attr("data-roomindex"), categoryId: $(this).attr("data-categoryId") });
+                })
+
+                return arrRoomIndexes;
+            }
+
+            let getComboRoomIndex = (_btnCombo) => {
+                let arrRoomIndexes = new Array();
+                _btnCombo.parents(".comboParent").find(".singleRoom").each(function () {
+                    arrRoomIndexes.push({ roomIndex: $(this).attr("data-roomindex"), categoryId: $(this).attr("data-categoryId") });
+                })
+
+                return arrRoomIndexes;
+            }
+
+            let frmProceedBooking = (roomIndexes) => {
+                HotelLoaderShow('', '', '');
+                if (roomIndexes.length > 0) {
+
+                    let frm = $("#frmProceedBooking");
+
+                    console.log(JSON.stringify(roomIndexes))
+
+                    let _object = $("#hdnObject"),
+                        res = $.parseJSON(_object.val());
+
+                    console.log(res)
+                    let roomIndexArr = res.getHotelRoomResult.hotelRoomsDetails.filter(x => roomIndexes.filter(y => y.roomIndex == x.roomIndex && y.categoryId == x.categoryId).length > 0);
+                    frm.find("input[name=RoomIndexes]").val(JSON.stringify(roomIndexArr));
+                    frm.submit();
+                }
+            }
+        })
+    </script>
+</body>
+
+<!-- Mirrored from techydevs.com/demos/themes/html/trizen-demo/trizen/flight-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 28 Apr 2021 09:20:30 GMT -->
+</html>

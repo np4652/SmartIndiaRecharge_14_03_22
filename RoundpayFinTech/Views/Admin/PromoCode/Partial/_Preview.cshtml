@@ -1,0 +1,20 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.PromoCode
+
+@{
+    var Preview= Model.Extension != "" ? "~/Image/PromoCode/" + Model.ID + Model.Extension + "?a=" + Model.ModifyDate : "";
+}
+<div class="container">
+    <div class="section">
+        <div class="row">
+            <div class="col-md-12">
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h3 class="text-info">Preview</h3><hr />
+            </div>
+            <img src="@Preview" asp-append-version="true" style="width:767px;height:400px" />
+        </div>
+       
+    </div>
+</div>

@@ -1,0 +1,364 @@
+﻿@{
+    ViewData["Title"] = "Package-Service Assignment";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">Package-Service Assignment</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-7 line-height-34 text-monospace">
+                                <i class="fas fa-link"></i> Package Master
+                            </div>
+                            <div class="col-sm-5">
+                                @if (ApplicationSetting.IsPackageAllowed)
+                                {
+                                    <div class="input-group">
+                                        <input id="txtSearchSlab" class="form-control text-left " placeholder="Search On List" />
+                                        <div class="input-group-append">
+                                            <button id="btnNew" class="btn btn-default btn-sm">New</button>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive vh-1">
+                            <table class="table table-bordered table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%;">#</th>
+                                        @if (ApplicationSetting.IsPackageAllowed)
+                                        {
+                                            <th style="width:1%;">Actions</th>
+                                        }
+                                        <th style="width:8%;">Package</th>
+                                        <th style="width:77%">Services</th>
+                                        <th>Cost(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th>IsMore</th>
+                                        <th>Default</th>
+                                        <th>SelfAssigned</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            darkAnimBtn($('#btnNew'));
+            preloader.load();
+            $.post('/Package-Master')
+                .done(function (result) {
+                    resultReload(result);
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    an.autoClose = 5;
+                    $("#txtSearchSlab").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#__p table tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                    $('[id^="chbService_"]').unbind().change(function () {
+                        var id = $(this).attr('id');
+                        var s = id.split('_')[2];
+                        var Is = $(this).is(':checked');
+                        var lbl = $('label[for="' + this.id + '"]');
+                        preloader.load();
+
+                        $.post('/p-update', { p: $(this).closest('tr').data().itemId, s: s, a: Is }, function (result) {
+                            resultReload(result);
+                            an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            an.autoClose = 5;
+                            if (result.statuscode == an.type.failed) {
+                                lbl.addClass('is-invalid');
+                            } else {
+                                lbl.addClass('is-valid');
+                            }
+                        }).catch(function () {
+                            console.clear();
+                        }).fail(function (xhr) {
+                            $(_this).attr('checked', Is == false);
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['Edit', 'New']) < 0) {
+                            return true;
+                        }
+                        preloader.load();
+                        var id = 0;
+                        if ($(this).text() === 'Edit') {
+                            id = $(this).closest('tr').data().itemId;
+                        }
+                        $.post('/Package-Edit/' + id).done(function (result) {
+                            resultReload(result);
+                            mdlA.content = result;
+                            mdlA.id = 'mymodal';
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.default);
+                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                mdlA.dispose();
+                            });
+                            var ctSlab = { snam: $('#txtSlabName'), srem: $('#txtRemark'), btn: $('#btnSlbSave'), hid: $('#hid'), isactive: $('#chbIsActive'), isdefault: $('#chbIsDefault'), pkgcost: $('#txtPkgCost'), isShowMore: $('#chbIsShowMore') };
+                            ctSlab.btnTxt = ctSlab.btn.html();
+                            setTimeout(function () {
+                                ctSlab.snam.focus();
+                            }, 500);
+                            ctSlab.btn.click(function () {
+                                if (ctSlab.btnTxt !== ctSlab.btn.html()) {
+                                    return false;
+                                }
+                                btnLdr.addClass = 'btn-dark';
+                                btnLdr.removeClass = 'btn-outline-dark';
+                                btnLdr.Start(ctSlab.btn, 'Requesting');
+                                var IsE = { snam: ctSlab.snam.val().trim() == '' }
+                                $v.showErrorFor(ctSlab.snam, 'Field can not be empty!', IsE.snam);
+
+                                IsE.err = (IsE.snam);
+                                if (IsE.err) {
+                                    btnLdr.Stop(ctSlab.btn);
+                                    return false;
+                                }
+                                var PM = { ID: ctSlab.hid.val(), Slab: ctSlab.snam.val(), Remark: ctSlab.srem.val(), IsActive: ctSlab.isactive.is(':checked'), IsDefault: ctSlab.isdefault.is(':checked'), PackageCost: ctSlab.pkgcost.val(), IsShowMore: ctSlab.isShowMore.is(':checked') }
+                                an.id = 'myalert';
+                                an.parent = $('#alertmsg');
+
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/Package-Edit',
+                                    dataType: 'json',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(PM),
+                                    success: function (result) {
+                                        resultReload(result);
+                                        console.log(result);
+                                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        if (result.statuscode == an.type.success) {
+                                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                                mdlA.dispose(function () {
+                                                    reload();
+                                                });
+                                            });
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (xhr, result) {
+                                        an.title = "Oops! Error";
+                                        an.content = result;
+                                        an.alert(an.type.failed);
+                                        if (result === 'parsererror') {
+                                            reload();
+                                        }
+                                    },
+                                    complete: function () {
+                                        btnLdr.Stop(ctSlab.btn);
+                                    }
+                                });
+                            });
+                        }).catch(function (xhr, e, msg) {
+
+                        }).fail(function (xhr) {
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+
+                    $('a[id^="CPC"], a[id^="LPC"]').click(function () {
+                        preloader.load();
+                        var id = $(this).closest('tr').data().itemId;
+                        var actiontype = 0
+                        console.log($(this).attr('id'));
+                        if ($(this).attr('id') === 'LPC_' + id) {
+                            actiontype = 2;
+                        }
+                        $.post('/Package-Comm', { CommonInt: parseInt(id), CommonInt2: parseInt(actiontype) }, function (result) {
+                            resultReload(result);
+                            mdlA.content = result;
+                            mdlA.id = 'mymodal';
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.xxlarge);
+                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                mdlA.dispose();
+                            });
+                            $('[data-toggle="tooltip"]').tooltip();
+                            $('.btn-toggle').click(function () {
+                                $(this).find('.btn').toggleClass('active');
+                                if ($(this).find('.btn-dark').length > 0) {
+                                    $(this).find('.btn').toggleClass('btn-dark');
+                                }
+                                if ($(this).find('.btn-outline-dark').length > 0) {
+                                    $(this).find('.btn').toggleClass('btn-outline-dark');
+                                }
+                            });
+                            $('input[id^="txtComAmt"], div[id^="btnGroupComType"]').on('blur click', function () {
+                                if (event.type == "click" && ($(this).is(':input[id^="txtComAmt"]'))) {
+                                    return true;
+                                }
+                                var IstxtComAmt = false;
+                                if ($(this).is(':input[id^="txtComAmt"]')) {
+                                    IstxtComAmt = true;
+                                }
+                                var _tid = $(this).attr('id');
+
+                                var PackageId = parseInt(_tid.split('_')[1]);
+                                var RoleId = parseInt(_tid.split('_')[2]);
+                                var comm = $('#txtComAmt_' + PackageId + '_' + RoleId).val();
+                                var hidcomm = $('#hidComAmt_' + PackageId + '_' + RoleId).val();
+                                var commType = $('#btnGroupComType_' + PackageId + '_' + RoleId + ' button.active').text();
+
+                                var dotLen = comm.split('.').length - 1;
+                                var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+
+                                $v.showErrorFor($('#txtComAmt_' + PackageId + '_' + RoleId), 'Invalid amount.', IsE.comm);
+                                IsE.err = IsE.comm;
+                                if (IsE.err) {
+                                    return false;
+                                }
+
+                                if (parseFloat(comm) === parseFloat(hidcomm) && IstxtComAmt) {
+                                    return true;
+                                }
+                                var Slab = { PackageId: PackageId, Commission: parseFloat(comm), CommType: commType === 'SUR' ? 1 : 0, RoleId: RoleId, ActionType: 2 };
+
+                                preloader.load();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/Update-Level-PkgComm',
+                                    data: JSON.stringify(Slab),
+                                    dataType: 'json',
+                                    contentType: 'application/json',
+                                    success: function (result) {
+                                        resultReload(result);
+                                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        if (result.statuscode == an.type.success) {
+                                            $('#ToolTip_' + PackageId + '_' + RoleId).attr('data-original-title', 'Last Modified: Just Now!');
+                                            $('#hidComAmt_' + PackageId + '_' + RoleId).val(comm);
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (xhr, result) {
+                                        if (result.responseText.indexOf('login.js') > -1) {
+                                            rel(0);
+                                            return false;
+                                        }
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        preloader.remove();
+                                    }
+                                });
+
+                            });
+                        }).catch(function (xhr, e, msg) {
+
+                        }).fail(function (xhr) {
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+                });
+        });
+    </script>
+}

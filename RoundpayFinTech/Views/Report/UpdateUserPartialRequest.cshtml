@@ -1,0 +1,223 @@
+﻿@model SattlementAccountStatus
+@{
+    ViewData["Title"] = "Bank Details Update Request";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Bank Details Update Request</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i>Bank Details Update Request
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtAccHolder">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="1000">1000</option>
+                                        <option value="5000">5000</option>
+                                        <option value="-1">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl">Approve Status</label>
+                                    @{ var list = new SelectList(Model.ApprovalStatus, "ID", "Name");
+                                        var select = 1;
+                                    }
+
+                                    <select aria-describedby="helpBL" class="form-control" id="ddl_Approve" tabindex="4" asp-items="@list" asp-for="@select">
+                                        <option value="-1">ALL</option>
+                                    </select>
+
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlOperator">Verification Status</label>
+                                    @{ var list1 = new SelectList(Model.VerificationStatus, "ID", "Name");
+                                        select = -1;
+                                    }
+
+                                    <select aria-describedby="helpBL" class="form-control" id="ddl_Verification" tabindex="4" asp-items="@list1" asp-for="@select">
+                                        <option selected value="-1">ALL</option>
+                                    </select>
+
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlOperator">Choose Filed</label>
+                                    <select id="ddlStype" tabindex="9" class="form-control">
+                                        <option selected value="-1">ALL</option>
+                                        <option value="1">Account Number</option>
+                                        <option value="2">User ID</option>
+                                        <option value="3">Mobile Number</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">Search Text</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="Small4" class="form-control" id="txtStext" tabindex="6" type="text">
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="9" class="btn btn-outline-dark" original-text="Search">Search</button>
+                                        </div>
+
+                                    </div>
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm tblrecord table-mh">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblFA">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th>Action</th>
+                                        <th class="text-wrap">User</th>
+                                        <th>Bank</th>
+                                        <th>Account Holder</th>
+                                        <th>Actual Name</th>
+                                        <th>IFSC</th>
+                                        <th class="text-nowrap">
+                                            Approval Status
+                                        </th>
+                                        @if (ApplicationSetting.IsSattlemntAccountVerify)
+                                        {
+                                            <th class="text-nowrap">Verification Status</th>
+                                        }
+                                        <th>Request Date</th>
+
+
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            search();
+        });
+        var search = function () {
+            preloader.load();
+            let data = {
+                VerificationStatus: $('#ddl_Verification').val(),
+                ApprovalStatus: $('#ddl_Approve').val(),
+                CommonInt: $('#ddlStype').val(),
+                CommonStr3: $('#txtStext').val(),
+                CommonInt2: $('#ddlTop').val()
+
+            }
+            $v.showErrorFor($('#txtStext'), 'Please Fill Search Text.', ($('#ddlStype').val() != "-1"&&$('#txtStext').val() == ""));
+          
+
+                if($('#ddlStype').val() != "-1"&& $('#txtStext').val() == "") {
+                   
+                    preloader.remove()
+                    return false;
+                }
+          
+
+            $.ajax({
+                type: 'POST',
+                url: '/_UpdateUserPartialRequest',
+                data: JSON.stringify(data),
+                contentType: 'application/json',
+                success: function (result) {
+                    $('#tblFA tbody').html(result);
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $(".dropdown-toggle").dropdown();
+                    $('[id^=btnAccept],[id^=btnReject]').click(function () {
+                        debugger;
+                        var status = this.id.toUpperCase()[3];
+                        var id = $(this).closest('tr').data().itemId;
+                        var Name = $(this).closest('tr').data().html;
+                        preloader.load();
+                        $.post('/Update_SattlementAccountbyadmin', { Status: status, RequestID: id, Name: Name })
+
+                            .done(function (result) {
+                                resultReload(result);
+                                search()
+                                if (result.statuscode !== undefined) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $('[data-item-id="' + id + '"]').remove();
+                                    }
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request....Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                },
+                complete: function () {
+                    btnLdr.Stop($("#btnSearch"));
+                    preloader.remove();
+                }
+            });
+        };
+
+        $("#btnSearch").click(function () {
+            search()
+        })
+
+    </script>
+}
+

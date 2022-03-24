@@ -1,0 +1,310 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>
+@{
+    ViewData["Title"] = "EServicesPendings";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link href="~/lib/bootstrap/dist/css/bootstrap-select.css" rel="stylesheet" />
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> E-Services Pending Transaction</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-7 text-monospace">
+                                <i class="fas fa-link"></i> E-Services Pending Transaction
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="input-group">
+                                    @{
+                                        var lst = new SelectList(Model, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" data-live-search="true" aria-describedby="nameOperator" tabindex="7" class="selectpicker form-control" asp-items="lst">
+                                        <option value="0">:: Select E-Services :: </option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" id="btnSearch" class="btn btn-info text-monospace">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-3">
+
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                @*<div class="form-group">
+                                    @{
+                                        var lst = new SelectList(Model, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" data-live-search="true" aria-describedby="nameOperator" tabindex="7" class="selectpicker" asp-items="lst">
+                                        <option value="0">:: Select E-Services :: </option>
+                                    </select>
+                                </div>*@
+                            </div>
+                            @*<div class="col-md-3 col-sm-3 col-xs-3">
+                                <button type="button" id="btnSearch" class="btn btn-info">Search</button>
+                            </div>*@
+                        </div>
+                        <div id="pends">
+                            <div class="table-responsive table-sm">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="tblPendings">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col"><input type="checkbox" id="chbResend_All" /></th>
+                                            <th>Actions</th>
+                                            <th>TransactionIDs</th>
+                                            <th scope="col">DateTime</th>
+                                            <th scope="col">Outlet</th>
+                                            <th scope="col">AccountNo</th>
+                                            <th scope="col" class="text-right">Amount</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">API</th>
+                                            <th scope="col">VendorID</th>
+                                            <th scope="col">Operator</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="12">
+                                                Searching...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var pends = function () {
+                preloader.load();
+                $.post('/PESPendingTransaction', { OID: $('#ddlOperator').val() })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('.__p #pends').html(result);
+                        $('[data-toggle="tooltip"]').tooltip();
+
+                        $('[id^=btnSuccess],[id^=btnFail]').click(function () {
+                            var status = this.id.toUpperCase()[3];
+                            var id = $(this).closest('tr').data().itemId;
+                            var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[1]).find('[id^=txtRemark]');
+                            var rem = txtRemark.val();
+                            var transid = $($('[data-item-id="' + id + '"]').children('td')[2]).find('small').html().trim().split('[').join('').split(']').join('') + String.fromCharCode(160);
+                            //preloader.load();
+                            console.log(status)
+                            if (status == 'S') {
+                                _ApprovalWin(status, id, transid, rem);
+                            }
+                            else {
+                                _Action(status, id, transid, rem)
+                            }
+                        });
+
+
+                        $(".a_modal").click(function () {
+                            var td = $(this).parent("td");
+                            var tid = $(this).attr("name");
+                            var transid = $(td).find("#lbltid").val();
+                            $.post('/PESDetails', { TID: tid, T: transid }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'myalert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span').unbind().click(function () {
+                                    mdlA.dispose();
+                                });
+                            }).fail(function (xhr) {
+                                if (xhr.status === 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status === 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        });
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+
+            $('#btnSearch').click(function () {
+                pends();
+            });
+
+            $('#btnSearch').click();
+        });
+
+        function _Action(status, id, transid, rem) {
+            $.post('/U-S-F', { Status: status, TID: id, TransactionID: transid, Remark: rem })
+                .done(function (result) {
+                    resultReload(result);
+                    if (result.statuscode !== undefined) {
+                        if (result.statuscode == an.type.failed) {
+                            an.title = "Oops";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }
+                        else if (result.statuscode == an.type.success) {
+                            an.title = "Well done";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            $('[data-item-id="' + id + '"]').remove();
+                        }
+                    }
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var _ApprovalWin = (status, id, transid, rem) => {
+            var _html = `<div class="row">
+                                      <div class="col-md-12">
+                                        <button type="button" class="close" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        <h5>Approval</h5><hr />
+                                      </div>
+                                      <div class="col-sm-12">
+                                        <div class="form-group">
+                                            <label>Upload File</label>
+                                            <input type="file" id="txtfile" class="form-control" multiple/>
+                                        </div>
+                                        <div class="form-group">
+                                            <button class="btn btn-outline-success" id="btnApprove">Approve</button>
+                                        </div>
+                                      </div>
+                                   </div>`
+            mdlA.id = 'approvalWin';
+            mdlA.content = _html;
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.default);
+            $('button.close span').unbind().click(function () {
+                mdlA.dispose();
+            });
+
+
+            $('#btnApprove').click(function () {
+                var formData = new FormData();
+                formData.append('TID', id)
+                for (let i = 0; i < $('#txtfile')[0].files.length; i++) {
+                    formData.append('file', $('#txtfile')[0].files[i])
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/upload-PESDocument',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: function (result) {
+                        if (result.statuscode === 1) {
+                            an.title = 'Success';
+                            an.content = result.msg;
+                            an.alert(an.type.success);
+                            _Action(status, id, transid, rem);
+                            $('button.close span').click();
+
+                        } else {
+                            an.title = 'Oops';
+                            an.content = result.msg;
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (result) {
+                        checkError(result);
+                        an.title = 'Oops';
+                        an.content = 'An error occured!';
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        preloader.remove();
+                    }
+                });
+            });
+        }
+
+
+    </script>
+}

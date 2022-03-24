@@ -1,0 +1,371 @@
+﻿@using Fintech.AppCode.StaticModel
+@model Fintech.AppCode.Model.Reports.AccountSummary
+
+@if (Model.RoleID == Role.APIUser)
+{
+    <style>
+        .card-count-left {
+            padding: 6px 8px;
+            background-color: #e0e0e0;
+        }
+
+        .sales-heading {
+            font-size: 17px;
+        }
+
+        .card-count-left {
+            width: 40px;
+            height: 40px;
+        }
+        .outerBox{
+            padding:0px;
+        }
+    </style>
+}
+else
+{
+    <style>
+        .card-count-left {
+            padding: 10px 10px;
+            background-color: #e0e0e0;
+        }
+    </style>
+}
+
+@if (Model.RoleID == Role.Retailor_Seller || Model.RoleID == Role.APIUser)
+{
+    @if (Model.RoleID == Role.Retailor_Seller || Model.RoleID == Role.APIUser)
+    {
+        <div class="col-12 outerBox">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    @*<i class="fa fa-chart-bar"></i>*@
+                    <img src="~/images/favicons/sales.png" class="img-fluid" />
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Sales</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Requested</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 outerBox">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    @*<i class="fa fa-chart-bar"></i>*@
+                    <img src="~/images/favicons/purchase.png" class="img-fluid" />
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Purchase</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Purchase</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 outerBox">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    @*<i class="fa fa-chart-bar"></i>*@
+                    <img src="~/images/favicons/earning.png" class="img-fluid" />
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Earning</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Commission</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 outerBox">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    @*<i class="fa fa-chart-bar"></i>*@
+                    <img src="~/images/favicons/refund.png" class="img-fluid" />
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Refund</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Refunded</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        if (Model.RoleID == Role.Retailor_Seller)
+        {
+            if (ApplicationSetting.IsTarget == true)
+            {
+                <div class="col-12 outerBox">
+                    <div class="card-count mb-2">
+                        <div class="card-count-left">
+                            @*<i class="fa fa-chart-bar"></i>*@
+                            <img src="~/images/favicons/target.png" class="img-fluid" />
+                        </div>
+                        <div class="card-count-right">
+                            <span class="count_top text-dark">Target</span>
+                            <div class="count text-pink">
+                                <h2 class="mb-0 sales-heading">@Model.SetTarget</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 outerBox">
+                    <div class="card-count mb-2">
+                        <div class="card-count-left">
+                            @*<i class="fa fa-chart-bar"></i>*@
+                            <img src="~/images/favicons/remain target.png" class="img-fluid" />
+                        </div>
+                        <div class="card-count-right">
+                            <span class="count_top text-dark">Remain Target</span>
+                            <div class="count text-pink">
+                                @{
+                                    var _remain = Model.SetTarget - Model.TargetTillDate;
+                                    if (_remain < 0)
+                                    {
+                                        <h2 class="mb-0 sales-heading">0</h2>
+                                    }
+                                    else
+                                    {
+                                        <h2 class="mb-0 sales-heading">@_remain</h2>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+            if (ApplicationSetting.IsTarget == true && Model.IsGift == true)
+            {
+                <div class="col-12 outerBox">
+                    <div class="card-count mb-2">
+                        <div class="card-count-left">
+                            <i class="fa fa-chart-bar"></i>
+                        </div>
+                        <div class="card-count-right">
+                            <span class="count_top text-dark">Gift</span>
+                            <div class="count text-pink">
+                                <h2 class="mb-0 sales-heading cursor-pointer" id="btn_ShowGift">
+                                    <i class="fas fa-gift"></i>
+                                </h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    }
+    else if (Model.RoleID != Role.Admin)
+    {
+        <div class="col-12">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    <i class="fa fa-chart-bar"></i>
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Fundtransfer</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.FundTransfered</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    <i class="fa fa-chart-bar"></i>
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Purchase</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Purchase</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    <i class="fa fa-chart-bar"></i>
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's Earning</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Commission</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <div class="card-count mb-2">
+                <div class="card-count-left">
+                    <i class="fa fa-chart-bar"></i>
+                </div>
+                <div class="card-count-right">
+                    <span class="count_top text-dark">Today's PurchaseReturn</span>
+                    <div class="count text-pink">
+                        <h2 class="mb-0 sales-heading">@Model.Return</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        @if (ApplicationSetting.IsTarget == true)
+        {
+            <div class="col-12">
+                <div class="card-count mb-2">
+                    <div class="card-count-left">
+                        <i class="fa fa-chart-bar"></i>
+                    </div>
+                    <div class="card-count-right">
+                        <span class="count_top text-dark">Target</span>
+                        <div class="count text-pink">
+                            <h2 class="mb-0 sales-heading">@Model.SetTarget</h2>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12">
+                <div class="card-count mb-2">
+                    <div class="card-count-left">
+                        <i class="fa fa-chart-bar"></i>
+                    </div>
+                    <div class="card-count-right">
+                        <span class="count_top text-dark">Remian Target</span>
+                        <div class="count text-pink">
+                            @{
+                                var _remain = Model.SetTarget - Model.TargetTillDate;
+                                if (_remain < 0)
+                                {
+                                    <h2 class="mb-0 sales-heading text-success">@Model.SetTarget</h2>
+                                }
+                                else
+                                {
+                                    <h2 class="mb-0 sales-heading text-pink">@Model.SetTarget</h2>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+}
+else
+{
+    <div class="col-12">
+        <div class="card card-statistics" style="margin-top:0;">
+            <div class="card-body">
+                @if (Model.RoleID == Role.Retailor_Seller || Model.RoleID == Role.APIUser)
+                {
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between ml-lg-5">
+                        <div class="col-sm col-lg col-xs-12 statistics-item">
+                            <span class="count_top text-dark">Today's Sales</span>
+                            <div class="count text-pink"><h2>@Model.Requested</h2></div>
+                        </div>
+                        <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                            <span class="count_top text-dark">Today's Purchase</span>
+                            <div class="count text-pink"><h2>@Model.Purchase</h2></div>
+                        </div>
+                        <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                            <span class="count_top text-dark">Today's Earning</span>
+                            <div class="count text-pink"><h2>@Model.Commission</h2></div>
+                        </div>
+                        <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                            <span class="count_top text-dark">Today's Refund</span>
+                            <div class="count text-pink"><h2>@Model.Refunded</h2></div>
+                        </div>
+                        @if (ApplicationSetting.IsTarget == true)
+                        {
+                            <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                                <span class="count_top text-dark">Target</span>
+                                <div class="count text-pink"><h2>@Model.SetTarget</h2></div>
+                            </div>
+
+                            <div class="col-sm col-lg col-xs-12 tile_stats_count">
+
+                                <span class="count_top text-dark">Remain Target</span>
+                                @{
+                                    var _remain = Model.SetTarget - Model.TargetTillDate;
+                                    if (_remain < 0)
+                                    {
+                                        <div class="count text-success"><h2> 0 </h2></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="count text-pink"><h2>@_remain</h2></div>
+                                    }
+                                }
+                            </div>
+                        }
+                        @if (ApplicationSetting.IsTarget == true && Model.IsGift == true)
+                        {
+                            <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                                <span class="count_top text-dark">Gift</span>
+                                <div class="count text-pink">
+                                    <h2 class="cursor-pointer" id="btn_ShowGift">
+                                        <i class="fas fa-gift"></i>
+                                    </h2>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+                else if (Model.RoleID != Role.Admin)
+                {
+                    <div class="d-flex flex-column flex-md-row align-items-center justify-content-between ml-lg-5">
+                        <div class="col-sm col-lg col-xs-12 statistics-item">
+                            <span class="count_top text-dark">Today's Fundtransfer</span>
+                            <div class="count text-pink"><h2>@Model.FundTransfered</h2></div>
+                        </div>
+                        <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                            <span class="count_top text-dark">Today's Purchase</span>
+                            <div class="count text-pink"><h2>@Model.Purchase</h2></div>
+                        </div>
+                        <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                            <span class="count_top text-dark">Today's Earning</span>
+                            <div class="count text-pink"><h2>@Model.Commission</h2></div>
+                        </div>
+
+                        <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                            <span class="count_top text-dark">Today's PurchaseReturn</span>
+                            <div class="count text-pink"><h2>@Model.Return</h2></div>
+                        </div>
+
+                        @if (ApplicationSetting.IsTarget == true)
+                        {
+                            <div class="col-sm col-lg col-xs-12 tile_stats_count">
+                                <span class="count_top text-dark">Target</span>
+                                <div class="count text-pink"><h2>@Model.SetTarget</h2></div>
+                            </div>
+
+                            <div class="col-sm col-lg col-xs-12 tile_stats_count">
+
+                                <span class="count_top text-dark">Remian Target</span>
+                                @{
+                                    var _remain = Model.SetTarget - Model.TargetTillDate;
+                                    if (_remain < 0)
+                                    {
+                                        <div class="count text-success"><h2>@(Model.SetTarget)</h2></div>
+                                    }
+                                    else
+                                    {
+                                        <div class="count text-pink"><h2>@(Model.SetTarget)</h2></div>
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+}

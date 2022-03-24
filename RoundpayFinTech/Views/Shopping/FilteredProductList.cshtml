@@ -1,0 +1,61 @@
+﻿@{
+    Layout = "/Views/Shared/_LayoutShopping.cshtml";
+}
+
+<main id="maincontent" class="page-main container single_product">
+    <div class="layout layout-2-col row">
+        <div class="col-xs-12 col-sm-3 col-md-3 col-lg-2 col-sidebar" id="divFilters" data-subcategory2-Id="@ViewBag.id">
+            <p>Filter</p>
+        </div>
+        <div class="col-main col-xs-12 col-sm-9 col-md-9 col-lg-10" id="renderProducts">
+        </div>
+    </div>
+</main>
+
+
+<div id="renderProducts"></div>
+<script src="~/Shopping/js/nouislider.js"></script>
+<script>
+    jQuery(document).ready(function () {
+        //BindMenu();
+        //CartCount();
+        //WishlistCount();
+        GetFilterProduct(@ViewBag.id);
+        GetFilterList(@ViewBag.id);
+    });
+
+    var GetFilterProduct = (id) => {
+        let param = {
+            CategoryID: 0,
+            SubCategoryID1: 0,
+            SubCategoryID2: id
+        };
+        $.post('/GetFilteredProduct', param).done(result => {
+            $('#renderProducts').html(result);
+        }).fail(xhr => {
+            //an.title = 'Oops';
+            //an.content = xhr.status === 0 ? "Check your internet connection" : "Server Error";
+            //an.alert(-1);
+        }).always(function () {
+           // preloader.remove();
+            //$('.info_shopping_icon').unbind().mouseover(function () {
+            //    shoppingMoouseOver(this);
+            //});
+        });
+    };
+
+    var GetFilterList = (id) => {
+        $.post('/GetFilterList', { sid: id, IsListForm: true }).done(result => {
+            $('#divFilters').html(result);
+        }).fail(xhr => {
+            //an.title = 'Oops';
+            //an.content = xhr.status === 0 ? "Check your internet connection" : "Server Error";
+            //an.alert(-1);
+        }).always(function () {
+            // preloader.remove();
+            //$('.info_shopping_icon').unbind().mouseover(function () {
+            //    shoppingMoouseOver(this);
+            //});
+        });
+    };
+</script>

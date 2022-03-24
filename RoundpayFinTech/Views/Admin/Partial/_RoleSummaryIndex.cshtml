@@ -1,0 +1,25 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using RoundpayFinTech.AppCode.Configuration
+@model List<DashboardData>
+@{ var Total = 0M;
+    var UTotal = 0M;}
+@foreach (var item in Model)
+{
+    Total = Total + item.Amount;
+    UTotal = UTotal + item.OpeningBal;
+    <tr>
+        <th>@item.ServiceType (@item.RoleCount)</th>
+        <td class="text-right">@item.Amount</td>
+        @if (ApplicationSetting.IsDoubleWallet)
+        {
+            <td class="text-right">@item.OpeningBal</td>
+        }
+    </tr>
+}
+<tr>
+    <th>Total</th>
+    <th class="text-right">@Total</th>
+    @if (ApplicationSetting.IsDoubleWallet)
+    {
+        <th class="text-right">@UTotal</th>}
+</tr>

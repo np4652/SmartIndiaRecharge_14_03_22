@@ -1,0 +1,22 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@model IEnumerable<OperatorDetail>
+@foreach (var item in Model)
+{
+    @if (item.IsActive) { 
+    <tr data-item-id="@item.OID">
+        <td>
+            @item.Name
+            <small id="nameHelp" class="form-text text-monospace mt-0" style="font-size:70%">@Html.Raw("(" + item.Min + "-" + item.Max + ")")</small>
+        </td>
+        <td class="text-right"><input type="text" class="form-control-sm text-right" id="@("oid_"+item.OID)" value="@item.Charge" onchange="UpdateCharge(this)" style="width: 90px;" /> </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="chbChargeAmtType_@item.OID" tabindex="15" @(item.ChargeAmtType ? "checked='checked'" : "")>
+                <label for="chbChargeAmtType_@item.OID" class="font-weight-bold lbl"></label>
+            </span>
+
+        </td>
+    </tr>
+    }
+    
+}

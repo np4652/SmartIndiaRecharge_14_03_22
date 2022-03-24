@@ -1,0 +1,271 @@
+﻿
+@{
+    ViewData["Title"] = "BBPS Transaction Status Check";
+}
+
+<style>
+    .btnTrackComplaint {
+        cursor: pointer;
+    }
+</style>
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> BBPS Transaction Status Check </li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row" id="parentContainer">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> BBPS Transaction Status Check
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="radio" id="rdoMobile" name="byReference" value="1" class="radio" checked="checked" />
+                                <label for="rdoMobile">Mobile</label>
+
+                                <input type="radio" id="rdoTransaction" name="byReference" value="2" class="radio" />
+                                <label for="rdoTransaction">TransactionID</label>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="float-right" style="margin-right: 40px;">
+                                    <img src="/images/BBPS.png" style="max-height: 88.99px;" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group" id="divMobile">
+                                    <label for="txtMobile">Mobile No</label>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="basic-addon1">IN: 91</span>
+                                        </div>
+                                        <input type="text" class="form-control" placeholder="Enter MobileNo" id="txtMobile" aria-label="Mobile" aria-describedby="basic-addon1">
+                                    </div>
+                                </div>
+                                <div class="form-group d-none" id="divTransaction">
+                                    <label for="transactionNo">Transaction No.:</label>
+                                    <input type="text" class="form-control" placeholder="Enter transaction no." id="transactionNo">
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="dtFromDate">From Date</label>
+                                    <input type="text" class="form-control" placeholder="Select FromDate" id="dtFromDate" aria-describedby="dtFromDate" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label for="dtToDate">To Date</label>
+                                    <input type="text" class="form-control" placeholder="Select ToDate" id="dtToDate" aria-describedby="dtToDate" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                </div>
+                            </div>
+                            <div class="col-md-3" id="divOTP">
+                                <div class="form-group">
+                                    <label for="transactionNo">Enter OTP</label>
+                                    <div class="input-group mb-3">
+                                        <input type="text" id="txtOTP" class="form-control" placeholder="Enter OTP" aria-label="OTP Section" aria-describedby="btnSendOTP">
+                                        <div class="input-group-append">
+                                            <span class="btn btn-primary btn-sm" id="btnSendOTP">SendOTP</span>
+                                            <span class="btn btn-danger btn-sm" id="btnRSendOTP"><i class="fas fa-sync-alt"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-2 ">
+                                <div class="form-group">
+                                    <br />
+                                    <button type="button" class="btn btn-primary bg-gradientorange text-white btnSearch" id="btnSearch" style="border:none">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-12 mt-4 transactionInfoDiv text-center">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <td><strong>Biller Name</strong></td>
+                                    <td>:</td>
+                                    <td><span class="billerName"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>CA Number</strong></td>
+                                    <td>:</td>
+                                    <td><span class="caNumber"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Amount</strong></td>
+                                    <td>:</td>
+                                    <td><span class="amount"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Ref. No.</strong></td>
+                                    <td>:</td>
+                                    <td><span class="refNumber"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Payment Status</strong></td>
+                                    <td>:</td>
+                                    <td><span class="status"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+
+            $('[name="byReference"]').on('change', function () {
+                if ($(this).val() == '1') {
+                    $('#divMobile').removeClass('d-none');
+                    $('#divTransaction').addClass('d-none');
+                    $('#divOTP').removeClass('d-none');
+                }
+                else {
+                    $('#divTransaction').removeClass('d-none');
+                    $('#divMobile').addClass('d-none');
+                    $('#divOTP').addClass('d-none');
+                }
+            });
+            $(".btnSearch").click(() => { return transactionSearch(); })
+            $('#btnSendOTP,#btnRSendOTP').click(function () {
+                GenerateOTP($(this).attr('id') =="btnRSendOTP");
+            });
+            var transactionSearch = () => {
+                let transactionNo = $("#transactionNo").val();
+                let IsTran = $('#rdoTransaction').is(':checked');
+                if (IsTran == false) {
+                    transactionNo = $('#txtMobile').val();
+                }
+                preloader.load();
+                $.post('/bbps-transaction-status-check', { rpid: transactionNo, IsTran, OTP: $('#txtOTP').val(), FromDate: $('#dtFromDate').val(), ToDate: $('#dtToDate').val() })
+                    .done(function (result) {
+                        if (result.billerName.trim() != '') {
+                            $(".transactionInfoDiv").find(".billerName").text(result.billerName);
+                            $(".transactionInfoDiv").find(".caNumber").text(result.caNumber);
+                            $(".transactionInfoDiv").find(".amount").text("Rs. " + result.amount);
+                            $(".transactionInfoDiv").find(".refNumber").text(result.refNumber);
+                            $(".transactionInfoDiv").find(".status").text(result.status);
+                        }
+
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            var GenerateOTP = function (IsResend) {
+                preloader.load();
+                $.post('/bbps-generateOTP', { IsResend, mob: $("#txtMobile").val() })
+                    .done(function (result) {
+                        an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+        })
+    </script>
+}

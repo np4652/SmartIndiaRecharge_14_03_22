@@ -1,0 +1,76 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model PackageModel
+@{
+    int i = 1;
+}
+<div class="table-responsive">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-info text-monospace">Assign Package</h5><hr />
+    <table class="table table-bordered table-striped table-responsive-sm">
+        <thead class="bg-tableth">
+            <tr>
+                <th scope="col" style="width:1%;">#</th>
+                <th scope="col" style="width:15%;">Package</th>
+                <th scope="col">Services</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Assign</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Slabs)
+            {
+                <tr data-item-id="@item.ID">
+                    <th class="align-middle">@i</th>
+                    <td class="align-middle">
+                        @item.Slab
+                    </td>
+                    <td class="align-middle">
+                        <div class="row ml-1">
+                            @{
+                                var services = Model.Services.Where(x => x.PackageId == item.ID && x.IsActive == true);
+                            }
+                            @foreach (var service in services)
+                            {
+                                <h5>
+                                    <span class="badge badge-secondary mr-2 text-monospace">
+                                        @service.ServiceName
+                                    </span>
+                                </h5>
+                            }
+                        </div>
+                    </td>
+                    <td class="align-middle">
+                        <input type="number" value="0" class="form-control"/>
+                    </td>
+                    <td class="align-middle">
+                        @{
+                            PackageAvailableModel PackageAvailable = Model.AvailablePackage.FirstOrDefault(f => f.PackageId == item.ID);
+                        }
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align">
+                                <input type="checkbox" class="switch" id="chbIsAvailable_@item.ID" @(PackageAvailable != null && PackageAvailable.IsAvailable == true ? "checked='checked'" : "")>
+                                <label for="chbIsAvailable_@item.ID" class="font-weight-bold lbl"></label>
+                            </span>
+
+                        </div>
+                    </td>
+
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    (() => {
+        $('input[type="number"]').change(e => {
+            if ($(e.currentTarget).val() < 0) {
+                $(e.currentTarget).val($(e.currentTarget).val() * -1);
+            }
+        });
+    })();
+   
+</script>

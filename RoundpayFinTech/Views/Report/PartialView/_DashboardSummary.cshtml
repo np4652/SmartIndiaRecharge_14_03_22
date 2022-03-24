@@ -1,0 +1,37 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Hosting;
+@using Fintech.AppCode;
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IHostingEnvironment _env
+@{
+    LoginML loginML = new LoginML(HttpContextAccessor, _env);
+    var WebInfo = loginML.GetWebsiteInfo();
+    ViewData["Theme"] = WebInfo.ThemeId;
+    var Theme = ViewData["Theme"] == null ? 1 : Convert.ToInt32(ViewData["Theme"]);
+    string partialToRender = "PartialView/" + Theme + "/__DashboardSummary";
+}
+
+<partial name="@partialToRender" model="@Model" />
+
+<script>
+    $("#btn_ShowGift").on('click', function () {
+        preloader.load();
+        $.post('/s-g-i')
+            .done(function (result) {
+                mdlA.id = 'myMdlGift';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.options.keyboard = false;
+                mdlA.alert(mdlA.size.large);
+                $('button.close').click(
+                    () => mdlA.dispose()
+                );
+            })
+            .catch()
+            .fail()
+            .always(
+                () => preloader.remove()
+            );
+    });
+</script>
+

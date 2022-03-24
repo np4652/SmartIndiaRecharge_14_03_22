@@ -1,0 +1,405 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-home"></i> Dashboard</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="">
+            <div class="bg-purple row grid-margin" id="Div_Pening"></div>
+        </div>
+
+        <div class="br-pagebody mb-3">
+            <div class="row row-sm">
+                <div class="col-sm-6 col-xl-2 pl-0">
+                    <div class="widget bg-cyan">
+                        <a class="stats-left " href="/RechargeReport">
+                            <h5>Transaction</h5>
+                            <h4> History</h4>
+                        </a>
+                        <div class="stats-right border-cyan">
+                            <label> <i class="fas fa-file-alt tx-60 lh-0 txt-cyan op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-red">
+                        <a class="stats-left " href="/UserLedger">
+                            <h5>Account</h5>
+                            <h4> Ledger</h4>
+                        </a>
+                        <div class="stats-right border-red">
+                            <label> <i class="fas fa-chart-bar tx-60 lh-0 txt-red op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-yellow">
+                        <a class="stats-left " href="/AdminLedger">
+                            <h5>Admin</h5>
+                            <h4> Ledger</h4>
+                        </a>
+                        <div class="stats-right border-yellow">
+                            <label> <i class="fas fa-shopping-basket tx-60 lh-0 txt-yellow op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-dark">
+                        <a class="stats-left " href="/USalesSummary">
+                            <h5>Sales</h5>
+                            <h4> Summary</h4>
+                        </a>
+                        <div class="stats-right border-dark">
+                            <label> <i class="fas fa-book-open tx-60 lh-0 txt-dark op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-green">
+                        <a class="stats-left " href="/UDaybook">
+                            <h5>Day</h5>
+                            <h4> Book</h4>
+                        </a>
+                        <div class="stats-right border-green">
+                            <label> <i class="fas fa-book tx-60 lh-0 txt-green op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2 pr-0">
+                    <div class="widget bg-blue">
+                        <a class="stats-left " href="/DMRReport">
+                            <h5>DMT</h5>
+                            <h4> Report</h4>
+                        </a>
+                        <div class="stats-right border-blue">
+                            <label> <i class="fas fa-rupee-sign tx-60 lh-0 txt-blue op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12 text-center"><span id="divOpDown" class="text-danger"></span></div>
+        </div>
+        <div class="row">
+            <div class="col-xl-6">
+                <div class="row gutter">
+                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                Sales
+                            </div>
+                            <div class="card-body" style="padding:0;">
+
+                                <div id="container" style="padding: 5px;height:341px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <style>
+                .card {
+                    margin-top: 20px;
+                }
+
+                .list-group-item:first-child {
+                    border-radius: 0;
+                }
+            </style>
+            <div class="col-xl-3">
+                <div class="card">
+                    <div class="card-header bg-gradientorange text-white">
+                        Today's Summary
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <table class="table table-bordered" style="margin-bottom:0;">
+                            <tbody id="ulReport"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3">
+                <div class="card">
+                    <div class="card-header bg-gradientorange text-white">
+                        User's Summary
+                    </div>
+                    <div class="card-body" style="padding:0;">
+                        <table class="table table-bordered" style="margin-bottom:0;">
+                            <tbody id="ulUser"></tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section scripts{
+            <script src="~/js/chart/highcharts.js?i=0"></script>
+            <script src="~/js/chart/exporting.js"></script>
+            <script>
+                $(document).ready(function () {
+                    $('[data-toggle="tooltip"]').tooltip();
+                    //if (serverSetting.applicationSetting.IsAgreementApproval) {
+                    //    OpenPopUp();
+                    //}
+                    
+                    Getdata();
+                    TotalPending();
+                    AccountSummary();
+                    TotalBalRoleWise();
+                    GetDownOperators();
+                    GetRPDCount();
+                });
+
+
+                //function OpenPopUp() {
+                //    preloader.load();
+                //    $.post('/_AgreementApprovalNotification')
+                //        .done(function (result) {                            
+                //            if (typeof (result) === 'string') {
+                //                mdlA.id = 'DashboardPopup';
+                //                mdlA.title = 'Notification';
+                //                mdlA.content = result;
+                //                mdlA.modal(mdlA.size.default);
+                //            }
+                //        }).fail(xhr => {
+                //            an.title = 'Oops';
+                //            an.content = xhr.status == 0 ? 'Internet Connection was broken' :'Server error';
+                //            an.alert(an.type.failed);
+                //        }).always(() => preloader.remove());
+                //}
+                     
+
+
+                     function Getdata() {
+                         preloader.load();
+                    $.post('/Dashboard', {}, function (result) {
+                             var Opertor = []; var Success = []; var Fail = []; var listdata = ''; var Success1 = 0; var dispute = 0;
+                             var list = result.chart;
+                             for (var i = 0; i < list.length; i++) {
+                                 Opertor.push(list[i].opType);
+                                 if (list[i].opTypeID == 2) {
+                                $('#Div_DP').html(list[i].pAmount);
+                                 }
+                                 if (list[i].opTypeID == 1) {
+                                $('#Div_RP').html(list[i].pAmount);
+                                 }
+                                 Success.push(list[i].sAmount);
+                                 Fail.push(list[i].fAmount);
+                                 Success1 += parseFloat(list[i].sAmount);
+                                 dispute += parseFloat(list[i].dispute);
+                             }
+
+                             getchart(Opertor, Success, Fail);
+                         }).catch(function () {
+                         console.clear();
+                     }).fail(function (xhr) {
+                        $(_this).attr('checked', Is == false);
+                         if (xhr.status == 500) {
+                             an.title = 'Oops';
+                             an.content = 'Server error';
+                             an.alert(an.type.failed);
+                         }
+                         if (xhr.status == 0) {
+                             an.title = 'Oops';
+                             an.content = 'Internet Connection was broken';
+                             an.alert(an.type.failed);
+                         }
+                     }).always(function () {
+                         preloader.remove();
+                     });
+                     }
+                     function getchart(Opertor, Success, Fail) {
+                    $('#container').highcharts({
+                             chart: {
+                                 type: 'column'
+                             },
+                        title: {
+                                 text: 'Today\'s Report'
+                        },
+                        //subtitle: {
+                        //    text: 'Source: WorldClimate.com'
+                        //},
+                        xAxis: {
+                                 categories:
+                                 Opertor
+                            ,
+                            crosshair: true
+                        },
+                        yAxis: {
+                                 min: 0,
+                            title: {
+                                     text: 'Service Wise'
+                            }
+                             },
+                        tooltip: {
+                                 headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                            pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                                '<td style="padding:0"><b>{point.y:.1f} Rs</b></td></tr>',
+                            footerFormat: '</table>',
+                            shared: true,
+                            useHTML: true
+                        },
+                        plotOptions: {
+                                 column: {
+                                     pointPadding: 0.1,
+                                borderWidth: 0
+                                 }
+                             },
+                        series: [{
+                                 name: 'Success',
+                            data: Success
+
+                        }, {
+                                 name: 'Failed',
+                            data: Fail
+
+                        }]
+                    });
+                 }
+                 function AccountSummary() {
+
+                     preloader.load();
+                    $.post('/AdminAccountSummary', {}, function (result) {
+                        $('#ulReport').html(result);
+
+                     })
+                        .catch(function (xhr, e, msg) {
+                         an.title = 'Oops';
+                         an.content = 'An error has been occured during request.Reload again!'
+                            an.alert(an.type.failed);
+                     })
+                        .fail(function (xhr) {
+                         if (xhr.status == 500) {
+                             an.title = 'Oops';
+                             an.content = 'Server error';
+                             an.alert(an.type.failed);
+                         }
+                         if (xhr.status == 0) {
+                             an.title = 'Oops';
+                             an.content = 'Internet Connection was broken';
+                             an.alert(an.type.failed);
+                         }
+                     })
+                        .always(function () {
+                         preloader.remove();
+                     });
+                     }
+                     function TotalPending() {
+
+                         preloader.load();
+
+                    $.post('/TotalPending', {}, function (result) {
+                        $('#Div_Pening').html(result);
+                         })
+                        .catch(function (xhr, e, msg) {
+                         an.title = 'Oops';
+                         an.content = 'An error has been occured during request.Reload again!'
+                            an.alert(an.type.failed);
+                     })
+                        .fail(function (xhr) {
+                         if (xhr.status == 500) {
+                             an.title = 'Oops';
+                             an.content = 'Server error';
+                             an.alert(an.type.failed);
+                         }
+                         if (xhr.status == 0) {
+                             an.title = 'Oops';
+                             an.content = 'Internet Connection was broken';
+                             an.alert(an.type.failed);
+                         }
+                     })
+                        .always(function () {
+                         preloader.remove();
+                     });
+                     }
+                     function TotalBalRoleWise() {
+                         preloader.load();
+                    $.post('/TotalBalRoleWise', {}, function (result) {
+                        $('#ulUser').html(result);
+
+                         })
+                        .catch(function (xhr, e, msg) {
+                         an.title = 'Oops';
+                         an.content = 'An error has been occured during request.Reload again!'
+                            an.alert(an.type.failed);
+                     })
+                        .fail(function (xhr) {
+                         if (xhr.status == 500) {
+                             an.title = 'Oops';
+                             an.content = 'Server error';
+                             an.alert(an.type.failed);
+                         }
+                         if (xhr.status == 0) {
+                             an.title = 'Oops';
+                             an.content = 'Internet Connection was broken';
+                             an.alert(an.type.failed);
+                         }
+                     })
+                        .always(function () {
+                         preloader.remove();
+                     });
+                     }
+                     var GetDownOperators = function () {
+                         preloader.load();
+                    $.post('/GetDownOP', {}, function (result) {
+                             resultReload(result);
+                             var od = result.length > 0 ? 'Operator Down : ' + result.join(', ') : 'All operators working fine.';
+                        $('#divOpDown').html(od);
+                         }).catch(function () {
+                             console.clear();
+                         }).fail(function (xhr) {
+                        $(_this).attr('checked', Is == false);
+                             if (xhr.status == 500) {
+                                 an.title = 'Oops';
+                                 an.content = 'Server error';
+                                 an.alert(an.type.failed);
+                             }
+                             if (xhr.status == 0) {
+                                 an.title = 'Oops';
+                                 an.content = 'Internet Connection was broken';
+                                 an.alert(an.type.failed);
+                             }
+                         }).always(function () {
+                             preloader.remove();
+                         });
+                         }
+
+                         var GetRPDCount = () => {
+                    $.post('/rpadcount')
+                        .done(result => {
+                            $('#spTotalDisputCount').html('(' + result.disputeCount + ')')
+                            $('#spTotalPendingCount').html('(' + result.pCount + ')')
+                        })
+                        .fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        });
+
+                         }
+                         </script>
+        }
+    </div>
+</div>

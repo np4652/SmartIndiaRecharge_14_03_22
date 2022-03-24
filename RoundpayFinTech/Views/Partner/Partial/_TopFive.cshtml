@@ -1,0 +1,132 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model List<RoundpayFinTech.AppCode.Model.ProcModel.ProcRechargeReportResponse>
+<style type="text/css">
+    .balance_card .balance_body_card h5 {
+        font-size: 12px;
+        text-transform: capitalize;
+        color: #6d6868;
+        margin-bottom: 3px;
+        /*text-align: center;*/
+    }
+
+    .balance_card .balance_body_card .spn {
+        font-size: 12px;
+        /*text-align: center;*/
+        display: block;
+    }
+        .balance_card .balance_body_card .op_no img {
+            float: left;
+        }
+
+    .child_op_no {
+        float: left;
+        margin: 0.5em 1em;
+    }
+
+    .mob_recharge {
+        margin-top: 2em;
+        float: right;
+        font-weight: 500;
+    }
+
+    .balance_card .balance_body_card .op_success {
+        font-size: 14px;
+    }
+
+    .op_time {
+        color: #9e9e9e;
+    }
+
+    .status_line {
+        width: 100%;
+        height: 5px;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+    }
+</style>
+@{
+    var i = 0;
+    var bgClass = "bg-info";
+    var txtClass = "text-info";
+    @foreach (var item in Model)
+    {
+        i = 1;
+        if (item._Type == RechargeRespType.SUCCESS)
+        {
+            bgClass = "bg-success";
+            txtClass = "text-success";
+        }
+        else if (item._Type == RechargeRespType.FAILED)
+        {
+            bgClass = "bg-danger";
+            txtClass = "text-danger";
+        }
+        else if (item._Type == RechargeRespType.REFUND)
+        {
+            bgClass = "bg-refund";
+            txtClass = "text-refund";
+        }
+        <div class="card balance_card mb-1">
+            <p class="status_line @bgClass"></p>
+            <div class="card-body balance_body_card">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h5>Bank Balance</h5>
+                        <span class="text-info spn">@(Symbols.Rupee) @item.Optional2</span>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="op_no">
+                            <img src="@ViewData["Host"]/Image/operator/@(item.OID+".png")" style="width:50px" alt="@(item.OID+".png")">
+                            <div class="child_op_no">
+                                <h5>@item.Operator</h5>
+                                <span>@item.Account</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <span class="text-info mob_recharge">@(Symbols.Rupee) @item.RequestedAmount</span>
+                    </div>
+                    <div class="col-md-6 text-muted">@item.TransactionID</div>
+                    <div class="col-md-6">@item.LiveID</div>
+                    <div class="col-md-8">
+                        <span class="float-left op_time">@item.EntryDate</span>
+                    </div>
+                    <div class="col-md-4">
+                        <span class="@txtClass float-right op_success">
+                            @if (item._Type == RechargeRespType.SUCCESS)
+                            {
+                                <i class="fas fa-check-circle"></i> @item.Type_
+                            }
+                            else if (item._Type == RechargeRespType.FAILED)
+                            {
+                                <i class="far fa-times-circle"></i> @item.Type_
+                            }
+                            else if (item._Type == RechargeRespType.REFUND)
+                            {
+                                <i class="fas fa-exchange-alt"></i> @item.Type_
+                            }
+                            else
+                            {
+                                <i class="fas fa-pause-circle"></i> @item.Type_
+                            }
+
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @if (i == 0)
+    {
+        <div>
+            <div class="card-header bg-gradientorange text-white">
+                <i class="fas fa-mobile"></i> Last Transaction
+            </div>
+            <div class="card-body">
+                <div class="col-md-12">
+                    <h3 class="text-center">No transaction found for today</h3>
+                </div>
+            </div>
+        </div>
+    }
+}

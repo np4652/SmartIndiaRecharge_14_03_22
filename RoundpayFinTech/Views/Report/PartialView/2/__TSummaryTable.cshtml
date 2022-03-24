@@ -1,0 +1,127 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Microsoft.AspNetCore.Http;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@model RoundpayFinTech.AppCode.Model.PSTReportUser
+@{
+    LoginResponse _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+}
+
+<style>
+    .fa-rupee-sign {
+        font-size: smaller;
+    }
+</style>
+<h6>Transaction Summary</h6>
+
+<table class="table table-hover" id="Table2">
+    <thead>
+        <tr>
+            <th rowspan="2" style="background: #ccc;" class="text-center">Header</th>
+            <th colspan="1" class="bg-grey text-white text-center">LMTD</th>
+            <th colspan="1" class="bg-grey text-white text-center">MTD</th>
+            <th colspan="1" class="bg-grey text-white text-center">Last Day</th>
+            <th colspan="1" class="bg-grey text-white text-center">FTD</th>
+        </tr>
+        <tr>
+            <th>Amount(<i class="fa fa-rupee-sign"></i>)</th>
+            <th>Amount(<i class="fa fa-rupee-sign"></i>)</th>
+            <th>Amount(<i class="fa fa-rupee-sign"></i>)</th>
+            <th>Amount(<i class="fa fa-rupee-sign"></i>)</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="bg-pri-td text-white">Primary</td>
+            <td>@Model.PriLastMonthTillDate</td>
+            <td>
+                @Model.PriMonthTillDate
+
+                @if (Model.Pri_LMTD_MTD_Diff > 0)
+                {
+                    <i class="fa fa-caret-up text-success"> @Model.Pri_LMTD_MTD_Diff.ToString("0.##")%</i>
+                }
+                else if (Model.Pri_LMTD_MTD_Diff < 0)
+                {
+                    <i class="fa fa-caret-down text-danger"> @((Model.Pri_LMTD_MTD_Diff * -1).ToString("0.##"))%</i>
+                }
+            </td>
+            <td>@Model.PriLastDay</td>
+            <td>
+                @Model.PriFTD
+
+                @if (Model.Pri_LastDay_Current_Diff > 0)
+                {
+                    <i class="fa fa-caret-up text-success"> @Model.Pri_LastDay_Current_Diff.ToString("0.##")%</i>
+                }
+                else if (Model.Pri_LastDay_Current_Diff < 0)
+                {
+                    <i class="fa fa-caret-down text-danger"> @((Model.Pri_LastDay_Current_Diff*-1).ToString("0.##"))%</i>
+                }
+            </td>
+        </tr>
+        @if (_lr.RoleID != Role.APIUser)
+        {
+            <tr>
+                <td class="bg-sec-td text-white">Secondary</td>
+                <td>@Model.SecLastMonthTillDate</td>
+                <td>
+                    @Model.SecMonthTillDate
+
+                    @if (Model.Sec_LMTD_MTD_Diff > 0)
+                    {
+                        <i class="fa fa-caret-up text-success"> @Model.Sec_LMTD_MTD_Diff.ToString("0.##")%</i>
+                    }
+                    else if (Model.Sec_LMTD_MTD_Diff < 0)
+                    {
+                        <i class="fa fa-caret-down text-danger"> @((Model.Sec_LMTD_MTD_Diff*-1).ToString("0.##"))%</i>
+                    }
+                </td>
+                <td>@Model.SecLastDay</td>
+                <td>
+                    @Model.SecFTD
+
+                    @if (Model.Sec_LastDay_Current_Diff > 0)
+                    {
+                        <i class="fa fa-caret-up text-success"> @Model.Sec_LastDay_Current_Diff.ToString("0.##")%</i>
+                    }
+                    else if (Model.Sec_LastDay_Current_Diff < 0)
+                    {
+                        <i class="fa fa-caret-down text-danger"> @((Model.Sec_LastDay_Current_Diff*-1).ToString("0.##"))%</i>
+                    }
+                </td>
+            </tr>
+        }
+
+        <tr>
+            <td class="bg-ter-td text-white">Tertiary</td>
+            <td>@Model.TerLastMonthTillDate</td>
+            <td>
+                @Model.TerMonthTillDate
+
+                @if (Model.Ter_LMTD_MTD_Diff > 0)
+                {
+                    <i class="fa fa-caret-up text-success"> @Model.Ter_LMTD_MTD_Diff.ToString("0.##")%</i>
+                }
+                else if (Model.Ter_LMTD_MTD_Diff < 0)
+                {
+                    <i class="fa fa-caret-down text-danger"> @((Model.Ter_LMTD_MTD_Diff*-1).ToString("0.##"))%</i>
+                }
+            </td>
+            <td>@Model.TerLastDay</td>
+            <td>
+                @Model.TerFTD
+
+                @if (Model.Ter_LastDay_Current_Diff > 0)
+                {
+                    <i class="fa fa-caret-up text-success"> @Model.Ter_LastDay_Current_Diff.ToString("0.##")%</i>
+                }
+                else if (Model.Ter_LastDay_Current_Diff < 0)
+                {
+                    <i class="fa fa-caret-down text-danger"> @((Model.Ter_LastDay_Current_Diff * -1).ToString("0.##"))%</i>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>

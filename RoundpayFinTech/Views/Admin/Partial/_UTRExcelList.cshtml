@@ -1,0 +1,36 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.UTRExcelMaster>
+@if (Model.Any())
+{
+    <table class="table table-sm table-borderless table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Files</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{ int count = 0;
+                foreach (var item in Model)
+                {
+                    count++;
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.EntryDate</td>
+                        <td>
+                            <i class="text-success fa fa-file-excel fa-2x"></i> @item.FileName
+                        </td>
+                        <td>
+                            @if (item.IsJobDone)
+                            {
+                                <a href="/Download-UTRDetailExcel?FileId=@item.FileId" class="btn btn-sm btn-outline-success"><i class="fas fa-download"></i></a>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}

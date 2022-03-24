@@ -1,0 +1,37 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.MplanDTHHeavyRefresh
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Heavy Refresh</h3>
+        <hr />
+    </div>
+    @if (@Model.Response != null)
+    {
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="scroll-content">
+            <table class="table table-striped">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>Operator</th>
+                        <th>Customer ID</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>@Model.Operator</td>
+                        <td>@Model.Number</td>
+                        <td>@Model.Response.desc</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
+    else
+    {
+    <h1 class="text-danger">Oops no record found!</h1>
+    }
+</div>

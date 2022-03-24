@@ -1,0 +1,86 @@
+/* Responsive CSS Document */
+
+/* 
+    Created on   : 28/06/2019.
+    Theme Name   : Rogan - Business and Agency html Template.
+    Version      : 1.1.
+    Author       : Creativegigs.
+    Developed by : Jubayer al hasan. (me@heloshape.com) / (www.me.heloshape.com)
+   
+*/
+
+@media (min-width: 992px) {
+  .container {padding-right: 0;padding-left: 0;}
+}
+@media (min-width: 1200px) and (max-width: 1450px) {
+  .testimonial-section-standard .slider-wrapper {max-width: 960px;}
+}
+@media (max-width: 1366px) {
+}
+@media (max-width: 1199px) {
+  .main-menu{padding-left: 15px;padding-right: 15px;}
+}
+@media (min-width: 992px) and (max-width: 1550px) {
+  
+}
+
+@media (min-width: 992px) and (max-width: 1366px) {
+  #mega-menu-holder {margin-left: 50px;}  
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+}
+/*(min-width: 992px) and (max-width: 1199px)*/
+
+@media (max-width: 991px) {
+  .navbar-collapse {/*background: #222836;border: 1px solid #383f50;*/}
+  .navbar .navbar-collapse .navbar-nav .nav-item .nav-link {/*border-top-color: #383f50;*/}
+  .main-menu #mega-menu-holder {margin-left: 20px;}
+  .main-menu {padding-top: 25px;}
+  .navbar .dropdown-menu .dropdown-menu .dropdown-item {padding-left: 45px;}
+  .navbar .dropdown-menu .dropdown-menu .dropdown-menu  .dropdown-item {padding-left: 60px;}
+
+  .main-menu-list>ul {margin-top: 50px; padding-bottom: 40px;}
+  .main-menu-list>ul>li>a {font-size: 24px;line-height: 45px;}
+  .main-menu-list>ul>li>a .expander {line-height: 45px;}
+  .logo-wrapper .close-button {left: auto;right: 10px;}
+  .main-menu, .main-menu {padding: 20px 15px;}
+} 
+/*(max-width: 991px)*/
+
+@media (min-width: 768px) and (max-width: 991px) {
+}
+/*(min-width: 768px) and (max-width: 991px)*/
+
+@media (min-width: 576px) and (max-width: 991px) { 
+}
+@media (max-width: 649px) { 
+  
+}
+
+
+@media (max-width: 767px) {
+  .navbar .mega-menu-title {border-bottom-color: #383f50;}
+  .mega-container .container {max-width: 100%;padding:0;}
+  .main-wrapper form {max-width: 100%;}
+}
+/*(max-width: 767px)*/
+
+@media (min-width: 576px) and (max-width: 767px) {
+
+}
+/*(min-width: 576px) and (max-width: 767px)*/
+
+@media (max-width: 575px) {
+  .main-menu .contact-button {min-width: 140px;padding: 0 20px;}
+}
+/*(max-width: 575px)*/
+
+@media (max-width: 500px) {
+}
+
+@media (max-width: 430px) {
+  .main-menu .right-content .cart-action-wrapper {margin-right: 15px;}
+}
+@media (max-width: 400px) {
+}

@@ -1,0 +1,237 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<CardAccountMapping>
+@{
+    var counter = 0;
+}
+
+<div class="row">
+
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+    </style>
+
+    <input type="hidden" value="@ViewBag.Id" id="hfId"/>
+    <div class="col-md-12">
+        <div class="card mt-12">
+            <div class="card-header bg-gradientorange text-white">
+                <i class="fas fa-link"></i> Card Account Mapping
+                @*<div class="float-right"><button id="btnNew" class="btn btn-default btn-sm">New</button></div>*@
+            </div>
+           
+            <div class="card-body" style="">
+                <div class="row">
+                    <div class="col-md-4 col-sm-4 col-xs-4">
+                        <div class="form-group">
+                            <input type="hidden" id="tbluserID" value="@ViewBag.Id" />
+                            <input type="hidden" id="tblID" value="0" />
+                            <label class="lbl" for="txtAccHolder">Card Number</label>
+                            <input aria-describedby="txtddTrID" maxlength="16" onkeypress="return isNumberwithoutdecimal(event)"  class="form-control" id="txtCardno" name="txtddTrID" placeholder="Enter Card No." tabindex="2" type="text" value="">
+                            <small id="txtddTrID" class="form-text text-muted d-none"></small>
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-xs-3">
+                        <div class="form-group">
+                            <label class="lbl" for="txtTrID">Valid From </label>
+                            <input aria-describedby="txtfrmdate" class="form-control" readonly id="dtFromDate" name="dtFromDate"  tabindex="2" type="text" value="@DateTime.Now.ToString("dd MMM yyyy")">
+                            <small id="txtfrmdate" class="form-text text-muted d-none"></small>
+                            <input type="hidden" id="hidTrID" value="" class="d-none" />
+                        </div>
+                    </div>
+                    <div class="col-md-3 col-sm-3 col-xs-3">
+                        <div class="form-group">
+                            <label class="lbl" for="txtTrID">Valid Thru </label>
+                            <input aria-describedby="todate" class="form-control" readonly id="dtToDate" name="dtToDate"  tabindex="2" type="text" value="@DateTime.Now.ToString("dd MMM yyyy")">
+                            <small id="todate" class="form-text text-muted d-none"></small>
+                            <input type="hidden" id="hidTrID" value="" class="d-none" />
+                        </div>
+                    </div>
+                    <div class="col-md-1 col-sm-1 col-xs-1 text-right">
+                        <div class="form-group">
+                            <label class="lbl" style="color:white" for="btnSearch">Search</label>
+                            <button id="btnSaveCard" tabindex="6" class="btn btn-outline-dark">Save</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="table-responsive">
+                    <gridView></gridView>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/js/datepickerHelper.js"></script>
+<script type="text/javascript">
+    var partialGrid;
+    $(document).ready(function () {
+        var FDate = DatePicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+            
+        });
+        var TDate = DatePicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+           
+        });
+        
+         partialGrid = () => {
+            $.post('/MapCardTouserList', {ID: $('#hfId').val()}).done(result => $('gridView').html(result)).fail(() => { })
+        }
+        partialGrid();
+      
+
+        $('#btnSaveCard').click(function () {
+            debugger
+
+            var ctDept = { tblid: $('#tblID'), accn: $('#txtCardno'), frmdate: $('#dtFromDate'), todate: $('#dtToDate'), tbluserID: $('#tbluserID') }
+
+            var IsE = {
+                accn: ctDept.accn.val().trim() == '',
+                frmdate: ctDept.frmdate.val().trim() == '',
+                todate: ctDept.todate.val().trim() == '',
+                accnlen: !(ctDept.accn.val().length==16)
+            }
+            IsE.err = (IsE.accn || IsE.frmdate || IsE.todate || IsE.accnlen)
+            $v.showErrorFor(ctDept.accn, 'Enter Card Number', IsE.accn);
+            $v.showErrorFor(ctDept.frmdate, 'Enter From Date.', IsE.frmdate);
+            $v.showErrorFor(ctDept.todate, 'Enter Through Date', IsE.todate);
+            $v.showErrorFor(ctDept.accn, 'Card Number should be 16 digit.', IsE.accnlen);
+            if (IsE.err) {
+              
+                return false;
+            }
+
+           var dprt = {
+           
+               ID: ctDept.tblid.val(),
+               UserID: ctDept.tbluserID.val(),
+               AccountNo: ctDept.accn.val(),
+               Validfrom: ctDept.frmdate.val(),
+               ValidThru: ctDept.todate.val()
+      
+
+            }
+
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/UpdateCardDetail',
+                data: JSON.stringify(dprt),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == an.type.success) {
+                        ctDept.accn.val("")
+                        partialGrid();
+                    }
+                    
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result, msg) {
+                    an.title = "Oops";
+                    an.content = msg;
+                    an.alert(an.type.failed);
+                    
+                    preloader.remove();
+                },
+                complete: function () {
+                  
+                    preloader.remove();
+                }
+            });
+
+        })
+
+
+       
+
+
+
+    })
+
+    function _delete(ID, UserID) {
+
+
+
+        var dprt = {
+
+            ID: ID,
+            UserID: UserID,
+
+        }
+
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/DeleteCardDetail',
+            data: JSON.stringify(dprt),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+
+                    partialGrid();
+
+                    preloader.remove();
+                }
+
+            },
+            statusCode: {
+                500: function () {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                },
+                0: function () {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            },
+            error: function (xhr, result, msg) {
+                an.title = "Oops";
+                an.content = msg;
+                an.alert(an.type.failed);
+
+                preloader.remove();
+            },
+            complete: function () {
+
+                preloader.remove();
+            }
+        });
+
+
+
+
+    }
+   
+    function isNumberwithoutdecimal(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+
+
+            return false;
+        }
+        return true;
+    }
+</script>

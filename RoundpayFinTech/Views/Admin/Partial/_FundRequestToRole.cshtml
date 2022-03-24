@@ -1,0 +1,29 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<FundRequestToRole>
+@{
+    var counter = 0;
+}
+@foreach (var mdl in Model)
+{
+    <tr data-item-id="@mdl.FromId">
+        <th style="width:1em;" scope="row">@(counter + 1)</th>
+        <td style="width:6em">@mdl.FromRole</td>
+        <td>
+            @foreach (var i in mdl.ToRoles)
+            {
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="@Html.Raw("isActive_"+mdl.FromId+"_"+i.ToId)" @Html.Raw(i.IsActive ? "checked='checked'" : "")/>
+                <label for="@Html.Raw("isActive_"+mdl.FromId+"_"+i.ToId)">@i.ToRole</label>
+            </span>
+            }
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isupline_@mdl.FromId" @Html.Raw(mdl.IsUpline ? "checked='checked'" : "")/>
+                <label for="isupline_@mdl.FromId"></label>
+            </span>
+        </td>
+
+    </tr>
+    counter++;
+}

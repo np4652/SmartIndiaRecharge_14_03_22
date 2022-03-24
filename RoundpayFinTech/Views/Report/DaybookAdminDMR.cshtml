@@ -1,0 +1,197 @@
+﻿@{
+    ViewData["Title"] = "Admin Daybook DMT";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="form-group">
+                                    <button id="btnSearch" tabindex="8" class="btn btn-outline-dark mt-4">Search</button>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <span class="btn btn-lg btn-outline-success far fa-file-excel mt-4" id="btnExport"></span>
+                            </div>
+                            
+                        </div>
+
+                        <div class="table-responsive table-sm" id="dvDaybook">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblDaybook">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" class="text-right">SuccessHits</th>
+                                        <th scope="col" class="text-right text-nowrap">Success(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">CCF(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">BaseAmount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">Surcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">GSTOnSurcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">AmountAfterSurcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">RefundGST(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">AmountWithTDS(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">TDS(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">CreditedAmount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APISurcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APIGSTOnSurcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APIAmountAfterSurcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APIRefundGST(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APIAmountWithTDS(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APITDS(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">APICreditedAmount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">TeamCommission(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">Profit(<i class="fas fa-rupee-sign"></i>)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script src="~/lib/jquery/table2excel.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            search();
+            $("#btnSearch").click(function () {
+                search();
+            });
+        });
+        var search = function () {
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($("#btnSearch"), 'Requesting');
+            preloader.load();
+            $.post('/day-book-dmr', { FromDate: $('#dtFromDate').val(), ToDate: $('#dtToDate').val() })
+                .done(function (result) {
+                    resultReload(result);
+                    $('#tblDaybook tbody').html(result);
+                    $('#btnExport').unbind().click(function () {
+                        $("#tblDaybook").table2excel({
+                            exclude: ".table table-hover .table-responsive-sm .table-bordered .table-striped",
+                            name: "Worksheet Name",
+                            filename: "admindaybookDMT.xls"
+                        });
+                    });                    
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                    btnLdr.Stop($('#btnSearch'));
+                });
+        };
+    </script>
+
+
+}
+

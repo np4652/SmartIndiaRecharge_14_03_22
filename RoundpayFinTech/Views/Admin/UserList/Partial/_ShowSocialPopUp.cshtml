@@ -1,0 +1,73 @@
+﻿@model RoundpayFinTech.AppCode.Model.LowBalanceSetting
+    <style>
+        button#btnEmailVerify {
+            display: block;
+            margin: 15px auto;
+            padding: 8px 42px !important;
+            background-color: #28a745;
+            border-color: #28a745;
+            color: #fff;
+        }
+
+        button#btnUpdateWhatsapp {
+            display: block;
+            margin: 15px auto;
+            padding: 8px 17px !important;
+            background-color: #17a2b8;
+            border-color: #17a2b8;
+            color: #fff;
+        }
+        button#btnUpdateHangout {
+            display: block;
+            margin: 15px auto;
+            padding: 8px 26px !important;
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #fff;
+        }
+
+    </style>
+<div class="col-md-12">
+    <div class="col-md-12 text-center">
+        <img class="mb-2" src="/Image/iconMsg/12.png">
+        <div class="mb-2" style="font-size:16px;">Kindly Update Your Whatsapp, Telegram or Hangout ID</div>
+        <div class="modal-btn">
+            <button class="btn btn-outline-success btn-lg @Html.Raw( Model.IsEmailVerified ? "d-none" : "")" id="btnEmailVerify">Verifiy Email</button>
+            <button class="btn btn-outline-info btn-lg @Html.Raw( Model.WhatsappNo == "" ? "" : "d-none")" id="btnUpdateWhatsapp">Update Whatsapp</button>
+            <button class="btn btn-outline-primary btn-lg @Html.Raw( Model.HangoutId == "" ? "" : "")" id="btnUpdateHangout">Update Hangout</button>
+        </div>
+    </div>
+    
+
+    <script>
+
+        $('#btnEmailVerify').click(() => {
+            $.post('/SendVerifyEmail').done(result => {
+                an.title = 'Well done';
+                an.id = 'verificaticationalert';
+                an.content = 'Verification link send to your register e-mail id';
+                an.alert(1);
+                mdlA.dispose();
+            });
+        });
+
+
+        $('#btnUpdateWhatsapp,#btnUpdateHangout').click(() => {
+            $.post('/_SocialAlertSetting').done(result => {
+                if (!result) {
+                    sessionStorage.setItem('IsSocialAlert', true);
+                }
+                else {
+                    mdlA.id = "SocialAlertSetting";
+                    mdlA.title = 'Social Alert Setting';
+                    mdlA.headerClass = 'h4 text-danger text-monospace';
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.large);
+                    mdlA.dispose();
+                }
+            })
+        });
+
+
+        
+    </script>

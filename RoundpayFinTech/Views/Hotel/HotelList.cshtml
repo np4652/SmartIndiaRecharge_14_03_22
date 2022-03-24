@@ -1,0 +1,984 @@
+﻿@model RoundpayFinTech.AppCode.ThirdParty.HotelAPI.TekTvlSearchingResponse
+@{
+    var mod = Model;
+    ViewData["Title"] = "Hotel List";
+    ViewData["HTitle"] = "Hotel";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="TechyDevs">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Roundpay - Hotel</title>
+    <!-- Favicon -->
+    <link rel="icon" href="website-assets/images/favicon.png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+    <!-- Template CSS Files -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/line-awesome/1.3.0/line-awesome/css/line-awesome.min.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/bootstrap-select.min.css" rel="stylesheet" />
+    @*<link href="~/css/Hotel/line-awesome.css" rel="stylesheet" />*@
+    <link href="~/css/Hotel/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery.fancybox.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/daterangepicker.css" rel="stylesheet" />
+    <link href="~/siteadmin/css/animate.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/animated-headline.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery-ui.css" rel="stylesheet" />
+    <link href="~/css/Hotel/flag-icon.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/style.css" rel="stylesheet" />
+    <link href="~/css/Hotel/search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/tooltip.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-autocomplete.css" rel="stylesheet" />
+
+    <style>
+        .btn-link-top {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero-box:after {
+            opacity: 0;
+            background-color: #0d233e;
+        }
+
+        .navbar {
+            padding: 0 1rem;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+
+
+
+        .sidebar.mt-0 {
+            position: sticky;
+            top: 60px;
+            bottom: 0;
+            z-index: 0;
+            align-self: flex-start;
+            max-height: 570px;
+        }
+
+
+
+        .contact-form-action .form-group .form-icon {
+            top: 10px !important;
+        }
+
+        .sticky-top {
+            z-index: 999 !important;
+        }
+
+
+
+        .cus-bds {
+            margin-top: 7px;
+        }
+
+        .text-white {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    @Html.Hidden("hdnCityId", mod.HotelSearchResult.CityId)
+
+    <form action="/Hotel-Single" method="post" id="frmHotelSingle" style="display:none">
+        @Html.Hidden("searchJson", Model.searchJson)
+        @Html.Hidden("TraceId", mod.HotelSearchResult.TraceId)
+        @Html.Hidden("NoOfRooms", mod.HotelSearchResult.NoOfRooms)
+        @Html.Hidden("CheckInDate", mod.HotelSearchResult.CheckInDate)
+        @Html.Hidden("CheckOutDate", mod.HotelSearchResult.CheckOutDate)
+        @Html.Hidden("NoOfPersons", mod.HotelSearchResult.NoOfPersons)
+        @Html.Hidden("NoOfChild", mod.HotelSearchResult.NoOfChild)
+        @Html.Hidden("ResultIndex")
+        @Html.Hidden("HotelCode")
+        @Html.Hidden("CategoryId"))
+    </form>
+    <!-- start cssload-loader -->
+    <!-- ================================
+                START HEADER AREA
+    ================================= -->
+    <header class="header-area">
+
+        <div class="header-menu-wrapper padding-right-100px padding-left-100px box-shadow">
+            <div class="contact-form-action">
+                <form method="post" action="/Hotel/SearchHotel" class="align-items-center" id="frmSearch">
+                    <input type="hidden" id="searchJsonlist" name="searchJson" />
+                    <div class="search-widget-uistyles__OuterWrapDiv-f6e3g4-0 bhdKLn">
+                        <div class="container">
+                            <div class="dweb-commonstyles__CenteredSpaceWrap-sc-13fxsy5-0 search-widget-uistyles__WrapperStyle-f6e3g4-6 cgGKLF cPwTXt padt10">
+                                <div class="row nwbgfrhlist">
+
+                                    <div class="col-sm-10">
+                                        <div class="dweb-commonstyles__FlexItem-sc-13fxsy5-3 eaRCts">
+                                            <div class="row">
+                                                <div class="col-lg-5">
+                                                    <div class="input-box">
+                                                        <label class="text-white">Destination / Hotel Name</label>
+                                                        <div class="form-group ">
+                                                            <span class="la la-map-marker form-icon"></span>
+                                                            <input class="form-control" id="txthotel" type="text" autocomplete="off" placeholder="Enter city or property">
+
+                                                            <select class="form-control" id="ddlhotelsearch" style="display:none"></select>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- end col-lg-3 -->
+                                                <div class="col-lg-2">
+                                                    <div class="input-box">
+                                                        <label class="text-white">Check-in</label>
+                                                        <div class="form-group">
+                                                            <span class="la la-calendar form-icon"></span>
+                                                            <input class="form-control" type="text" name="daterange-single" 
+                                                                   id="CheckInDate1" readonly>
+                                                        </div>
+                                                    </div>
+                                                </div><!-- end col-lg-3 -->
+                                                <div class="col-lg-2">
+                                                    <div class="input-box">
+                                                        <label class="text-white">Check-out</label>
+                                                        <div class="form-group">
+                                                            <span class="la la-calendar form-icon"></span>
+                                                            <input class="date-range form-control" type="text"
+                                                                   name="daterange-single" id="CheckOutDate1" readonly>
+
+                                                        </div>
+                                                    </div>
+                                                </div><!-- end col-lg-3 -->
+                                                <div class="col-lg-3">
+                                                    <div class="input-box">
+                                                        <label class="text-white">Guests & Rooms</label>
+                                                        <div class="form-group">
+                                                            <div class="dropdown dropdown-contain gty-container btnDropdownToggle">
+                                                                <a class="dropdown-toggle dropdown-btn" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                                    <span class="adult" data-text="Adult" data-text-multi="Adults">0 Adult</span>
+                                                                    -
+                                                                    <span class="children" data-text="Child" data-text-multi="Children">0 Children</span>
+                                                                </a>
+                                                                <div class="dropdown-menu dropdown-menu-wrap" id="count-guest">
+                                                                    <div class="dropdown-item">
+                                                                        <div class="qty-box d-flex align-items-center justify-content-between">
+                                                                            <div class="roomsGuests">
+                                                                                <div class="roomsGuestsTop">
+                                                                                    <div class="addRoomRow pt-2 pb-0">
+                                                                                        <div class="addRoomLeft">
+                                                                                            <p class="darkText font16 latoBlack capText appendBottom10 m-0">ROOM 1</p>
+                                                                                            <small><!--Data will be here at runtime--></small>
+                                                                                        </div>
+                                                                                        <div class="addRoomRight mt-2">
+                                                                                            <div class="addRooomDetails">
+                                                                                                <div class="col-sm-12 p-0">
+                                                                                                    <div class="row">
+                                                                                                        <div class="col-sm-6">
+                                                                                                            <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                                <span class="latoBold font12 grayText">Adults <br />(Above 12 Years) </span>
+                                                                                                            </p>
+                                                                                                        </div>
+                                                                                                        <div class="col-sm-6">
+                                                                                                            <div class="input-group mb-3 adultCounter">
+                                                                                                                <div class="input-group-prepend">
+                                                                                                                    <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                        <i class="fa fa-minus"></i>
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                                <input type="text" value="1" readonly class="form-control p-1 text-center" placeholder="0" />
+                                                                                                                <div class="input-group-prepend">
+                                                                                                                    <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                        <i class="fa fa-plus"></i>
+                                                                                                                    </button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+
+
+
+
+                                                                                                <div>
+                                                                                                    <div class="col-sm-12 p-0">
+                                                                                                        <div class="row">
+                                                                                                            <div class="col-sm-6">
+                                                                                                                <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                                    <span class="latoBold font12 grayText">Children <br />(1 - 12 Years) </span>
+                                                                                                                </p>
+                                                                                                            </div>
+                                                                                                            <div class="col-sm-6">
+                                                                                                                <div class="input-group mb-3 childCounter">
+                                                                                                                    <div class="input-group-prepend">
+                                                                                                                        <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                            <i class="fa fa-minus"></i>
+                                                                                                                        </button>
+                                                                                                                    </div>
+                                                                                                                    <input type="text" value="0" readonly class="form-control p-1 text-center childInput" placeholder="0" />
+                                                                                                                    <div class="input-group-prepend">
+                                                                                                                        <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                            <i class="fa fa-plus"></i>
+                                                                                                                        </button>
+                                                                                                                    </div>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </div>
+
+                                                                                                    <div class="divChild" style="display:none">
+                                                                                                        <ul class="childAgeList appendBottom10 mb-3">
+                                                                                                            <!--data will be here at runtime-->
+                                                                                                        </ul>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="roomsGuestsBottom">
+                                                                                    <button type="button" class="btnAddRoom" id="hsw_add_another_room_btn">+ ROOM </button>
+                                                                                    <button type="button" class="primaryBtn btnApply capText" id="hsw_apply_changes_btn">Apply</button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                            <!-- end dropdown -->
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div>
+                                            <label class="text-white"></label>
+                                            <div class="form-group cus-bds">
+
+                                                <button type="button" id="btnSearch" class="theme-btn">Update Search</button>
+                                                @*<button type="button" id="btnSearch" class="btn btn-info btn-sm mt-2">Update Search</button>*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <!-- end container-fluid -->
+        </div>
+        <!-- end header-menu-wrapper -->
+    </header>
+    <!-- ================================
+             END HEADER AREA
+    ================================= -->
+    <!-- ================================
+        END BREADCRUMB AREA
+    ================================= -->
+    <!-- ================================
+        START CARD AREA
+    ================================= -->
+    <section class="card-area section--padding bg-top">
+        <div class="container">
+            <!-- end row -->
+            <div class="row">
+                <div class="col-lg-3">
+                    <div class="sidebar mt-0">
+                        <div class="sidebar-widget">
+                            <h3 class="title stroke-shape">Price Range</h3>
+                            <a onclick='reset()' class="button-reset cursor-pointer">Reset All</a>
+                            <div class="sidebar-widget-item priceRange">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" value="0-2000" id="Range1">
+                                    <label for="Range1">Upto ₹2000</label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" value="2001-4000" id="Range2">
+                                    <label for="Range2">₹2001 - ₹4000</label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" value="4001-6000" id="Range3">
+                                    <label for="Range3">₹4001 - ₹6000</label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" value="6001-8000" id="Range4">
+                                    <label for="Range4">₹6001 - ₹8000</label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" value="8000" id="Range5">
+                                    <label for="Range5">₹8000 +</label>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="sidebar-widget">
+                                <h3 class="title stroke-shape">Customer Ratings</h3>
+                                <div class="sidebar-widget-item">
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="Rating1" value="4.5">
+                                        <label for="Rating1">
+                                            <div class="Filtersstyles__AverageReviewWrapper-bkjigy-8 hbeyFW">
+                                                <span class="Filtersstyles__AverageReviewText-bkjigy-7 hWFaXt">4.5+ </span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="Rating2" value="4">
+                                        <label for="Rating2">
+                                            <div class="Filtersstyles__AverageReviewWrapper-bkjigy-8 dNGnWf">
+                                                <span class="Filtersstyles__AverageReviewText-bkjigy-7 hWFaXt">4+ </span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="Rating3" value="3.5">
+                                        <label for="Rating3">
+                                            <div class="Filtersstyles__AverageReviewWrapper-bkjigy-8 hsUSIs">
+                                                <span class="Filtersstyles__AverageReviewText-bkjigy-7 hWFaXt">3.5+ </span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="Rating4" value="3">
+                                        <label for="Rating4">
+                                            <div class="Filtersstyles__AverageReviewWrapper-bkjigy-8 ilZScp">
+                                                <span class="Filtersstyles__AverageReviewText-bkjigy-7 hWFaXt">3+ </span>
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>*@
+
+                        <div class="sidebar-widget">
+                            <h3 class="title stroke-shape">Filter by Rating</h3>
+                            <div class="sidebar-widget-item starRating">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="r6" value="5">
+                                    <label for="r6">
+                                        <span class="ratings d-flex align-items-center padTB6">
+                                            <i class="las la-star"></i>
+                                            <i class="las la-star"></i>
+                                            <i class="las la-star"></i>
+                                            <i class="las la-star"></i>
+                                            <i class="las la-star"></i>
+                                            <!--  <span class="color-text-3 font-size-13 ml-1">(55.590)</span>-->
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="r7" value="4">
+                                    <label for="r7">
+                                        <span class="ratings d-flex align-items-center padTB6">
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star-o"></i>
+                                            <!--<span class="color-text-3 font-size-13 ml-1">(40.590)</span>-->
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="r8" value="3">
+                                    <label for="r8">
+                                        <span class="ratings d-flex align-items-center padTB6">
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star-o"></i>
+                                            <i class="la la-star-o"></i>
+                                            <!--<span class="color-text-3 font-size-13 ml-1">(23.590)</span>-->
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="r9" value="2">
+                                    <label for="r9">
+                                        <span class="ratings d-flex align-items-center padTB6">
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star-o"></i>
+                                            <i class="la la-star-o"></i>
+                                            <i class="la la-star-o"></i>
+                                            <!--<span class="color-text-3 font-size-13 ml-1">(12.590)</span>-->
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="custom-checkbox mb-0">
+                                    <input type="checkbox" class="checkbox" id="r10" value="1">
+                                    <label for="r10">
+                                        <span class="ratings d-flex align-items-center padTB6">
+                                            <i class="la la-star"></i>
+                                            <i class="la la-star-o"></i>
+                                            <i class="la la-star-o"></i>
+                                            <i class="la la-star-o"></i>
+                                            <i class="la la-star-o"></i>
+                                            <!--<span class="color-text-3 font-size-13 ml-1">(590)</span>-->
+                                        </span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end sidebar-widget -->
+                        <div class="sidebar-widget" style="display:none">
+                            <h3 class="title stroke-shape">Amenities</h3>
+                            <a href="#" class="button-reset">Reset</a>
+                            <div class="sidebar-widget-item">
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="Checkbox1">
+                                    <label for="Checkbox1" class="font-size-12">Air Conditioning</label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="Checkbox2">
+                                    <label for="Checkbox2" class="font-size-12">Airport Transfer (on Demand)</label>
+                                </div>
+                                <div class="custom-checkbox">
+                                    <input type="checkbox" class="checkbox" id="Checkbox3">
+                                    <label for="Checkbox3" class="font-size-12">Banquet hall</label>
+                                </div>
+
+                                <div id="demo" class="collapse">
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="Checkbox4">
+                                        <label for="Checkbox4">CCTV surveillance</label>
+                                    </div>
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="Checkbox5">
+                                        <label for="Checkbox5">Conference Room</label>
+                                    </div>
+                                </div>
+
+                                <a href="" data-toggle="collapse" class="font-size-11" data-target="#demo">more...</a>
+                            </div>
+                        </div>
+
+                        <!-- end sidebar-widget -->
+                    </div>
+                    <!-- end sidebar -->
+                </div>
+                <!-- end col-lg-4 -->
+                <div class="col-lg-9">
+                    <div class="HotelCardstyles__OuterWrapperDiv-sc-1s80tyk-0 jEdYPu listContainer">
+
+                        @if (mod != null && mod.HotelSearchResult != null && mod.HotelSearchResult.HotelResults != null)
+                        {
+                            foreach (var hotel in mod.HotelSearchResult.HotelResults)
+                            {
+
+                                var catid = hotel.SupplierHotelCodes != null && hotel.SupplierHotelCodes.Count() > 0 ? hotel.SupplierHotelCodes[0].CategoryId : "";
+                                @*@if (catid != "")
+                                    {*@
+                                <div class="HotelCardstyles__WrapperSectionMetaDiv-sc-1s80tyk-3 kpotMw singleItem"
+                                     data-hotelid="@hotel.HotelCode" data-resultindex="@hotel.ResultIndex"
+                                     data-categoryid="@catid" data-traceid="@mod.HotelSearchResult.TraceId">
+                                    @{
+
+                                        string src = @hotel.HotelPicture.Contains("HotelNA.jpg") ? "/images/Hotel/hotelnotfound.jpg" : @hotel.HotelPicture;
+                                    }
+                                    <div itemprop="imghotel" class="HotelCardstyles__ImageGalleryWrapperDiv-sc-1s80tyk-1 ijewXf">
+                                        <img src="@src" alt="" class="HotelCardImageGallerystyles__ImageStyle-r3dzqu-1 dFVxSO imghotels" data-testid="">
+                                    </div>
+
+                                    <div class="HotelCardstyles__HotelCardInfoWrapperDiv-sc-1s80tyk-7 ccksih">
+                                        <div class="HotelCardstyles__HotelInfoWrapperDiv-sc-1s80tyk-8 cnUUXW">
+                                            <div class="HotelCardstyles__HeadingInfoWrapperDiv-sc-1s80tyk-10 cEOdyw">
+                                                <div class="dwebCommonstyles__CenteredSpaceWrap-sc-112ty3f-0 eHRHNU">
+                                                    <div class="dwebCommonstyles__CenteredSpaceWrap-sc-112ty3f-0 eHRHNU">
+                                                        <span itemprop="starRating" content="@hotel.StarRating">
+                                                            @for (int i = 0; i < hotel.StarRating; i++)
+                                                            {
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 16" class="HappyRatingStarIcon-qukodd-0 cYZZDN">
+                                                                    <path fill-rule="evenodd" d="M8.172 13.282l3.964 2.434c.726.446 1.614-.213 1.423-1.047l-1.05-4.577 3.505-3.084c.64-.562.296-1.629-.545-1.696l-4.613-.398L9.051.589c-.325-.785-1.432-.785-1.757 0L5.489 4.904l-4.613.398C.036 5.37-.31 6.436.33 6.999l3.505 3.083-1.05 4.577c-.191.834.697 1.494 1.423 1.048l3.963-2.425z"></path>
+                                                                </svg>
+                                                            }
+                                                        </span>
+                                                        <span class="HotelCardstyles__HotelTypeTag-sc-1s80tyk-11 enozjT">BnB</span>
+                                                        <span color="" class="PromotedTag__HotelPromotedTag-sc-1cjuge4-0 ggPwsb">Sponsored</span>
+                                                    </div>
+                                                    <div class="ReviewAndRatingsstyles__ReviewAndRatingOuterContainer-sc-1nxmeoo-2 kBBFrJ">
+                                                        <div class="ReviewAndRatingsstyles__HotelTotalReviewWrapper-sc-1nxmeoo-1 ixtzNN">
+                                                            <div class="ReviewAndRatingsstyles__TotalReviewOuterDiv-sc-1nxmeoo-7 cYLqwE">
+                                                                <div class="ReviewAndRatingsstyles__AverageReviewWrapper-sc-1nxmeoo-5 ekXWxv">
+                                                                    <span itemprop="ratingValue" content="4.5" class="ReviewAndRatingsstyles__AverageReviewText-sc-1nxmeoo-8 jzSqUD">
+                                                                        @hotel.StarRating / @((int)RoundpayFinTech.AppCode.ThirdParty.HotelAPI.TekTvlHotelValues.HotelRetating.MaxRating)
+                                                                    </span>
+                                                                </div>
+                                                                <span class="ReviewAndRatingsstyles__ReviewTestStyles-sc-1nxmeoo-6 efIbNl"></span>
+                                                            </div>
+                                                            <span itemprop="ratingCount" content="45" class="ReviewAndRatingsstyles__TotalReviewCountText-sc-1nxmeoo-4 ckCNHU">
+                                                                45 Ratings
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div itemprop="name" class="HotelCardstyles__HotelNameWrapperDiv-sc-1s80tyk-12 biniNQ">
+                                                    <h4 class="dwebCommonstyles__SmallSectionHeader-sc-112ty3f-7 hAEfdZ open-hotel hotelname">
+                                                        @hotel.HotelName
+                                                    </h4>
+                                                </div>
+                                                <div itemprop="address">
+                                                    <div class="HotelCardstyles__LocationNameWrapper-sc-1s80tyk-2 qrDUo">
+                                                        @{
+
+                                                            string mapurl = "https://www.google.com/maps/search/?api=1&query=" + @hotel.Latitude + "," + @hotel.Longitude;
+                                                        }
+                                                        <span class="map-open" data-map-url="@mapurl">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="1.3rem" height="1.3rem" margin="0 0.2rem 0 0" fill="#2274E0" class="HappyMapPointerIcon-sc-8ontf-0 kWMSiB">
+                                                                <path d="M11.052 12.15h.099C16 12.566 16 13.576 16 14.01 16 15.806 10.455 16 8 16s-8-.194-8-1.991c0-.434 0-1.444 4.822-1.856a.67.67 0 01.703.615.672.672 0 01-.59.727c-.836.063-1.668.18-2.49.35a.167.167 0 00-.13.165c0 .078.053.147.13.164 1.83.355 3.692.516 5.555.479a26.425 26.425 0 005.556-.479.168.168 0 00.13-.164.168.168 0 00-.13-.165 19.59 19.59 0 00-2.517-.352.672.672 0 01-.609-.728.669.669 0 01.72-.614zM7.852 0c2.7 0 4.889 2.213 4.889 4.943 0 2.185-3.027 7.207-4.329 9.266a.663.663 0 01-1.12 0C5.99 12.15 2.963 7.128 2.963 4.943 2.963 2.213 5.152 0 7.852 0zm0 2.354c-1.284 0-2.326 1.053-2.326 2.352 0 1.3 1.042 2.352 2.327 2.352 1.284 0 2.326-1.053 2.326-2.352 0-1.3-1.042-2.352-2.326-2.352z"></path>
+                                                            </svg>
+                                                        </span>
+                                                        <span class="PersuasionHoverTextstyles__WrapperDiv-sc-1c06rw1-13 csdwmX">
+                                                            <span type="customLocation" class="PersuasionHoverTextstyles__HoverTargetWrapperDiv-sc-1c06rw1-2 cnDklP">
+                                                                <div color="#2274E0" type="customLocation" class="PersuasionHoverTextstyles__TextWrapperSpan-sc-1c06rw1-14 eokYuJ">
+                                                                    <span class="addressText">@hotel.HotelAddress</span>
+                                                                </div>
+                                                            </span>
+                                                        </span>
+                                                    </div>
+                                                    <span></span>
+                                                </div>
+                                            </div>
+                                            <div class="HotelCardstyles__PersuasionWrapperDiv-sc-1s80tyk-9 fpsJVN">
+                                                <div class="HotelCardstyles__RoomTypeWrapperDiv-sc-1s80tyk-14 ioxuNx">
+                                                    <span  class="PersuasionHoverTextstyles__WrapperDiv-sc-1c06rw1-13 csdwmX">
+                                                        <span class="PersuasionHoverTextstyles__HoverTargetWrapperDiv-sc-1c06rw1-2 dJLaty">
+                                                            <span type="aboveRatePlanPersuasion" class="PersuasionHoverTextstyles__MainTextIconWrapperSpan-sc-1c06rw1-18 lfPdlb">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="1.6rem" height="1.6rem" fill="#2276e3" class="UgcPersuasionIcon-xk3nsn-0 hcRXQm">
+                                                                    <g fill="none" fill-rule="evenodd">
+                                                                        <path d="M-4-4h24v24H-4z"></path>
+                                                                        <path fill="#898B91" d="M8 0a8.009 8.009 0 018 8 8 8 0 11-8-8zm2.933 6.667H9.267a.167.167 0 01-.139-.26l1.31-1.964a.5.5 0 00-.416-.776H7.539a.667.667 0 00-.596.368L4.82 8.278A.5.5 0 005.267 9h1.04a.167.167 0 01.158.22L5.35 12.56a.333.333 0 00.553.342l5.382-5.383a.5.5 0 00-.352-.853z"></path>
+                                                                    </g>
+                                                                </svg>
+                                                            </span>
+                                                            <div itemprop="nearby" color="#2276e3" type="aboveRatePlanPersuasion" 
+                                                                 class="PersuasionHoverTextstyles__TextWrapperSpan-sc-1c06rw1-14 cTsPPE">
+                                                                <span class="wrapper NearByAddress" >
+                                                                  Near By
+                                                                    <div class="tooltip">
+                                                                        <div class="Layouts__Column-sc-1yzlivq-1 PersuasionHoverTextstyles__TextBlockDropDownWrapper-sc-1c06rw1-7 fzWoxL ilmRrW">
+                                                                            <div class="Layouts__Row-sc-1yzlivq-0 PersuasionHoverTextstyles__TextBlockDDHeading-sc-1c06rw1-9 iwUOtq bfjJTv">
+                                                                                <label color="#2276e3" class="PersuasionHoverTextstyles__TextBlockDDHeadingSpan-sc-1c06rw1-10 hFaBpS">
+                                                                                    <label type="aboveRatePlanPersuasion" class="PersuasionHoverTextstyles__PersuasionHoverTitleSpan-sc-1c06rw1-0 fUgOcZ marB0 hnearby">@hotel.HotelLocation </label>
+                                                                                </label>
+                                                                            </div>
+                                                                            <p class="PersuasionHoverTextstyles__TextBlockDDFilterText-sc-1c06rw1-11 dpGUvh thnearby"></p>
+                                                                            <a class="PersuasionHoverTextstyles__BlueLinkText-sc-1c06rw1-12 zvgsp" style="display:none">View similar hotels</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </span>
+                                                        <span style="display:none" type="aboveRatePlanPersuasion" class="PersuasionHoverTextstyles__HoverTargetWrapperDiv-sc-1c06rw1-2 dJLaty">
+                                                            <div color="#2276e3" type="aboveRatePlanPersuasion" class="PersuasionHoverTextstyles__TextWrapperSpan-sc-1c06rw1-14 cTsPPE">
+                                                                <span class="wrapper">
+                                                                    Dwarka Sector 21 Metro Station
+                                                                    <div class="tooltip">
+                                                                        <div class="Layouts__Column-sc-1yzlivq-1 PersuasionHoverTextstyles__TextBlockDropDownWrapper-sc-1c06rw1-7 fzWoxL ilmRrW">
+                                                                            <div class="Layouts__Row-sc-1yzlivq-0 PersuasionHoverTextstyles__TextBlockDDHeading-sc-1c06rw1-9 iwUOtq bfjJTv">
+                                                                                <label color="#2276e3" class="PersuasionHoverTextstyles__TextBlockDDHeadingSpan-sc-1c06rw1-10 hFaBpS">
+                                                                                    <label type="aboveRatePlanPersuasion" class="PersuasionHoverTextstyles__PersuasionHoverTitleSpan-sc-1c06rw1-0 fUgOcZ marB0">Dwarka Sector 21 Metro Station</label>
+                                                                                </label>
+                                                                            </div>
+                                                                            <p class="PersuasionHoverTextstyles__TextBlockDDFilterText-sc-1c06rw1-11 dpGUvh">Approx 2.7km from Dwarka Sector 21 Metro Station</p>
+                                                                            <a class="PersuasionHoverTextstyles__BlueLinkText-sc-1c06rw1-12 zvgsp">View similar hotels</a>
+                                                                        </div>
+                                                                    </div>
+                                                                </span>
+                                                            </div>
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                                <div itemprop="Facility" class="HotelCardstyles__RoomTypeWrapperDiv-sc-1s80tyk-14 ioxuNx">
+                                                    <span itemprop="facicon" class="HotelCardstyles__RoomTypeIconWrapperSpan-sc-1s80tyk-17
+                                                          idkooe " style="display:none">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" class="BedIcon-pl6h8j-0 fPeXyy">
+                                                            <g fill="none" fill-rule="evenodd">
+                                                                <path d="M-4-4h24v24H-4z"></path>
+                                                                <path fill="#898B91" d="M.333 11h15.334c.16 0 .295.114.326.266l.007.067V13.5a1.502 1.502 0 01-1.5 1.5.167.167 0 00-.158.114l-.009.053v.333a.5.5 0 01-.992.09l-.008-.09v-.167a.333.333 0 00-.266-.326L13 15H3a.333.333 0 00-.327.266l-.006.067v.167a.5.5 0 01-.992.09l-.008-.09v-.333A.167.167 0 001.5 15a1.502 1.502 0 01-1.493-1.356L0 13.5v-2.167c0-.16.114-.295.266-.326L.333 11h15.334zM1.51 4.333h12.98c.138 0 .258.084.309.208l.019.064.992 5.334a.333.333 0 01-.255.386l-.073.008H.517a.333.333 0 01-.334-.321l.006-.073.992-5.334a.333.333 0 01.26-.265l.068-.007H14.49zM13.167 0a1.502 1.502 0 011.5 1.5v1.833c0 .184-.15.334-.334.334h-1.05a.333.333 0 01-.33-.279l-.24-1.443a.333.333 0 00-.329-.278h-3.05A.333.333 0 009 2v1.333c0 .184-.15.334-.333.334H7.333A.333.333 0 017 3.333V2a.333.333 0 00-.333-.333H3.616a.333.333 0 00-.33.278l-.24 1.443a.333.333 0 01-.329.279h-1.05a.333.333 0 01-.334-.334V1.5a1.502 1.502 0 011.5-1.5z"></path>
+                                                            </g>
+                                                        </svg>
+                                                    </span>
+                                                    <span title="Facility" class="HotelCardstyles__RoomTypeTextWrapper-sc-1s80tyk-16 jYuA-DB facilities">
+                                                    </span>
+                                                </div>
+                                                <div itemprop="dvmore" class="HotelCardstyles__RoomTypeWrapperDiv-sc-1s80tyk-14 ioxuNx " style="display:none">
+                                                    <div class="AmenitiesListstyles__HoverTargetWrapperDiv-sc-19dqtu1-1 bkZBRd">
+                                                        <a data-id="@hotel.HotelCode" class="dwebCommonstyles__PrimaryLink-sc-112ty3f-8 npTjr anchmore">+ more</a>
+                                                        <div class="iozPdL">
+                                                            <div class="hQAVux">
+                                                                <div class="fVGWFo idAYCJ anemeties">
+                                                                    <div class="bRYECE">
+                                                                        <div class="iwUOtq cuiDaJ">
+                                                                            <span class="fCobav">
+                                                                                <span class="dtAtEV">
+                                                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="1.2rem" width="1.2rem" fill="#2274E0" class="hTkaXK">
+                                                                                        <path d="M9.431 18.767a2.813 2.813 0 001.983 1.165 3.723 3.723 0 002.517-1.356 3.333 3.333 0 015.716.52c.295.499.823.813 1.401.836a2.49 2.49 0 001.969-1.128c.198-.34.46-.639.772-.879a.333.333 0 00.065-.456l-6.145-8.605a2 2 0 011.142-3.103l5.232-1.309a2 2 0 00-.971-3.88L17.879 1.88a5.999 5.999 0 00-3.425 9.31l.393.551-7.333 5.04a.333.333 0 00.091.593 3.265 3.265 0 011.825 1.393z"></path>
+                                                                                        <path d="M26.906 8.006a3.166 3.166 0 11-4.478 4.478 3.166 3.166 0 114.478-4.478zM11.413 24.597a7.812 7.812 0 005.08-2 6.1 6.1 0 004.555 2 6.868 6.868 0 004.829-2 6.37 6.37 0 004.881 1.976 1.333 1.333 0 001.241-1.419 1.363 1.363 0 00-1.424-1.239 4.483 4.483 0 01-3.567-2.092 1.4 1.4 0 00-2.288.029 4.496 4.496 0 01-3.671 2.077 3.739 3.739 0 01-3.2-1.975 1.39 1.39 0 00-2.29-.209 5.735 5.735 0 01-4.133 2.184 4.74 4.74 0 01-3.68-2.107 1.39 1.39 0 00-2.184-.122c-.017.024-1.956 2.427-4.145 2.267a1.307 1.307 0 00-1.414 1.192l-.004.073a1.332 1.332 0 001.261 1.401c.101 0 .199.008.296.008a7.776 7.776 0 004.976-2.143 6.977 6.977 0 004.88 2.096zM30.573 28.759a4.515 4.515 0 01-3.567-2.092 1.398 1.398 0 00-2.288.029 4.496 4.496 0 01-3.671 2.077 3.733 3.733 0 01-3.2-1.976 1.393 1.393 0 00-2.29-.208 5.735 5.735 0 01-4.133 2.184 4.746 4.746 0 01-3.692-2.107 1.388 1.388 0 00-2.184-.122c-.017.024-1.853 2.275-3.989 2.275h-.156a1.304 1.304 0 00-1.401 1.199l-.003.057a1.335 1.335 0 001.26 1.403h.001c.101 0 .199.008.296.008a7.788 7.788 0 004.976-2.143 6.985 6.985 0 004.88 2.096 7.812 7.812 0 005.08-2 6.1 6.1 0 004.555 2 6.868 6.868 0 004.829-2 6.425 6.425 0 004.881 1.976 1.333 1.333 0 001.241-1.416 1.353 1.353 0 00-1.427-1.241z"></path>
+                                                                                    </svg>
+                                                                                </span>
+                                                                                <span class="iaPjTA">Facility</span>
+
+                                                                            </span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="mf_@(hotel.HotelCode)">
+                                                                    
+                                                                </div>
+
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="HotelCardstyles__HotelPricingInfoWrapperDiv-sc-1s80tyk-18 yvBI">
+                                            <div class="HotelCardstyles__ContentWrapperDiv-sc-1s80tyk-19 hjruEM">
+                                                <span class="PersuasionHoverTextstyles__WrapperDiv-sc-1c06rw1-13 csdwmX">
+                                                    <span class="PersuasionHoverTextstyles__HoverTargetWrapperDiv-sc-1c06rw1-2 gCAaPL">
+                                                        <div color="#2bac36" type="belowBannerPersuasion" class="PersuasionHoverTextstyles__TextWrapperSpan-sc-1c06rw1-14 czKxhI">
+                                                            <span style="display:none">Free Cancellation Till 12 May'21</span>
+                                                        </div>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                            <div class="HotelCardstyles__PriceInfoWrapperDiv-sc-1s80tyk-25 ffKgMF">
+                                                <div class="HotelCardstyles__DealPersuationWrapperDiv-sc-1s80tyk-15 eExJev"></div>
+                                                <span class="OfferTagstyles__OuterBlockWrapper-sc-16zl30v-9 iBocOf">
+
+                                                    @{
+
+                                                        var costOfWork = @hotel.Price.PublishedPriceRoundedOff + @hotel.Price.Discount;
+                                                        var workersCharge = @hotel.Price.PublishedPriceRoundedOff;
+                                                        var Discount = Math.Round((costOfWork - workersCharge) / costOfWork * 100, 2);
+                                                        if (@Discount > 0)
+                                                        {
+                                                            <div class="price fixed">@Discount</div><span>% Off</span>
+                                                        }
+                                                    }
+                                                    <!--<div class="OfferTagstyles__PercentageOffWrapperDiv-sc-16zl30v-10 bqOixo"></div>-->
+                                                    <!--<span class="OfferTagstyles__PercentageLabelStyles-sc-16zl30v-11 bDpTMe"></span>-->
+                                                </span>
+                                                <section class="HotelCardstyles__PricingCompleteSection-sc-1s80tyk-54 fOELdy">
+                                                    @{
+                                                        var TotalPrice = @hotel.Price.PublishedPriceRoundedOff + @hotel.Price.Discount;
+                                                        if (@Discount > 0)
+                                                        {
+                                                            <p class="HotelCardstyles__OriginalPriceTextWrapper-sc-1s80tyk-26 fVerwi">
+                                                                <span>
+                                                                    @TotalPrice
+                                                                </span>
+                                                            </p>
+                                                        }
+                                                    }
+                                                    <div class="HotelCardstyles__CurrentPriceTextWrapper-sc-1s80tyk-27 eqtvkm">
+                                                        @*<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" height="1.5rem" width="1.5rem" class="RupeeIcon-sc-5hlwf0-0 eaJmwC">
+                                                                <path d="M21.482 7.945h3.536c.982 0 1.786.818 1.786 1.818s-.804 1.818-1.786 1.818h-3.536a9.429 9.429 0 01-2.625 5.109 9.509 9.509 0 01-6.75 2.891h-.679l9.661 9.255c0 .018.018.018.036.036.679.673.696 1.782.036 2.473a1.742 1.742 0 01-2.518.091L5.714 19a1.78 1.78 0 01-.554-1.364c.036-.964.839-1.727 1.786-1.691h5.179a5.902 5.902 0 004.214-1.836 6.327 6.327 0 001.482-2.527H6.946c-.982 0-1.786-.818-1.786-1.818s.804-1.818 1.786-1.818h10.875C17 5.455 14.714 3.782 12.125 3.764H6.946c-.982 0-1.786-.818-1.786-1.818S5.964.128 6.946.128h18.071c.982 0 1.786.818 1.786 1.818s-.804 1.818-1.804 1.818h-5.464a8.504 8.504 0 011.946 4.182z"></path>
+                                                            </svg>*@
+                                                        <p itemprop="priceRange" content="@hotel.Price.PublishedPriceRoundedOff" class="HotelCardstyles__CurrentPrice-sc-1s80tyk-28 inUyrJ">@hotel.Price.PublishedPriceRoundedOff</p>
+                                                    </div>
+                                                </section>
+                                                <span class="HotelCardstyles__TaxPriceTextWrapper-sc-1s80tyk-29 mFiRR">+ ₹@hotel.Price.Tax taxes &amp; fees</span>
+                                                <span class="HotelCardstyles__PerRoomNightTextWrapper-sc-1s80tyk-30 bhjGOF">per room / night</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                //}
+                            }
+                        }
+                        else
+                        {
+                            <div class="jumbotron jumbotron-fluid">
+                                <div class="container">
+                                    <h1>No Records Found!</h1>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <!-- end col-lg-8 -->
+            </div>
+            <!-- end row -->
+            <div class="row" style="display:none">
+                <div class="col-lg-12">
+                    <div class="btn-box mt-3 text-center">
+                        <button type="button" class="theme-btn"><i class="la la-refresh mr-1"></i>Load More</button>
+                        <p class="font-size-13 pt-2">Showing 1 - 6 of 24 Hotels</p>
+                    </div>
+                    <!-- end btn-box -->
+                </div>
+                <!-- end col-lg-12 -->
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </section>
+    <!-- end card-area -->
+    <!-- ================================
+        END CARD AREA
+    ================================= -->
+
+    <div class="section-block"></div>
+
+
+    <!-- start back-to-top -->
+    <div id="back-to-top">
+        <i class="la la-angle-up" title="Go top"></i>
+    </div>
+    <!-- end back-to-top -->
+    <!-- Template JS Files -->
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/Common/jquery-ui.js"></script>
+    <script src="~/lib/jquery/dist/popper.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/js/Hotel/daterangepicker.js"></script>
+    <script src="~/js/Common/owl.carousel.min.js"></script>
+    <script src="~/js/Hotel/jquery.fancybox.min.js"></script>
+    <script src="~/js/Hotel/jquery.countTo.min.js"></script>
+    <script src="~/js/Hotel/animated-headline.js"></script>
+    <script src="~/js/Hotel/jquery.ripples-min.js"></script>
+    <script src="~/js/Hotel/quantity-input.js"></script>
+    <script src="~/js/Hotel/main.js"></script>
+    <script src="~/js/Hotel/hotel-search.js"></script>
+    <script>
+        $(document).ready(function () {
+            getHotelInfo();
+        });
+
+        function getHotelInfo() {
+
+            let arrHotelCodes = [];
+            $(".listContainer").find(".singleItem").each(function () {
+                arrHotelCodes.push($(this).attr("data-hotelid"));
+            })
+            let cityId = $("#hdnCityId").val();
+            let req = { TBOHotelCodes: arrHotelCodes, CityId: cityId };
+            //Post method will be here for data fetch of hotel info
+
+            $.post("/Get-Hotel-Info", req)
+                .done(function (res) {
+                    console.log(res)
+                    $(".listContainer").find(".singleItem").each(function () {
+                        let _thisSingleItem = $(this);
+                        let _thisHotelCode = $(this).attr("data-hotelid");
+                        res.forEach(function (item, index) {
+                            let itemHotelCode = item["@@TBOHotelCode"];
+                            let itemHotelName = item["@@HotelName"];
+                            let itemHotelimage = item["@@ImageUrl"];
+                            let itemFacility = item["@@Facility"];
+                            if (itemHotelCode == _thisHotelCode) {
+                                let lat = item.position["@@Latitude"],
+                                    lon = item.position["@@Longitude"];
+                                let mapURL = "https://www.google.com/maps/search/?api=1&query=" + lat + "," + lon;
+                                _thisSingleItem.find(".map-open").attr("data-map-url", mapURL);
+                                _thisSingleItem.find("span[itemprop='ratingCount']").attr("content", item.award["@@Rating"]).text(item.award["@@Rating"] > 1 ? item.award["@@Rating"] + " Ratings" : item.award["@@Rating"] + " Rating");
+                                let addtext = _thisSingleItem.find("div[itemprop='address']").find(".addressText");
+                                let hotelName = _thisSingleItem.find("div[itemprop='name']").find(".hotelname");
+                                let Facility = _thisSingleItem.find("div[itemprop='Facility']").find(".facilities");
+                                let nearby = _thisSingleItem.find("div[itemprop='nearby']").find(".hnearby");
+                                let thnearby = _thisSingleItem.find("div[itemprop='nearby']").find(".thnearby");
+                                
+                                debugger;
+                                let hotelimgtag = _thisSingleItem.find("div[itemprop='imghotel']").find(".imghotels");
+                                if (nearby.text()?.trim() == "") {
+                                    nearby.text(item.address.addressLine[0]);
+                                }
+                                if (thnearby.text()?.trim() == "") {
+                                    thnearby.text(item.address.addressLine[1]);
+                                }
+                                if (addtext.text()?.trim() == "") {
+                                    addtext.text(item.address.addressLine[0]);
+                                }
+                                if (hotelName.text()?.trim() == "") {
+                                    hotelName.text(itemHotelName);
+                                }
+                                if (Facility.text()?.trim() == "") {
+                                    Facility.text(itemFacility);
+                                    _thisSingleItem.find("div[itemprop='dvmore']").show();
+                                    _thisSingleItem.find("span[itemprop='facicon']").show();
+                                }
+                                if (hotelimgtag.attr('src').indexOf("hotelnotfound.jpg") > -1) {
+                                    hotelimgtag.attr('src', itemHotelimage);
+                                }
+                                //let anemList = createAnemeties(item.attributes.attribute);
+                                //_thisSingleItem.find(".anemeties").append(anemList);
+                            }
+                        })
+                    })
+                })
+        }
+
+        $(".singleItem").find(".map-open").on("click", function () {
+            let mapUrl = $(this).attr("data-map-url");
+            if (mapUrl != "" && mapUrl != undefined) {
+                window.open(mapUrl, '_blank');
+            }
+        })
+
+
+        //$(".singleItem").find(".open-hotel").on("click", function () {
+        //    let _singleItem = $(this).parents(".singleItem");
+        //    let hotelCode = _singleItem.attr("data-hotelid"),
+        //        resultIndex = _singleItem.attr("data-resultindex"),
+        //        catid = _singleItem.attr("data-categoryid");
+
+        //    let frmHotelSingle = $("#frmHotelSingle");
+        //    frmHotelSingle.find("#ResultIndex").val(resultIndex);
+        //    frmHotelSingle.find("#HotelCode").val(hotelCode);
+        //    frmHotelSingle.find("#CategoryId").val(catid);
+
+        //    frmHotelSingle.submit();
+        //})
+
+        $(".singleItem").on("click", function () {
+            debugger;
+            preloader.load();
+            let _singleItem = $(this);
+            let hotelCode = _singleItem.attr("data-hotelid"),
+                resultIndex = _singleItem.attr("data-resultindex"),
+                catid = _singleItem.attr("data-categoryid");
+
+            let frmHotelSingle = $("#frmHotelSingle");
+            frmHotelSingle.find("#ResultIndex").val(resultIndex);
+            frmHotelSingle.find("#HotelCode").val(hotelCode);
+            frmHotelSingle.find("#CategoryId").val(catid);
+
+            frmHotelSingle.submit();
+        })
+
+        function createAnemeties(arrAnem) {
+            if (arrAnem.length > 0) {
+                let anemList = "";
+                for (var i = 0; i < arrAnem.length; i++) {
+                    anemList += `<div class="bRYECE">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="jwJkjF">
+                                                                    <path d="M20.667 0a1 1 0 00-1 1v29.667a1.333 1.333 0 002.666 0V20c0-.368.298-.667.667-.667h2.333A1.658 1.658 0 0027 17.685V17.657C26.915 8.073 23.776 0 20.667 0zM14.333 0C13.597 0 13 .597 13 1.333V8a2.66 2.66 0 01-.761 1.867.334.334 0 01-.572-.234v-8.3a1.333 1.333 0 00-2.666 0V9.63a.334.334 0 01-.572.233 2.657 2.657 0 01-.761-1.864V1.332a1.333 1.333 0 00-2.666 0v6.667a5.344 5.344 0 003.556 5.029.666.666 0 01.444.628v17.009a1.333 1.333 0 002.666 0V13.656c0-.282.178-.534.444-.628a5.345 5.345 0 003.556-5.029V1.332c0-.736-.597-1.333-1.333-1.333z"></path>
+                                                                </svg>
+                                                                <p class="iEiBKc">${arrAnem[i]["@@AttributeName"]}</p>
+                                                            </div>`;
+                }
+
+                return anemList;
+            }
+            return "";
+        }
+
+        $(".starRating").find("input[type=checkbox]").on("click", function () {
+            preloader.load();
+            debugger;
+            preloader.load();
+            let arrCheckedStars = [];
+            $(".starRating").find("input[type=checkbox]:checked").each(function () {
+                arrCheckedStars.push($(this).val());
+            })
+
+            $(".listContainer").find(".singleItem").each(function () {
+                if (arrCheckedStars.length > 0) {
+                    let _thisStar = $(this).find("span[itemprop='starRating']").attr("content");
+                    if (!arrCheckedStars.includes(_thisStar)) {
+                        $(this).hide();
+                    }
+                    else {
+                        $(this).show();
+                    }
+                }
+                else {
+                    $(this).show();
+                }
+            })
+
+            preloader.remove();
+        })
+
+
+        $(".priceRange").find("input[type=checkbox]").on("click", function () {
+            preloader.load();
+            debugger;
+            var valsh = 0;
+            preloader.load();
+            let arrCheckedprice = [];
+
+            $(".priceRange").find("input[type=checkbox]:checked").each(function () {
+                arrCheckedprice.push($(this).val());
+            })
+            $(".listContainer").find(".singleItem").each(function () {
+                debugger;
+                $(this).show();
+                if (arrCheckedprice.length > 0) {
+                    let _thisPrice = $(this).find("p[itemprop='priceRange']").attr("content");
+                    var finalprice = _thisPrice == "" ? 0 : Number.parseInt(_thisPrice);
+                    $.each(arrCheckedprice, function (index, value) {
+                        var prices = value.split('-');
+                        var pric1 = prices[0] == "" ? 0 : Number.parseInt(prices[0]);
+                        var pric2 = prices[1] == "" ? 0 : Number.parseInt(prices[1]);
+                        if (pric1 == 8000) {
+                            // finalprice >= pric1 ? $(this).show() : $(this).hide();
+                            valsh = finalprice >= pric1 ? 1 : 2;
+                        }
+                        else if (finalprice >= pric1 && finalprice <= pric2) {
+                            valsh = 1;
+                        }
+                        else {
+                            valsh = 2;
+                        }
+                    });
+                }
+                if (valsh == 2) {
+                    $(this).hide();
+                }
+                else {
+                    $(this).show()
+                }
+                //valsh = 1 ? $(this).show() : valsh = 2 ? $(this).hide() : $(this).show();
+            })
+            preloader.remove();
+        })
+
+        function reset() {
+            preloader.load();
+            $(".checkbox").prop("checked", false);
+            $(".singleItem").show();
+        }
+
+        $(".anchmore").hover(function () {
+            var dataid = $(this).attr("data-id");
+            let parentDiv = $(".mf_" + dataid);
+            parentDiv.empty();
+            $.post("/Get-Hotel-facility", { hc: dataid })
+                .done(function (res) {
+                    $.each(res, function (propName, propVal) {
+                        parentDiv.append(`<div class="AmenitiesListstyles__IconWrapperDiv-sc-19dqtu1-6 bRYECE">
+                                                                        <svg viewBox="0 0 16 16" class="RoundedCheckbox-sc-4skzta-0 hHXVDR">
+                                                                            <g fill="none" fill-rule="evenodd">
+                                                                                <path d="M-4-4h24v24H-4z">
+                                                                                </path>
+                                                                                <path fill="#898B91" d="M7.68 0a7.68 7.68 0 110 15.36A7.68 7.68 0 017.68 0zm4.335
+                                                                                           3.922l-6.233 6.702-2.454-2.26a.436.436 0 00-.622.021.452.452 0 00.022.632l2.556
+                                                                                           2.358c.295.28.76.26 1.039-.032l6.326-6.8a.452.452 0 00-.011-.632.436.436 0 00-.623.011z"></path>
+                                                                            </g>
+                                                                        </svg>
+                                                                        <p class="AmenitiesListstyles__TextWrapper-sc-19dqtu1-7 iEiBKc">${propVal}</p>
+                                                                    </div>`);
+                    });
+                });
+        });
+    </script>
+</body>
+
+<!-- Mirrored from techydevs.com/demos/themes/html/trizen-demo/trizen/flight-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 28 Apr 2021 09:20:30 GMT -->
+</html>

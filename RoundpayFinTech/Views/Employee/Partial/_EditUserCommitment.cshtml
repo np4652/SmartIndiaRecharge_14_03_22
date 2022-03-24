@@ -1,0 +1,81 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.UserCommitment>
+<div class="row">
+    @if (Model.Any())
+    {
+        <a style="position:absolute;top:-48px;right:44px" asp-action="ExportUserCommitment" asp-controller="Employee" target="_blank"><i class="text-success fa fa-file-excel fa-2x"></i></a>
+        <div class="col-sm-12">
+            <table class="table table-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>UserID</th>
+                        <th>UserName</th>
+                        <th>Role</th>
+                        <th>Mobile</th>
+                        <th>Balance</th>
+                        <th>City</th>
+                        <th>State</th>
+                        <th>Commitment</th>
+                        <th class="text-right">Achieved</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int counter = 1;
+                        foreach (var item in Model)
+                        {
+                                        <tr data-User-Id="@item.UserID" data-Commitment-Id="@item.CommitmentID">
+                                            <td>@counter</td>
+                                            <td>@item.Prefix@item.UserID</td>
+                                            <td>@item.UserName</td>
+                                            <td>@item.Role</td>
+                                            <td>@item.UserMobile</td>
+                                            <td>@item.Balance</td>
+                                            <td>@item.City</td>
+                                            <td>@item.State</td>
+                                            <td><input type="text" class="form-control text-right" value="@item.Commitment" /></td>
+                                            <td class="text-right">@item.Achieved</td>
+                                        </tr>
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-12">
+            <h4 class="text-danger">No Data Found</h4>
+        </div>
+    }
+</div>
+
+<script>
+    Q.geoLoaction();
+    $('input').numeric({
+        numericType: 'number',
+        maxLength: 10
+    });
+
+    $('input').unbind().change(e => {
+        let _ele = $(e.currentTarget).closest('tr');
+        let param = {
+            Commitment: $(e.currentTarget).val(),
+            UserID: _ele.data().userId,
+            Latitude: geoLoactionDetail.Latitude,
+            Longitute: geoLoactionDetail.Longitute
+        };
+        $.post('/Employee/SetUserCommitment', param)
+            .done(result => {
+                console.log(result);
+                an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+            });
+    });
+</script>

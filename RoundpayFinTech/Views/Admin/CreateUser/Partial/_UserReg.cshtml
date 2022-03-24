@@ -1,0 +1,241 @@
+﻿@using Fintech.AppCode.StaticModel
+@using RoundpayFinTech.AppCode.Configuration;
+@model UserRegModel
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-4">
+                <div class="card-header bg-gradientorange text-white">
+                    <i class="fas fa-link"></i> User Creation
+                </div>
+                <div class="card-body" style="">
+                    <div class="row">
+                        <div class="col-md-8 offset-md-2">
+                            <div class="row">
+                                <div class="col-6">
+                                    @Html.Label("txtReferal", "Referal", new { @class = "lbl" })
+                                    @Html.TextBox("txtReferal", Model.Input, new { @class = "form-control text-capitalize", @placeholder = "Enter Referal", @aria_describedby = "ReferalHelp", @tabindex = 1, @token = Model.Token, @IsAdminDefined = Model.userInfo.IsAdminDefined })
+                                    @if (Model.IsError)
+                                    {
+                                        <small id="ReferalHelp" class="form-text text-danger">Invalid Referal</small>
+                                    }
+                                    else
+                                    {
+                                        <small id="ReferalHelp" class="form-text text-success">@Html.Raw(Model.userInfo.OutletName + " " + Model.userInfo.MobileNo)</small>
+                                    }
+                                </div>
+                                <div class="col-6">
+                                    @Html.Label("ddlRole", "Choose Role", new { @class = "lbl" })
+                                    <select id="ddlRole" aria-describedby="roleHelp" tabindex="2" class="custom-select custom-select-md mb3">
+                                        <option selected value="0">:: Choose Role ::</option>
+                                        @if ((Model.roleSlab.Roles ?? new List<Fintech.AppCode.Model.RoleMaster>()).Any())
+                                        {
+                                            @foreach (var _roles in Model.roleSlab.Roles)
+                                            {
+                                                <option value="@_roles.ID">@_roles.Role</option>
+                                            }
+                                        }
+                                    </select>
+                                    <small id="roleHelp" class="form-text text-muted d-none">Role is mandatory</small>
+                                </div>
+                            </div>
+                            @if (!Model.IsError)
+                            {
+                                if (!Model.userInfo.IsAdminDefined || Model.userInfo.RoleID == Role.Admin)
+                                {
+                                    <div class="form-group">
+                                        <div class="row">
+                                            <div class="col-6">
+                                                @Html.Label("ddlSlab", "Choose Slab", new { @class = "lbl" })
+                                                <div class="input-group">
+                                                    <select id="ddlSlab" aria-describedby="slabHelp" tabindex="3" class="custom-select custom-select-md mb3 form-control text-capitalize">
+                                                        <option selected value="0">:: Choose Slab ::</option>
+                                                        @if ((Model.roleSlab.Slabs ?? new List<Fintech.AppCode.Model.SlabMaster>()).Any())
+                                                        {
+                                                            @foreach (var _slabs in Model.roleSlab.Slabs)
+                                                            {
+                                                                <option value="@_slabs.ID">@_slabs.Slab</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                    <div class="input-group-append d-none">
+                                                        <span class="input-group-text switch switch-sm bg-white align">
+                                                            <input type="checkbox" class="switch" id="chbIsRealApi" tabindex="14" @Html.Raw(Model.userInfo.IsGSTApplicable ? "checked='checked'" : "")>
+                                                            <label for="chbIsRealApi" class="font-weight-bold lbl">IsRealApi</label>
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <small id="slabHelp" class="form-text text-muted d-none">Slab is mandatory</small>
+                                            </div>
+                                            @if (ApplicationSetting.IsWhitelabel)
+                                            {
+                                                <div class="col-6">
+                                                    @Html.Label("txtWebsite", "Website", new { @class = "lbl" })
+                                                    <div class="input-group">
+                                                        @Html.TextBox("txtWebsite", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Website", @aria_describedby = "websiteHelp", @tabindex = 1 })
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                                <input type="checkbox" class="switch" id="chbIsWebsite" tabindex="2" )>
+                                                                <label for="chbIsWebsite" class="font-weight-bold lbl">IsWebsite</label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <small id="websiteHelp" class="form-text text-muted d-none">Website is mandatory</small>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                }
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-6">
+                                            @Html.Label("txtName", "Name", new { @class = "lbl" })
+                                            @Html.TextBox("txtName", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Name", @aria_describedby = "nameHelp", @tabindex = 1 })
+                                            <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                                        </div>
+                                        @if (ApplicationSetting.WithCustomLoginID)
+                                        {
+                                            <div class="col-3">
+
+                                                @Html.Label("txtOutletName", "Outlet Name", new { @class = "lbl" })
+                                                @Html.TextBox("txtOutletName", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Outlet Name", @aria_describedby = "outletnameHelp", @tabindex = 2 })
+                                                <small id="outletnameHelp" class="form-text text-muted d-none">Outlet Name is mandatory</small>
+                                            </div>
+                                            <div class="col-md-3">
+                                                @Html.Label("txtCustomLogin", "Custom Login Name", new { @class = "lbl" })
+                                                @Html.TextBox("txtCustomLogin", null, new { @id = "txtCustomLogin", @class = "form-control", @placeholder = "Enter Custome Login Name", @aria_describedby = "LoginName", @tabindex = 3 })
+                                                <small id="LoginName" class="form-text text-muted d-none">Custome Login name is mandatory</small>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="col-6">
+
+                                                @Html.Label("txtOutletName", "Outlet Name", new { @class = "lbl" })
+                                                @Html.TextBox("txtOutletName", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Outlet Name", @aria_describedby = "outletnameHelp", @tabindex = 2 })
+                                                <small id="outletnameHelp" class="form-text text-muted d-none">Outlet Name is mandatory</small>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @Html.Label("txtEmail", "Email ID", new { @class = "lbl" })
+                                            @Html.TextBox("txtEmail", null, new { @class = "form-control text-lowercase", @placeholder = "Enter Email ID", @aria_describedby = "emailHelp", @tabindex = 4 })
+                                            <small id="emailHelp" class="form-text text-muted d-none">Email is mandatory</small>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("txtMobile", "Mobile Number", new { @class = "lbl" })
+                                            @Html.TextBox("txtMobile", null, new { @class = "form-control", @placeholder = "Enter Mobile Number", @aria_describedby = "mobileHelp", @tabindex = 3 })
+                                            <small id="mobileHelp" class="form-text text-muted d-none">Mobile Number is mandatory</small>
+                                        </div>
+                                        <div class="col-md-3">
+                                            @Html.Label("txtWhatsappNo", "Whatsapp Number", new { @class = "lbl" })
+                                            @Html.TextBox("txtWhatsappNo", null, new { @class = "form-control", @placeholder = "Enter Whatsapp Number", @aria_describedby = "whatsappHelp", @tabindex = 3 })
+                                            <small id="whatsappHelp" class="form-text text-muted d-none">Whatsapp Number is mandatory</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            @Html.Label("txtPinCode", "Pincode", new { @class = "lbl" })
+                                            @Html.TextBox("txtPinCode", null, new { @class = "form-control text-lowercase", @placeholder = "Enter Pincode", @aria_describedby = "pincodeHelp", @tabindex = 5 })
+                                            <small id="pincodeHelp" class="form-text text-muted d-none">Pincode is mandatory</small>
+                                        </div>
+                                        <div class="col-md-6">
+                                            @Html.TextBox("txtCommRate", 0, new { @class = "form-control text-lowercase" + (ApplicationSetting.ActiveFlatType == FlatTypeMaster.DisableFlat ? "d-none" : ""), @placeholder = "Enter Comm Rate", @aria_describedby = "CommRateHelp", @tabindex = 5 })
+                                            @if (ApplicationSetting.ActiveFlatType != FlatTypeMaster.DisableFlat)
+                                            {
+                                                @Html.Label("txtCommRate", "CommRate", new { @class = "lbl" })
+                                            }
+
+                                            @if (ApplicationSetting.ActiveFlatType != FlatTypeMaster.DisableFlat)
+                                            {
+                                                <small id="CommRateHelp" class="form-text text-muted d-none">Comm Rate is mandatory</small>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            @Html.Label("txtAddress", "Address", new { @class = "lbl" })
+                                            @Html.TextBox("txtAddress", null, new { @class = "form-control", @placeholder = "Enter Address", @aria_describedby = "addressHelp", @tabindex = 5 })
+                                            <small id="addressHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group @Html.Raw(ApplicationSetting.IsAreaMaster ? "" : "d-none")">
+                                    <div class="row">
+                                        <div class="col-md-3 col-sm-3 col-xs-3">
+                                            <div class="mb-2">
+                                                <label class="lbl" for="ddlTop">Area</label>
+                                                <select id="ddlArea" tabindex="1" class="form-control">
+                                                    <option value="0">All</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <div class="row">
+                                        @*@if (Model.userInfo.RoleID == Role.Admin)
+                    {
+                        <div class="col-md-3">
+                            <select class="form-control" id="ddlDMRModel" aria-describedby="ddlDMRModelH" tabindex="14" asp-for=@(Model.userInfo.DMRModelID) asp-items="@Model.DMRModelSelect">
+                                <option value="0">:: Choose DMTModel ::</option>
+                            </select>
+                            <small id="ddlDMRModelH" class="form-text text-muted d-none"></small>
+                        </div>
+                    }*@
+                                        <div class="col-md-9 mt-1">
+                                            @if (Model.userInfo.RoleID == Role.Admin)
+                                            {
+                                                @if (ApplicationSetting.IsWhitelabel)
+                                                { 
+                                            <span class="switch switch-sm">
+                                                <input type="checkbox" class="switch" id="chbIsVirtual" tabindex="15">
+                                                <label for="chbIsVirtual">IsVirtual</label>
+                                            </span>
+                                                }
+                                                @if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.ByAdminOnly)
+                                                {
+                                                    <span class="switch switch-sm">
+                                                        <input type="checkbox" class="switch" id="chbIsFlatCommission" tabindex="15">
+                                                        <label for="chbIsFlatCommission">IsFlatCommission</label>
+                                                    </span>
+                                                }
+                                            }
+                                            <span class="switch switch-sm @(Model.userInfo.RoleID == Role.Admin?"":"d-none")">
+                                                <input type="checkbox" class="switch" id="chbISGSTAPPLICABLE" tabindex="14" @Html.Raw(Model.userInfo.IsGSTApplicable ? "checked='checked'" : "")>
+                                                <label for="chbISGSTAPPLICABLE">IsGST</label>
+                                            </span>
+                                            <span class="switch switch-sm @(Model.userInfo.RoleID == Role.Admin?"":"d-none")">
+                                                <input type="checkbox" class="switch" id="chbISTDSAPPLICABLE" tabindex="15" @Html.Raw(Model.userInfo.IsTDSApplicable ? "checked='checked'" : "")>
+                                                <label for="chbISTDSAPPLICABLE">IsTDS</label>
+                                            </span>
+                                            @*<span class="switch switch-sm d-none" id="dvIsECollection">
+                            <input type="checkbox" class="switch" id="chbIsECollection" tabindex="16">
+                            <label for="chbIsECollection">IsE-Collection</label>
+                        </span>*@
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-primary" id="btnCreate">Create User</button>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-md-3" id="alertmsg"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

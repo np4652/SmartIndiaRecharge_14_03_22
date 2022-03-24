@@ -1,0 +1,24 @@
+﻿@using RoundpayFinTech.AppCode.Model
+@model DepositResponse
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Beneficary Detail</h3>
+    <div class="text-center">
+        <div class="form-group">
+            Bank : <span class="label" id="spnBank"></span>
+        </div>
+        <div class="form-group">
+            Account Number : <span class="label" id="spnAcc"></span>
+        </div>
+        <div class="form-group">
+            Beneficiary : <span class="label">@Model.BeneficaryName</span>
+        </div>
+        <div class="form-group">
+            Amount : <span class="label" id="spnAmt"></span>
+        </div>
+    </div>
+    <button class="btn btn-outline-success btn-sm" id="btnDepositNow">Deposit Now?</button>
+    <button class="btn btn-danger btn-sm" id="mdlCancel">Cancel</button>
+</div>

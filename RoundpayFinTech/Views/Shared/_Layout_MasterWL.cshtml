@@ -1,0 +1,445 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode;
+@using RoundpayFinTech.AppCode.StaticModel;
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    var userML = new UserML(_lr);
+    var IsChannel = (_lr.RoleID == Role.Admin && _lr.LoginTypeID == LoginType.ApplicationUser || userML.IsCustomerCareAuthorised(ActionCodes.AddEditSLAB)) || !_lr.IsAdminDefined;
+    int ThemeID = Convert.ToInt32(ViewData["Theme"]);
+    int WID = Convert.ToInt32(ViewData["WID"]);
+    var IsPaymentGateway = ViewData["IsPaymentGateway"] != null ? Convert.ToBoolean(ViewData["IsPaymentGateway"]) : false;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["HTitle"]</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="~/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="~/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="~/images/favicons/favicon.ico">
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.css" />
+        <link rel="stylesheet" href="~/AvailableThemes/@ThemeID/css/site.css" />
+        <link rel="stylesheet" href="~/css/table-loader.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.css" />
+        <link href="~/AvailableThemes/@ThemeID/css/reseller.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/dashboard.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/main.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/index-style.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.min.css" />
+        <link rel="stylesheet" href="~/AvailableThemes/@ThemeID/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/table-loader.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.min.css" />
+        <link href="~/AvailableThemes/@ThemeID/css/reseller.min.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/dashboard.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/main.min.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/index-style.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    @RenderSection("head", required: false)
+</head>
+<body>
+    <div style="position: fixed; right: -24px;top: 50%;background: black;transform: rotate(90deg);z-index: 1;">
+        <a href="/support" class="nav-link text-white font-bold">Support</a>
+    </div>
+    <div class="top-navbar">
+        <div class="container-fluid">
+            <div class="mobile-only-brand float-left">
+                <div class="nav-header float-left">
+                    <div class="logo-wrap">
+                        <a asp-area="" asp-controller="MasterWL" asp-action="Index" class="navbar-brand"><img src="@ViewData["Host"]/Image/Website/@ViewData["WID"]/white-logo.png" height="26" class="d-inline-block align-top" alt="@ViewData["CName"]" /></a>
+                    </div>
+                </div>
+            </div>
+            <ul class="nav navbar-right top-nav float-right">
+                @if (ApplicationSetting.IsAddMoneyEnable)
+                {
+                    if (ApplicationSetting.IsPaymentGatway)
+                    {
+                        <li>
+                            <a class="nav-link text-white font-bold" href="/addmoney"><i class="fas fa-plus"></i> Money</a>
+                        </li>
+                    }
+                    if (ApplicationSetting.IsUPI && (ApplicationSetting.IsFraudPrevention && _lr.IsMarkedGreen || !ApplicationSetting.IsFraudPrevention))
+                    {
+                        <li>
+                            <a class="nav-link text-white font-bold" href="/addmoneyUPI"><i class="fas fa-plus"></i> UPI</a>
+                        </li>
+                        if (ApplicationSetting.IsUPIQR && IsPaymentGateway)
+                        {
+                            <li id="liQR">
+                                <a class="nav-link text-white font-bold"><i class="fas fa-2x fa-qrcode"></i></a>
+                            </li>
+                        }
+                        if (ApplicationSetting.IsCOIN)
+                        {
+                            <li id="liQRCoin">
+                                <a class="nav-link text-warning font-bold"><i class="fas fa-2x fa-qrcode"></i></a>
+                            </li>
+                        }
+                    }
+                }
+                <li>
+                    <span class="nav-link text-white font-bold"><span class="custom bal"></span></span>
+                </li>
+                <li>
+                    <div class="dropdown" id="UINFO">
+                        <button class="btn btnProfileSetting btnProfileSetting-sm p-0" id="btnProfileSetting" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img id="profileImg" />
+                        </button>
+
+                        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="drpdn_LoginInfo">
+                            <div class="bg-new pt-3 pb-2">
+                                <div class="row ">
+                                    <div class="col-lg-3">
+                                        <button class="btn btnProfileSetting ml-2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                    </div>
+                                    <div class="col-lg-9">
+                                        <div class="row">
+                                            <div class="col-lg-9 pl-0">
+                                                <span id="fullName" class="ml-4" style="font-size: 12px; font-weight: 900;"></span>
+                                            </div>
+                                            <div class="col-lg-3">
+                                                <a href="/ProfileUser"><i class="fas fa-edit" style="font-size: 12px; border-radius: 50%;"></i></a>
+                                            </div>
+
+                                            <div class="col-lg-12">
+                                                <span class="dropdown-item-text mt-0 pl-2" style="font-size: 11px; "></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#" id="myBalance">My Balance</a>
+                            <a class="dropdown-item" href="#" id="PackageLimitbalance">Service Limit Balance</a>
+                            <a class="dropdown-item" href="/ProfileUser" id="updatePro">Update Profile</a>
+                            <a class="dropdown-item" href="#" id="changepass">Change Password</a>
+                            <a class="dropdown-item" href="#" id="changepin">Change Pin</a>
+                            <a href="javascript:Two_FA_Win()" class="dropdown-item" target="_top">Two Factor Authentication</a>
+                            <div class="dropdown-divider"></div>
+                            <a href="javascript:recentLoginActivity()" class="dropdown-item">Recent Login Activity</a>
+                            <a class="dropdown-item" href="#" id="logoutAll">Logout All Devices</a>
+                            <a class="dropdown-item" href="#" id="logout">Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-greenhead">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+        <div class="navbar-collapse collapse" id="menu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a asp-area="" asp-controller="MasterWL" asp-action="Index" class="nav-link">Dashboard</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuUserMgmt" data-toggle="dropdown">UserManagement</a>
+                    <div class="dropdown-menu" area-labelledby="drpdnMenuUserMgmt">
+                        <a href="/CreateUser" class="dropdown-item">Create User</a>
+                        <a href="/UserList" class="dropdown-item">User List</a>
+                        <a href="/FOSList" class="dropdown-item">FOS User List</a>
+                        <a href="/AssignRetailer" class="dropdown-item">Assign Retailer to FOS</a>
+
+                    </div>
+                </li>
+                @if (_lr.IsWLAPIAllowed && ApplicationSetting.IsWLAPIAllowed)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dwnMenuApiMgmt" data-toggle="dropdown">API Management</a>
+                        <div class="dropdown-menu" area-labelledby="dwnMenuApiMgmt">
+                            <div class="dropdown-header">APIs</div>
+                            <a href="/Recharge-API" class="dropdown-item">Recharge API</a>
+                            <a href="/APIOpCode" class="dropdown-item">API Operator Code</a>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-header">Switching</div>
+                            @if (ApplicationSettingWL.IsUserwiseSwitch)
+                            {
+                                <a href="/UserwiseAPISwitch" class="dropdown-item">Userwise API Switch</a>
+                                <a href="/USwitchDetail" class="dropdown-item">User Switch Detail</a>
+                            }
+                            @if (ApplicationSettingWL.IsCircleSwitch)
+                            {
+                                <a href="/CircleSwitching" class="dropdown-item">Circle Switch</a>
+                                @if (ApplicationSetting.IsCircleSlabShow)
+                                {
+                                    <a href="/CircleBlocked" class="dropdown-item">Circle Block</a>
+                                }
+                            }
+                            @if (ApplicationSettingWL.IsDenominationAPISwitch)
+                            {
+                                <a href="/DenominationAPISwitching" class="dropdown-item">Denomination Switch</a>
+                                <a href="/D-Switch-Report" class="dropdown-item">Denomination Switch Report</a>
+                            }
+
+                            @if (ApplicationSetting.IsUserwiseDenominationSwitch && ApplicationSettingWL.IsUserwiseDenominationSwitch)
+                            {
+                                <a href="/DenominationAPISwitchingU" class="dropdown-item">User Denomination Switch</a>
+                                <a href="/D-Switch-Report-U" class="dropdown-item">User Denomination Switch Report</a>
+                            }
+                            <a href="/APISwitching" class="dropdown-item">API Switch</a>
+                        </div>
+                    </li>
+                }
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMenuComm" data-toggle="dropdown">Commission</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMenuComm">
+                        @if (IsChannel)
+                        {
+                            <a href="/SlabMaster" class="dropdown-item">Slab Master</a>
+                        }
+                        @if (ApplicationSetting.IsPackageAllowed)
+                        {
+                            <a href="/Available-Package" class="dropdown-item">Package Commission Detail</a>
+                        }
+                        <a href="/SlabCommission" class="dropdown-item">SlabDetail</a>
+                        <a href="/DTHSlabCommissionDisplay" class="dropdown-item">DTH Commission Detail</a>
+                        @*<a href="/RangeSlabCommission" class="dropdown-item">Range Slab Detail</a>*@
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="/fund-request" class="nav-link">Fund Request</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMenuMast" data-toggle="dropdown">Masters</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMenuMast">
+                        <a href="/bank-master" class="dropdown-item">Bank Master</a>
+                        @if (ApplicationSetting.IsAreaMaster)
+                        {
+                            <a href="/area-master" class="dropdown-item">Area Master</a>
+                        }
+                    </div>
+                </li>
+                @if (_lr.IsWebsite && ApplicationSetting.IsWhitelabel)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="drpBrannding" data-toggle="dropdown">Branding</a>
+                        <div class="dropdown-menu" area-labelledby="drpBrannding">
+                            <a href="/Website-Setting" class="dropdown-item">Website Setting</a>
+                            <a href="/CompanyProfile" class="dropdown-item">Company Profile</a>
+                            <a href="/BannerMaster" class="dropdown-item">Banner Setting</a>
+                            <a href="/popup" class="dropdown-item">Popup Master</a>
+                            <a href="/News" class="dropdown-item">News</a>
+                        </div>
+                    </li>
+                }
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnUserReport" data-toggle="dropdown">User Report</a>
+                    <div class="dropdown-menu" area-labelledby="dwnUserReport">
+                        <a href="/RechargeReport" class="dropdown-item">Recharge Report</a>
+                        <a href="/DMRReport" class="dropdown-item">DMT Report</a>
+                        <a href="/AEPSReport" class="dropdown-item">MiniBank Report</a>
+                        <a href="/UserLedger" class="dropdown-item">User Ledger</a>
+                        @if (ApplicationSetting.ISServiceLimitTransfer)
+                        {
+                            <a href="/UserPackageLimitLedger" class="dropdown-item">User Service  Limit Ledger</a>
+                        }
+                        <a href="/UDaybook" class="dropdown-item">User Daybook</a>
+                        @if (ApplicationSetting.IsCCFApplicable)
+                        {
+                            <a href="/UDaybookDMR" class="dropdown-item">User Daybook DMT</a>
+                        }
+                        @if (ApplicationSetting.IsAccountStatement)
+                        {
+                            <a href="/AccStmt" class="dropdown-item">Account Statement Summary</a>
+                            <a href="/ASC/0" class="dropdown-item">Account Statement & Collection</a>
+                            <a href="#" class="dropdown-item" id="lnkVchEntry">Voucher Entry </a>
+                        }
+                        <a href="/FundRequestReport" class="dropdown-item">User Fund Orders</a>
+                        <a href="/FundRequestReportSelf" class="dropdown-item">My Fund Orders</a>
+                        <a href="/FundReceiveStatement" class="dropdown-item">Fund Debit-Credit</a>
+                        <a href="/RefundHistory" class="dropdown-item">Dispute Settlement</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/SalesSummary" class="dropdown-item">Sales Summary(Operatorwise)</a>
+                        <a href="/USalesSummary" class="dropdown-item">Sales Summary(Userwise)</a>
+                        <a href="/USalesSummaryR" class="dropdown-item">Sales Summary(Rolewise)</a>
+
+                        @if (!_lr.IsWebsite)
+                        {
+                            <a href="/GSTSummary" class="dropdown-item">GST Summary</a>
+                            <a href="/InvoiceList" class="dropdown-item">Invoice List</a>
+                            <a href="/UploadStatus" class="dropdown-item">Uploaded Invoice</a>
+                        }
+
+
+                        <a href="/UserSettlement" class="dropdown-item">Userwise Settlement</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnRequests" data-toggle="dropdown">Requests</a>
+                    <div class="dropdown-menu" area-labelledby="dwnRequests">
+                        <a href="/FundRequestApproval" class="dropdown-item">Fund Order</a>
+                        @if (_lr.IsWLAPIAllowed && ApplicationSetting.IsWLAPIAllowed)
+                        {
+                            <a href="/Pendings" class="dropdown-item">Recharge Pendings</a>
+                            <a href="/RefundRequest" class="dropdown-item">Dispute Request</a>
+                        }
+                    </div>
+                </li>
+                @if (_lr.IsWebsite && ApplicationSetting.IsWhitelabel)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuSetting" data-toggle="dropdown">Setting</a>
+                        <div class="dropdown-menu" area-labelledby="drpdnMenuSetting">
+                            <a href="/SMSAPI" class="dropdown-item">SMS API Setting</a>
+                            <a href="/EmailAPI" class="dropdown-item">Email Setting</a>
+                            <a href="/Theme" class="dropdown-item">Theme</a>
+
+                        </div>
+                    </li>
+                }
+            </ul>
+
+        </div>
+    </nav>
+    <div class="main-wrapper body-content">
+        <div id="alertmsg"></div>
+        @RenderBody()
+    </div>
+    <footer style="position:fixed;" class="footer">
+        <div class="container-fluid text-center">
+            <p>&copy;2012-@ViewData["CName"]</p>
+        </div>
+    </footer>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery/dist/popper.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.js"></script>
+        <script src="~/lib/jquery/dist/moment.js"></script>
+        <script src="~/lib/jquery.bootstrap.newsbox.min.js"></script>
+        <script src="~/js/validator.js" asp-append-version="true"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script>var $$IsWebNotify='@ApplicationSetting.IsWebNotification';</script>
+        <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+        <script src="~/js/Common/jquery-customselect.js"></script>
+
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery/dist/popper.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.min.js"></script>
+        <script src="~/lib/jquery/dist/moment.min.js"></script>
+        <script src="~/lib/jquery.bootstrap.newsbox.min.js"></script>
+        <script src="~/js/validator.min.js" asp-append-version="true"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script>var $$IsWebNotify='@ApplicationSetting.IsWebNotification';</script>
+        <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+        <script src="~/js/Common/jquery-customselect.js"></script>
+
+    </environment>
+    <script>
+
+        var $$host = '@(ViewData["Host"])';
+    </script>
+    @RenderSection("Scripts", required: false)
+    @*@if (ApplicationSetting.IsRPOnly)
+        {
+            <script charset="UTF-8" src="//web.webpushs.com/js/push/9b2b97541217dbc110d8cb05816349a4_1.js" async></script>
+        }*@
+    @if (ApplicationSetting.IsAddMoneyEnable && ApplicationSetting.IsUPI)
+    {
+        <script>
+            var $$host = '@(ViewData["Host"])';
+            $(document).ready(function () {
+                 $('#liQR a').unbind().click(function () {
+                    $.post("/UserVADetail", {}, function (result) {
+                        resultReload(result);
+                        var _d = 0;//new Date().getTime();
+                        mdlA.id = "qrModel";
+                        mdlA.isHeaderBorder = true;
+                        mdlA.title = "  ";
+                        mdlA.content = `<div class="text-center">
+ @if (ApplicationSetting.IsBankAccountNoReplaceWithSmartCollect)
+     {
+         <p><img class="img-thumbnail" src="${$$host + '/Report/UserUPIQRCodeShortURL?ShortURL='}${result.userSDetail.smartQRShortURL}" alt="QR Code" style="width:350px"></p>
+        <p>Your virtual account detail for instant wallet payment</p>
+        <div class="text-secondary">BANK : ${result.userSDetail.bankName}</div>
+        <div class="text-secondary">IFSC : ${result.userSDetail.ifsc}</div>
+        <div class="text-secondary">VirtualAccount : ${result.userSDetail.smartAccountNo}</div>
+     }
+     else {
+         <p>Scan the QR code using your UPI apps</p>
+        <img class="mb-3 mt-3" src="${$$host + '/Image/QRImg/UPI.png'}" style="width: 57%;">
+        <p><img class="img-thumbnail" src="${$$host + '/Report/UserUPIQRCode?a=0&b='}${_d}" alt="QR Code" style="width:250px"></p>
+        @if (ApplicationSetting.IsECollectEnable) {
+            <p>Your virtual account detail for instant wallet payment</p>
+            <div class="text-secondary">BANK : ${result.bankName}</div>
+            <div class="text-secondary">IFSC : ${result.ifsc}</div>
+            <div class="text-secondary">VirtualAccount : ${result.virtualAccount}</div>
+
+        }
+
+     }
+            <button class="btn btn-outline-primary w-75 mt-3 mb-2" id="mdlCancel">Close</button>
+                                </div>`;
+                        mdlA.modal(mdlA.size.default);
+                        $('#qrModel .modal-header').remove();
+                        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                    });
+
+                 });
+                $('#liQRCoin a').unbind().click(function () {
+                    $.post("/CoinQRModalPopup", {}, function (result) {
+                        resultReload(result);
+                        mdlA.id = "qrModelCoin";
+                        mdlA.isHeaderBorder = true;
+                        mdlA.title = "  ";
+                        mdlA.content = result;
+                        mdlA.modal(mdlA.size.default);
+                        $('#qrModel .modal-header').remove();
+                        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                    });
+
+                });
+            });
+
+        </script>
+    }
+</body>
+</html>

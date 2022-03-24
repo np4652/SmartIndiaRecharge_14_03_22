@@ -1,0 +1,96 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model GetAddService
+@{
+    var counter = 1;
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Activate Additional Service</h3>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="form-row">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblAddonService">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Services</th>
+                        <th scope="col">Available Limit</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.AddonServList != null)
+                    {
+                        if (Model.Statuscode == 1)
+                        {
+
+                            @foreach (var item in Model.AddonServList)
+                            {
+                                <tr>
+                                    <td>@counter</td>
+                                    <td>@item.DisplayName</td>
+                                    <td>@item.IDLimit</td>
+                                    <td>@item.IsActive</td>
+                                    <td>
+                                        @if (!item.IsActive)
+                                        {
+                                            <span class="switch switch-sm">
+                                                <input type="checkbox" class="switch" id="isacti_@counter" @Html.Raw(@item.IsActive ? "checked='checked'" : "") data-toggle="tooltip" data-placement="top" data-original-title="@Html.Raw(@item.IsActive ? "De-Activate Service" : "Activate Service")" data-opid="@item.OpTypeID" data-oid="@item.OID" data-uid="@item.UID" data-outid="@Model.OutletID">
+                                                <label for="isacti_@counter"></label>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-success">Activated</span>
+                                        }
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>@Html.Raw(@Model.Msg)</tr>
+                        }
+
+                    }
+                    else
+                    {
+                        <tr class="text-center text-monospace">
+                            <td colspan="4">
+                                No Data Found
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $('input[id^=isacti]').on('change', function () {
+        var uId = $(this).data().uid;
+        var opTypeID = $(this).data().opid;
+        var oid = $(this).data().oid;
+        var outid = $(this).data().outid;
+
+
+        $.post('/act-add-serv', { uid: uId, opTypeId: opTypeID, OID: oid, outletID: outid })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+</script>

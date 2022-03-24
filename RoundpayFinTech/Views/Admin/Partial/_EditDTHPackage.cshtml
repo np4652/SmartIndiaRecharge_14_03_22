@@ -1,0 +1,104 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.DTHPackageRes
+@{
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="mb-3 text-info">DTH Package </h5>
+        <hr />
+    </div>
+    <div class="col-sm-12">
+        <input type="hidden" id="txtID" value="@(Model.package!=null?Model.package.ID:0)"/>
+        <div class="form-group row">
+            @{
+                var _OpTypes = new SelectList(Model.OpTypes, "ID", "OpType");
+                var _OpTypeID = Model.package != null ? Model.package.OPTypeID : 0;
+            }
+            <div class="col-sm-6">
+                <label class="lbl" for="ddlOpTypes">Choose OpType</label>
+                <select class="form-control" id="ddlOpTypes" tabindex="1" asp-items="@_OpTypes" asp-for="@_OpTypeID">
+                    <option value="0"> :: Select Operator :: </option>
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <label class="lbl" for="ddlOperator">Choose Operator</label>
+                @if (Model.Operators != null)
+                {
+                    var list = new SelectList(Model.Operators, "OID", "Name");
+                    var _OID = Model.package != null ? Model.package.OID : 0;
+                    <select class="form-control" id="ddlOperator" tabindex="1" asp-items="@list" asp-for="@_OID">
+                        <option value="0"> :: Select Operator :: </option>
+                    </select>
+                }
+                else
+                {
+                    <select class="form-control" id="ddlOperator" tabindex="1">
+                        <option value="0"> :: Select Operator :: </option>
+                    </select>
+                }
+
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Package Name</label>
+            <input type="text" class="form-control" id="txtPackageName" value="@(Model.package!=null ?Model.package.PackageName:"")" />
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-3">
+                <label>Package MRP (<i class="fa fa-rupee-sign"></i>)</label>
+                <input type="number" class="form-control" id="txtPackageMRP" value="@(Model.package!=null?Model.package.PackageMRP:0)" />
+            </div>
+
+            <div class="col-sm-3">
+                <label>Booking Amount</label>
+                <input type="number" class="form-control" id="txtBookingAmount" value="@(Model.package!=null?Model.package.BookingAmount:0)" />
+            </div>
+            <div class="col-sm-3">
+                <label>FRC</label>
+                <input type="number" class="form-control" id="txtFrcAmount" value="@(Model.package!=null?Model.package.FRC:0)" />
+            </div>
+
+            <div class="col-sm-3">
+                <label>Validity (In days)</label>
+                <div class="input-group">
+                    <input type="number" class="form-control" id="txtValidity" value="@(Model.package!=null?Model.package.Validity:0)" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" id="txtDescription">@(Model.package!=null?Model.package.Description:"")</textarea>
+        </div>
+        <div class="form-group">
+            <label>Remark</label>
+            <textarea class="form-control" id="txtRemark">@(Model.package!=null?Model.package.Remark:"")</textarea>
+        </div>
+        <div class="row form-group">
+            <div class="col-md-3">
+                @if (Model.package != null)
+                {
+                    <span class="input-group-text switch switch-sm bg-white align">
+                        <input type="checkbox" class="switch" id="Status" tabindex="2" @Html.Raw(Model.package.IsActive ? "checked='checked'" : "") )>
+                        <label for="Status" class="font-weight-bold lbl">@Html.Raw(Model.package.IsActive ? "Deactive" : "Active")</label>
+                    </span>
+                }
+                else
+                {
+                    <span class="input-group-text switch switch-sm bg-white align">
+                        <input type="checkbox" class="switch" id="Status" tabindex="2" checked="checked">
+                        <label for="Status" class="font-weight-bold lbl">Active</label>
+                    </span>
+                }
+            </div>
+            <div class="col-md-4">
+                <button class="btn btn-outline-success" id="btnSave">SAVE</button>
+            </div>
+        </div>
+    </div>
+</div>
+

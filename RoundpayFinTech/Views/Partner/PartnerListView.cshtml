@@ -1,0 +1,205 @@
+﻿@model string
+
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> Partner List</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Partner List</li>
+        </ol>
+    </div>
+</div>
+
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Partner List
+                    </div>
+                    <div class="card-body" style="">
+
+
+                        <input type="hidden" id="hftype" value="@Model" />
+                        <input type="hidden" id="hfCurrentID" />
+                        <div class="table-responsive" id="divPartnerList">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var statuscode = { SUCCESS: 1, ERROR: -1, INFO: 2 }
+        var status = false;
+        if ($("#hftype").val() == 'partners') {
+            status = true;
+        }
+        var pends;
+        $(document).ready(function () {
+            an.autoClose = 5;
+            pends = function () {
+                preloader.load();
+                $.post('/PartnerList', { s: '@Model' })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#divPartnerList').html(result);
+                        $(".dropdown-toggle").dropdown();
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            pends();
+            $('#btnSearch').click(function () {
+                pends();
+            });
+        });
+        function ChangeStatus(ID) {
+            var Is = $(this).is(':checked');
+            $.post('/TogglePartnerStatus', { ID: ID }, function (result) {
+                resultReload(result);
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                an.autoClose = 5;
+                if (result.statuscode == -1) {
+                    $(this).attr('checked', Is == false);
+                }
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_thModels).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+        function ViewData(ID) {
+            $("#hfCurrentID").val(ID);
+            $.post('/partnerdetailView', { id: ID }, function (result) {
+                mdlA.id = 'mdlMsgbx';
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.xlarge);
+                $('#btnClose').click(function () {
+                    mdlA.dispose();
+                });
+            });
+        }
+        function UpdateStatus(status) {
+            $.post('/UpdatePartnerStatus', { ID: $("#hfCurrentID").val(), status: status }, function (result) {
+                if (result.statuscode == 1) {
+                    mdlA.dispose();
+                    an.content = result.msg;
+                    an.alert(result.msg);
+                    an.autoClose = 5;
+                    pends();
+                }
+            })
+        }
+        function GetPsaStatus() {
+            let psa = $('#txtPsa').val();
+            if (psa.length == 5) {
+                preloader.load();
+                let param = {
+                    PSAId: $('#txtPsa').val()
+                };
+                $.post('/Partner/CheckPsaId', param).done(result => {
+                    if (result == false) {
+                        var a = $('#txtUser').hasClass('hide');
+                        var b = $('#txtFather').hasClass('hide');
+                        if (!a) { $('#txtUser').addClass('hide'); }
+                        if (!b) { $('#txtFather').addClass('hide'); }
+                        $('#lblAvailable').text('Sequence unavailable');
+                        $('#lblAvailable').removeClass("text-success");
+                        $('#lblAvailable').addClass("text-danger");
+                        $('#lblAvailable').removeClass("hide");
+                        an.title = "Oops! Error";
+                        an.content = "Input string must be 5 charachter unique";
+                        an.alert(an.type.failed);
+                    }
+                    else {
+                        $('#lblAvailable').text('Sequence available');
+                        $('#lblAvailable').removeClass("text-danger");
+                        $('#lblAvailable').addClass("text-success");
+                        $('#lblAvailable').removeClass("hide");
+                        $('#txtUser').removeClass('hide');
+                        $('#txtFather').removeClass('hide');
+                    }
+
+                }).fail(xhr => {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove())
+            }
+            else {
+                var check = $('#lblAvailable').hasClass("hide");
+                if (check == false) {
+                    $('#lblAvailable').addClass("hide");
+                }
+            }
+        }
+        function UpdatePsaKey() {
+            let psa = $('#txtPsa').val();
+            let available = $('#lblAvailable').text();
+            if (psa.length == 5 && $('#txtFather').val().trim() != "" && available == 'Sequence available') {
+                preloader.load();
+                let param = {
+                    PSAId: $('#txtPsa').val(),
+                    FatherName: $('#txtFather').val()
+                };
+                $.post('/Partner/UpdatePsaId', param).done(result => {
+                    if (result == false) {
+                        an.title = "Oops! Error";
+                        an.content = "Sequence unavailable. Try with different sequence";
+                        an.alert(an.type.failed);
+                    }
+                    else {
+                        location.reload();
+                    }
+
+                }).fail(xhr => {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove())
+            }
+            else {
+                an.title = "Oops! Error";
+                an.content = "First enter valid sequence, User and Father Name";
+                an.alert(an.type.failed);
+            }
+        }
+    </script>
+}

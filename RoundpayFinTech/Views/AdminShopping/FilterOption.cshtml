@@ -1,0 +1,63 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Filter Option";
+}
+
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-1">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <input type="hidden" value="@Model" id="hfFId" />
+                                <button class="btn btn-sm btn-outline-light pl-2 pr-2 font-bold" id="btnNew" data-Item-id="0"><i class="fa fa-plus"></i> NEW</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="row" id="Options">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <script>
+        var AddFilterOption = ID => {
+            preloader.load();
+            $.post('/AddFilterOption', { OptionID: ID, FilterID: $('#hfFId').val() })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'AddOption';
+                    mdlA.title = 'Option';
+                    mdlA.modal(mdlA.size.default);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        
+        var loadOptionGrid = () => {
+            preloader.load();
+            $.post('/GetFilterOption', { FilterID: $('#hfFId').val() })
+                .done(result => $("#Options").html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        loadOptionGrid();
+        $('#btnNew').unbind().click(() => AddFilterOption(0));
+        
+    </script>

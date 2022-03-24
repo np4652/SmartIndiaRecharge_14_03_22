@@ -1,0 +1,48 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<ProcRechargeReportResponse>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Upline Commission</h3>
+    <div class="table-responsive">
+        <table class="table" id="tbl_UplineComm">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">UserID</th>
+                    <th scope="col">Role</th>
+                    <th scope="col">Outlet Name</th>
+                    <th scope="col">Mobile No</th>
+                    <th class="text-right">Comm</th>
+                    <th class="text-right">GST</th>
+                    <th class="text-right">TDS</th>
+                    <th class="text-right">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 1;
+                    foreach (var item in Model)
+                    {
+                <tr>
+                    <th>@i</th>
+                    <th>@(item.Prefix + "" + item.UserID)</th>
+                    <td>@item.Role</td>
+                    <td>@item.Outlet</td>
+                    <td>@item.OutletNo</td>
+                    <td class="text-right"><span class="badge @Html.Raw(!item.CommType ? "badge-success" : "badge-danger")">@item.Commission</span></td>
+                    <td class="text-right">@item.GSTAmount</td>
+                    <td class="text-right">@item.TDSAmount</td>
+                    <td class="text-right">@(item.Commission + item.GSTAmount + item.TDSAmount)</td>
+
+</tr>
+       i = i + 1;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-outline-primary btn-sm" id="mdlCancel">It's Ok <i class="fas fa-smile text-warning"></i></button>
+</div>
+

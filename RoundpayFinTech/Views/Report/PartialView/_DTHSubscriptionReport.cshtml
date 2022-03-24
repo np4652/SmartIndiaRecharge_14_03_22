@@ -1,0 +1,63 @@
+﻿@model RoundpayFinTech.AppCode.Model.DTHSubscriptionModel;
+@{
+
+}
+@if (Model != null && Model.Report.Any())
+{
+    int counter = 1;
+    foreach (var item in Model.Report)
+    {
+        <tr>
+            <td>@counter</td>
+            @*<td class="w-100">
+                    <input type="hidden" id="lbltid" value="@item.TransactionID" />
+
+                    <input type="hidden" id="hidTDate" value="@item.EntryDate" />
+                    @if (Model.IsAdmin)
+                    {
+                        <span class="fa fa-info-circle text-info a_modal" name="@item.TID" data-IsPES="" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"></span>@item.TID
+                    }
+                    else
+                    {
+                        @item.TransactionID
+                    }
+                </td>*@
+            <td>
+                <span class="a_modal text-nowrap d-inline" name="@item.ID" data-IsPES="" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"><i class="fa fa-info-circle text-info pr-2"></i>@item.TransactionID</span>
+            </td>
+            <td>@item.EntryDate</td>
+            @if (Model.IsAdmin)
+            {
+                <td>@item.ModifyDate</td>
+            }
+            <td>@item.OutletName<br />[@item.MobileNo]</td>
+            <td>@item.Account</td>
+            <td class="text-right">@item.Opening</td>
+            <td class="text-right">@item.RequestedAmount</td>
+            <td class="text-right">@item.Amount</td>
+            <td class="text-right">@item.Balance</td>
+            <td class="text-right">@item.Commission</td>
+            <td>@item.Status_</td>
+            <td>@item.BookingStatus_</td>
+            <td>@item.CustomerNumber</td>
+            <td>@item.CustomerName</td>
+            <td>@item.Address</td>
+            <td>@item.Pincode</td>
+            <td>@item.PackageName</td>
+            <td>@item.Operator</td>
+            @if (Model.IsAdmin || Model.IsAPIUser)
+            {
+                <td>@item.API</td>
+                <td>@item.APIRequestID</td>
+            }
+            <td>@item.LiveID</td>
+        </tr>
+        counter++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="@Html.Raw(Model.IsAdmin?"21":"18")">No Data Found</td>
+    </tr>
+}

@@ -1,0 +1,261 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model LedgerReportModel
+@{
+    ViewData["Title"] = "My Fund Order History";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">User Report</li>
+            <li class="breadcrumb-item active">My Fund Order History</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Fund Request
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlWType">Wallet Type</label>
+                                    <select aria-describedby="helpddlWType" class="form-control" id="ddlWType">
+                                        <option value="0">:: Select Wallet ::</option>
+                                        <option value="@Wallet.Prepaid"> @Wallet._Prepaid </option>
+                                        @if (Model.userBalnace.IsUBalance)
+                                        {
+                                            <option value="@Wallet.Utility"> @Wallet._Utility </option>
+                                        }
+
+                                        @if (Model.userBalnace.IsCBalance)
+                                        {
+                                            <option value="@Wallet.Card"> @Wallet._Card </option>
+                                        }
+                                        @if (Model.userBalnace.IsIDBalance)
+                                        {
+                                            <option value="@Wallet.RegID"> @Wallet._RegID </option>
+                                        }
+                                        @if (Model.userBalnace.IsPacakgeBalance)
+                                        {
+                                            <option value="@Wallet.Package"> @Wallet._Package </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlStatus">Choose Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="1">REQUESTED</option>
+                                        <option value="2">ACCEPTED</option>
+                                        <option value="3">REJECTED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlAPI">Choose Mode</label>
+                                    <select id="ddlMode" tabindex="7" class="form-control">
+                                        <option value="0">:: Select Mode :: </option>
+                                        <option value="1">NEFT</option>
+                                        <option value="2">RTGS</option>
+                                        <option value="3">Third Party Transfer</option>
+                                        <option value="4">Cheque</option>
+                                        <option value="5">IMPS</option>
+                                        <option value="6">EC-Exchange</option>
+                                        <option value="7">CASH DEPOSIT</option>
+                                        <option value="8">GCC (Green Channel Card)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtAccountNo">Enter AccountNo</label>
+                                    <input class="form-control" id="txtAccountNo" name="txtAccountNo" placeholder="Enter Account no" tabindex="4" type="text" value="" />
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtTrID">Enter Transaction ID</label>
+                                    <div class="input-group">
+                                        <input class="form-control" id="txtTrID" name="txtTrID" placeholder="Enter Transaction ID" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append"><button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblFR">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%">#</th>
+                                        <th scope="col">Bank</th>
+                                        <th scope="col">AccountHolder</th>
+                                        <th scope="col" class="text-nowrap">Transfer Mode</th>
+                                        <th scope="col">Transaction Id</th>
+                                        <th scope="col">MobileNo</th>
+                                        <th scope="col">ChequeNo</th>
+                                        <th scope="col">CardNumber</th>
+                                        <th scope="col">EntryDate</th>
+                                        <th scope="col" class="text-right text-nowrap">Amount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            search();
+            $('#btnSearch').click(function () {
+                search();
+            });
+        });
+        var search = function () {
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($("#btnSearch"), 'Requesting');
+            preloader.load();
+            $.post('/Fund-Report-self', { f: $('#dtFromDate').val(), t: $('#dtToDate').val(), um: '', tm: $('#ddlMode').val(), sts: $('#ddlStatus').val(), acn: $('#txtAccountNo').val(), tranid: $('#txtTrID').val(), tp: $('#ddlTop').val(), wid: $('#ddlWType').val()})
+                .done(function (result) {
+                    resultReload(result);
+                    $('#tblFR tbody').html(result);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                    btnLdr.Stop($('#btnSearch'));
+                });
+        };
+
+    </script>
+
+
+}
+
+                        };
+
+                        </script>
+
+
+                    }
+

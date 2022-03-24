@@ -1,0 +1,214 @@
+﻿
+@{
+    ViewData["Title"] = "Hotel Request";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Dispute Request</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row  text-monospace">
+                            <div class="col-sm-6 line-height-34">
+                                <i class="fas fa-link"></i> Dispute Request
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div id="dvAPI">
+                                    @{
+                                        var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                                    }
+                                    <select id="ddlAPI" tabindex="7" class="form-control" asp-items="listAPI">
+                                        <option value="0">:: Select API :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="input-group">
+                                    @{
+                                        var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" tabindex="7" class="form-control" asp-items="listOperator">
+                                        <option value="0">:: Select Operator :: </option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <span type="button" id="btnSearch" class="btn btn-outline-dark">
+                                            <i class="fa fa-search"></i>
+                                        </span>
+                                        <span type="button" id="btnExport" class="btn btn-dark">
+                                            <i class="fa fa-file-excel"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pt-2">
+                        <div id="rrs">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $("#btnSearch,#btnExport").click(function () {
+                search(this)
+            });
+            $("#btnSearch").click();
+        });
+
+        var search = function (sender) {
+            let IsExport = sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false;
+            if (IsExport) {
+                window.location = "/refundrequest-Export?" + $.param({ APIID: $('#ddlAPI').val(), OID: $('#ddlOperator').val() });
+            } else {
+                preloader.load();
+                $.post('/refundrequest', { APIID: $('#ddlAPI').val(), OID: $('#ddlOperator').val() })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('.__p #rrs').html(result);
+                        $('[data-toggle="tooltip"]').tooltip();
+
+                        $('[id^=btnAccept],[id^=btnReject]').click(function () {
+                            var status = this.id.toUpperCase()[3];
+                            var id = $(this).closest('tr').data().itemId;
+                            var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[0]).find('[id^=txtRemark]');
+                            var rem = txtRemark.val();
+                            var transid =
+                                $($('[data-item-id="' + id + '"]').children('td')[1]).find('small').html().trim().split('[').join('').split(']').join('') + String.fromCharCode(160);
+
+                            var opType = $($('[data-item-id="' + id + '"]').children('td')[9]).data().dotype;
+
+                            preloader.load();
+                            if (opType == 18) {
+                                mdlA.id = "qrModel";
+                                mdlA.isHeaderBorder = true;
+                                mdlA.title = "  ";
+                                mdlA.content = `<div class="col-md-12"><button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button><h5>Confirmation</h5><hr><div class="form-group"><label class="lbl" for="txtAmount">Amount</label><input aria-describedby="helpAmount" class="form-control text-capitalize" id="txtAmount" placeholder="Enter Amount" type="text" value="0"></div><button class="btn btn-outline-dark mr-2" id="btnAmtSave">Save</button><button class="btn btn-dark" id="mdlCancel">Cancel</button></div>`;
+                                mdlA.modal(mdlA.size.small);
+                                $('#qrModel .modal-header').remove();
+                                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                preloader.remove();
+
+                                $('#btnAmtSave').on('click', function () {
+                                    var amt = $('#txtAmount').val();
+                                    if (amt < 1) {
+                                        an.title = 'Oops';
+                                        an.content = 'Amount should be greater than zero!';
+                                        an.alert(an.type.failed);
+                                        return false;
+                                    }
+
+                                    $.post('/U-A-R', { Status: status, TID: id, TransactionID: transid, Remark: rem, amount: amt })
+                                        .done(function (result) {
+                                            resultReload(result);
+                                            if (result.statuscode !== undefined) {
+                                                an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                                if (result.statuscode == an.type.success) {
+                                                    $('[data-item-id="' + id + '"]').remove();
+                                                    mdlA.dispose();
+                                                }
+                                            }
+                                        })
+                                        .fail(xhr => {
+                                            an.title = 'Oops';
+                                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                            an.alert(an.type.failed);
+                                        })
+                                        .always(() => preloader.remove());
+
+
+                                });
+
+                                return false;
+                            }
+
+
+                            $.post('/U-A-R', { Status: status, TID: id, TransactionID: transid, Remark: rem, amount: 0 })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    if (result.statuscode !== undefined) {
+                                        an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        if (result.statuscode == an.type.success) {
+                                            $('[data-item-id="' + id + '"]').remove();
+                                        }
+                                    }
+                                })
+                                .fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                })
+                                .always(() => preloader.remove());
+                        });
+                        $('[id^=btnStsCheck]').click(function () {
+                            var id = $(this).closest('tr').data().itemId;
+                            var transid =
+                                $($('[data-item-id="' + id + '"]').children('td')[1]).find('small').html().trim().split('[').join('').split(']').join('');
+                            preloader.load();
+                            $.post('/chk-sts', { TID: id, TransactionID: transid })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    mdlA.id = "mymodel";
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.alert(mdlA.size.large);
+                                    $('button.close span,#mdlCancel').unbind().click(function () {
+                                        mdlA.dispose();
+                                        $('#btnSearch').click();
+                                    });
+                                })
+                                .fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+
+                                })
+                                .always(() => preloader.remove());
+                        });
+
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+        }
+    </script>
+}

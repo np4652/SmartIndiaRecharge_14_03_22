@@ -1,0 +1,58 @@
+﻿@using RoundpayFinTech.AppCode.Configuration
+@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.VendorMaster>
+@if (Model.Any())
+{
+    int i = 1;
+    foreach (var item in Model)
+    {
+        <tr data-VendorId="@item.Id">
+            <td>@i</td>
+            @*<td>
+                    <div class="btn-group dropup">
+                        <a href="#" id="act_@Counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="act_@Counter">
+                            <h6 class="dropdown-header">Action Menu</h6>
+                            @if (item.IsEditable)
+                            {
+                                <a href="#" class="dropdown-item btnEdit"><span class="fa fa-edit text-success"></span> Edit</a>
+                            }
+                            <a href="#" class="dropdown-item btnOption"><span class="fa fa-edit text-success"></span> Option</a>
+                        </div>
+                    </div>
+                </td>*@
+            <td>@item.VendorName</td>
+            <td>@item.VendorUserID</td>
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch" id="isAct_@i" @Html.Raw(item.IsActive ? "checked='checked'" : "")  onchange="changeStatus(this)" />
+                    <label for="isAct_@i"></label>
+                </span>
+            </td>
+            @if (ApplicationSetting.IsB2BAllowed)
+            {
+                <td>
+                    <span class="switch switch-sm">
+                        <input type="checkbox" class="switch" id="isB2B_@i" @Html.Raw(item.IsB2BAllowed ? "checked='checked'" : "") onchange="changeStatus(this)" />
+                        <label for="isB2B_@i"></label>
+                    </span>
+                </td>
+                <td>
+                    <span class="switch switch-sm">
+                        <input type="checkbox" class="switch" id="isOB2B_@i" @Html.Raw(item.IsOnlyB2B ? "checked='checked'" : "")  onchange="changeStatus(this)" />
+                        <label for="isOB2B_@i"></label>
+                    </span>
+                </td>
+            }
+        </tr>
+        i++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="6">No Data Found</td>
+    </tr>
+}
+<script>
+    $('.dropdown-toggle').dropdown();
+</script>

@@ -1,0 +1,59 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.DeliveryPersonnelList
+@if (Model.Status == 1 && Model.DeliveryPersonnels.Any())
+{
+    int Counter = 1;
+    foreach (var item in Model.DeliveryPersonnels)
+    {
+        <tr data-id="@item.ID">
+            <td>@Counter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@Counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@Counter">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item btnUp"><span class="fa fa-edit text-success"></span> Update</a>
+                        <a href="#" class="dropdown-item btnLoc"><span class="fa fa-edit text-success"></span> History</a>
+                    </div>
+                </div>
+            </td>
+            <td>@item.Name</td>
+            <td>@item.Mobile</td>
+            @*<td>@item.DOB</td>*@
+            <td>@item.Address</td>
+            <td>@item.Area</td>
+            <td>@item.City</td>
+            <td>@item.Pincode</td>
+            @*<td>@item.Location</td>*@
+            <td>@item.VehicleNumber</td>
+            <td>@item.Aadhar</td>
+            <td>@item.DLId</td>
+            <td data-chkId="@item.ID">
+                <span class="input-group-text switch switch-sm bg-white align ">
+                    <input type="checkbox" class="switch" id="chkActive_@item.ID" @Html.Raw(item.IsActive ? "checked='checked'" : "") />
+                    <label for="chkActive_@item.ID" class="font-weight-bold lbl">IsActive</label>
+                </span>
+            </td>
+            @*<td><input type="checkbox" disabled @Html.Raw(item.IsActive ? "checked='checked'" : "") /></td>*@
+        </tr>
+        Counter++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="14">No Data Found</td>
+    </tr>
+}
+<script>
+    $('.dropdown-toggle').dropdown();
+    $('.btnUp').unbind().click(e => AUEntity($(e.currentTarget).closest('tr').data().id));
+    $('.btnLoc').unbind().click(e => DPLocHis($(e.currentTarget).closest('tr').data().id));
+    $('#tblGrid tr :checkbox').change(function () {
+        let id = $(this).closest('tr').data().id;
+        var IsChecked = false;
+        if ($(this).is(':checked')) {
+            IsChecked = true;
+        }
+        UpdateStatus(id, IsChecked);
+    });
+</script>

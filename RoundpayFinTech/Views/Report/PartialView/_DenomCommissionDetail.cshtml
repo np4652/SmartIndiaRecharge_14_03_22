@@ -1,0 +1,37 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.DenomCommissionDetail>
+@{
+
+}
+<div class="row">
+    <div class="col-sm-12">
+        @if (Model.Any())
+        {
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-sm-2 form-group">
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="btn btn-sm btn-dark"><i class='fas fa-rupee-sign'></i></span>
+                            </div>
+                            <label class="form-control">@item.Amount</label>
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="btn btn-sm btn-dark">C</span>
+                            </div>
+                            <label class="form-control">@item.Commission @Html.Raw(item.AmtType==0?"%":"")</label>
+                            @*<div class="input-group-append">
+                                <span class="btn btn-sm btn-dark">@item.AmtType</span>
+                            </div>*@
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <h4 class="text-danger text-monospace">No Data Found.</h4>
+        }
+    </div>
+</div>

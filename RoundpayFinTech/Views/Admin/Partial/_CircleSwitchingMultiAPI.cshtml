@@ -1,0 +1,43 @@
+﻿@using NUglify.Helpers;
+@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model List<CircleAPISwitchDetail>
+@{
+    IEnumerable<CircleAPISwitchDetail> Ops = new List<CircleAPISwitchDetail>();
+    if (Model != null)
+    {
+        if (Model.Count > 0)
+        {
+            Ops = Model.Select(s=>new CircleAPISwitchDetail { OID=s.OID,Operator=s.Operator}).DistinctBy(g=> new { OID=g.OID, Operator=g.Operator});
+        }
+    }
+}
+@{var i = 1; }
+@foreach (var item in Ops)
+{
+    <tr data-item-id="@item.OID">
+        <th class="align-middle">@i</th>
+        <td class="align-middle">@item.Operator</td>
+        <td class="align-middle">
+            <div class="row mr-0">
+                @{
+                    var APIs = Model.Select(s => new CircleAPISwitchDetail { APIID = s.APIID, APIName = s.APIName,IsSwitched=s.IsSwitched,OID=s.OID,MaxCount=s.MaxCount }).Where(w => w.OID == item.OID);
+                }
+                @foreach (var api in APIs)
+                {
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="text" id="txtPriority_@Html.Raw(i+"_"+api.APIID)" style="width: 50px;margin-right: 9px;" class="form-control-sm" value="@api.MaxCount">
+                                    <input type="checkbox" id="chbCircle_@Html.Raw(i+"_"+api.APIID)" @Html.Raw(api.IsSwitched ? "checked='checked'" : "")>
+                                </div>
+                            </div>
+                            <label class="form-control" for="chbCircle_@Html.Raw(i+"_"+api.APIID)">@api.APIName</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </td>
+    </tr>
+    i++;
+}

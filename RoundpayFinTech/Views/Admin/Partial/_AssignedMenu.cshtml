@@ -1,0 +1,46 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.DepartmentModel.MenuOperationAssigned>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Menu Assignement</h5>
+    <div class="table-responsive">
+        <table class="table table-hover" id="tblAsdMenu">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Menu</th>
+                    <th scope="col">Operations</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int i = 1; }
+                @foreach (var item in Model)
+                {
+                    <tr data-item-id="@item.MenuID">
+                        <th class="align-middle">@i</th>
+                        <td class="align-middle">@item.Menu</td>
+                        <td class="align-middle">
+                            <div class="row mr-0">
+                                @foreach (var OpsAssigned in item.OperationAssigneds)
+                                {
+                                    if (OpsAssigned.MenuID == item.MenuID)
+                                    {
+                                        <div class="col-md border-dark mr-1 mb-1 pt-1" style="border:0.01em dotted">
+                                            <span class="switch switch-sm" >
+                                                <input type="checkbox" class="switch" id="isActive_@Html.Raw(item.MenuID+"_"+OpsAssigned.OperationID)" checked="@OpsAssigned.IsActive">
+                                                <label for="isActive_@Html.Raw(item.MenuID+"_"+OpsAssigned.OperationID)" class="text-nowrap text-monospace">@OpsAssigned.Operation</label>
+                                            </span>
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    i++;
+                }
+            </tbody>
+        </table>
+    </div>
+    <input type="hidden" id="hid" value="@ViewBag.UMobile"/>
+</div>

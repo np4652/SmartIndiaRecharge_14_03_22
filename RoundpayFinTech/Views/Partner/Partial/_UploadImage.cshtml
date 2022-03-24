@@ -1,0 +1,94 @@
+﻿@*@using Fintech.AppCode.StaticModel*@
+@model RoundpayFinTech.AppCode.Model.UploadImageModel
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Upload Partner Image</h5>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm" id="tblRSD">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">DocName</th>
+                    <th scope="col">Uploaded Document</th>
+                    <th scope="col">Image</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="right" title="Logo min size - 300*100"></i>
+                        <label>Logo</label>
+                    </td>
+                    <td class="align-middle">
+                        <div class="col-md-10 offset-md-1">
+                            <input type='file' id="dimageUpload1" class="custom-file-input" />
+                            <label id="lbdlogoUpload" for="dimageUpload1" class="custom-file-label">Upload Logo</label>
+                        </div>
+                        @*<input type='file' id="dimageUpload1" class="d-none" />
+                            <label for="dimageUpload1" class="btn btn-outline-dark btn-sm">Upload</label>*@
+                    </td>
+                    <td>
+                        <img id="imgLogo" src="@Model.LogoPath" style="height: 50px; width: auto;"/>
+                    </td>
+                    <td><label id="logoStatus"></label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="right" title="BackGround size - 1300*800"></i>
+                        <label>Background</label>
+                    </td>
+                    <td class="align-middle">
+                        <div class="col-md-10 offset-md-1">
+                            <input type='file' id="dimageUpload2" class="custom-file-input" />
+                            <label for="dimageUpload2" class="custom-file-label">Upload Background</label>
+                        </div>
+                    </td>
+                    <td>
+                        <img id="imgBg" src="@Model.BgImgPath" style="height: 50px; width: auto;" />
+                    </td>
+                    <td><label id="bgStatus"></label></td>
+                </tr>
+                <tr>
+                    <td>
+                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="right" title="Banner size - 1300*800"></i>
+                        <label>Banner</label>
+                    </td>
+                    <td class="align-middle">
+                        <div class="col-md-10 offset-md-1">
+                            <input type='file' id="dimageUpload3" class="custom-file-input" />
+                            <label for="dimageUpload3" class="custom-file-label">Upload Banner</label>
+                        </div>
+                    </td>
+                    <td>
+                        <img id="imgBan" src="@Model.BannerImgPath" style="height: 50px; width: auto;" />
+                    </td>
+                    <td><label id="bnStatus"></label></td>
+                </tr>
+            </tbody>
+            <tfoot class="font-italic ">
+                <tr>
+                    <td colspan="4" class="w-100">
+                        <label class="text-info text-left">(Only .jpeg, .jpg, .png, .gif, .pdf files are allowed and file size not more than 200 KB.)</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <button id="btnUpdate" onclick="uploadImage(@Model.Id)" class="btn btn-primary btn-sm">Update</button>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    });
+</script>

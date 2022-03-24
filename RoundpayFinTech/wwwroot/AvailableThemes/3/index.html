@@ -1,0 +1,87 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mobile Recharge | AEPS  | BBPS | Money Transfer |P</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="/images/favicons/favicon.ico">
+    <link rel="stylesheet" href="/lib/bootstrap/dist/css/bootstrap.css" />
+    <link rel="stylesheet" href="/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />   
+    <script src="/lib/jquery/dist/jquery.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <link href="css/Login-style.css" rel="stylesheet" />
+</head>
+<body>
+    <noscript><center><h1 class="text-danger">Javascript is disabled in your browser enable to start application</h1></center></noscript>
+    <div id="alertmsg"></div>
+
+    <div class="container">   
+        <div class="login-form">
+            <div class="login-border">
+                <div class="row">
+                    <div class="col text-center d-none d-sm-block">
+                        <img src="images/services.png" width="500" height="500" class="Avatar">
+                    </div>
+                    <div class="col">
+                        <div class="logo text-center">
+                            <a href="#" target="_blank">
+                                <img src="http://localhost:44339/Image/Website/1/white-logo.png" />
+                            </a>
+                        </div>
+                        <div class="login100-form validate-form mr-2" method="post" action="">
+                            <h3 align="center" id="login">Log in</h3>
+                            <div class="container mt-3">
+                                <select id="ddlLType" class="form-control">
+                                    <option value="1">ApplicationUser</option>
+                                    <option value="2">CustomerCare</option>
+                                    <option value="3">Employee</option>
+                                </select>
+                                <br />
+                                <i class="fa fa-users"></i>
+                                <label for="">User Id</label>
+                                <label class="sr-only" for="txtUser">User ID</label>
+                                <input class="form-control" id="txtUser" name="txtUser" placeholder="USER ID" type="text" value="" />
+                                <br>
+                                <i class="fa fa-key"></i>
+                                <label for="">Password</label>
+                                <label class="sr-only" for="txtPassword">Password</label>
+                                <input class="form-control" id="txtPassword" name="txtPassword" placeholder="PASSWORD" type="password" />
+                                <br />
+                                <span style="cursor:pointer" class="forpas" onclick="forgetPopUp()">forget password?</span>
+
+                            </div>
+                            <br>
+                            <div class="col">
+                                <small id="errorMsg" class="text-danger hide"></small>
+                                <button id="btnLogin" type="button" value="LOGIN" class="btn btn-dark">Log in</button>
+                            </div>
+                            <li><a href="/apk/dizipay.apk" title="Android APP"><i class="fa fa-android" style="    font-size: 33px;"></i> <b>Download APK</b></a></li>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer" style="text-align: center;"> Designed by | Roundpay </div>
+    </div>
+    <script src="/lib/jquery/dist/jquery.min.js"></script>
+    <script src="/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+</body>
+</html>

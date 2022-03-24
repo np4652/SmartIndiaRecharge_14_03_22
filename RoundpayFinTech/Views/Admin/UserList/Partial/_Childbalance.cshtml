@@ -1,0 +1,94 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model MyBalanceViewModel
+<style>
+    .bank-icon {
+        width: 171px;
+        height: 176px;
+        border-radius: 50%;
+    }
+
+    .img-QR {
+        width: 171px;
+        height: 159px;
+    }
+
+    .form-group {
+        margin-bottom: 10px !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <table style="width: 100%;border:1px solid #dee2e6;" class="table">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;border:0">
+                        <h5>Child balance</h5>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+
+
+                @if (@Model.userBalnace.IsBalance)
+                {
+                    <tr>
+                        <td><b>Prepaid </b></td>
+                        <td> @Model.userBalnace.Balance</td>
+                    </tr>
+                }
+
+                @if (@Model.userBalnace.IsUBalance)
+                {
+                    <tr>
+                        <td><b>Utility </b></td>
+                        <td> @Model.userBalnace.UBalance</td>
+                    </tr>
+                }
+                @if (@Model.userBalnace.IsBBalance)
+                {
+                    <tr>
+                        <td><b>Bank </b></td>
+                        <td> @Model.userBalnace.BBalance</td>
+                    </tr>
+                }
+
+                @if (@Model.userBalnace.IsCBalance)
+                {
+                    <tr>
+                        <td><b>Card </b></td>
+                        <td> @Model.userBalnace.CBalance</td>
+                    </tr>
+                }
+
+                @if (@Model.userBalnace.IsIDBalance)
+                {
+                    <tr>
+                        <td><b>RegID </b></td>
+                        <td> @Model.userBalnace.IDBalnace</td>
+                    </tr>
+                }
+
+                @if (@Model.userBalnace.IsPacakgeBalance)
+                {
+                    <tr>
+                        <td><b>Package </b></td>
+                        <td> @Model.userBalnace.PacakgeBalance</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <div style="text-align:center">
+            <button class="btn btn-outline-primary w-75 mt-3 mb-2" id="mdlCancel" >Close</button>
+        </div>
+   
+    
+</div>
+</div>
+<script>
+        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+</script>
+
+
+
+

@@ -1,0 +1,64 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Microsoft.AspNetCore.Http;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@model RoundpayFinTech.AppCode.Model.ProcModel.AccountSummaryTable
+@{
+    LoginResponse _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+}
+<h6>Account Summary</h6>
+<table class="table table-hover" id="tbl_1">
+
+    <tbody>
+        @if (_lr.RoleID != Role.APIUser)
+        {
+            <tr>
+                <th data-th="Account Balance" class="text-left" style="background: #ccc;">&nbsp;&nbsp;&nbsp;Header</th>
+                <th data-th="" colspan="3" class="" style="background: #ccc;">
+                    <span id="ContentPlaceHolder1_lblaccountbalance"></span>
+                </th>
+            </tr>
+        }
+
+        <tr>
+            <td data-th="Last Primary Amount" class="bg-grey-light">Last Primary Amount</td>
+            <td data-th="" class="bg-grey-light">
+                <span id="ContentPlaceHolder1_lbllastprimary">@Model.LastPriTransactionAmount</span>
+            </td>
+            <td data-th="Last Primary On" class="bg-grey-light">Last Primary On</td>
+            <td data-th="" class="bg-grey-light">
+                <span id="ContentPlaceHolder1_lbllastprimarydate">@Model.LastPriTransactionDate</span>
+            </td>
+        </tr>
+
+        @if (_lr.RoleID != Role.APIUser)
+        {
+            <tr>
+                <td data-th="Last Transfer Amount">Last Transfer Amount</td>
+                <td data-th="">
+                    <span id="ContentPlaceHolder1_lbllasttransferamt">@Model.LastSecTransactionAmount</span>
+                </td>
+                <td data-th="Last Transfer On">Last Transfer On</td>
+                <td data-th="">
+                    <span id="ContentPlaceHolder1_lbllasttransferdate">@Model.LastSecTransactionDate</span>
+                </td>
+            </tr>
+        }
+
+        @if (_lr.RoleID == Role.APIUser)
+        {
+            <tr>
+                <td data-th="Last Transfer Amount">Last Tertiary Amount</td>
+                <td data-th="">
+                    <span id="ContentPlaceHolder1_lbllasttransferamt">@Model.LastTerTransactionAmount</span>
+                </td>
+                <td data-th="Last Transfer On">Last Tertiary On</td>
+                <td data-th="">
+                    <span id="ContentPlaceHolder1_lbllasttransferdate">@Model.LastTerTransactionDate</span>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>

@@ -1,0 +1,78 @@
+﻿@model RoundpayFinTech.AppCode.Model.MiniStatementResponse
+@{
+    var counter = 1;
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Mini Statement</h3>
+        <hr />
+    </div>
+</div>
+
+<div class="row">
+    <div class="table-responsive table-sm table-mh">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblMSTMT">
+            <thead class="bg-tableth">
+                <tr>
+                    <th style="width:1%">#</th>
+                    <th>Date</th>
+                    <th>TxnType</th>
+                    <th>Amount</th>
+                    <th>Narration</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null)
+                {
+                    if (Model.Statuscode != Fintech.AppCode.StaticModel.ErrorCodes.Minus1 && Model.Statuscode != 3)
+                    {
+                        if (Model.Statements != null)
+                        {
+                            <tr><th colspan="2">Last Balance:</th><td colspan="3" class="text-right">@Model.Balance</td></tr>
+                            @foreach (var item in Model.Statements)
+                            {
+                                <tr>
+                                    <th>@counter</th>
+                                    <td>@item.TransactionDate</td>
+                                    <td>@item.TransactionType</td>
+                                    <td class="text-right">@item.Amount</td>
+                                    <td>@item.Narration</td>
+                                </tr>
+                                counter = counter + 1;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="5" class="text-center">@Model.Msg</td></tr>
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="5" class="text-center">No Response</td></tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+    <div class="row">
+        <button class="btn btn-outline-dark" id="btnPrint">Print</button>
+    </div>
+</div>
+<script>
+    $('#btnPrint').on('click', function () {
+        printData('tblMSTMT');
+    });
+
+    var printData = (id) => {
+        var divToPrint = document.getElementById(id);
+        newWin = window.open("");
+        newWin.document.write(divToPrint.outerHTML);
+        newWin.print();
+        newWin.close();
+    }
+
+</script>

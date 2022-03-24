@@ -1,0 +1,49 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@model IEnumerable<Notification>
+@{ var i = 0;}
+<div class="col-md-12">
+    <div class="card mt-4">
+        <div class="card-header bg-gradientorange text-white">
+            <i class="fas fa-link"></i> Send Notification Report
+        </div>
+
+        <div class="card-body" style="">
+            
+            <div class="table-responsive table-sm table-mh">
+                <table class="table table-bordered table-striped table-responsive-sm">
+                    <thead class="bg-tableth">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Title</th>
+                            <th scope="col">RedirectURL</th>
+                            <th scope="col">Image</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">EntryDate</th>
+                            <th scope="col">Response</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model!=null)
+                        {
+                            foreach (var item in Model)
+                            {
+                                i++;
+                                <tr>
+                                    <th>@i</th>
+                                    <td><button class="btn btn-outline-danger btn-sm" id="del_@item.ID">Delete</button></td>
+                                    <td>@item.Title</td>
+                                    <td><textarea class="form-control" style="border-style:None;" disabled="disabled">@item.Url</textarea></td>
+                                    <td class="text-center"><img src="@("Image/Notification/"+item.ImageUrl)" alt="" class="img-responsive img-thumbnail" style="height:60px;" /></td>
+                                    <td><textarea class="form-control" style="border-style:None;" disabled="disabled">@item.Message</textarea></td>
+                                    <td>@item.EntryDate</td>
+                                    <td><textarea class="form-control" style="border-style:None;" disabled="disabled">@item.Response</textarea></td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

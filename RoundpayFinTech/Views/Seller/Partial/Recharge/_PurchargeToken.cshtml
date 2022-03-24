@@ -1,0 +1,72 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.ServicesPM
+@{
+	var list = new SelectList(Model.Detail, "OID", "Name");
+}
+<div class="col-md-12 pb-3" >
+    <h3>Purchase Token</h3>
+	<div class="form-group">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            @foreach (var item in list)
+            {
+                <label class="btn btn-outline-info" onclick="setvalueToken(@item.Value);">
+                    <input aria-describedby="opHelp" type="radio" name="tokentype" id="@item.Value" autocomplete="off" value="@item.Value"> @item.Text
+                </label>
+            }
+            <input type="hidden" id="hidopHelp" aria-describedby="opHelp"/>
+            <small id="opHelp" class="ml-2 form-text text-danger d-none"></small>
+        </div>
+	</div>
+	<div class="form-group">
+		<label class="lbl" for="txtNoOfToken">No. of Token</label>
+		<input aria-describedby="amountHelp" class="form-control mt-1" id="txtNoOfToken" onkeyup="CalculateAmt(this.value)" name="txtNoOfToken" readonly="readonly" placeholder="Enter Token" tabindex="1" type="text" value="0">
+		<small id="amountHelp" class="form-text text-danger d-none"></small>
+	</div>
+	<div class="form-group">
+		<label class="lbl" for="txtTotalAmount">Total Amount</label>
+		<input aria-describedby="amountHelp" class="form-control mt-1" id="txtTotalAmount" name="txtTotalAmount" readonly="readonly" placeholder="Enter Total Amount" tabindex="1" type="text" value="0">
+		<small id="amountHelp" class="form-text text-danger d-none"></small>
+	</div>
+
+	<div class="form-group">
+		<strong>Please Note</strong>
+        <ul>
+            <li>
+                1 Token = 1 PAN Application
+            </li>
+            @foreach (var item in Model.Detail)
+            {
+                <li>
+                    1 Token = @item.Min (inclusive of TAX) @item.Name
+                </li>
+                var hiddID = "Hidd" + @item.OID;
+                <input type="hidden" id="@hiddID" value="@item.Min" />
+            }
+            <input type="hidden" id="hiddenTokenAmount" />
+
+            <li>
+                Token will be credited to your UTI PSA account in 2 working hours after purchase
+            </li>
+            <li>Login Here : <a target="_blank" href="http://www.psaonline.utiitsl.com/psaonline/">http://www.psaonline.utiitsl.com/psaonline/</a></li>
+        </ul>
+	</div>
+	<button class="btn btn-outline-dark" id="btnPSAToken">Purcharge</button>
+	<button class="btn btn-danger" id="credCancel">Cancel</button>
+</div>
+
+<script>
+	function setvalueToken(id) {
+		$("input[name*='tokentype']").attr("checked", false);
+		$("#" + id).attr("checked", true);
+		$("#hiddenTokenAmount").val($("#Hidd" + id).val());
+		$("#txtNoOfToken").attr("readonly", false);
+		CalculateAmt($("#txtNoOfToken").val());
+
+		//alert($('input[name=tokentype]:checked').val());
+	}
+	function CalculateAmt(totaltoken) {
+		var tokenAmount = $("#hiddenTokenAmount").val();
+		var totalCostToken = (parseFloat(totaltoken) * parseFloat(tokenAmount));
+		$("#txtTotalAmount").val(totalCostToken);
+	}
+</script>
+

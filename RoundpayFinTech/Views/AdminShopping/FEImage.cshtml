@@ -1,0 +1,215 @@
+﻿@*@{
+        var cList = Model.Any() ? Model : new List<RoundpayFinTech.AppCode.Model.Shopping.ShoppingCategory>();
+        var categoris = new SelectList(cList, "CategoryID", "CategoryName");
+    }*@
+@{
+    ViewData["Title"] = "FE Images";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-1">
+                <div class="card-header bg-gradientorange text-white">
+                    <div class="row">
+                        <div class="col-sm-9">
+                            <i class="fas fa-link"></i> @ViewData["Title"]
+                        </div>
+                        <div class="col-sm-3 text-right">
+                            <button class="btn btn-sm btn-outline-light font-bold btnNew" data-Item-id="0"><i class="fa fa-plus-square"></i> New</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pt-1">
+                    <div class="row">
+                        <div class="table-responsive" style="max-height:calc(100vh - 290px)">
+                            <table class="table table-striped table-condensed" id="tblFilter">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Action</th>
+                                        <th style="width:60%">FileName</th>
+                                        <th>Image Type</th>
+                                        <th>Category</th>
+                                        <th>IsActive</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@*<div class="row">
+        <div class="col-sm-12">
+            <div id="__p" class="main-temp-body">
+
+            </div>
+        </div>
+    </div>*@
+
+@section scripts{
+    <script src="~/js/Shopping/ShoppingCategory.js"></script>
+    <script>
+        let newFileList = [];
+        $('table').fixTableHeader();
+
+        var AddImg = ID => {
+            preloader.load();
+            $.post('/_FEImgUpdate', { id: ID })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'AddFEImg';
+                    mdlA.title = 'FE Images';
+                    mdlA.modal(mdlA.size.default);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var DelImg = ID => {
+            let _div = `<div class="row">
+                    <input id="hdnID" type="hidden" value="${ID}" />
+                    <div class="col-sm-12">
+                        <div class="form-group">
+                           <label>Confirm delete action</label>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 text-right">
+                        <div class="form-group">
+                            <button class="btn btn-outline-danger btnDel" onclick="deleteFile();">Delete</button>
+                        </div>
+                    </div>
+                    </div>`;
+            mdlA.content = _div;
+            mdlA.id = 'delFEImg';
+            mdlA.title = 'Confirm Delete';
+            mdlA.modal(mdlA.size.small);
+        };
+        var UpdateFEImage = (ID, IsActive, IsDelete = false) => {
+            preloader.load();
+            $.post('/UpdateFEImg', { Id: ID, IsActive: IsActive, IsDelete: IsDelete })
+                .done(result => {
+                    preloader.remove();
+                    an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (IsDelete) {
+                        loadGrid();
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var deleteFile = (function () {
+            let _id = $('#hdnID').val();
+            if (_id > 0) {
+                UpdateFEImage(_id, false, true);
+            }
+            mdlA.dispose('delFEImg');
+
+        });
+        var deleteImage = () => {
+            $('.previewImage > span.close').unbind().click(e => {
+                let _this = $(e.currentTarget).parents('.previewImage');
+                //let ImageURL = $(e.currentTarget).parents('.previewImage').find('img').attr('src');
+                //if (ImageURL.indexOf('blob') > -1) {
+                //    $(e.currentTarget).parent('div.previewImage').remove();
+                //    //this.newFileList.pop($(e.currentTarget).data().indexId);
+                //    //$('div.previewImage>img').each(function (i) {
+                //    //    $(this).attr('data-index-id', i);
+                //    //});
+                //    newFileList = [];
+                //}
+                //else {
+                $(_this).remove();
+                newFileList = [];
+                //preloader.load();
+                //$.post('/deleteProductImage', { ImagePath: ImageURL }).done((result) => {
+                //    if (result.statuscode === an.type.success) {
+                //        $(_this).remove()
+                //    }
+                //    else {
+                //        validateAlert(result.msg)
+                //    }
+                //}).fail(xhr => console.log(xhr)).always(() => preloader.remove());
+                // }
+            });
+        }
+        var loadGrid = () => {
+            preloader.load();
+            $.post('/GetFEImg')
+                .done(result => $("#tblFilter tbody").html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var previewImage = (e, divId = '') => {
+            if (newFileList.length > 0) {
+                an.title = 'Oops';
+                an.content = 'Only one image allowed';
+                an.alert(an.type.failed);
+                return;
+            }
+            try {
+                let selectElement = $(e.currentTarget).attr('id'),
+                    count = $('#imagePreview img').length,
+                    totalFile = document.getElementById(selectElement).files.length;
+                for (var i = 0; i < totalFile; i++) {
+                    newFileList.push($(`#${selectElement}`)[0].files[i]);
+                    let _src = URL.createObjectURL(event.target.files[i]);
+                    if (divId === '') {
+                        $(`#${selectElement}`).parent('div').append(`<div class="previewImage float-left text-center">
+                                                                                            <span class="setDefault">
+                                                                                                <input type="checkbox" ${count === 0 && i === 0 ? 'checked="checked"' : ''} class="chkDefaultImg" onclick="pro.setDefaultIcon($(this))" data-toggle="tooltip" data-placement="top" data-original-title="Set as defult icon"/>
+                                                                                            </span>
+                                                                                            <span class="close fa fa-times"></span>
+                                                                                            <img src="${_src}" data-index-Id="${count === 0 ? i : count}" style="width:200px;height:auto;">
+                                                                                         </div>`);
+                    }
+                    else {
+                        $(`#${divId}`).append(`<div class="previewImage float-left text-center">
+                                                                     <span class="setDefault">
+                                                                        <input type="checkbox" ${count === 0 && i === 0 ? 'checked="checked"' : ''} class="chkDefaultImg" onclick="pro.setDefaultIcon($(this))" data-toggle="tooltip" data-placement="top" data-original-title="Set as defult icon"/>
+                                                                      </span>
+                                                                     </span>
+                                                                     <span class="close fa fa-times"></span>
+                                                                     <img src="${_src}" data-index-Id="${count === 0 ? i : count}" style="width:200px;height:auto;">
+                                                                   </div>`);
+                    }
+                    $('[data-toggle="tooltip"]').tooltip();
+                    deleteImage();
+                }
+                $(`#${selectElement}`).val('');
+            }
+            catch (xhr) {
+                console.log(xhr)
+            }
+        };
+        $('.btnNew').unbind().click(() => AddImg(0));
+        (() => {
+            loadGrid();
+        })();
+    </script>
+}

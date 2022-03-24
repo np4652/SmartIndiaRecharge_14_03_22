@@ -1,0 +1,63 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Daybook>
+
+@{
+    var couter = 1;
+}
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5>Operator Circlewise Incentive</h5>
+        <table class="table table-hover table-responsive-sm mb-0">
+            <thead class="shadow">
+                <tr>
+                    <th class="text-right">#</th>
+                    <th>Operator</th>
+                    <th>Circle</th>
+                    <th class="text-right">Requested</th>
+                    <th class="text-right">Total Hits</th>
+                    <th class="text-right" scope="col">Incentive</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Any())
+                {
+                    var TotalHits = 0;
+                    var SuccessHits = 0M;
+                    var TotalIncentive = 0M;
+                    foreach (var item in Model)
+                    {
+                        TotalHits += item.TotalHits;
+                        SuccessHits += item.SuccessAmount;
+                        TotalIncentive += item.Incentive;
+                        <tr>
+                            <td class="text-right">@couter</td>
+                            <td>@item.Operator</td>
+                            <td>@item.Circle</td>
+                            <td class="text-right">@item.SuccessAmount</td>
+                            <td class="text-right">@item.TotalHits</td>
+                            <td class="text-right">@item.Incentive</td>
+                        </tr>
+                        couter = couter + 1;
+
+                    }
+                    <tr>
+                        <th colspan="3" class="text-right">Total</th>
+                        <th class="text-right">@SuccessHits</th>
+                        <th class="text-right">@TotalHits</th>
+                        <th class="text-right">@TotalIncentive</th>
+                    </tr>
+                }
+                else
+                {
+                    <tr rowspan="2">
+                        <td colspan="5">
+                            <center>No Record Found</center>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+

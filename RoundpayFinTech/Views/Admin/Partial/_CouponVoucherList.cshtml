@@ -1,0 +1,148 @@
+﻿@model RoundpayFinTech.AppCode.Model.CoupanVoucherReq
+
+@{ 
+    int counter = 0;
+    /// Layout = null;
+}
+<div class="row form-group">
+    <div class="col-md-3 col-sm-3 col-xs-3">
+
+        <label class="lbl" for="" title="For sale">Total Available Coupon</label>
+
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3">
+
+        <label class="lbl" for="">@ViewBag.TotalACoupn</label>
+
+    </div>
+
+    <div class="col-md-3 col-sm-3 col-xs-3">
+
+        <label class="lbl" for="ddlApiName">Total Available Amount</label>
+
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-3">
+
+        <label class="lbl" for="ddlApiName">@ViewBag.TotalAmount </label>
+
+    </div>
+</div>
+<table id="tblsendeno" class="table table-bordered table-striped table-responsive-sm">
+    <thead class="bg-tableth">
+        <tr>
+            <th>#</th>
+            <th>Api Name</th>
+            <th>Coupon Code</th>
+            <th>Amount</th>
+            <th>IsSale</th>
+            <th>Action</th>
+            <th>Add Date</th>
+            <th>Sell Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mdl in Model.CoupanVoucher)
+        {
+
+        <tr data-item-id="@mdl.ID">
+            <th style="width:1em;" scope="row">@(counter + 1)</th>
+            <td style="width:6em">
+                @mdl.ApiName
+            </td>
+            <td style="width:6em">
+                @mdl.CouponCode
+            </td>
+            <td style="width:6em">
+                @mdl.Amount
+            </td>
+            <td style="width:6em">
+                @mdl.IsSale
+            </td>
+            <td hidden style="width:6em">
+                @mdl.APIID
+            </td>
+            <td hidden style="width:6em">
+                @mdl.VoucherID
+            </td>
+            <td style="width:8em;" align="center">
+                @if (@mdl.IsSale == false)
+                {
+                    <button tabindex="6" class="btn btn-info btn-sm btnEditCard" title="Edit"><i class="fa fa-edit"></i></button>
+                }
+                @if (@mdl.IsSale == false)
+                {
+                    <button tabindex="6" onclick="delCoupon(@mdl.ID)" class="btn btn-danger btn-sm" title="Delete"><i class="fa fa-trash-alt"></i></button>
+                }
+            </td>
+            <td  style="width:10em" >
+                @mdl.EntryDate
+            </td>
+            <td  style="width:10em" >
+                @if (@mdl.IsSale == true)
+                {
+                    @mdl.ModifyDate;
+                }
+                </td>
+        </tr>
+            counter++;
+        }
+    </tbody>
+</table>
+<script>
+    $('.btnEditCard').click(function () {
+        $("#txtCouponCode").val($(this).closest('tr').find("td").eq(1).text().trim());
+        $("#_Amt").val($(this).closest('tr').find("td").eq(2).text().trim());
+        $("#ddlApi").val($(this).closest('tr').find("td").eq(4).text().trim());
+        $("#tblID").val($(this).closest('tr').data().itemId);
+        $("#btnSaveCard").text("Update")
+    });
+    function delCoupon(id)
+    {
+
+        var dprt = {
+            ID: id
+
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/CouponVoucher-Del',
+            data: JSON.stringify(dprt),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+
+                CouponVoucher1(@Model.CoupanVoucher.FirstOrDefault().VoucherID)
+                       
+            },
+            statusCode: {
+                500: function () {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                },
+                0: function () {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            },
+            error: function (xhr, result, msg) {
+                an.title = "Oops";
+                an.content = msg;
+                an.alert(an.type.failed);
+
+                preloader.remove();
+            },
+            complete: function () {
+
+                preloader.remove();
+            }
+        });
+
+
+    }
+
+</script>

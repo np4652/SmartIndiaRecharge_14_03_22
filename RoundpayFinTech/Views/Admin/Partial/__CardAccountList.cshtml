@@ -1,0 +1,59 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<CardAccountMapping>
+@{
+    var counter = 0;
+}
+<table id="tblsendeno" class="table table-bordered table-striped table-responsive-sm">
+    <thead class="bg-tableth">
+        <tr>
+            <th>#</th>
+            <th>Account No</th>
+            <th>Valid From</th>
+            <th>Valid Thru</th>
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var mdl in Model)
+        {
+
+            <tr data-item-id="@mdl.ID">
+                <th style="width:1em;" scope="row">@(counter + 1)</th>
+
+                <td style="width:6em">
+                    @mdl.AccountNo
+                </td>
+                <td style="width:6em">
+                    @mdl.Validfrom
+                </td>
+                <td style="width:6em">
+                    @mdl.ValidThru
+                </td>
+                <td style="width:6em">
+                    <div class="form-group">
+
+                        <button tabindex="6" class="btn btn-outline-dark btnEditCard">Edit</button>
+                    </div>
+                </td>
+                <td style="width:6em">
+                    <div class="form-group">
+
+                        <button tabindex="6" onclick="_delete(@mdl.ID,@mdl.UserID)" class="btn btn-outline-dark btndel">Delete</button>
+                    </div>
+                </td>
+
+
+
+            </tr>
+            counter++;
+        }
+    </tbody>
+</table>
+<script>  
+    $('.btnEditCard').click(function () {
+        $("#txtCardno").val($(this).closest('tr').find("td").eq(0).text().trim());
+        $("#dtFromDate").val($(this).closest('tr').find("td").eq(1).text().trim());
+        $("#dtToDate").val($(this).closest('tr').find("td").eq(2).text().trim());
+        $("#tblID").val($(this).closest('tr').data().itemId);
+    });</script>

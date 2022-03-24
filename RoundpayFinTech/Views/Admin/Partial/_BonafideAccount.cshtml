@@ -1,0 +1,36 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.BonafideAccount>
+@{int i = 1; }
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.ID">
+        <td style="width:15em;">@(i++)</td>
+        <td style="width:15em;">@item.Name</td>
+        <td style="width:15em;">@item.OutletName</td>
+        <td style="width:15em;">@item.MobileNo</td>
+        <td style="width:15em;">@item.PyeeName</td>
+        <td style="width:15em;">@item.AccountNo</td>
+        <td style="width:15em;">@item.IFSC</td>
+        <td style="width:15em;">@item.UPICount</td>
+        <td style="width:15em;">@item.ModifyDate</td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="IsActive_@i" @Html.Raw(item.IsActive ? "checked='checked'" : "")>
+                <label for="IsActive_@i"></label>
+                @Html.HiddenFor(modelItem => item.IsActive, new { @id = "hidIIN" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </span>
+        </td>
+        @*<td style="text-align:center; font-size:23px" id="Remove_@i">
+
+            <span class="fa fa-trash" aria-hidden="true"></span>
+        </td>*@
+
+        <td style="text-align:center; font-size:23px">
+            <a href="#" id="Remove_@i" data-nm="" data-mb="" data-toggle="tooltip" data-placement="top" data-original-title="Delete"><i class="fa fa-trash"></i></a>
+        </td>
+
+    </tr>
+
+}
+
+

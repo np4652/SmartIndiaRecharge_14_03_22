@@ -1,0 +1,66 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.Model.ProcModel
+@model UserBalnace
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3><small class="text-muted">All Wallets</small></h3>
+    <div class="form-group">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-info active">
+                <input type="radio" name="options" id="opBalance" autocomplete="off" data-balance="@Model.Balance" data-btype="@Wallet.Prepaid" data-text="@Wallet._Prepaid" checked> @Wallet._Prepaid
+            </label>
+            @if (Model.IsUBalance && Model.IsUBalanceFund)
+            {
+            <label class="btn btn-outline-info">
+                <input type="radio" name="options" id="opUtility" autocomplete="off" data-balance="@Model.UBalance" data-btype="@Wallet.Utility" data-text="@Wallet._Utility"> @Wallet._Utility
+            </label>
+            }
+            @if (Model.IsBBalance && Model.IsBBalanceFund)
+            {
+            <label class="btn btn-outline-info">
+                <input type="radio" name="options" id="opMiniBank" autocomplete="off" data-balance="@Model.BBalance" data-btype="@Wallet.Bank" data-text="@Wallet._Bank"> @Wallet._Bank
+            </label>
+            }
+            @if (Model.IsCBalance && Model.IsCBalanceFund)
+            {
+            <label class="btn btn-outline-info">
+                <input type="radio" name="options" id="opPrepaidCard" autocomplete="off" data-balance="@Model.CBalance" data-btype="@Wallet.Card" data-text="@Wallet._Card"> @Wallet._Card
+            </label>
+            }
+            @if (Model.IsIDBalance && Model.IsIDBalanceFund)
+            {
+            <label class="btn btn-outline-info">
+                <input type="radio" name="options" id="opRegistrationID" autocomplete="off" data-balance="@Model.IDBalnace" data-btype="@Wallet.RegID" data-text="@Wallet._RegID"> @Wallet._RegID
+            </label>
+            }
+            @if (Model.IsPacakgeBalance && Model.IsPacakgeBalanceFund)
+            {
+            <label class="btn btn-outline-info">
+                <input type="radio" name="options" id="opPackage" autocomplete="off" data-balance="@Model.PacakgeBalance" data-btype="@Wallet.Package" data-text="@Wallet._Package"> @Wallet._Package
+            </label>
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="form-group-lg col-md-6">
+            <label class="lbl" for="txtcbal"> Prepaid Balance</label>
+            <input class="form-control form-control-lg text-success" id="txtcbal" type="text" value="@Model.Balance" readonly="readonly" style="background-color:white">
+        </div>
+        <div class="form-group-lg col-md-6">
+            <label class="lbl" for="txtAmount"> Enter Prepaid Amount</label>
+            <input aria-describedby="amountHelp" class="form-control form-control-lg text-info" id="txtAmount" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="0">
+            <small id="amountHelp" class="form-text text-muted d-none"></small>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="lbl" for="txtRemark">Enter Remark</label>
+        <input aria-describedby="remHelp" class="form-control form-control-lg" id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text">
+        <small id="remHelp" class="form-text text-muted d-none"></small>
+    </div>
+    <input type="hidden" id="btnBType" value="@Wallet.Prepaid" />
+    <button class="btn btn-outline-dark btn-lg" id="bAddW">Add Wallet</button>
+    <button class="btn btn-dark btn-lg" id="mdlCancel">Cancel</button>
+</div>
+

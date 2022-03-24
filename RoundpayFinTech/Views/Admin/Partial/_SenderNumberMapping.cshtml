@@ -1,0 +1,91 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<WhatsappAPIDetail>
+@{
+    var counter = 0;
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+    </style>
+
+
+    <div class="col-md-12">
+        <div class="card mt-12">
+            <div class="card-header bg-gradientorange text-white">
+                <i class="fas fa-link"></i> Whatsapp Sender No List
+                @*<div class="float-right"><button id="btnNew" class="btn btn-default btn-sm">New</button></div>*@
+            </div>
+            <input type="hidden" id="wtapiid"  name="wtapiid"  />
+            <div class="card-body" style="">
+                <!--<div class="form-group">
+                    @Html.Label("txtMobile", "Mobileno", new { @class = "lbl" })
+                    <div class="input-group">
+                        <input type="text" id="txtmobileno" maxlength="12" class="form-control m-1" placeholder="Mobileno With Country code (91)" aria-describedby="mobiled" tabindex="9" />-->
+
+
+                        @*@Html.TextBox("txtmobileno",Model.Mobileno, new { @class = "form-control", @placeholder = "Enter Mobileno No Start With 91", @aria_describedby = "mobiled", @tabindex = 1 })*@
+                        <!--<button type="button" class="btn btn-dark" id="btnSaveWSiN" tabindex="1">Save</button>
+                    </div>
+                    <small id="mobiled" class="form-text text-muted d-none">Mobileno is mandatory</small>
+
+
+                </div>-->
+                <div class="table-responsive">
+                    <table id="tblsendeno" class="table table-bordered table-striped table-responsive-sm">
+                        <thead class="bg-tableth">
+                            <tr>
+                                <th>#</th>
+                                <th>Mobile No</th>
+                                <th style="width:15%">Mapping Status</th>
+                                @*<th style="width:15%">Delete</th>*@
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var mdl in Model)
+                            {
+                                var depid = Convert.ToString(@ViewData["DeptID"]);
+                            <tr data-item-id="@mdl.ID">
+                                <th style="width:1em;" scope="row">@(counter + 1)</th>
+
+                                <td style="width:6em">
+                                    @mdl.Mobileno
+                                </td>
+
+                                <td>
+                                    <div class="input-group-append">
+                                        <span class="input-group-text switch switch-sm bg-white align">
+                                           
+                                            <input type="checkbox" class="switch IsWtnActive" id="whatsappno@(counter+1)" @Html.Raw(mdl.DEPID.Split(',').Contains(depid) ? "checked='checked'" : "")>
+                                            <label for="whatsappno@(counter+1)" class="font-weight-bold lbl"></label>
+                                        </span>
+                                    </div>
+                                </td>
+                                <td style="display:none;">
+                                    @mdl.DEPID
+                                </td>
+
+                                @*<td>
+            <div class="input-group-append">
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <button type="button" class="btn btn-outline-dark btndelwtsenderno" id="btndelwtsenderno@(counter+1)" tabindex="1">Delete</button>
+                </span>
+            </div>
+        </td>*@
+                            </tr>
+                                counter++;
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+ 
+</div>

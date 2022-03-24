@@ -1,0 +1,186 @@
+﻿@{
+    ViewData["Title"] = "Customercare Activity";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin Report</li>
+            <li class="breadcrumb-item active"> Activity Log</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Activity Log
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDateHelp" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="dtFromDateHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">To Date</label>
+                                    <input aria-describedby="dtToDateHelp" class="form-control" id="dtToDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="dtToDateHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtM">User Mobile</label>
+                                    <input aria-describedby="txtM" class="form-control" id="txtM" tabindex="5" type="text" placeholder="Mobile No" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="input-group-append">
+                                    <button id="btnSearch" tabindex="8" class="btn btn-outline-dark mt-4" style="border-bottom-right-radius: 0;border-top-right-radius: 0;" original-text="Search">Search</button>
+
+                                    <span class="btn btn-success far fa-file-excel mt-4" style="font-size:20px;" id="btnExport"></span>
+                                </div>
+                                @*<div class="form-group">
+                                        <button id="btnSearch" tabindex="8" class="btn btn-outline-dark mt-4">Search</button>
+                                    </div>*@
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblCCLog">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Customer Care</th>
+                                        <th scope="col" class="text-nowrap">Activity Log</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            search();
+            $("#btnSearch").click(function () {
+                search();
+            });
+            $("#btnExport").click(function () {
+                exportExl();
+            });
+        });
+        var search = function () {
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($("#btnSearch"), 'Requesting');
+            preloader.load();
+            $.post('/cc-al', { f: $('#dtFromDate').val(), t: $('#dtToDate').val(), m: $('#txtM').val(), o: 0 })
+                .done(function (result) {
+                    resultReload(result);
+                    $('#tblCCLog tbody').html(result);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                    btnLdr.Stop($('#btnSearch'));
+                });
+        };
+
+
+        var exportExl = () => {
+            var data = { f: $('#dtFromDate').val(), t: $('#dtToDate').val(), m: $('#txtM').val(), o: 0 };
+            window.location = "/cc-al-export?" + $.param(data);
+        };
+    </script>
+
+
+}

@@ -1,0 +1,136 @@
+﻿@model RoundpayFinTech.AppCode.Model.WhatsappBotDic
+
+<section>
+    <form id="WhatsappBotDic">
+        <div class="row">
+            <div class="col-sm-8">
+                <div class="form-group">
+                    <input type="hidden" value="@Model.KeyId" id="KeyId" name="KeyId" />
+                    <input type="hidden" value="@Model.FormatType" id="hfdFormatType" />
+                    <label>Format</label>
+                    <select class="form-control" name="FormatType" required @Html.Raw(!string.IsNullOrEmpty(Model.FormatType) ? "disabled" : "")>
+                        <option value=""> :: Select Format  :: </option>
+                        @foreach (var format in Model.FormatTypes)
+                        {
+                            format.IsSelected = format.Value == Model.FormatType ? true : false;
+                            if (format.IsSelected)
+                            {
+                                <option value="@format.Value" selected> @format.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@format.Value"> @format.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label>Reply Type</label>
+                    <select class="form-control" name="ReplyType">
+                        <option value="T"> Text </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-12">
+                <div class="form-group">
+                    <label>Key Phrase</label>
+                    <input type="text" placeholder="Enter phrase" class="form-control" @Html.Raw(Model.KeyId > 0 ? "values='" + Model.Key + "'" : "") name="Key" required />
+                </div>
+                <div class="form-group">
+                    <label>Replacement Keys : </label>
+                    <div class="btn-group">
+                        <span class="btn btn-outline-dark cursor-pointer replacement" data-original-title="{sendernumber}">Sender Number</span>
+                        <span class="btn btn-outline-dark cursor-pointer replacement" data-original-title="{amount}">Amount </span>
+                        <span class="btn btn-outline-dark cursor-pointer replacement" data-original-title="{datetime}">Date Time </span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="lblReply">Reply Text 1 <small data-recharge-des="For Pending" data-dispute-des="Tranaction success but refund not requested"></small></label>
+                    <textarea class="form-control" name="Replytext1" id="Replytext1" required>@Model.ReplyText1 </textarea>
+                </div>
+                <div class="form-group">
+                    <label class="lblReply">Reply Text 2 <small data-recharge-des="For Success" data-dispute-des="Tranaction success but refund requested"></small></label>
+                    <textarea class="form-control" name="Replytext2" id="Replytext2" required>@Model.ReplyText2</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="lblReply">Reply Text 3 <small data-recharge-des="For Failed" data-dispute-des="Transaction status success but refund request rejected"></small></label>
+                    <textarea class="form-control" name="Replytext3" id="Replytext3" required>@Model.ReplyText3</textarea>
+                </div>
+                <div class="form-group text-right">
+                    <button class="btn btn-outline-info">Save</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</section>
+<script>
+    if ($('#hfdFormatType').val() == '') {
+        for (let i = 0; i < alreadyExistFormat.length; i++) {
+            if (alreadyExistFormat[i] != 'Other')
+                $('option[value="' + alreadyExistFormat[i] + '"]').remove();
+        };
+    }
+    var replyNotation = () => {
+        let element = $('[name="FormatType"]');
+        if (element.val() == 'RechargePending') {
+            $('.lblReply small').each(function () {
+                $(this).addClass('text-danger text-monospace').text('[' + $(this).data().rechargeDes + ']');
+            })
+        }
+        if (element.val() == 'Dispute') {
+            $('.lblReply small').each(function () {
+                $(this).addClass('text-danger text-monospace').text('[' + $(this).data().disputeDes + ']');
+            })
+        }
+        if (element.val() != 'RechargePending' && element.val() != 'Dispute') {
+            $('.lblReply small').removeClass('text-danger text-monospace').text('');
+        }
+    }
+    $('[name="FormatType"]').change(() => replyNotation());
+    replyNotation();
+    $('#WhatsappBotDic').submit(function () {
+        event.preventDefault();
+        preloader.load();
+        let $form = $(this);
+        let req = Q.getFormData($form);
+        if (req.FormatType == undefined || req.FormatType == '') {
+            req.FormatType = $('[name="FormatType"]').val();
+        }
+        $.post('UpdateWhatsappKeyphrase', req).done(result => {
+            an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === 1) {
+                mdlA.dispose();
+                loadGrid();
+            }
+        }).catch(function (xhr, e, msg) {
+            an.title = 'Oops';
+            an.content = 'An error has been occured during request.Reload again!'
+            an.alert(an.type.failed);
+            console.log(xhr.responseText, "\n", e, "\n", msg);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+    var allowedCtrlForPaste = ['Replytext1', 'Replytext2','Replytext3'];
+    var lastFocusCtrl = $("#Replytext1");
+    $('textarea').focus(function () {
+        lastFocusCtrl = $(this);
+    });
+    $('span.replacement').click(function () {
+        var cText = $(this).attr('data-original-title');
+        copyToClipboard(cText);
+        an.title = 'Copied';
+        an.content = cText;
+        an.alert(an.type.info);
+        an.autoClose = 5;
+        if ($.inArray(lastFocusCtrl.attr('id'), allowedCtrlForPaste) > -1 && lastFocusCtrl.val().indexOf(cText) < 0) {
+            pasteAtControl(lastFocusCtrl, cText);
+        }
+    });
+</script>

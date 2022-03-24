@@ -1,0 +1,24 @@
+﻿@using RoundpayFinTech.AppCode.Model
+@model DepositResponse
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    @if (Model.Statuscode == 1)
+    {
+
+        <h3>Fill OTP</h3>
+        <div class="form-group">
+            @Html.Label("txtOTP", "Fill OTP", new { @class = "lbl" })
+            @Html.TextBox("txtOTP", null, new { @class = "form-control text-capitalize", @placeholder = "Enter OTP", @aria_describedby = "OTPHelp", @tabindex = 4 })
+            <small id="OTPHelp" class="form-text text-danger  d-none">Invalid OTP</small>
+            <input type="hidden" id="hidReffNo" data-reffID='@Json.Serialize(new { Reff1 = Model.TransactionID, Reff2 = Model.RefferenceNo, Reff3 = Model.VendorID })' />
+        </div>
+        <button class="btn btn-outline-success btn-sm" id="btnDepositOTP">Verify</button>
+    }
+    else
+    {
+        <h3 class="text-danger text-center mt-4">@Model.Msg</h3>
+    }
+    <button class="btn btn-danger btn-sm" id="mdlCancel">Cancel</button>
+</div>

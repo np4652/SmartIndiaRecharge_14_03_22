@@ -1,0 +1,165 @@
+﻿@{
+    ViewData["Title"] = "User Creation";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">User Create</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body" id="usrContainer"></div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            userReg('');
+        });
+        var CustomLoginName = function () {
+            var name = $('#txtName').val();
+            var res = name.substring(0, 3) + (Math.floor(1000 + Math.random() * 9000));
+            $('#txtCustomLogin').val(res);
+        }
+        var userReg = function (m) {
+            preloader.load();
+            $.post('/ureg', { m: m }, function (result) {
+                $('#usrContainer').html(result);
+                $('#txtReferal').unbind().on('change', function () {
+                    userReg($('#txtReferal').val());
+                });
+                $('#txtName').on('focusout', function () {
+                    CustomLoginName();
+                });
+                var btn = $('#btnCreate');
+                btn.unbind().click(function () {
+                    addUsr(btn.html());
+                });
+                $('#ddlRole').change(function () {
+                    $($('#txtWebsite').parent()[0]).removeClass('d-none');
+                    if ($(this).val() == '2')
+                        $($('#txtWebsite').parent()[0]).addClass('d-none');
+                    if ($('#chbIsVirtual') !== undefined) {
+                        $($('#chbIsVirtual').parent()[0]).removeClass('d-none');
+                        if ($(this).val() == '2')
+                            $($('#chbIsVirtual').parent()[0]).addClass('d-none');
+                    }
+                    //if ($(this).val() == '8')
+                    //    $('#dvIsECollection').removeClass('d-none');
+                    //else
+                    //    $('#dvIsECollection').addClass('d-none');
+                });
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+        var addUsr = function (btnTxt) {
+            var ct = {
+                nam: $('#txtName'), namo: $('#txtOutletName'), mob: $('#txtMobile'), eml: $('#txtEmail'), rle: $('#ddlRole'), slb: $('#ddlSlab'), btn: $('#btnCreate'), pnc: $('#txtPinCode'), Tkn: $('#txtReferal'), wnam: $('#txtWebsite'), isver: $('#chbIsVirtual'), isgst: $('#chbISGSTAPPLICABLE'), istds: $('#chbISGSTAPPLICABLE'), isweb: $('#chbIsWebsite'), tkn: $('#txtReferal'), IsReal: $('#chbIsRealApi'), CommRate: $('#txtCommRate'), IsFlatCommission: $('#chbIsFlatCommission'), txtWhatsappNo: $('#txtWhatsappNo'), txtCustomLogin: $('#txtCustomLogin')
+            };
+            if (btnTxt !== ct.btn.html())
+                return false;
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start(ct.btn, 'Requesting');
+
+            var IsE = {
+                nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100),
+                namo: ($v.$IsNum(ct.namo.val()) || ct.namo.val().trim() == '' || ct.namo.val().length > 150),
+                mob: (ct.mob.val().length !== 10 || !$v.$IsMob(ct.mob.val())),
+                eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256),
+                slb: ct.slb.val() === null || ct.slb.val() == 0,
+                rle: ct.rle.val() === null || ct.rle.val() == 0,
+                pnc: (!$v.$IsPincode(ct.pnc.val())),
+                wnam: ct.isweb.is(':checked') ? ct.wnam.val() == '' : false,
+                CL: ct.txtCustomLogin.length ? ct.txtCustomLogin.val() == '' : false,
+                CommRate: (ct.CommRate.val() === null || ct.CommRate.val().trim() == '' || (!$v.$numOnly(ct.CommRate.val()) && !$v.$decmalOnly(ct.CommRate.val())))
+            }
+            $v.showErrorFor(ct.txtCustomLogin, 'Custom Login Name is required', IsE.CL);
+            $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(ct.namo, 'Outletname is non-numeric mandatory field and length is not more than 150', IsE.namo);
+            $v.showErrorFor(ct.mob, 'Mobile number is mandatory field and length should be 10', IsE.mob);
+            $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(ct.pnc, 'Enter correct Pincode is mandatory field and length should be 6', IsE.pnc);
+            $v.showErrorFor(ct.slb, 'Slab is required, select slab from list! (<i>In case of list is empty add slab first</i>)', IsE.slb);
+            $v.showErrorFor(ct.rle, 'Role is required, select role from list! (<i>In case of list is empty add role first</i>)', IsE.rle);
+            $v.showErrorFor(ct.wnam, 'Website is required', IsE.wnam);
+            $v.showErrorFor(ct.CommRate, 'Commission Rate is required', IsE.CommRate);
+            if (ct.txtCustomLogin.length) {
+                $v.showErrorFor(ct.txtCustomLogin, 'CustomLogin field is required', IsE.CommRate);
+            }
+            IsE.err = (IsE.nam || IsE.namo || IsE.mob || IsE.eml || IsE.slb || IsE.rle || IsE.pnc || IsE.wnam || IsE.CommRate || IsE.CL);
+            if (IsE.err) {
+                btnLdr.Stop(ct.btn);
+                return false;
+            }
+            var UserCreate = {
+                Name: ct.nam.val(), OutletName: ct.namo.val(), MobileNo: ct.mob.val(), EmailID: ct.eml.val(), RoleID: ct.rle.val(), WebsiteName: ct.wnam.val(), Pincode: ct.pnc.val(), SlabID: ct.slb.val(), IsGSTApplicable: ct.isgst.is(':checked'), IsTDSApplicable: ct.isgst.is(':checked'), IsVirtual: ct.isver.is(':checked'), IsWebsite: ct.isweb.is(':checked'), token: ct.tkn.attr('token'), IsAdminDefined: ct.tkn.attr('IsAdminDefined'), IsReal: ct.IsReal.is(':checked'), CommRate: ct.CommRate.val(), Address: $('#txtAddress').val(), DMRModelID: 0, IsFlatCommission: ct.IsFlatCommission.is(':checked'), WhatsAppNumber: ct.txtWhatsappNo.val(), CustomLoginID: ct.txtCustomLogin.length ? ct.txtCustomLogin.val() : '', AreaID: $('#ddlArea').val()
+            }
+            an.id = 'myalertUC';
+            an.parent = $('#alertmsg');
+            $.ajax({
+                type: 'POST',
+                url: '/creg',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(UserCreate),
+                success: function (result) {
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        var txtInto = $('#txtReferal');
+                        var into = txtInto.val();
+                        $('input[type="text"]').val('');
+                        txtInto.val(into);
+                        $('select').prop('selectedIndex', 0);
+                        an.title = "Well done!";
+                        an.content = result.msg + ((result.link != undefined) ? '<br/>To complete user profile <a href="' + result.link + '" class="' + an.linkClass + '">Click here</a>' : '');
+                        an.alert(result.statuscode);
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops! Error";
+                    an.content = result;
+                    an.alert(an.type.failed);
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+                },
+                complete: function () {
+                    btnLdr.Stop(ct.btn);
+                }
+            });
+        }
+    </script>
+}

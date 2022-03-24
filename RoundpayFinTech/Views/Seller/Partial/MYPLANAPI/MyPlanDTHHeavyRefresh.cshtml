@@ -1,0 +1,41 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.Root
+
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+            <h3>DTH Heavy Refresh</h3>
+            <hr />
+        </div>
+        @if (Model.status==true)
+        {
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="scroll-content">
+                    <table class="table table-striped">
+                        <thead class="bg-tableth">
+                            <tr>
+                                <th>Customer ID</th>
+                                <th>Operator</th>
+                                <th>Description</th>
+                                <th>Customername</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>@Model.result.tel</td>
+                                <td>@Model.result.Operator</td>
+                                <td>@Model.result.records.desc</td>
+                                <td>@Model.result.records.customername</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <h1 class="text-danger">Oops no record found!</h1>
+        }
+    </div>
+    

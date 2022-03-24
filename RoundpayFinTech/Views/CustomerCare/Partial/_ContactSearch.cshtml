@@ -1,0 +1,56 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using RoundpayFinTech.AppCode.StaticModel;
+@using System;
+@using System.Text;
+@model GetWhatsappContactListModel;
+@{
+    string path = "";
+}
+<!-- Messages -->
+
+<div class="row ContacstScroll" style="background-color:white;" id="chat-list">
+    @if (Model != null)
+    {
+        int i = 0;
+        @if (Model.GetWhatsappContactList != null)
+        {
+            @foreach (var waCont in Model.GetWhatsappContactList)
+            {
+                StringBuilder sb = new StringBuilder("{ApiId}_{SenderMobileName}_{SenderMobileNo}");
+                sb.Replace("{ApiId}", waCont.APIID.ToString()).Replace("{SenderMobileName}", waCont.SenderName).Replace("{SenderMobileNo}", waCont.SenderMobileNo);
+
+                <div data-chat-no="@sb.ToString()" class="wrapBox">
+                    
+                    <a href="javascript:void(0)" id="contactid@(i)" onclick="ChatArea(@waCont.ID,@waCont.APIID, '@waCont.MobileNo',@(i), '@waCont.ApICode', '@waCont.SenderMobileNo', '@waCont.SenderNoID', @waCont.Task)" style="width:100%">
+                        <div id="cid@(i)" tabindex="@waCont.ID" class="chat-list-item d-flex flex-row w-100 p-2 border-bottom unread act">
+
+                            @*<a href="@Url.Action("WhatsappConversion")">cht </a>*@
+
+                            <div id="profileImage">
+                                @waCont.PrefixName
+                            </div>
+                        
+                            <div id="pid" class="w-100 active" style="margin-left:18px">
+                                <div id="senderNm@(i)" class="name SenderName">
+                                    @waCont.SenderName @Html.Raw(!string.IsNullOrEmpty(waCont.Role) ? "(" + waCont.Role + ")" : "")
+                                    <img height="14px" src="/whatsapp/img/@Html.Raw(waCont.ApICode.ToLower()+".png")" />
+                                </div>
+                            
+                                <div id="cmob@(i)" class="small last-message cmobile">@waCont.MobileNo</div>
+
+                            </div>
+                            <div class="numberCircle">
+                                @if (@waCont.NewMsgs != 0)
+                                {
+                                    <span>@waCont.NewMsgs</span>
+                                }
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                i = i + 1;
+            }
+        }
+    }
+</div>
+

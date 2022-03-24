@@ -1,0 +1,76 @@
+﻿.top-navbar {
+    border-bottom: 1px solid #1e1e1e;
+    background: #1e1e1e;
+}
+
+.bg-greenhead {
+    background: linear-gradient( 85deg, #25b8a3, #17a893);
+}
+
+.main-wrapper .breadcrumb {
+    background: #179d89 !important;
+}
+
+.bg-purple {
+    background-color: #179d89 !important;
+}
+
+.bg-gradientorange {
+    background: linear-gradient(85deg, #625e5e, #474545);
+}
+
+.card-holiday {
+    background: #179d89!important;
+}
+
+.bg-pri-td {
+    background: linear-gradient( 85deg, #25b8a3, #17a893);
+}
+
+.bg-sec-td {
+    background: linear-gradient( 85deg, #25b8a3, #17a893);
+}
+
+.bg-ter-td {
+    background-color: #179d89 !important;
+}
+
+.nav-item.show {
+    background: #179d89 !important;
+}
+#navbar {
+    background: #3bdbc4!important;
+}
+#profileImage {
+   
+  
+    background: #3bdbc4!important;
+   
+}
+.nav-item.show {
+    background: #158599;
+}
+.breadcrumb-item + .breadcrumb-item {
+  
+    color: white;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: #ffffff;
+    background-color: #0f9582;
+    border-color: #0f9582;
+    border-radius: 3px;
+}
+
+.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+    color: #ffffff;
+    background-color: #0f9582;
+    border-color: #0f9582;
+    border-radius: 3px;
+}
+
+.badge-primary {
+    color: #fff;
+    background-color: #0f9582!important;
+    padding: 5px;
+}

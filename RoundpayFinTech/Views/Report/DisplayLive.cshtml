@@ -1,0 +1,105 @@
+﻿@{
+    Layout = "_FullPage";
+    ViewData["Title"] = "Heavy Live Refresh";
+}
+<div class="p table-responsive" id="DivPending">
+    <table class="table table-bordered table-responsive-sm" id="tblRechReport">
+        <thead class="bg-dark live-font">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">TID</th>
+                <th scope="col">TransactionID</th>
+                <th scope="col">Outlet</th>
+                <th scope="col">AccountNo</th>
+                <th scope="col">Operator</th>
+                <th scope="col">DateTime</th>
+                <th scope="col">Time Span</th>
+                <th scope="col" class="text-right">Amount</th>
+                <th scope="col">API</th>
+                <th scope="col">Live ID</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            Report();
+            setInterval(function () {
+                Report();
+            }, 10000);
+        });
+        function Report() {
+            $.post("/DisplayLive", {}, function (result) {
+                $('.p tbody').html(result);
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+
+        }
+
+        var pends = function () {
+            $.post('/dmrpending-tTr', {})
+                .done(function (result) {
+                    resultReload(result);
+                    if (result.length > 0) {
+                        result.forEach(r => {
+                            callStsCheck(r.commonInt, r.commonStr);
+                        });
+                    }
+                })
+                .catch(function (xhr, e, msg) {
+                    
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                });
+        }
+        var callStsCheck = function (t, tr) {
+            $.post('/chk-sts-dmr-tTr', { t, tr })
+                .done(function (result) {
+                    
+                })
+                .catch(function (xhr, e, msg) {
+                    
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                });
+        }
+    </script>
+}

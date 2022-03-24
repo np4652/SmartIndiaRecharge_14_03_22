@@ -1,0 +1,535 @@
+﻿@using Newtonsoft.Json
+@using RoundpayFinTech.AppCode.StaticModel
+@model int
+@{
+    ViewData["Title"] = "BBPS Complaints";
+}
+
+@Html.Hidden("ReasonTransactionLevel", JsonConvert.SerializeObject(BBPSComplaintsData.ReasonTransactionLevel))
+@Html.Hidden("ReasonServiceBiller", JsonConvert.SerializeObject(BBPSComplaintsData.ReasonServiceBiller))
+@Html.Hidden("ReasonServiceAgent", JsonConvert.SerializeObject(BBPSComplaintsData.ReasonServiceAgent))
+
+<style>
+    .btnTrackComplaint {
+        cursor: pointer;
+    }
+</style>
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> BBPS Complaints</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row" id="parentContainer">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> BBPS Complaints Report
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblBBPSReport">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Complaint Type</th>
+                                        <th>Complaint Against</th>
+                                        <th>Complaint Type ID</th>
+                                        <th>Complaint ID</th>
+                                        <th>Complaint Date</th>
+                                        <th>Status</th>
+                                        <th>Remark</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12">
+                <div class="card mt-4 mb-3">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> BBPS Complaints
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="container mt-4">
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="form-group row">
+                                        <label for="complaintType" class="col-sm-3 col-form-label">Complaint Type</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control form-control-sm" id="complaintType" aria-describedby="aria-complaintType">
+                                                <option value="1">Service Based</option>
+                                                <option value="2">Transaction Level</option>
+                                            </select>
+                                            <div id="aria-complaintType" class="text-danger"></div>
+                                        </div>
+                                    </div>
+                                    <fieldset class="form-group">
+                                        <div class="row">
+                                            <legend class="col-form-label col-sm-3 pt-0">Transaction Done at</legend>
+                                            <div class="col-sm-9" style="display:inline-flex">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="storeType" id="physicalStore" value="physical" checked>
+                                                    <label class="form-check-label" for="physicalStore">
+                                                        Physical Store
+                                                    </label>
+                                                </div>
+                                                <div class="form-check ml-4">
+                                                    <input class="form-check-input" type="radio" name="storeType" id="onlineStore" value="online">
+                                                    <label class="form-check-label" for="onlineStore">
+                                                        Online Portal
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+
+                                    <div class="form-group row">
+                                        <label for="storeType" class="col-sm-3 col-form-label storeTypeLabel">Physical Store</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control form-control-sm" id="storeType" aria-describedby="aria-storeType">
+                                                <!--Data will be here at runtime-->
+                                            </select>
+                                            <div id="aria-storeType" class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row participationTypeCon">
+                                        <label for="participationType" class="col-sm-3 col-form-label">Participation Type (Complaint Against)</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control form-control-sm" id="participationType" aria-describedby="aria-participationType">
+                                                <option value="Agent">Agent</option>
+                                                <option value="Biller">Biller</option>
+                                            </select>
+                                            <div id="aria-participationType" class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row apiboxCon">
+                                        <label for="TransId" class="col-sm-3 col-form-label">TransactionID</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="TransId" placeholder="TransactionID" aria-describedby="aria-apiboxTransId">
+                                            <div id="aria-apiboxTransId" class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row reasonTypeCon">
+                                        <label for="reasonType" class="col-sm-3 col-form-label">Reason</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control form-control-sm" id="reasonType" aria-describedby="aria-reasonType">
+                                            </select>
+                                            <div id="aria-reasonType" class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row descriptionCon">
+                                        <label for="description" class="col-sm-3 col-form-label">Description</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="description" placeholder="Description" aria-describedby="aria-description">
+                                            <div id="aria-description" class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row outserIDCon">
+                                        <label for="outserID" class="col-sm-3 col-form-label outserIDLabel">Outlet ID</label>
+                                        <div class="col-sm-9">
+                                            <select class="form-control form-control-sm" id="outserID" aria-describedby="aria-outserID">
+                                                <!--Data will be here at runtime-->
+                                            </select>
+                                            <div id="aria-outserID" class="text-danger"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="form-group row mobilenoCon">
+                                        <label for="mobileno" class="col-sm-3 col-form-label">Mobile No.</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" class="form-control form-control-sm" id="mobileno" placeholder="Mobile No." aria-describedby="aria-mobileno">
+                                            <div id="aria-mobileno" class="text-danger"></div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <div class="col-sm-3">
+                                            <button type="button" class="btn btn-outline-success btn-sm btnRaiseComplaint">Raise Complaint</button>
+                                        </div>
+                                        <div class="col-sm-9" id="showLiveID">
+                                            <h5></h5>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-4">
+                                    <div class="float-right" style="margin-right: -139px;">
+                                        <img src="/images/BBPS.png" style="max-height: 65px;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        bindRaisedComplaintsList();
+        manageComplaintType();
+
+        $(".btnRaiseComplaint").click(() => raiseComplaint());
+        storeType();
+    })
+
+    var bindRaisedComplaintsList = () => {
+        preloader.load();
+        $.post('/bbps-complaints-list')
+            .done(function (result) {
+                $("#tblBBPSReport tbody").html(result);
+                $("#tblBBPSReport tbody .btnTrackComplaint").unbind().on("click", function () {
+                    preloader.load();
+                    $.post('/track-bbps-complain', { TableID: $(this).parents("tr").data().itemId })
+                        .done(function (result) {
+                            mdlA.id = 'mdlReqResp';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.default);
+                            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                        })
+                        .catch(function (xhr, e, msg) {
+                            an.title = 'Oops';
+                            an.content = 'An error has been occured during request.Reload again!'
+                            an.alert(an.type.failed);
+                        })
+                        .fail(function (xhr) {
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        })
+                        .always(function () {
+                            preloader.remove();
+                        });
+                })
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+
+    var raiseComplaint = () => {
+        $('#showLiveID h5').html('');
+        var ct = {
+            comType: $('#complaintType'), storeType: $('input[type=radio][name=storeType]:checked'),
+            storeTypeSelected: $('#storeType'), TransID: $('#TransId'), reasonType: $('#reasonType'),
+            description: $('#description'), participationType: $("#participationType"), outserID: $("#outserID"),
+            mobileno: $("#mobileno"), btn: $(".btnRaisComplaint")
+        };
+
+        var IsE = {
+            comType: ($('#complaintType').val().trim() == ''), storeType: ($('input[type=radio][name=storeType]:checked').val() == ''),
+            storeTypeSelected: ($('#storeType').val().trim() == ''), TransID: ($('#TransId').val().trim() == ''),
+            mobileno: ($("#mobileno").val().length !== 10 || !$v.$IsMob($("#mobileno").val())),
+            reasonType: ($('#reasonType').val().trim() == ''), description: ($('#description').val().trim() == ''),
+            participationType: ($("#participationType").val().trim() == ''),
+            outserID: ($("#outserID").val() == undefined || $("#outserID").val() == null || $("#outserID").val().trim() == '')
+        }
+
+        $v.showErrorFor($('#complaintType'), 'Complaint Type is required!', IsE.comType);
+        $v.showErrorFor($('#storeType'), 'Choose option for Physical Store/Online Portal.', IsE.storeType);
+
+        $v.showErrorFor($('#reasonType'), 'Reason is required!', IsE.reasonType);
+        $v.showErrorFor($('#description'), 'Description is required!', IsE.description);
+
+        let OutletID = 0;
+        let ServiceID = 0;
+        let TransactionID = '';
+        if (ct.comType.val() == '2') {
+            $v.showErrorFor($('#TransId'), 'Trans ID is required!', IsE.TransID);
+            TransactionID = $('#TransId').val();
+            IsE.err = (IsE.comType || IsE.storeType || IsE.storeTypeSelected || IsE.reasonType || IsE.description || IsE.TransID);
+        }
+        else if ($('#complaintType').val() == '1') {
+            $v.showErrorFor($("#participationType"), 'Participation Type is required!', IsE.participationType);
+            $v.showErrorFor($("#outserID"), 'Outlet ID/Service ID is required!', IsE.outserID);
+            $v.showErrorFor($("#mobileno"), 'Mobile No. is required!', IsE.mobileno);
+
+            IsE.err = (IsE.comType || IsE.storeType || IsE.storeTypeSelected || IsE.reasonType || IsE.description || IsE.participationType || IsE.outserID || IsE.mobileno);
+
+            if ($('#participationType').val() === 'Agent') {
+                OutletID = $("#outserID").val();
+            }
+            else {
+                ServiceID = $("#outserID").val();
+            }
+        }
+
+        if (IsE.err) {
+            //btnLdr.Stop(ct.btn);
+            return false;
+        }
+        let TransactionDoneAt = $('#physicalStore').val() === 'physical' ? 1 : 2;
+
+        var complaintInfo = {
+            StoreOutletID: $('#storeType').val(), OutletID: OutletID, ComplainType: $('#complaintType').val(), TransactionDoneAt: TransactionDoneAt, TransactionID: TransactionID, ParticipationType: $('#participationType').val(), Reason: $('#reasonType').val(), Description: $('#description').val(), MobileNo: $('#mobileno').val(), OID: ServiceID
+        };
+        an.id = 'myalert';
+        an.parent = $('#alertmsg');
+        debugger
+        btnLdr.addClass = 'btn-success';
+        btnLdr.removeClass = 'btn-outline-success';
+        btnLdr.Start($(".btnRaiseComplaint"), 'Requesting');
+        $(".btnRaiseComplaint").prop("disabled", true);
+
+        $.ajax({
+            type: 'POST',
+            url: '/Raise-bbps-complain',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(complaintInfo),
+            success: result => {
+                an.title = result.statuscode == an.type.success ? "Well done!" : "Oops! Error";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == 1) {
+                    $('#showLiveID h5').html(result.liveID);
+                }
+            },
+            error: xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                an.alert(-1);
+                btnLdr.Stop($(".btnRaiseComplaint"));
+                $(".btnRaiseComplaint").prop("disabled", false).html("Raise Complaint");
+            },
+            complete: function () {
+                btnLdr.Stop($(".btnRaiseComplaint"));
+                $(".btnRaiseComplaint").prop("disabled", false).html("Raise Complaint");
+            }
+        });
+    }
+
+    $("#complaintType").on("change", function () {
+        manageComplaintType();
+    })
+
+    var manageComplaintType = () => {
+        let comType = $("#complaintType").val();
+
+        if (comType == "2") {
+            transactionLevel();
+        }
+        else if (comType == "1") {
+            serviceBased();
+        }
+    }
+
+    $("input[type=radio][name=storeType]").on("change", function () {
+        storeType();
+    })
+
+    function storeType() {
+        let val = $("input[type=radio][name=storeType]:checked").val();
+        if (val == "physical") $(".storeTypeLabel").html("Physical Store"), fillPhysicalStore();
+        if (val == "online") $(".storeTypeLabel").html("Online Portal"), fillOnlinePortal();
+    }
+
+    $("#participationType").on("change", function () {
+        participationType();
+    })
+
+    var participationType = () => {
+        let val = $("#participationType").val();
+        if (val == "Agent") agentParticipationType();
+        if (val == "Biller") billerParticipationType();
+    }
+
+    var billerParticipationType = () => {
+        let val = $("#ReasonServiceBiller").val();
+        let reasonArr = JSON.parse(val);
+        appendReason(reasonArr);
+
+        fillServiceIDs();
+    }
+
+    function fillServiceIDs() {
+        $(".outserIDLabel").html("Services");
+        $.post('/bbps-complaints-services')
+            .done(function (result) {
+                $("#outserID").empty();
+                for (var i = 0; i < result.length; i++) {
+                    $("#outserID").append("<option value='" + result[i].oid + "'>" + result[i].name + "</option>")
+                }
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+    var agentParticipationType = () => {
+        let val = $("#ReasonServiceAgent").val();
+        let reasonArr = JSON.parse(val);
+        appendReason(reasonArr);
+        fillOutletIDs();
+    }
+
+    function fillOutletIDs() {
+        $(".outserIDLabel").html("Outlet ID");
+        $.post('/bbps-complaints-outlets')
+            .done(function (result) {
+                $("#outserID").empty();
+
+                for (var i = 0; i < result.length; i++) {
+                    let name = "(" + result[i]._ID + ") " + result[i]._Company;
+                    $("#outserID").append("<option value='" + result[i]._ID + "'>" + name + "</option>")
+                }
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+    function fillPhysicalStore() {
+        $.post('/bbps-complaints-outlets')
+            .done(function (result) {
+                $("#storeType").empty();
+
+                for (var i = 0; i < result.length; i++) {
+                    let name = "(" + result[i]._ID + ") " + result[i]._Company;
+                    $("#storeType").append("<option value='" + result[i]._ID + "'>" + name + "</option>")
+                }
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+
+    function fillOnlinePortal() {
+        $("#storeType").empty();
+    }
+
+    var transactionLevel = () => {
+        $(".participationTypeCon").hide();
+        $(".outserIDCon").hide();
+        $(".mobilenoCon").hide();
+
+        $(".apiboxCon").show();
+
+        reasonTransactionLevel();
+        storeType();
+    }
+
+    function reasonTransactionLevel() {
+        let val = $("#ReasonTransactionLevel").val();
+        if (val.trim() != "") {
+            let reasonArr = JSON.parse(val.trim());
+            appendReason(reasonArr);
+        }
+    }
+
+    function appendReason(reasonArr) {
+        $("#reasonType").empty();
+        for (var i = 0; i < reasonArr.length; i++) {
+            $("#reasonType").append("<option val='" + reasonArr[i] + "'>" + reasonArr[i] + "</option>");
+        }
+    }
+
+    var serviceBased = () => {
+        $(".participationTypeCon").show();
+        $(".outserIDCon").show();
+        $(".mobilenoCon").show();
+
+        $(".apiboxCon").hide();
+
+        participationType();
+    }
+
+
+</script>

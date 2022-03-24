@@ -1,0 +1,50 @@
+﻿.dd-option-image, .dd-selected-image {
+    vertical-align: middle;
+    float: left;
+    margin-right: 1px;
+    max-width: 64px;
+    margin-top: 3px;
+    margin-left: 5px;
+    max-height: 30px;
+}
+
+.dd-option {
+    padding: 5px;
+}
+
+.dd-select {
+    width: 140px!important;
+    background: #FFFFFF!important;
+    height: 28px;
+}
+
+.dd-selected {
+    padding: 0px !important;
+}
+
+.dd-options {
+    border: solid 1px #ccc;
+    border-top: none;
+    list-style: none;
+    box-shadow: 0px 1px 5px #ddd;
+    display: none;
+    position: absolute;
+    z-index: 2000;
+    margin: 0;
+    padding: 0;
+    background: #fff;
+    overflow: auto;
+    width: 140px !important;
+}
+
+div#ddlSenderNo {
+    margin-right: -71px !important;
+    width: 200px!important;
+
+}
+
+.dd-selected-text, .dd-option-text {
+    line-height: 26px!important;
+    margin-left: 5px;
+    font-size: 11px;
+}

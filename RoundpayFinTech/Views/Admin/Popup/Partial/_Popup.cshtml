@@ -1,0 +1,120 @@
+﻿@model RoundpayFinTech.AppCode.Model.PopupInfo
+<tr id="_Web">
+    <td>1</td>
+    @if (Model.ISWebSitePopup)
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.AbsoluteHost/WebPopup.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+    else
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.AbsoluteHost/noimage.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+
+    <td>
+        <input type='file' id="dlWebPopup" class="d-none" />
+        <label for="dlWebPopup" class="btn btn-secondary btn-sm">Website Popup</label>
+    </td>
+    @if (Model.ISWebSitePopup)
+    {
+        <td class="text-center "><button class="btn btn-danger" id="WebPopup.png">Remove</button></td>
+    }
+    else
+    {
+        <td class="text-center "></td>
+    }
+</tr>
+
+<tr id="_BLog">
+    <td>2</td>
+    @if (Model.IsBeforeLoginPopup)
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.AbsoluteHost/BeforeLogin.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+    else
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.AbsoluteHost/noimage.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+
+    <td>
+        <input type='file' id="dwhitelogoUpload" class="d-none" />
+        <label for="dwhitelogoUpload" class="btn btn-secondary btn-sm">Before Login Popup</label>
+    </td>
+    @if (Model.IsBeforeLoginPopup)
+    {
+        <td class="text-center "><button class="btn btn-danger" id="BeforeLogin.png">Remove</button></td>
+    }
+    </tr>
+
+<tr id="_ALog">
+    <td>3</td>
+    @if (Model.IsAfterLoginPopup)
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.AbsoluteHost/AfterLogin.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+    else
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.AbsoluteHost/noimage.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+
+    <td>
+        <input type='file' id="dbgmainUpload" class="d-none" />
+        <label for="dbgmainUpload" class="btn btn-secondary btn-sm">After Login Popup</label>
+    </td>
+    @if (Model.IsAfterLoginPopup)
+    {
+        <td class="text-center "><button class="btn btn-danger" id="AfterLogin.png">Remove</button></td>
+    }
+    else
+    {
+        <td class="text-center "></td>
+    }
+</tr>
+
+<tr id="_BLog">
+    <td>4</td>
+    @if (Model.IsBeforeLoginPopupApp)
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:300px;height:500px" src="@Model.AbsoluteHost/AppBeforeLogin.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+    else
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:300px;height:500px" src="@Model.AbsoluteHost/noimage.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+
+    <td>
+        <input type='file' id="BLoginApp" class="d-none" /> 
+        <label for="BLoginApp" class="btn btn-secondary btn-sm"> App Before Login Popup</label>
+    </td>
+    @if (Model.IsBeforeLoginPopupApp)
+    {
+        <td class="text-center "><button class="btn btn-danger" id="AppBeforeLogin.png">Remove</button></td>
+    }
+</tr>
+
+<tr id="_ALog">
+    <td>5</td>
+    @if (Model.IsAfterLoginPopupApp)
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:300px;height:500px" src="@Model.AbsoluteHost/AppAfterLogin.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+    else
+    {
+        <td><div class="text-center"><img class="img-thumbnail" style="width:300px;height:500px" src="@Model.AbsoluteHost/noimage.png" alt="no Image" asp-append-version="true" /></div></td>
+    }
+
+    <td>
+        <input type='file' id="ALoginApp" class="d-none" />
+        <label for="ALoginApp" class="btn btn-secondary btn-sm">App After Login Popup</label>
+    </td>
+    @if (Model.IsAfterLoginPopupApp)
+    {
+        <td class="text-center "><button class="btn btn-danger" id="AppAfterLogin.png">Remove</button></td>
+    }
+    else
+    {
+        <td class="text-center "></td>
+    }
+</tr>
+
+
+

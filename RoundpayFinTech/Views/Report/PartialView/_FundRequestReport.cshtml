@@ -1,0 +1,53 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.FundRequetResp>
+@{ var couter = 1; }
+@if (Model.Any())
+{
+    var Total = 0M;
+    foreach (var item in Model)
+    {
+        Total += item.Amount;
+        <tr>
+            <td scope="col" style="width:1%">@couter</td>
+            <td>@item.UserName <small class="font-weight-bold text-monospace"> [@item.UserMobile]</small></td>
+            <td scope="col">@item.Bank </td>
+            <td scope="col">@item.AccountHolder <small class="font-weight-bold text-monospace"> [@item.AccountNo]</small></td>
+            <td scope="col">@item.MODE</td>
+            <td scope="col">@item.TransactionId</td>
+            <td>@item.UPIID</td>
+            <td scope="col">@item.MobileNo</td>
+            <td scope="col">@item.ChequeNo</td>
+            <td scope="col">@item.CardNumber</td>
+            <td scope="col">@item.Branch</td>
+            <td scope="col">@item.EntryDate</td>
+            <td scope="col" class="text-right">@item.Amount</td>
+            <td scope="col">
+                @if (item.Status == "Requested")
+                {
+                    <span class="badge badge-secondary">@item.Status</span>
+                }
+                @if (item.Status == "Accepted")
+                {
+                    <span class="badge badge-success">@item.Status</span>
+                }
+                @if (item.Status == "Rejected")
+                {
+                    <span class="badge badge-danger">@item.Status</span>
+                }
+            </td>
+            <td>@item.Remark</td>
+            <td scope="col">@item.ApproveDate</td>
+            <td scope="col">@item.ApproveName<span class="font-weight-bold text-monospace">[@item.ApproveMobile]</span></td>
+        </tr>
+        couter = couter + 1;
+    }
+    <tr><th colspan="12" class="text-right">Total</th><th class="text-right">@Total</th><th colspan="4"></th></tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="17">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

@@ -1,0 +1,168 @@
+﻿@model RoundpayFinTech.AppCode.Model.APIDenominationReq
+
+@Html.Hidden("hdnOID",Model.OID)
+@Html.Hidden("hdnOPName", Model.OPName)
+@Html.Hidden("hdnAPIId", Model.APIId)
+@Html.Hidden("hdnAPIName", Model.APIName)
+
+<style>
+    .btn-maximize {
+        border: none;
+        background: none;
+    }
+
+    .fa-window-maximize, .fa-window-restore, .fa-rectangle-landscape {
+        float: right;
+        font-weight: 200;
+        line-height: 1;
+        height: 30px;
+        position: absolute;
+        top: 8px;
+        right: 37px;
+        color: gray;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn-maximize"><span class="fa fa-window-maximize"></span></button>
+        <button type="button" class="close" aria-label="Close" id="mdlCancel">
+            <span aria-hidden="true">×</span>
+        </button>
+
+        <select class="ddlCircle float-left mr-2">
+            @if (Model != null && Model.Cirlces != null)
+            {
+                foreach (var item in Model.Cirlces)
+                {
+                    <option value="@item.ID">@item.Circle</option>
+                }
+            }
+        </select>
+        <h6 class="text-info text-uppercase" style="margin-top:-22px;margin-bottom:6px;">@Model.OPName [@Model.APIName]</h6><hr style="margin-top:0px" />
+    </div>
+    <div class="col-md-12">
+        <section id="showDenomBody">
+            <!--Data will be bind here at runtime-->
+        </section>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(".ddlCircle").trigger("change");
+    })
+
+    $(".ddlCircle").on("change", function () {
+        _showDenomBody(this);
+    })
+
+    function _showDenomBody(sender) {
+        preloader.load();
+        var param = {
+            OID: $("#hdnOID").val(),
+            OPName: $("#hdnOPName").val(),
+            APIId: $("#hdnAPIId").val(),
+            APIName: $("#hdnAPIName").val(),
+            CircleID: $(sender).val()
+        };
+        $.post('/ADAPI-Denomination-Body', param = param)
+            .done(function (result) {
+                $("#showDenomBody").html(result);
+
+
+                $('#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+
+                $('.btn-maximize').click(function () {
+                    var _winCls = $(this).find('span').attr('class') == "fa fa-window-restore" ? "modal-lg" : "modal-xxl";
+                    var _class = $(this).closest('.modal-dialog').attr('class').split(' ');
+                    var _filterClass = _class[0] + " " + _class[1] + " " + _winCls;
+                    $(this).closest('.modal-dialog').removeAttr('class').attr('class', _filterClass)
+                    if (_winCls == "modal-xxl") {
+                        $(this).find('span').removeAttr('class').attr('class', 'fa fa-window-restore');
+                    }
+                    else {
+                        $(this).find('span').removeAttr('class').attr('class', 'fa fa-window-maximize');
+                    }
+                })
+
+                $('input[type="checkbox"]').on('click', function () {
+                    var _maxCount = $(this).closest('.input-group').find('.MaxCount').val();
+                    _maxCount = isNaN(_maxCount) == true || _maxCount < 1 ? 1 : _maxCount;
+                    $(this).closest('.input-group').find('.MaxCount').val(_maxCount);
+                    var param = {
+                        APIId: @Model.APIId,
+                        OID: @Model.OID,
+                        DRangeID: $(this).data().itemDrangeid == undefined ? 0 : $(this).data().itemDrangeid,
+                        DenomID: $(this).data().itemDenomid == undefined ? 0 : $(this).data().itemDenomid,
+                        Action: $(this).is(':checked'),
+                        MaxCount: _maxCount,
+                        CircleID: $(".ddlCircle").val()
+                    };
+                    console.log(param)
+                    $.post('/API-Denom-updation', param = param)
+                        .done(function (result) {
+                            if (result.statuscode === -1) {
+                                an.title = 'Oops';
+                                an.content = result.msg;
+                                an.alert(an.type.failed);
+                            }
+                            else {
+                                an.title = 'Success';
+                                an.content = result.msg;
+                                an.alert(an.type.success);
+                            }
+                        })
+                })
+
+                $('.MaxCount').on('change', function () {
+                    var _selection = $(this).parent('.input-group').find('input[type="checkbox"]');
+                    if (_selection.is(':checked') == false) {
+                        return false;
+                    }
+                    var param = {
+                         APIId: @Model.APIId,
+                         OID: @Model.OID,
+                         DRangeID: _selection.data().itemDrangeid == undefined ? 0 : _selection.data().itemDrangeid,
+                         DenomID: _selection.data().itemDenomid == undefined ? 0 : _selection.data().itemDenomid,
+                         Action: _selection.is(':checked'),
+                        MaxCount: $(this).val(),
+                        CircleID: $(".ddlCircle").val()
+                    };
+                    $.post('/API-Denom-updation', param = param)
+                        .done(function (result) {
+                            if (result.statuscode === -1) {
+                                an.title = 'Oops';
+                                an.content = result.msg;
+                                an.alert(an.type.failed);
+                            }
+                            else {
+                                an.title = 'Success';
+                                an.content = result.msg;
+                                an.alert(an.type.success);
+                            }
+                        })
+                })
+
+            })
+            .catch(function (xhr) {
+                console.log(xhr.responseText)
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+
+    }
+</script>

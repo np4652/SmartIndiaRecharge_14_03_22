@@ -1,0 +1,20 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.TopPerformer>
+@{ 
+
+}
+@if (Model.Any())
+{
+    int i = 1;
+    foreach(var item in Model)
+    {
+        <tr data-user-Id="@item.UserID">
+            <td>@i</td>
+            <td>@item.UserName</td>
+            <td>@item.MobileNo</td>
+            <td>@item.Email</td>
+            <td>@item.Role</td>
+            <td class="text-right">@item.TotalSale</td>
+        </tr>
+        i++;
+    }
+}

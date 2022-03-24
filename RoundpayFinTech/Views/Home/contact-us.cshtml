@@ -1,0 +1,177 @@
+﻿@{
+    Layout = "_LayoutSiteAdmin";
+}
+
+<section class="pagepicture">
+    <img src="siteadmin/images/contact-us.jpg">
+</section>
+
+
+
+<div class="heading innerheading text-center mt-5">
+    <h1>Contact <span>Us</span></h1>
+    <p>Build vital capabilities to deliver digital outcomes.</p>
+</div>
+
+
+<section class="maincontent">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 contmiddleline">
+                <div class="pagehead">
+                    <h6>This is our future</h6>
+                    <h2>Get in Touch</h2>
+                    <span>&nbsp;</span>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="contactform mb-5">
+                            <p>Please fill out the quick form and we will be in touch with lightening speed.</p>
+                            <h6 class="text-center">For more information please fill the form</h6>
+
+                            <form>
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" class="form-control forminput" placeholder="Full Name">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email ID</label>
+                                    <input type="text" class="form-control forminput" placeholder="Email ID">
+                                </div>
+                                <div class="form-group">
+                                    <label>Mobile No.</label>
+                                    <input type="text" class="form-control forminput" placeholder="Mobile No">
+                                </div>
+                                <div class="form-group">
+                                    <label>City/Area</label>
+                                    <input type="text" class="form-control forminput" placeholder="City/Area">
+                                </div>
+                                <div class="form-group">
+                                    <label>Message</label>
+                                    <textarea class="form-control forminput" rows="3" placeholder="Message"></textarea>
+                                </div>
+                                <p class="text-center"><a href="#" class="formbutton">Submit</a></p>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+
+            <div class="col-md-6">
+                <p class="pointer"><img src="siteadmin/images/pointer.png"></p>
+
+                <div class="contactdetails">
+                    <h4>Smart India Recharge</h4>
+
+                    <p><i class="fa fa-map-marker" aria-hidden="true"></i> <span class="address-sec">Address:</span>mj computer system satun bus stand Taranagar 331304</p>
+                    <p><i class="fa fa-phone" aria-hidden="true"></i>+91-9783454531</p>
+                    <p><i class="fa fa-envelope" aria-hidden="true"></i>prsad.jagdish@gmail.com</p>
+                    <p><i class="fa fa-globe" aria-hidden="true"></i>www.smartindiarecharge.today</p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+
+
+<section class="locationmap">
+    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d28005.416023783608!2d75.02745495493863!3d28.669388428220337!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39138133f9f73873%3A0x9c3d273872fb6b2!2sTaranagar%2C%20Rajasthan%20331304!5e0!3m2!1sen!2sin!4v1600753626093!5m2!1sen!2sin" width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+</section>
+<!-- End Map Section -->
+
+
+@section scripts{
+    <script src="~/js/validator.js" asp-append-version="true"></script>
+    <script src="~/js/Tools.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            an.autoClose = 65;
+            $('#btnSubmitDetail').click(function () {
+                _SendMail();
+            });
+        });
+        function _SendMail() {
+            $('#btnSubmitDetail').attr('disabled', 'disabled').text('Sending...');
+            //var $v = $validator;
+            var obj = {
+                Name: $('#txtName'),
+                Email: $('#txtEmail'),
+                MobileNo: $('#txtMobileNo'),
+                Message: $('#txtmessage')
+            }
+            if (obj.Name.val() == '') {
+                $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                obj.Name.attr('placeholder', 'Name is Required')
+                obj.Name.focus();
+                return false
+            }
+            if (obj.MobileNo.val() == '') {
+                $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                obj.MobileNo.attr('placeholder', 'MobileNo is Required')
+                obj.MobileNo.focus();
+                return false
+            }
+            if (obj.Email.val() == '') {
+                $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                obj.Email.attr('placeholder', 'Email is Required')
+                obj.Email.focus();
+                return false
+            }
+
+            var GetIntouch = {
+                Name: obj.Name.val(),
+                MobileNo: obj.MobileNo.val(),
+                EmailID: obj.Email.val(),
+                Message: obj.Message.val(),
+                RequestPage: 'ContactPage'
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/GetinTouch',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(GetIntouch),
+                success: function (result) {
+                    $('#returnMsg').text(result.msg).addClass(result.statuscode == 1 ? 'text-success' : 'text-danger');
+                    $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                    obj.Name.val('');
+                    obj.Email.val('');
+                    obj.Message.val('');
+                    obj.MobileNo.val('');
+                }, statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'server error';
+                        an.alert(-1);
+                        an.show();
+                        $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(-1);
+                        an.show();
+                        $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                    }
+                },
+                error: function (xhr, result) {
+                    Alerts(result, AlertStatus.RED);
+                    $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                },
+                complete: function () {
+                    $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                }
+            });
+        };
+    </script>
+}

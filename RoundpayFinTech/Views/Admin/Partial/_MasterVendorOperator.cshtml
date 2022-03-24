@@ -1,0 +1,128 @@
+﻿@model RoundpayFinTech.AppCode.Model.VendorBindOperators
+
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">@Html.Raw("Update Vendor Operator")</h5><hr />
+        <input type="hidden" id="hfdID" value="@Model.ID" />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped" id="tblVendorOperator">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th scope="col" style="width:19%;">Vendor Name</th>
+                                    <th scope="col" style="width:80%;">Operators</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr data-item-id="@Model.ID">
+                                    <td class="align-middle">@Model.VendorName<small class="form-text text-muted mt-0"> [@Model.ID]</small></td>
+                                    <td class="align-middle">
+                                        <div class="row mr-0">
+                                            @{ int i = 0;}
+                                            @foreach (var op in Model.OperatorDdl)
+                                            {
+                                                i++;
+                                                var IsActive = Model.SelectedOperators != null ? Model.SelectedOperators.Any(x => x == op.ID) : false;
+                                                <div class="col-md-3">
+                                                    <div class="input-group mb-2">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text">
+                                                                <input type="checkbox" class="chbOp" id="chbOp_@Html.Raw(op.ID)" @Html.Raw(IsActive ? "checked='checked'" : "") onchange="OnCheckChange(this)">
+                                                            </div>
+                                                        </div>
+                                                        <label class="form-control" for="chbOp_@Html.Raw(i+"_"+op.ID)">@op.OpType</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </td>
+                                </tr>
+                                @*    }
+                                    else
+                                    {
+                                        <tr><td colspan="4"><p>No Record found</p></td></tr>
+                                    }*@
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @*<button type="button" class="btn btn-dark" id="btnCreate">@Html.Raw("Update")</button>*@
+    </div>
+</div>
+<script>
+    var OnCheckChange = function (_this) {
+        preloader.load();
+        var opId = [];
+        $('input.chbOp:checkbox:checked').each(function () {
+            var id = this.id.split('_');
+            opId.push(id[1]);
+        });
+        $.post('/OperatorAllocate', { id: @Model.ID, arrOp: opId })
+            .done(function (result) {
+                    if (result.statuscode == 1) {
+                        an.title = 'Success';
+                        an.content = result.msg;
+                        an.alert(an.type.success);
+                    } else {
+                        $(_this).prop('checked', false);
+                        an.title = 'Oops';
+                        an.content = 'Record update failed. Try again.';
+                        an.alert(an.type.failed);
+                    }
+            })
+            .fail(xhr => {
+                $(_this).prop('checked', false);
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+    @*$('#btnCreate').click(function () {
+        preloader.load();
+        var opId = [];
+        $('input.chbOp:checkbox:checked').each(function () {
+            var id = this.id.split('_');
+            opId.push(id[1]);
+        });
+        console.log(opId);
+        if (opId.length > 0) {
+            $.post('/OperatorAllocate', { id: @Model.ID, arrOp: opId })
+                .done(function (result) {
+                    console.log(result);
+                    if (result.statuscode == 1) {
+                        an.title = 'Success';
+                        an.content = result.msg;
+                        an.alert(an.type.success);
+                        mdlA.dispose();
+                        _load();
+                    } else {
+                        an.title = 'Oops';
+                        an.content = 'Record update failed. Try again.';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        } else {
+            preloader.remove();
+            an.title = 'Oops';
+            an.content = 'Select operator first';
+            an.alert(an.type.failed);
+        }
+    });*@
+
+</script>

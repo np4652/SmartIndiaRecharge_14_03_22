@@ -1,0 +1,64 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<FlatCommissionDetail>
+@{
+    int i = 1;
+}
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Flat Commission Setting</h5><hr />
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tbl_flt_Comm">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>#</th>
+                        <th>Role</th>
+                        <th class="text-right">Commission</th>
+                        <th>Last Modified</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null)
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr data-item-roleid="@item.RoleID" data-item-userid="@item.UserID">
+                                <th class="align-middle">@i</th>
+                                <td class="align-middle">@item.Role</td>
+                                <td class="text-right">
+                                    <input type="text" class="form-control-sm text-right" value="@item.CommRate" />
+                                </td>
+                                <td class="align-middle">@item.LastModified</td>
+                            </tr>
+                            i++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+<script>
+    $('#tbl_flt_Comm input[type="text"]').change(function () {
+        var c = $(this).val();
+        var rid = $(this).closest('tr').data().itemRoleid;
+        var uid = $(this).closest('tr').data().itemUserid;
+        preloader.load();
+        $.post('/update-fltc', { uid, rid, c })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success?'Wow':'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                an.autoClose = 5;
+            })
+            .fail(xhr => {
+                $(_this).attr('checked', Is == false);
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+</script>
+

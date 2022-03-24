@@ -1,0 +1,199 @@
+﻿@using System.IO;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ImageCount_OID>
+<style>
+    .new-box {
+        background: #fff;
+        -webkit-box-shadow: 0px 0px 5px 0px rgba(64,64,64,1);
+        -moz-box-shadow: 0px 0px 5px 0px rgba(64,64,64,1);
+        box-shadow: 0px 0px 5px 0px rgba(64,64,64,1);
+        text-align: center;
+        padding: 10px 0;
+        height: 100%;
+        max-height: 300px;
+    }
+    .new-box:hover {
+        cursor: pointer;
+    }
+    .new-box img {
+       height: 160px;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active" >CouponVoucherList</li>
+        </ol>
+    </div>
+</div>
+@{
+    foreach (var itm in @Model)
+    {
+        int count = 1;
+        int scount = 0;
+        bool flag = true;
+        <div class="col-md-12">
+            <div class="card mt-2">
+                <div class="card-header bg-gradientorange text-white">@itm.Oname</div>
+
+                <div class="card-body">
+                    <div class="row">
+                        @while (flag)
+                        {
+                            string img = itm.OID.ToString() + "_" + count;
+                            string imgpath = @"Image/CouponVoucher/" + @itm.OID + "/" + img + ".png";
+                            if (File.Exists(imgpath))
+                            {
+                                <div class="col-md-3 mb-3">
+                                    <div class="new-box" onclick="_loadFrm(@itm.OID,'@itm.Oname')" title="Buy Now!">
+                                        <img class="img-thumbnail img-responsive mb-2" src="/@imgpath?@DateTime.Now.Ticks"  />
+                                        @if (@itm.CouponDetail.FirstOrDefault().Max > 0)
+                                        {
+                                            <h6>Buy @itm.CouponDetail.FirstOrDefault().OpName  Gift Card of Any Amount between ₹@itm.CouponDetail.FirstOrDefault().Min-₹@itm.CouponDetail.FirstOrDefault().Max  </h6>
+                                        }
+                                        else
+                                        {
+                                            if (@itm.CouponDetail.Count() > 0)
+                                            {
+                                                <h6>Buy @itm.CouponDetail.FirstOrDefault().OpName Gift Card available in Multiple Denomination- ₹@string.Join(",₹", @itm.CouponDetail.ToList().Select(p => p.DenominationID)) </h6>
+                                            }
+                                        }
+                                        <button type="button" class="btn tbn-primary" style="background: #5050df; color: #fff; padding: 2px 8px 4px; ">Buy Now</button>
+                                    </div>
+                                </div>
+
+                                scount = scount + 1;
+
+                            }
+                            else
+                            {
+
+                            }
+                            count = count + 1;
+
+                            flag = scount == itm.ImageCount ? false : true;
+                        }
+
+
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+
+
+    }
+
+}
+<div>
+
+</div>
+
+<script>
+  
+
+    var _loadFrm = function (oid,name) {
+       
+        $.post('/SloadCouponVoucher/'+ oid).done(function (result) {
+            mdlA.content = result;
+            mdlA.id = 'mymodal1';
+            mdlA.title = `Coupon Voucher For: ${name}`;
+            mdlA.options.backdrop = 'static';
+            mdlA.modal(mdlA.size.large);
+            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            var ctCoupon = { voctype: $("#txtVoucherType"), voremark: $("#txtRemark"), voopid: $("#ddlOperator"), btn: $("#btnCopSave") };
+        }).fail(function (xhr) {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    };
+    function _Setamount(a, b) {
+
+        $('.btn').removeClass("btn-primary");
+        $(b).addClass("btn-primary");
+        $("#txtAmount").val(a);
+
+    }
+    function btnPay_coupon () {
+        preloader.load();
+        var ct = {
+            OID: $("#ddlOperator_Voc"),
+            To: $("#txtTo"),
+            From: $("#txtFrom"),
+            Message: $("#message"),
+            Quantity: $("#txtQuantity"),
+            Amount: $("#txtAmount")
+        }
+        var IsE = {
+            OID: $("#ddlOperator_Voc").val() == 0,
+            To: ct.To.val() == "",
+            From: ct.From.val() == "",
+            Amount: ct.Amount.val() == 0 || ct.Amount.val() == "",
+            Quantity: ct.Quantity.val() == 0 || ct.Quantity.val() == ""
+
+        }
+        $v.showErrorFor(ct.OID, 'Operator is required.)', IsE.OID);
+        $v.showErrorFor(ct.To, 'To is required.)', IsE.To);
+        $v.showErrorFor(ct.From, 'From is required.)', IsE.From);
+        $v.showErrorFor(ct.Amount, 'Amount is required.)', IsE.Amount);
+        $v.showErrorFor(ct.Quantity, 'Quantity is required.)', IsE.Quantity);
+        if (IsE.To || IsE.From || IsE.Amount || IsE.Quantity || IsE.OID) {
+            preloader.remove();
+            return false;
+
+        }
+
+        let data = {
+            OID: ct.OID.val(),
+            To: ct.To.val(),
+            From: ct.From.val(),
+            Message: ct.Message.val(),
+            Quantity: ct.Quantity.val(),
+            Amount: ct.Amount.val()
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: '/SaveCouponVoucher',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(data),
+            success: function (result) {
+                preloader.remove();
+
+
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == 1) {
+                    ct.OID.val(0),
+                        ct.To.val(""),
+                        ct.From.val(""),
+                        ct.Message.val(""),
+                        ct.Quantity.val(""),
+                        ct.Amount.val(0)
+
+                    mdlA.dispose()
+                }
+
+
+            },
+            error: function (xhr, result) {
+                preloader.remove();
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            }
+        });
+
+
+
+
+    }
+</script>

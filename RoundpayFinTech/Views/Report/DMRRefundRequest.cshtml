@@ -1,0 +1,180 @@
+﻿@{
+    ViewData["Title"] = "Dispute DMTRequest";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Dispute DMT Request</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Dispute DMT Request
+                    </div>
+                    <div class="card-body pt-2">
+                        <div id="rrs">
+                            <div class="table-responsive table-sm">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="tbl_RefundRequest">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th class="text-center">Actions</th>
+                                            <th>TransactionIDs</th>
+                                            <th scope="col">Outlet</th>
+                                            <th scope="col">TransDate</th>
+                                            <th scope="col">R-ReqDate</th>
+                                            <th scope="col">AccountNo</th>
+                                            <th scope="col" class="text-right">Amount</th>
+                                            <th scope="col">API</th>
+                                            <th scope="col">VendorID</th>
+                                            <th scope="col">Operator</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">LiveID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var rreqs = function () {
+                preloader.load();
+                $.post('/dmr-refundrequest', { APIID: 0, OID: 0 })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('.__p #rrs').html(result);
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('[id^=btnAccept],[id^=btnReject]').click(function () {
+                            var status = this.id.toUpperCase()[3];
+                            var id = $(this).closest('tr').data().itemId;
+                            var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[0]).find('[id^=txtRemark]');
+                            var rem = txtRemark.val();
+                            var transid =
+                                $($('[data-item-id="' + id + '"]').children('td')[1]).find('small').html().trim().split('[').join('').split(']').join('') + String.fromCharCode(160);
+
+                            preloader.load();
+                            $.post('/U-A-R', { Status: status, TID: id, TransactionID: transid, Remark: rem })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    if (result.statuscode !== undefined) {
+                                        if (result.statuscode == an.type.failed) {
+                                            an.title = "Oops";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                        }
+                                        else if (result.statuscode == an.type.success) {
+                                            an.title = "Well done";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            $('[data-item-id="' + id + '"]').remove();
+                                        }
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+                                    an.title = 'Oops';
+                                    an.content = 'An error has been occured during request.Reload again!'
+                                    an.alert(an.type.failed);
+                                })
+                                .fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+                        $('[id^=btnStsCheck]').click(function () {
+                            var id = $(this).closest('tr').data().itemId;
+                            var transid =
+                                $($('[data-item-id="' + id + '"]').children('td')[1]).find('small').html().trim().split('[').join('').split(']').join('');
+                            preloader.load();
+                            $.post('/chk-sts-dmr', { t: id, tr: transid })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    mdlA.id = "mymodelChkSts";
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.alert(mdlA.size.large);
+                                    $('button.close span,#mdlCancel').unbind().click(function () {
+                                        mdlA.dispose();
+                                        rreqs();
+                                    });
+                                })
+                                .catch(function (xhr, e, msg) {
+                                    an.title = 'Oops';
+                                    an.content = 'An error has been occured during request.Reload again!'
+                                    an.alert(an.type.failed);
+                                })
+                                .fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            rreqs();
+            $('#btnSearch').click(function () {
+                rreqs();
+            });
+        });
+    </script>
+}

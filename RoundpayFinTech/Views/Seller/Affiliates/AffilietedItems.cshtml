@@ -1,0 +1,54 @@
+﻿@{
+    ViewData["Title"] = "Affilited Items";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> Our Services</li>
+        </ol>
+    </div>
+</div>
+<div class="col-md-12">
+    <div id="__p" class="main-temp-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2 mb-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-10 line-height-34  text-monospace">
+                                <i class="fas fa-link"></i>  @ViewData["Title"]
+                            </div>
+                            <div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body" id="usrContainer">
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script>
+        (() => {
+            preloader.load();
+            $.post('/GetAffilietedItems')
+                .done(result => $('#usrContainer').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        })();
+    </script>
+}

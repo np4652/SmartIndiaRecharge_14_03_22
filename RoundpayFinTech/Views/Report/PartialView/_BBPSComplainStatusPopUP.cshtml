@@ -1,0 +1,46 @@
+﻿@using RoundpayFinTech.AppCode.Model.Recharge;
+@model BBPSComplainAPIResponse
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3><small class="text-muted">Complain Status Detail</small></h3>
+    <div class="row">
+        <table class="table table-bordered">
+            <tbody>
+                <tr>
+                    <th>Status as on </th>
+                    <th>:</th>
+                    <td>@Model.StatusAsOn</td>
+                </tr>
+                <tr>
+                    <th>Compalin Status </th>
+                    <th>:</th>
+                    <td>@Model.ComplainStatus</td>
+                </tr>
+                <tr>
+                    <th>Complain Assigned To</th>
+                    <th>:</th>
+                    <td>@Model.ComplainAssignedTo </td>
+                </tr>
+                <tr>
+                    <th>NPCI Reference</th>
+                    <th>:</th>
+                    <td>@Model.NPCIRefID </td>
+                </tr>
+                <tr>
+                    <th>Complain Reason</th>
+                    <th>:</th>
+                    <td>@Model.ComplainReason</td>
+                </tr>
+                <tr>
+                    <th>Remark</th>
+                    <th>:</th>
+                    <td>@Model.Remark</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <button class="btn btn-outline-danger btn-sm" id="mdlCancel">Cancel</button>
+</div>
+

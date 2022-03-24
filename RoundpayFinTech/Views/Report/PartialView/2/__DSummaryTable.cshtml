@@ -1,0 +1,26 @@
+﻿@model RoundpayFinTech.AppCode.Model.Report.DealerSummary
+<h6>Dealer Summary</h6>
+<table class="table table-hover" id="Table3">
+    <tbody>
+        <tr class="bg-primary text-white">
+            <th>Active</th>
+            <th>Total User</th>
+            <th>Bal&lt;=1000</th>
+            <th>Bal&lt;=500</th>
+        </tr>
+        <tr>
+            <td data-th="Genre">
+                <span>@Model.ActiveUsers</span>
+            </td>
+            <td data-th="Genre">
+                <span>@Model.TotalUsers</span>
+            </td>
+            <td data-th="Year">
+                <span>@Model.BalWise1</span>
+            </td>
+            <td data-th="Gross">
+                <span>@Model.BalWise2</span>
+            </td>
+        </tr>
+    </tbody>
+</table>

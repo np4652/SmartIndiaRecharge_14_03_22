@@ -1,0 +1,76 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.AvailablePackageMaster
+@{
+    int i = 1;
+}
+@if (Model != null)
+{
+    if (Model.Data != null)
+    {
+        @foreach (var item in Model.Data.PackageDetail)
+        {
+            <tr data-item-id="@item.PackageId'">
+                <th class="align-middle">@i</th>
+                <td class="align-middle">
+                    @item.PackageName
+                </td>
+                <td class="align-middle">
+                    <div class="row ml-1 ">
+                        <div class="col-md-12 text-center">
+                            @if (Model.Data.Services != null)
+                            {
+                                var Services = Model.Data.Services.Where(w => w.PackageId == item.PackageId);
+                                @foreach (var service in Services)
+                                {
+                                    <span class="badge badge-info badge-pill text-monospace" style="font-size: 1em;">
+                                        @service.ServiceName
+                                    </span>
+                                }
+                            }
+                        </div>
+                    </div>
+                </td>
+                @{
+                    var parentItem = Model.Data.ParentPackageDetail != null ? Model.Data.ParentPackageDetail.Where(x => x.PackageId == item.PackageId).FirstOrDefault() : null;
+
+                }
+                <td class="text-right">
+                    @if (Model.IsChannel && Model.IsParent)
+                    {
+                        var commdetail = Model.Data.ParentPackageDetail != null ? Model.Data.CommissionDetail.FirstOrDefault(x => x.PackageId == item.PackageId) : null;
+                        <div class="form-inline col-md-12">
+                            @Html.TextBoxFor(modelItem => commdetail.Commission, new { @id = "txtComAmt_" + item.PackageId, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpComAmt_" + item.PackageId })
+                            <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" id="ToolTip_" @item.PackageId data-placement="top" title="Last Modified: @(item.ModifyDate!=null?item.ModifyDate:"not yet")"></i>
+                            @Html.HiddenFor(modelItem => commdetail.Commission, new { @id = "hidComAmt_" + item.PackageId, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                        </div>
+                        <small id="helpPComAmt_@item.PackageId" class="mt-0 text-right text-monospace">@(parentItem != null ? parentItem.PackageCost + " (Received)" : "")</small>
+                        <small id="helpComAmt_@item.PackageId" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                    }
+                    else
+                    {
+                        @(parentItem != null ? parentItem.PackageCost : 0)
+                        @if (!Model.IsEndUser)
+                        {
+                            <br />
+                <span class="text-monospace text-info text-nowrap">[Commission:@Html.Raw(parentItem.Commission)]</span>
+                        }
+                    }
+                </td>
+                @if (Model.IsEndUser)
+                {
+                    <td>
+                        @if (!item.IsCurrent)
+                        {
+                            <span class="btn btn-outline-danger btn-sm text-uppercase" id="btnUpgrade_@item.PackageId">Upgrade</span>
+                        }
+                        else
+                        {
+                            <span class="font-weight-bold text-success text-uppercase">Current</span>
+                        }
+                    </td>
+                }
+            </tr>
+            i = i + 1;
+        }
+    }
+}
+

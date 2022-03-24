@@ -1,0 +1,101 @@
+﻿
+@model IEnumerable<RoundpayFinTech.AppCode.Model.SlabRangeDetail>
+
+@{
+    var couter = 1;
+}
+<div class="row">
+    <div class="col-sm-12">
+        @*<button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>*@
+        <h5 class="text-info">Detail</h5><hr />
+    </div>
+    <div class="col-sm-12 table-responsive">
+        @if (Model.Any())
+        {
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        @foreach (var item in Model)
+                        {
+                            <th>#</th>
+                            <th>Range</th>
+                            if (item.CommType == true )
+                            {
+                                <th>Surcharge</th>
+                            }
+                            else
+                            {
+                                <th>Commission</th>
+                            }
+                            if (item.DMRModelID == 2 || item.DMRModelID == 3 || item.DMRModelID == 4)
+                            {
+                                <th>Fixed Charge</th>
+                            }
+                            else if (item.DMRModelID == 1)
+                            {
+                                // no column
+                                @*<th>Max Commission</th>*@
+                            }
+                            else
+                            {
+                                <th>Max Commission</th>
+                            }
+                            break;
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr data-Item-OID="@item.OID">
+                            <td>@couter</td>
+                            <td>@(item.MinRange + "-" + item.MaxRange)</td>
+                            <td class="text-center">
+                                <div class="row">
+                                    <div class="col-md text-left">
+                                        <span class="text-monospace text-nowrap"> @Html.Raw((item.CommType ? "SUR " : "COM ") + item.Comm + (item.AmtType ? "(<i class='fas fa-rupee-sign text-success'></i>)" : "(%)"))</span>
+                                    </div>
+                                </div>
+                            </td>
+
+                            @if (item.DMRModelID == 2 || item.DMRModelID == 3)
+                            {
+                                <td>1(%)</td>
+                            }
+                            else if (item.DMRModelID == 4 && item.FixedCharge > 0)
+                            {
+                                <td>@item.FixedCharge</td>
+                            }
+                            else if (item.DMRModelID == 4 && item.FixedCharge <= 0)
+                            {
+                                <td>1(%)</td>
+                            }
+                            else if(item.DMRModelID ==1)
+                            {
+                                // no column
+                            }
+                            else
+                            {
+                                <td>@item.MaxComm.ToString()</td>
+                            }
+                        </tr>
+                        couter = couter + 1;
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table class="table table-bordered">
+                <tr>
+                    <td class="text-center">
+                        <center>No Record Found</center>
+                    </td>
+                </tr>
+            </table>
+
+        }
+    </div>
+</div>

@@ -1,0 +1,46 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.RechargeReportSummary
+<div class="col-lg-12 col-xl-12 m-b-15">
+    <div class="card-stats mb-4 mb-xl-0 card m-T-20">
+        <div class="card-body-1">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h5 class="text-uppercase text-muted mb-0 card-title tx-12">Success</h5>
+                    <span class="h2 font-weight-bold mb-0"><span id="ctl00_contentpageData_lblaccountstatus">@Model.TotalSuccessNo|@Model.TotalSuccessAmount</span></span>
+                </div>
+                <div class="col-sm-4">
+                    <div class="icon-cir icon-shape bg-success text-white rounded-circle shadow"><i class="fa fa-thumbs-up"></i></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card-stats mb-4 mb-xl-0 card m-T-20">
+        <div class="card-body-1">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h5 class="text-uppercase text-muted mb-0 card-title tx-12">Failed</h5>
+                    <span class="h2 font-weight-bold mb-0"><span id="ctl00_contentpageData_lblaccountstatus">@Model.TotalFailedNo|@Model.TotalFailedAmount</span></span>
+                </div>
+                <div class="col-sm-4">
+                    <div class="icon-cir icon-shape bg-danger text-white rounded-circle shadow"><i class="fa fa-thumbs-down"></i></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card-stats mb-4 mb-xl-0 card m-T-20 m-b-20">
+        <div class="card-body-1">
+            <div class="row">
+                <div class="col-sm-8">
+                    <h5 class="text-uppercase text-muted mb-0 card-title tx-12">Pending</h5>
+                    <span class="h2 font-weight-bold mb-0"><span id="ctl00_contentpageData_lblaccountstatus">@Model.TotalPendingNo|@Model.TotalPendingAmount</span></span>
+                </div>
+                <div class="col-sm-4">
+                    <div class="icon-cir icon-shape bg-yellow text-white rounded-circle shadow"><i class="fa fa-thumbs-up"></i></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>

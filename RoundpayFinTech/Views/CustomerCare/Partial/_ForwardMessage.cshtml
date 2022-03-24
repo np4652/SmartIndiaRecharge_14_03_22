@@ -1,0 +1,65 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using RoundpayFinTech.AppCode.StaticModel;
+@model GetWhatsappContactListModel;
+@{
+    string path = "";
+}
+<style>
+</style>
+
+<div class="p-2" id="getcode" style="height:400px;overflow:scroll">
+    <table class="table table-bordered table-striped table-responsive-sm">
+        @if (Model != null)
+        {
+            int i = 0;
+            @if (Model.GetWhatsappContactList != null)
+            {
+                @foreach (var waCont in Model.GetWhatsappContactList)
+                {
+                    i = i + 1;
+
+                    @if (@waCont.ApICode == WhatsappAPICode.WATI)
+                    {
+                        path = "/whatsapp/img/Wati.png";
+                    }
+                    else if (@waCont.ApICode == WhatsappAPICode.WATEAM)
+                    {
+                        path = "/whatsapp/img/WATeam.png";
+                    }
+                    else if (@waCont.ApICode == WhatsappAPICode.ALERTHUB)
+                    {
+                        path = "/whatsapp/img/AlertHub.png";
+                    }
+
+                    <tr style="cursor:pointer" id="trfd@(i)">
+                        <td id="tdfd@(i)">
+                            <input type="checkbox" class="chkforwardmessage" value="@waCont.MobileNo" style="margin-left:5px" />
+                            @if (@waCont.Role == "")
+                            {
+                                <img src="~/whatsapp/img/wauser.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;margin-left:8px"><span>@waCont.SenderName ~ @waCont.MobileNo    <img height="14px" src=@path /></span>
+                            }
+                            else
+                            {
+                                <img src="~/whatsapp/img/wauser.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;margin-left:8px"><span> @waCont.SenderName   ~ @waCont.Role ~ @waCont.MobileNo   <img height="14px" src=@path /></span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </table>
+</div>
+
+
+<script>
+    $("td").click(function(e) {
+    var chk = $(this).closest("tr").find("input:checkbox").get(0);
+    if(e.target != chk)
+    {
+        chk.checked = !chk.checked;
+    }
+    });
+</script>
+
+
+

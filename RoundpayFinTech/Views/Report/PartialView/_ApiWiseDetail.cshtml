@@ -1,0 +1,70 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ApiWiseDetail>
+@{
+    var counter = 1;
+    //var mdl = Model;
+}
+<div class="card mt-4">
+    <div class="card-header bg-gradientorange text-white">
+        <i class="fas fa-list"></i> API WISE DETAIL - <text id="outlateName" class="font-italic"></text>
+        <button type="button" class="close text-white" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover table-responsive-sm">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">APIID</th>
+                        <th scope="col">API NAME</th>
+                        <th scope="col">API OutletID</th>
+                        <th scope="col">Verify Status</th>
+                        <th scope="col">BBPSID</th>
+                        <th scope="col">BBPS Status</th>
+                        <th scope="col">AEPSID</th>
+                        <th scope="col">AEPS Status</th>
+                        <th scope="col">DMTID</th>
+                        <th scope="col">DMT Status</th>
+                        <th scope="col">PSAID</th>
+                        <th scope="col">PSA Status</th>
+                        <th scope="col">LastUpdated On</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                    <tr data-item-Id="@item.APIID">
+                        <td>@counter</td>
+                        <td>@item.APIID</td>
+                        <td>@item.APIName</td>
+                        <td>@item.APIOutletId</td>
+                        <td>@item._VerifyStatus</td>
+                        <td>@item.BBPSID</td>
+                        <td>@item._BBPSStatus</td>
+                        <td>@item.AEPSID</td>
+                        <td>@item._AEPSStatus</td>
+                        <td>@item.DMTID</td>
+                        <td>@item._DMTStatus</td>
+                        <td>@item.PSAID</td>
+                        <td>@item._PSAStatus</td>
+                        <td>@item.LastUpdatedOn</td>
+                    </tr>
+                            counter = counter + 1;
+                        }
+                    }
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.close').on('click', function () {
+        mdlA.dispose();
+    })
+</script>

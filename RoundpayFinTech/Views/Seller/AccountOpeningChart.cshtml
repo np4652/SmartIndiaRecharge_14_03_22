@@ -1,0 +1,58 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.AccountOpData>
+
+<style>
+    .OpeningBanner-text {
+        font-size: 14px;
+        text-align: justify;
+    }
+    .my-mt{margin-top:20px;}
+    .my-mt thead{
+        background:#0094ff;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Bank Account opening service</li>
+        </ol>
+    </div>
+</div>
+
+
+<div class="container-fluid my-mt">
+    <div class="col-md-12">
+        <div class="row">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>Bank Name</th>
+                            <th>Content</th>
+                            <th>Banner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            @foreach (var item in Model)
+                            {
+                               
+                        <tr>
+                            <td><h4>@item.Name</h4></td>
+                            <td style="width:40%"><p class="OpeningBanner-text">@Html.Raw(item.Content)</p><p class="text-center"><a href="@(item.RedirectURL)" target="_blank" class="btn btn-info ">Apply</a></p></td>
+                            <td style="width:40%">
+                                <a href="@(item.RedirectURL)" target="_blank">
+                                    <img class="img-thumbnail img-responsive" src="@ViewData["Host"]/Image/BannerBank/@(item.OID).png" style="width:100%;" />
+                                </a>
+                            </td>
+                        </tr>
+                        }
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+    </div>
+</div>

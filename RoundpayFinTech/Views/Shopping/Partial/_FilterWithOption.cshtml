@@ -1,0 +1,52 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.FilterWithOptions>
+@using RoundpayFinTech.AppCode.StaticModel;
+@{
+
+}
+@if (Model.Any())
+{
+    <table class="table" id="tblFilter">
+        <thead class="bg-dark text-white">
+            <tr>
+                <td style="width:5%">#</td>
+                <td style="width:10%">Filter</td>
+                <td>Option</td>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int counter = 1;
+                foreach (var filter in Model)
+                {
+                    <tr data-Filter-Id="@filter.FilterID">
+                        <td>@counter</td>
+                        <td>@filter.FilterName</td>
+                        <td>
+                            @foreach (var option in filter.FilterOption)
+                            {
+                                if (option.FilterID == ShoppingFilters.Color)
+                                {
+                                    <span class="spnColor btn btn-outline-dark" data-Option-Id="@Html.Raw(filter.FilterID + "_" + option.ID)" data-Option-Name="@option.Option" data-Option-Code="@option.OptionalID" style="background-color:@option.OptionalID"></span>
+                                }
+                                else
+                                {
+                                    <span data-Option-Name="@option.Option" data-Option-Id="@Html.Raw(filter.FilterID + "_" + option.ID)" data-Option-Code="@option.Option" class="spnSize btn btn-outline-dark">@option.Option @option.OptionalID</span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            }
+        </tbody>
+    </table>
+}
+<script>
+    $('span').click(e => {
+        let selectedRow = $(e.currentTarget).closest('tr');
+        selectedRow.find('span').removeClass('active');
+        $(e.currentTarget).addClass('active');
+    });
+
+    var removeTr = sender => $(sender).closest('tr').remove();
+</script>

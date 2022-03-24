@@ -1,0 +1,74 @@
+﻿@{
+    ViewData["Title"] = "API Circle Code";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-3">
+                                <input type="text" placeholder="Search" id="txtSearch" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th style="width:8%">#</th>
+                                                <th style="width:25%">Circle</th>
+                                                <th>APIs</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var _loadGrid = () => {
+            preloader.load();
+            $.post('/_APICircleCode').done(result => $('table tbody').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        (() => {
+            _loadGrid();
+            
+            $("#txtSearch").focus().on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('table tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        })();
+    </script>
+}

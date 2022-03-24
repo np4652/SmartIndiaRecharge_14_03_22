@@ -1,0 +1,55 @@
+﻿@using Fintech.AppCode.StaticModel
+@model List<RoundpayFinTech.AppCode.Model.ProcModel.ProcRecentTransactionCounts>
+
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Service</th>
+                <th>Account No.</th>
+                <th>Date</th>
+                <th>Amount(₹)</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Count() > 0)
+            {
+                int count = 0;
+                foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@(++count)</td>
+                        <td>
+                            <img src="/Image/operator/@(item.OID).png" class="img-fluid" style="height:40px" title="@item.Operator" />
+                        </td>
+                        <td>@item.Account</td>
+                        <td>@item.EntryDate</td>
+                        <td>@item.ValueFloat</td>
+                        <td>
+                            @if (item.Status.Trim().ToLower() == RechargeRespType._SUCCESS.ToLower())
+                            {
+                                <span class="badge badge-success">@item.Status</span>
+                            }
+                            else if (item.Status.Trim().ToLower() == RechargeRespType._FAILED.ToLower())
+                            {
+                                <span class="badge badge-danger">@item.Status</span>
+                            }
+                            else
+                            {
+                                <span>@item.Status</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="5">No Records</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

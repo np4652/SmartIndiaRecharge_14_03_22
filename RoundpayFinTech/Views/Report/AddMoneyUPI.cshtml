@@ -1,0 +1,346 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.Model.Paymentgateway
+@model PGDisplayModel
+@{
+    ViewData["Title"] = "Unified Payment Interface(UPI)";
+    var OID = 0;
+}
+<style>
+    .mode-box {
+        background: white;
+        border-radius: 4px;
+        padding: 2px 13px;
+        overflow: hidden;
+        cursor: pointer;
+    }
+
+    .mode-header {
+        margin-bottom: 1px;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: capitalize;
+        color: #424141;
+        margin-top: 13px;
+    }
+
+    .mode-span {
+        font-size: 11px;
+        text-transform: capitalize;
+        color: #9a0606;
+    }
+
+    .bank-logo {
+        width: 150px;
+    }
+
+    .vpa-name {
+        position: absolute;
+        right: 8px;
+        border: 0;
+        top: 6px;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> Unified Payment Interface(UPI)</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6 mt-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlWType">Wallet Type</label>
+                                    <select aria-describedby="helpddlWType" class="form-control" id="ddlWType">
+                                        <option value="@Wallet.Prepaid"> @Wallet._Prepaid </option>
+                                        @if (Model.UB.IsUBalanceFund)
+                                        {
+                                            <option value="@Wallet.Utility"> @Wallet._Utility </option>
+                                        }
+                                        @if (Model.UB.IsBBalanceFund)
+                                        {
+                                            <option value="@Wallet.Bank"> @Wallet._Bank</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtAmount">Enter Amount</label>
+                                    @Html.TextBox("txtAmount", null, new { @class = "form-control mb-1 ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1, @type = "number" })
+                                    <small id="AmountHelp" class="form-text text-danger d-none">Invalid Amount</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtUPIID">Enter UPIID</label>
+                                    <div class="input-group">
+                                        @Html.TextBox("txtUPIID", null, new { @class = "form-control  mb-1 ", @placeholder = "Enter UPIID", @aria_describedby = "upiHelp", @tabindex = 1 })
+                                        <div class="input-group-append" style="height:43px">
+                                            <span class="input-group-text bg-white p-0 vpa-name">
+                                                <small id="upiOwner" class="form-text text-success d-none" style="font-size:14px">UPI Owner</small>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <small id="upiHelp" class="form-text text-danger d-none">Invalid UPIID</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <button class="btn btn-outline-primary" id="btnUPIPay" style="margin-top: 20px;">Proceed To Add</button>
+                            </div>
+                        </div>
+                        @if (Model.modes.Any())
+                        {
+                            @foreach (var item in Model.modes)
+                            {
+                                if (item.IsActive)
+                                {
+                                    OID = item.OID;
+                                    break;
+                                }
+                            }
+                        }
+                        <input type="hidden" id="hidID" value="@OID" data-upgid="@Model.UPGID" />
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card mt-4" id="DivTopFive" style="min-height: 540px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        window.addEventListener("storage", e => {
+            var result = $.parseJSON(event.newValue);
+            if (result.hasOwnProperty("origin")) {
+                if (result.origin === 'addMoney') {
+                    if (IsPackage == 1) {
+                        window.close();
+                    }
+                    var _html = `<div class="row"><div class="col-md-12 mb-3"><button type="button" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div class="col-sm-12 text-center"><img src="${$$host}/Image/iconMsg/${result.statuscode == 1 || result.statuscode == 0 ? '10' : (result.statuscode == 2 ? '1' : '11')}.png" /><h3 class="${result.statuscode == 1 || result.statuscode == 0 ? 'text-info' : (result.statuscode == 2 ? 'text-success' : 'text-danger')}">${result.statuscode == 1 || result.statuscode == 0 ? 'Transaction Pending' : (result.statuscode == 2 ? 'Transaction Successful' : 'Transaction Failed')}<br/><small>${result.statuscode == -1 ? result.reason : ''}</small></h3></div></div>`;
+                    mdlA.id = "callBackAlert";
+                    mdlA.content = _html;
+                    mdlA.alert(mdlA.size.large);
+                    $('button.close').click(() => mdlA.dispose());
+                }
+            }
+        }, true)
+        var IsPackage = 0;
+        $(document).ready(function () {
+            $('#btnUPIPay').click(function () {
+                if ($("#btnUPIPay").text().trim() != 'Proceed To Add')
+                    return false;
+                var IsE = !$v.$IsNum($('#txtAmount').val());
+                $v.showErrorFor($('#txtAmount'), 'Amount is  numeric mandatory field', IsE);
+                if (IsE) {
+                    return false;
+                }
+                var o = $('#hidID').val();
+                if (o == '0') {
+                    $v.showErrorFor($('#txtAmount'), 'This feature is disabled', true);
+                    return false;
+                }
+                var a = $('#txtAmount').val();
+                var w = $('#ddlWType').val();
+                var upiid = $('#txtUPIID').val();
+                if (upiid == '') {
+                    $v.showErrorFor($('#txtUPIID'), 'Enter UPIID', true);
+                    return false;
+                }
+                ChoosePG(o, a, w, upiid, btnLdr);
+            });
+
+            $('#txtUPIID').on('focusout', () => {
+
+                var val = $('#txtUPIID').val().trim();
+                if (val.indexOf('@@') == -1 || val.length < 7)
+                    return false;
+                verifyUPI(val);
+
+            });
+
+            const ChoosePG = function (id, a, w, vpa, btnLdr) {
+                preloader.load();
+                $.post("/choose-pg-upi", { id, a, w, vpa }, function (result) {
+                    resultReload(result);
+                    if (typeof (result) == 'object')//if (pgid == 3)
+                    {
+                        showPopUp(result.amount, result.walletID, result.vpa, result.oid, result.pGs[0].id);
+                    }
+                    else {
+                        mdlA.title = "Payment Gateway Selection";
+                        mdlA.id = 'pgModel';
+                        mdlA.content = result;
+                        mdlA.options.backdrop = 'static';
+                        mdlA.headerClass = "h6";
+                        mdlA.modal(mdlA.size.small);
+                        //$('#dv_pgparent .mode-box').click(function () {
+                        //    var upgid = $(this).data().upgid;
+                        //    let _selector = $('#dv_pgparent').data();
+                        //    var oid = _selector.oid;
+                        //    var amount = _selector.amount;
+                        //    var wallet = _selector.wallet;
+                        //    /*var pgid = $(this).data().pgid;*/
+                        //    btnLdr.addClass = 'btn-dark';
+                        //    btnLdr.removeClass = 'btn-outline-dark';
+                        //    btnLdr.Start($("#btnUPIPay"), 'Requesting');
+                        //    CallPaymentGatewayUPI(upgid, oid, amount, wallet, vpa);
+                        //});
+                        //if ($('#hidOnly').val() != undefined) {
+                        //    if ($('#hidOnly').val() == "true") {
+                        //        $('#dv_pgparent .mode-box').click();
+                        //    }
+                        //}
+                        //$('button.close span,#mdlCancel').click(function () {
+                        //    mdlA.dispose();
+                        //});
+                    }
+                }).catch(function (err) {
+                    console.log(err);
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    an.title = 'Oops';
+                    an.content = an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+            const showPopUp = function (a, w, upiid, o, upgid) {
+                preloader.load();
+                $.post("/paywith-upi", { a, w, upiid, o, upgid }, function (result) {
+                    resultReload(result);
+                    an.id = 'alertUPI';
+                    an.title = result.statuscode == an.type.failed ? 'Oops' : 'Wow';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    an.autoClose = 10;
+                    if (result.statuscode == 1) {
+                        setTimeout(function () {
+                            $("#btnUPIPay").html("Proceed To Add");
+                            $("#btnUPIPay").removeClass();
+                            $("#btnUPIPay").addClass('btn btn-outline-primary');
+                            btnLdr.addClass = 'btn-dark';
+                            btnLdr.Start($("#btnUPIPay"), 'Checking Status...');
+                            let upiImg = upiid.split('@@').length > 1 ? upiid.split('@@')[1] : 'upi';
+                            upiImg = UPIName.hasOwnProperty(upiImg) == false ? 'upi' : upiImg;
+                            let upiOwner = $('#upiOwner').text().trim();
+
+                            mdlA.id = "mdlaUPI";
+                            mdlA.isHeaderBorder = true;
+                            mdlA.title = "title";
+                            mdlA.content = `<div>Payment request sent to</div>
+                                                                   <div>${upiOwner == 'UPI Owner' ? '' : upiOwner}<span class="text-secondary">(${upiid})</span>${upiOwner != 'UPI Owner' ? "<i class='fas fa-check-circle text-success'></i>" : ""}</div>
+                                                                   <div class="text-center mt-5 mb-4">
+                                                                   <div><img src="${$$host + '/Image/QRImg/icon/' + upiImg + '.png'}" alt="upi image"></div>
+                                                                   <div>Please open & complete the payment of <span class="text-primary"><i class="fas fa-rupee-sign"> ${a}</i></span> in your ${UPIName[upiImg]} within </div>
+                                                                   <div class="mt-5 mb-5"><span class="text-success h1" id="JsTimer">5:00</span> mins</div>
+                                                                    <div>Do not press the back button untill the payment is complete</div>
+                                                                   <button class="btn btn-outline-primary w-75 mt-4" id="mdlCancel">Close</button>
+                                                                                            </div>`;
+                            mdlA.modal(mdlA.size.default);
+                            $('#mdlaUPI .modal-header').remove();
+                            $('button.close span,#mdlCancel').click(() => mdlA.dispose(function () {
+                                $("#btnUPIPay").html("Proceed To Add");
+                                $("#btnUPIPay").removeClass();
+                                $("#btnUPIPay").addClass('btn btn-outline-primary');
+                            }));
+                            var showJsTimer = new ShowJsTimer(JsTimer, 5);
+                            showJsTimer.startTimer();
+                            setTimeout(function () {
+                                CHeckStsUPI(result.commonInt, 0, showJsTimer, function () {
+                                    mdlA.dispose();
+                                });
+                            }, 6000);
+                        }, 500);
+                    } else {
+                        $("#btnUPIPay").html("Proceed To Add");
+                        $("#btnUPIPay").removeClass();
+                        $("#btnUPIPay").addClass('btn btn-outline-primary');
+                    }
+                }).catch(function () {
+                    /*console.clear();*/
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(function () {
+                    //btnLdr.Stop($('#btnUPIPay'));
+                    preloader.remove();
+                });
+            };
+            const CHeckStsUPI = function (TID, t, showJsTimer, onStopTimer) {
+                $.post("/upi-status-check", { TID }, function (result) {
+                    resultReload(result);
+                    if (result.status == 1 && t < 10) {
+                        setTimeout(function () {
+                            t = t + 1;
+                            CHeckStsUPI(TID, t, showJsTimer, onStopTimer);
+                        }, 30 * 1000);
+                    } else {
+                        $("#btnUPIPay").html("Proceed To Add");
+                        $("#btnUPIPay").removeClass();
+                        $("#btnUPIPay").addClass('btn btn-outline-primary');
+                        if (showJsTimer != undefined)
+                            showJsTimer.stopTimer(onStopTimer);
+                        if (result.status == 2) {
+                            an.id = 'alertUPI';
+                            an.title = 'Wow';
+                            an.content = 'Wallet Updated successfully';
+                            an.alert(1);
+                        } else if (result.status == 3) {
+                            an.id = 'alertUPI';
+                            an.title = 'Oops';
+                            an.content = 'Transaction unsuccessfull';
+                            an.alert(-1);
+                        }
+                    }
+                }).catch(function () {
+                    /*console.clear();*/
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(function () {
+
+                });
+            };
+            const verifyUPI = (u) => {
+                $('#upiOwner').html('UPI Owner');
+                $('#upiOwner').addClass('d-none');
+                $('#upiHelp').addClass('d-none');
+                $v.showErrorFor($('#txtUPIID'), '', false);
+                $.post("/verify-upi", { UPIID: u }, function (result) {
+                    resultReload(result);
+                    if (result.accHold != '') {
+                        $('#upiOwner').html(result.accHold + ' <i class="fas fa-check-circle text-success"></i>');
+                        $('#upiOwner').removeClass('d-none');
+                    }
+                }).catch(function () {
+                    /*console.clear();*/
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(function () {
+                    preloader.remove();
+                });
+            };
+        });
+    </script>
+}

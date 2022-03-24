@@ -1,0 +1,45 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model List<ProductOptionSetInfoList>;
+@{
+    var FilterType = ViewData["FilterType"];
+}
+<div class="row">
+    @if (Model != null)
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-xl-3 col-md-4 col-sm-6">
+                <div class="product-single">
+                    <div class="product-thumb">
+                        <span class="off">₹ @item.Discount /-off</span>
+                        <a href="GetProductDetails/@item.POSId">
+                            <img alt="" onerror="this.src='';" src="@item.FrontImage">
+                        </a>
+                        <div class="product-quick-view">
+                            <farhan-quickview>
+                                <a href="javascript:void(0);" onclick="quickView('1',@item.POSId)">quick view</a><!---->
+                    </farhan-quickview>
+                        </div>
+                    </div>
+                    <div class="product-title">
+                        <h4>
+                            <a href="GetProductDetails/@item.POSId">@item.Title</a>
+                        </h4>
+                    </div>
+                    <div class="product-price-rating">
+                        <div class="pull-left">
+                            <span>₹ @item.SellingPrice /-</span>
+                            <del>₹ @item.MRP /-</del>
+                        </div>
+                    </div>
+                    <div class="product-action">
+                        <a class="add-to-cart" href="javascript:void(0);">Add to Cart</a>
+                        <a class="product-wishlist" href="javascript:void(0);">
+                            <i class="ti-heart"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

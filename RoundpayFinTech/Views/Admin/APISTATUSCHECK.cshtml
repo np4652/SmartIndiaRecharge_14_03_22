@@ -1,0 +1,437 @@
+﻿@using Fintech.AppCode.StaticModel
+@{
+    ViewData["Title"] = "Response Match Master";
+}
+<style>
+    .table td {
+        border-top: none;
+    }
+
+    .form-group {
+        margin-bottom: 0px !important;
+    }
+</style>
+<link href="~/lib/bootstrap/dist/css/bootstrap-select.css" rel="stylesheet" />
+@model SelectList
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i>  @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row form-group">
+                            <div class="col-md-12">
+                                <textarea name="txt_Msg" rows="2" cols="20" id="txt_Msg" style="height:150px;width:100%;" class="form-control"></textarea>
+                            </div>
+                        </div>
+                        <table style="width:100%" class="table table-sm table-responsive-sm ">
+                            <tbody>
+                                <tr>
+                                    <td style="width:50px"><button type="button" name="btn_GetIndex" id="btn_GetIndex" class="btn btn-outline-dark btn-sm">Get Index OR Result</button></td>
+                                    <td></td>
+
+                                    <td style="width:50px"><button type="button" id="btn_SavedAll" class="btn btn-outline-dark btn-sm">Show All Saved Status</button></td>
+                                    
+                                    <td style="width:50px"><button type="button" name="btn_Save" id="btn_Save" class="btn btn-outline-dark btn-sm">Save</button></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <table class="table table-sm table-responsive-sm">
+                            <tbody>
+                                <tr>
+                                    <td style="width:100%">
+                                        <div>
+                                            <table class="table table-sm table-responsive-sm" cellspacing="0" rules="all" border="1" id="grd_Index" style="height:300px;width:150px;border-collapse:collapse;">
+                                                <thead class="shadow">
+                                                    <tr>
+                                                        <th scope="col">Index</th>
+                                                        <th scope="col">Value</th>
+                                                        <th scope="col">Check</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody></tbody>
+                                            </table>
+                                        </div>
+                                    </td>
+                                    <td valign="top">
+                                        <textarea name="txt_checks" rows="2" cols="20" id="txt_checks" onkeydown="return false;" style="height:300px;width:150px;" class="form-control"></textarea>
+                                        <input type="hidden" id="hid" value="0" />
+                                    </td>
+                                    <td></td>
+                                    <td valign="top">
+                                        <table class="table table-sm table-responsive-sm table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Status</td>
+                                                    <td colspan="2">
+                                                        <select name="ddl_Status" id="ddl_Status" class="form-control-sm w-100">
+                                                            <option value="@RechargeRespType.SUCCESS">@RechargeRespType._SUCCESS</option>
+                                                            <option value="@RechargeRespType.FAILED">@RechargeRespType._FAILED</option>
+                                                            <option value="@RechargeRespType.BALANCE">@RechargeRespType._BALANCE</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>VendorID</td>
+                                                    <td>
+                                                        <input name="txt_VendorId" type="number" id="txt_VendorId" placeholder="VendorID" style="width:100px">
+                                                    </td>
+                                                    <td><input name="txt_VendorIdReplace" type="text" id="txt_VendorIdReplace" placeholder="Replace" style="width:73px"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>OperatorId</td>
+                                                    <td>
+                                                        <input name="txt_OperatorId" type="number" id="txt_OperatorId" placeholder="OperatorId" style="width:100px;">
+                                                    </td>
+                                                    <td><input name="txt_OperatorIdReplace" type="text" id="txt_OperatorIdReplace" placeholder="Replace" style="width:73px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>TransactionId</td>
+                                                    <td>
+                                                        <input name="txt_transactionId" type="number" id="txt_transactionId" placeholder="TransactionId" style="width:100px;">
+                                                    </td>
+                                                    <td><input name="txt_TransactionIdReplace" type="text" id="txt_TransactionIdReplace" placeholder="Replace" style="width:73px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Balance</td>
+                                                    <td>
+                                                        <input name="txt_Balance" type="number" id="txt_Balance" placeholder="Balance" style="width:100px;">
+                                                    </td>
+                                                    <td><input name="txt_BalanceReplace" type="text" id="txt_BalanceReplace" placeholder="Replace" style="width:73px;"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td colspan="3">
+                                                        <select id="ddlError" asp-items="@Model" class="form-control form-control-sm selectpicker text-center" data-live-search="true">
+                                                            <option value="0">:: SELECT ERROR ::</option>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td></td>
+                                    <td valign="top">
+                                        <table class="table table-sm table-responsive-sm table-borderless">
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <textarea class="form-control" name="txt_Result" rows="2" cols="20" id="txt_Result" onkeydown="return false;" style="height:300px;width:250px;"></textarea>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="text-align:left;border:solid 1px;" class="mt-1"></div>
+@section scripts{
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('#ddlError').selectpicker('refresh');
+            an.autoClose = 5;
+            $('#btn_SavedAll').click(function () {
+                preloader.load();
+                $.post('/a-s-c-l', {})
+                    .done(function (result) {
+                        resultReload(result);
+                        mdlA.content = result;
+                        mdlA.id = 'mymodal';
+                        mdlA.options.backdrop = 'static';
+                        mdlA.alert(mdlA.size.xxlarge);
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('button.close span,#mdlCancel').unbind().click(function () {
+                            mdlA.dispose();
+                        });
+                        GetStatusList('', 0);
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+            var ctrl = { btn_Save: $('#btn_Save'), txt_checks: $('#txt_checks'), ddlError: $('#ddlError')}
+            $('#btn_GetIndex').click(function () {
+                preloader.load();
+                var stsCheck = { Msg: $('#txt_Msg').val() };
+                $.ajax({
+                    type: 'POST',
+                    url: '/api-status-check',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(stsCheck),
+                    success: function (result) {
+                        resultReload(result);
+                        an.autoClose = 5;
+                        an.title = result.statuscode == 1 ? 'Success' : 'Info';
+                        an.content = result.msg;
+                        an.alert(result.statuscode == 1 ? an.type.success : an.type.info);
+                        if (result.splitMsg != undefined) {
+                            var arr = result.splitMsg;
+                            if (arr.length > 0) {
+                                for (var i in arr) {
+                                    if (i == 0) {
+                                        $('#grd_Index tbody tr').remove();
+                                    }
+                                    $('#grd_Index tbody').append('<tr><td>' + i + '</td><td>' + arr[i] + '</td><td><input type="checkbox" id="chbIndex_' + i + '" class="m-0" /> </td></tr>');
+                                }
+                                $('[id^=chbIndex_]').unbind().change(function () {
+                                    var indVal = '';
+                                    $('[id^=chbIndex_]').each(function (i) {
+                                        if ($(this).is(':checked'))
+                                            indVal = indVal.concat('|')
+                                                .concat(i)
+                                                .concat(':')
+                                                .concat($($(this).closest('tr')[0].cells[1]).text().trim())
+                                                .concat('\r\n');
+                                    });
+                                    $('#txt_checks').val(indVal);
+                                });
+                                ctrl.btnTxt = ctrl.btn_Save.html();
+                                ctrl.btn_Save.unbind().click(function () {
+                                    if (ctrl.btnTxt !== ctrl.btn_Save.html()) {
+                                        return false;
+                                    }
+                                    btnLdr.addClass = 'btn-dark';
+                                    btnLdr.removeClass = 'btn-outline-dark';
+                                    btnLdr.Start(ctrl.btn_Save, 'Requesting');
+                                    ErrCode = parseInt(ctrl.ddlError.val());
+                                    if (ErrCode === undefined || ErrCode == '0') {
+                                        an.title = 'Oops';
+                                        an.content = 'Select ErrorCode from list.'
+                                        an.alert(an.type.failed);
+                                        btnLdr.Stop(ctrl.btn_Save);
+                                        return false;
+                                    }
+                                    if (ctrl.txt_checks.val() == '') {
+                                        an.title = 'Oops';
+                                        an.content = 'Choose indexes from list.'
+                                        an.alert(an.type.failed);
+                                        ctrl.txt_checks.focus();
+                                        btnLdr.Stop(ctrl.btn_Save);
+                                        return false;
+                                    }
+                                    var ct = { ddlError: $('#ddlError'), btn_Save: $('#btn_Save'), txt_checks: $('#txt_checks'), ddl_Status: $('#ddl_Status'), txt_VendorId: $('#txt_VendorId'), txt_VendorIdReplace: $('#txt_VendorIdReplace'), txt_OperatorId: $('#txt_OperatorId'), txt_OperatorIdReplace: $('#txt_OperatorIdReplace'), txt_transactionId: $('#txt_transactionId'), txt_TransactionIdReplace: $('#txt_TransactionIdReplace'), txt_Balance: $('#txt_Balance'), txt_BalanceReplace: $('#txt_BalanceReplace'), txt_Result: $('#txt_Result'), hid: $('#hid') }
+                                    stsCheck = { ID: ct.hid.val(), ErrorCode: ct.ddlError.val(), Checks: ct.txt_checks.val(), Status: ct.ddl_Status.val(), VendorIDIndex: ct.txt_VendorId.val(), VendorIDReplace: ct.txt_VendorIdReplace.val(), OperatorIDIndex: ct.txt_OperatorId.val(), OperatorIDReplace: ct.txt_OperatorIdReplace.val(), TransactionIDIndex: ct.txt_transactionId.val(), TransactionIDReplace: ct.txt_TransactionIdReplace.val(), BalanceIndex: ct.txt_Balance.val(), BalanceReplace: ct.txt_BalanceReplace.val(), IndLength: arr.length }
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/asc',
+                                        dataType: 'json',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(stsCheck),
+                                        success: function (result) {
+                                            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            if (result.statuscode == an.type.success) {
+                                                ClearAll();
+                                                ct.hid.val(0);
+                                            }
+                                        },
+                                        statusCode: {
+                                            500: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Server error';
+                                                an.alert(an.type.failed);
+                                            },
+                                            0: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Internet Connection was broken';
+                                                an.alert(an.type.failed);
+                                            }
+                                        },
+                                        error: function (xhr, result) {
+                                            an.title = "Oops! Error";
+                                            an.content = result;
+                                            an.alert(an.type.failed);
+                                            if (result === 'parsererror') {
+                                                reload();
+                                            }
+                                        },
+                                        complete: function () {
+                                            btnLdr.Stop(ct.btn_Save);
+                                        }
+                                    });
+                                });
+                            }
+                            if (result.statuscode == an.type.success) {
+                                var inds = result.checks.replace('|', '').split('|');
+                                for (var i in inds) {
+                                    $('#chbIndex_' + inds[i].split(':')[0]).attr('checked', 'checked');
+                                }
+                                var ct = { ddlError: $('#ddlError'), btn_Save: $('#btn_Save'), txt_checks: $('#txt_checks'), ddl_Status: $('#ddl_Status'), txt_VendorId: $('#txt_VendorId'), txt_VendorIdReplace: $('#txt_VendorIdReplace'), txt_OperatorId: $('#txt_OperatorId'), txt_OperatorIdReplace: $('#txt_OperatorIdReplace'), txt_transactionId: $('#txt_transactionId'), txt_TransactionIdReplace: $('#txt_TransactionIdReplace'), txt_Balance: $('#txt_Balance'), txt_BalanceReplace: $('#txt_BalanceReplace'), txt_Result: $('#txt_Result'), hid: $('#hid') }
+                                ct.ddlError.val(result.errorCode);
+                                //$('[data-id="ddlError"]').html($('#ddlError :selected').html());
+                                ct.txt_checks.val(result.checks.split('|').join('\r\n|').replace('\r\n|', '|'));
+                                ct.ddl_Status.val(result.status);
+                                ct.txt_VendorId.val(result.vendorIDIndex);
+                                ct.txt_VendorIdReplace.val(result.vendorIDReplace);
+                                ct.txt_OperatorId.val(result.operatorIDIndex);
+                                ct.txt_OperatorIdReplace.val(result.operatorIDReplace);
+                                ct.txt_transactionId.val(result.transactionIDIndex);
+                                ct.txt_TransactionIdReplace.val(result.transactionIDReplace); 
+                                ct.txt_Balance.val(result.balance);
+                                ct.txt_BalanceReplace.val(result.balanceReplace);
+                                ct.hid.val(result.id);
+                                var resstr = '';
+                                resstr = resstr
+                                    .concat('\r\nStatusID:\t').concat(result.id).concat('\r\n')
+                                    .concat('\r\nErrorCode:\t').concat($('#ddlError').val()).concat('\r\n')
+                                    .concat('\r\nVendorID:\t').concat(result.vendorID).concat('\r\n')
+                                    .concat('\r\OperatorId:\t').concat(result.operatorID).concat('\r\n')
+                                    .concat('\r\TransactionId:\t').concat(result.transactionID).concat('\r\n')
+                                ct.txt_Result.val(resstr);
+                                ct.hid.val(result.id);
+                            }
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops! Error";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        preloader.remove();
+                    }
+                });
+            });
+            var ClearAll = function () {
+                $('#grd_Index tbody tr').remove();
+                $('input,textarea').each(function (i) {
+                    if (this.id !== 'txt_Msg') {
+                        $(this).val('');
+                    }
+                });
+                $('select').prop('selectedIndex', 0);
+            }
+            var GetStatusList = function (t, s) {
+                preloader.load();
+                $.post('/a-s-c-l-h', { t, s })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#tblStatusList tbody').html(result);
+                        $(".dropdown-toggle").dropdown();
+                        $('#tblStatusList tr div.dropdown-menu a.dropdown-item').click(function () {
+                            itemid = $(this).closest('tr').data().itemId;
+                            mdlStk.id = 'mystack' + itemid;
+                            mdlStk.content = mdlStk.confirmStack(itemid, '<h5>Are you sure to delete?</h5>');
+                            mdlStk.alert(mdlA.size.small);
+                            $('#mdlCancel' + itemid).unbind().click(function () {
+                                mdlStk.disposeConfirm();
+                            });
+                            $('#' + mdlStk.id).css("background", "#00000078");
+                            $('#btnOK').unbind().click(function () {
+                                preloader.load();
+                                $.post('/d-a-s-c', { id: itemid })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        if (result.statuscode == an.type.success) {
+                                            $('[data-item-id="' + itemid + '"]').remove();
+                                        }
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                        $('#mdlCancel' + itemid).click();
+                                    });
+                            });
+                        });
+                        $('#btn_Search').unbind().click(function () {
+                            GetStatusList($('#txtSearchText').val(), $('#ddl_TStatus').val());
+                        });
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+        });
+    </script>
+}
+
+

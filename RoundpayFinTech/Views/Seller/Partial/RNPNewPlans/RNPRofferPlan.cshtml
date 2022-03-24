@@ -1,0 +1,46 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.RNPRoffer
+
+    <style>
+        .fix-thead {
+            position: sticky;
+            top: 0;
+        }
+
+    </style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>R OFFER</h3>
+        <hr />
+    </div>
+    @if (Model.StatusCode == 1)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="scroll-content">
+                <table class="table table-striped table-bordered">
+                    <thead class="bg-tableth fix-thead">
+                        <tr>
+                            <th>RS</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.RofferData)
+                        {
+                            <tr>
+                                <td><span class="btn btn-outline-success" id="spnOferAmt_@item.Amount" style="margin-right: 0.5rem;">@item.Amount</span></td>
+                                <td>@item.Description</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any roffer found!</h1>
+    }
+</div>

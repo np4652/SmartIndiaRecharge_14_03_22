@@ -1,0 +1,96 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@model List<RoundpayFinTech.AppCode.Model.Daybook>
+
+@{
+    var couter = 1;
+}
+
+@if (Model.Count > 0)
+{
+    var TotalHits = 0;
+    var TotalAmount = 0M;
+    var SuccessHits = 0;
+    var SuccessAmount = 0M;
+    var FailedHits = 0;
+    var FailedAmount = 0M;
+    var PendingHits = 0;
+    var PendingAmount = 0M;
+    var Commission = 0M;
+    var Incentive = 0M;
+    var APICommission = 0M;
+    var GSTTaxAmount = 0M;
+    var TDSAmount = 0M;
+    var Profit = 0M;
+
+    foreach (var item in Model)
+    {
+        TotalHits += item.TotalHits;
+        TotalAmount += item.TotalAmount;
+        SuccessHits += item.SuccessHits;
+        SuccessAmount += item.SuccessAmount;
+        FailedHits += item.FailedHits;
+        FailedAmount += item.FailedAmount;
+        PendingHits += item.PendingHits;
+        PendingAmount += item.PendingAmount;
+        Commission += item.Commission;
+        Incentive += item.Incentive;
+        APICommission += item.APICommission;
+        GSTTaxAmount += item.GSTTaxAmount;
+        TDSAmount += item.TDSAmount;
+        Profit += item.Profit;
+<tr>
+    <th class="text-right">@couter</th>
+    <td>@item.TDate</td>
+    <td class="text-right">@item.TotalHits</td>
+    <td class="text-right">@item.TotalAmount</td>
+    <td class="text-right">@item.SuccessHits</td>
+    <td class="text-right">@item.SuccessAmount</td>
+    <td class="text-right">@item.FailedHits</td>
+    <td class="text-right">@item.FailedAmount</td>
+    <td class="text-right">@item.PendingHits</td>
+    <td class="text-right">@item.PendingAmount</td>
+    <td class="text-right">@item.APICommission</td>
+    <td class="text-right">@item.Commission</td>
+    <td class="text-right">@item.Incentive</td>
+    @if (ApplicationSetting.IsGSTEnable)
+    {
+        <td class="text-right">@item.GSTTaxAmount</td>
+    }
+    <td class="text-right">@item.TDSAmount</td>
+    <td class="text-right @(item.Profit>0?"text-success":"text-danger")">@item.Profit</td>
+</tr>
+
+        couter = couter + 1;
+
+    }
+<tr>
+    <th colspan="2" class="text-right">Total</th>
+    <th class="text-right">@TotalHits</th>
+    <th class="text-right">@TotalAmount</th>
+    <th class="text-right">@SuccessHits</th>
+    <th class="text-right">@SuccessAmount</th>
+    <th class="text-right">@FailedHits</th>
+    <th class="text-right">@FailedAmount</th>
+    <th class="text-right">@PendingHits</th>
+    <th class="text-right">@PendingAmount</th>
+    <th class="text-right">@APICommission</th>
+    <th class="text-right">@Commission</th>
+    <th class="text-right">@Incentive</th>
+    @if (ApplicationSetting.IsGSTEnable)
+    {
+        <th class="text-right">@GSTTaxAmount</th>
+    }
+    <th class="text-right">@TDSAmount</th>
+    <th class="text-right">@Profit</th>
+</tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="18">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+
+

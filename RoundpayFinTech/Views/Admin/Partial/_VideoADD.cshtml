@@ -1,0 +1,37 @@
+﻿
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+    </style>
+<div class="row">    
+    <div class="col-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> Video Setting</h3>
+        <hr />
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    @Html.Label("txttitle", "Title", new { @class = "lbl" })
+                    <div class="input-group">
+                        @*@Html.TextBox("txttitle", new { @class = "form-control", @placeholder = "Enter Tilte", @aria_describedby = "titleHelp", @tabindex = 1 })*@
+                        <input class="form-control" id="txttitle" name="txttitle" placeholder="Enter Title" tabindex="1" type="text">
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted d-none">Email is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txturl", "URL", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextArea("txturl",  new { @class = "form-control text-capitalize", @placeholder = "Enter Video URl", @aria_describedby = "urlHelp", @tabindex = 1 })
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted d-none">Link is mandatory</small>
+                </div>
+              
+                <button type="button" class="btn btn-dark" id="btnSaveAPI" tabindex="7">Save Vedio Link</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

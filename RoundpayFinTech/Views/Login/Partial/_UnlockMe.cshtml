@@ -1,0 +1,27 @@
+﻿<style>
+    .modal-header.custome {
+        display: block;
+    }
+    .modal-content {
+        min-height: 278px;
+        width: 72%;
+    }
+</style>
+<div class="col-md-12">
+    <div class="form-group">
+        <select id="ddlFLType" class="form-control">
+            <option value="1">ApplicationUser</option>
+            <option value="2">CustomerCare</option>
+            <option value="3">Employee</option>
+        </select>
+    </div>
+    <div class="form-group">
+        @Html.TextBox("txtFFUser", null, new { @placeholder = "USER ID/MobileNo", @class = "form-control" })
+    </div>
+    <div class="form-group">
+        <span id="alert"></span>
+    </div>
+    <div class="form-group">
+        <button class="form-control btn btn-outline-dark" id="btnUnlock" onclick="Unlock()">Send</button>
+    </div>
+    </div>

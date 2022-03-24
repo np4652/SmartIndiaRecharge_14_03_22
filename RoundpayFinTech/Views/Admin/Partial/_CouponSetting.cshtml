@@ -1,0 +1,106 @@
+﻿@model RoundpayFinTech.AppCode.Model.CouponsettingReq
+
+
+
+
+<style>
+    .my-check input {
+        height: 45%;
+        width: 35%;
+        line-height: 50px;
+        vertical-align: top;
+        margin-bottom: 20px;
+    }
+
+    .my-check label {
+        margin-left: 20%;
+        margin-bottom: 20px;
+        line-height: 30px;
+    }
+</style>
+
+<div class="card mt-12">
+    <div class="card-header bg-gradientorange text-white">
+        <i class="fas fa-link"></i> Coupon Voucher (@ViewBag.VoucherType)
+    </div>
+    <input type="hidden" id="VoucherID" value="@ViewBag.VoucherID" class="d-none" />
+    <div class="col-md-12" id="divDenomination">
+        <div class="form-group">
+            <div class="row mt-3">
+                @{
+                    int[] selectedIds = Model.couponsetting.Select(x => x.DenominationID).ToArray();
+
+                    foreach (var itm in Model.denominationsoucher)
+                    {
+                        if (selectedIds.Length > 0)
+                        {
+                            <div class="form-check col-md-4 my-check">
+                                <input type="checkbox" onchange="Selectdenom(@itm.DenominationID,this)" @Html.Raw(selectedIds.Contains(@itm.DenominationID) ? "checked='checked'" : "") class="form-check-input denom" value="@itm.DenominationID">
+                                <label class="form-check-label" for="exampleCheck1">@itm.DenminationAmount</label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-check col-md-4 my-check">
+                                <input type="checkbox" onchange="Selectdenom(@itm.DenominationID,this)" class="form-check-input denom" value="@itm.DenominationID">
+                                <label class="form-check-label" for="exampleCheck1">@itm.DenminationAmount</label>
+                            </div>
+                        }
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Initialize the plugin: -->
+
+<script>
+
+
+
+    function Selectdenom(a, b) {
+
+        var Couponsetting = {
+            VoucherID: $('#VoucherID').val(),
+            DenominationID: a,
+            IsActive: $(b).is(':checked')
+
+        }
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/CoupanSetting-Edit',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify(Couponsetting),
+            success: function (result) {
+
+
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+
+                if (result.statuscode == an.type.success) {
+                    preloader.remove()
+
+
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+
+            }
+        });
+
+
+    }
+
+
+</script>

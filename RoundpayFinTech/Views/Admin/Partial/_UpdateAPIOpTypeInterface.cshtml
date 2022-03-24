@@ -1,0 +1,22 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<OpTypeMaster>;
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Click to Update Biller</h3>
+        <hr />
+    </div>
+    <div class="container">
+        <div class="row pl-5 pr-5">
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <span id="spnAPIOpType_@item.ID" class="col-md btn btn-outline-info mr-1 mb-1" data-optypedetail='@Json.Serialize(new { item.ID,item.APIOpType})'>@(item.OpType)</span>
+                }
+            }
+        </div>
+    </div> 
+</div>

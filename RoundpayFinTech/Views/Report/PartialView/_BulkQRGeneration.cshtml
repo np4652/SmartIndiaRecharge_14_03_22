@@ -1,0 +1,63 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.QRGenerationReq
+@{
+    int RowCount = 0;
+    int PageNumber = 1;
+    int TopRows = 10;
+    int counter = 0;
+}
+
+@if (Model != null)
+{
+    if (Model.PegeSetting != null)
+    {
+        var pageSetting = Model.PegeSetting;
+        RowCount = pageSetting.Count == null ? 0 : (int)pageSetting.Count;
+        PageNumber = pageSetting.PageNumber;
+        TopRows = pageSetting.TopRows;
+    };
+    if (Model.QRGenData != null)
+    {
+        foreach (var item in Model.QRGenData)
+        {
+            <tr>
+                <th>@((PageNumber - 1) * TopRows + (counter + 1))</th>
+                <td>@item.TransactionID</td>
+                <td>@item.BankRefID</td>
+                <td>@item.EntryDate</td>
+                <td>@Html.Raw(string.IsNullOrEmpty(item._AssignedTo) ? "Not Assigned" : item._AssignedTo)  </td>
+                <td>@Html.Raw(string.IsNullOrEmpty(item.AssignedDate) ? "Not Assigned" : item.AssignedDate)</td>
+                <td>
+                    <button class="btn btn-outline-success btn-sm" data-refid="@item.RefID" id="btnDownloads_@counter">
+                        <i class="fas fa-qrcode" style="color: black;"></i> Show
+                    </button>
+                </td>
+            </tr>
+            counter++;
+        }
+
+    }
+    else
+    {
+        <tr>
+            <td colspan="7">
+                <center>No Record Found</center>
+            </td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="7">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+<script>
+    @*,PageNumber=@PageNumber,TopRows=@TopRows*@
+    RowCount =@RowCount
+</script>
+
+
+
+

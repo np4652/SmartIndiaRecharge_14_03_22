@@ -1,0 +1,143 @@
+﻿@{
+    ViewData["Title"] = "Bank Reconcilation";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-3 text-right">
+                                <a class="btn btn-outline-light" id="btnUploadWin">Upload Excel</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Call Partial view here -->
+                                <UTRExcelList></UTRExcelList>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var loadPartial = () => {
+            $.post("/_UTRExcelList").done(result => $('UTRExcelList').html(result)).fail(() => {
+                an.title = 'Oops';
+                an.content = xhr.status == 500 ? 'Server error' : 'Internet Connection was broken';
+                an.alert(an.type.failed);
+            }).always(() => { });
+        };
+
+        $('#btnUploadWin').click(e => {
+            let _html = `<div class="row"><div class="col-sm-12"><div class="form-group"><input type="file" id="fUpload" class="form-control"/></div><div class="form-group"><button class="btn btn-outline-info" id="btnUpload">Upload</button></div></div></div>`
+            mdlA.id = "divUploadWin";
+            mdlA.title = "Upload Excel";
+            mdlA.content = _html;
+            mdlA.modal(mdlA.size.default);
+            $('#btnUpload').click(e => {
+                $.post("/UTRExcel-OTP").done(result => {
+                    console.log(result);
+                    an.title = "Alert";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode === 1) {
+                        $('#fUpload').parent('.form-group').after(`<div class="form-group"><input type="text" id="txtotp" class="form-control" placeholder="${result.msg}"/></div>`);
+                        $(e.currentTarget).text('Submit').unbind().click(() => uploadExcel());
+                    }
+                }).fail(() => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 500 ? 'Server error' : 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }).always(() => { });
+            });
+        })
+
+        var uploadExcel = () => {
+            let OTP = $('#txtotp').val();
+            if (OTP == undefined || OTP == "") {
+                $('#txtotp').after('<span class="text-danger">Please fill OTP</span>')
+                return false;
+            }
+            let element = $("#fUpload");
+            let filename = element.val();
+            if (filename == undefined || filename == '') {
+                an.title = 'Validation Warning';
+                an.content = "Please select only excel files.";
+                an.alert(an.type.failed);
+                return false;
+            }
+            let fileExtension = ['xlsx'];
+
+            let extension = filename.replace(/^.*\./, '');
+            if ($.inArray(extension, fileExtension) == -1) {
+                an.title = 'Validation Warning';
+                an.content = "Please select only excel files.";
+                an.alert(an.type.failed);
+                $('#fUpload').val('');
+                return false;
+            }
+            let formData = new FormData();
+            formData.append('file', element[0].files[0]);
+            formData.append('OTP', OTP);
+            $.ajax({
+                type: "POST",
+                url: "/upload-UTRExcel",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (result) {
+                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode === 1) {
+                        $('#fUpload').val('');
+                        mdlA.dispose();
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        };
+        $(document).ready(function () { loadPartial() });
+    </script>
+}

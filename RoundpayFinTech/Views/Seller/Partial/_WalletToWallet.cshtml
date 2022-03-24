@@ -1,0 +1,191 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="mb-0 mt-0 bg-white rounded text-info"> Wallet To Wallet Fund Transfer</h4>
+        <hr />
+        <input type="hidden" id="hndUserID"/>
+        <div class="scroll-content" id="dvUserInfo">
+            <div class="container">
+                <div class="form-group">
+                    <label class="lbl" for="txtCustNo">Customer No.</label>
+                    <div class="input-group">
+                        <input aria-describedby="custNoHelp" class="form-control" id="txtCustNo" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" placeholder="Enter Mobile No." tabindex="1" type="text" value="">
+                    </div>
+                    <small id="custNoHelp" class="form-text text-muted d-none"></small>
+                </div>
+            </div>
+        </div>
+
+        <div class="scroll-content d-none" id="dvFT">
+            <div class="container">
+                <div class="row mb-1">
+                    <div class="col-sm-3">
+                        <div class="btn-group btn-toggle">
+                            <button class="btn btn-sm btn-outline-info active">Credit</button>
+                        </div>
+                    </div>
+                    <div class="col-sm-9">
+                        <div>
+                            <h6 class="mb-0">
+                                <span id="spnNam" class="text-monospace"></span>
+                            </h6>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons" id="btnGroup">
+                        <label class="btn btn-sm btn-outline-info active d-none" id="btIsPre">
+                            <input type="radio" name="options" data-id="@Wallet.Prepaid" autocomplete="off" checked> @Wallet._Prepaid
+                        </label>
+                        <label class="btn btn-sm btn-outline-info d-none" id="btIsUt">
+                            <input type="radio" name="options" data-id="@Wallet.Utility" autocomplete="off"> @Wallet._Utility
+                        </label>
+                        <label class="btn btn-sm btn-outline-info d-none" id="btIsBank">
+                            <input type="radio" name="options" data-id="@Wallet.Bank" autocomplete="off"> @Wallet._Bank
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group d-none" id="dvPIN">
+                    <label class="lbl" for="txtPIN">Pin Password</label>
+                    <div class="input-group">
+                        <input aria-describedby="amountHelp" class="form-control" id="txtPIN" placeholder="Enter PIN" tabindex="1" type="text" value="">
+                    </div>
+                    <small id="amountHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="form-group">
+                    <label class="lbl" for="txtAmount">Amount</label>
+                    <div class="input-group">
+                        <input aria-describedby="amountHelp" class="form-control" id="txtAmount" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" placeholder="Enter Amount" tabindex="1" type="text" value="">
+                    </div>
+                    <small id="amountHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                <div class="form-group">
+                    <label class="lbl" for="txtRemark">Remark</label>
+                    <textarea aria-describedby="remarkHelp" class="form-control" id="txtRemark" placeholder="Enter Remark" tabindex="3"></textarea>
+                    <small id="remarkHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                <div class="scroll-content">
+                    <div class="container">
+                        <button type="button" class="btn btn-dark" id="btnFCollect" tabindex="7">Collect</button>
+                        <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var cntrFn = 0;
+    
+    //// mdlA.dispose()
+    $("#txtCustNo").on('change keyup paste mouseup', function () {
+        if (cntrFn == 0) {
+            if ($(this).val().length >= 10) {
+                cntrFn++;
+                var mob = $(this).val();
+                if (mob.length != 10) {
+                    an.title = 'Oops!';
+                    an.content = 'Please Enter a Correct Mobile No!';
+                    an.alert(an.type.failed);
+                    cntrFn = 0;
+                    return false;
+                }
+                getUserInfo(mob);
+            }
+        }
+    });
+
+    var getUserInfo = (mob) => {
+        $.post('g-u-i', { MobileNo: mob })
+            .done(result => {
+                if (result.statusCode == an.type.failed) {
+                    an.title = 'Oops!';
+                    an.content = result.msg;
+                    an.alert(an.type.failed);
+                }
+                else {
+                    $('#dvUserInfo').addClass('d-none');
+                    $('#dvFT').removeClass('d-none');
+                    console.log(result);
+                    if (result.isPrepaidB === true)
+                        $('#btIsPre').removeClass('d-none');
+                    if (result.isUtilityB === true)
+                        $('#btIsUt').removeClass('d-none');
+                    if (result.isDoubleFactor === true)
+                        $('#dvPIN').removeClass('d-none');
+                    var ht = result.outletName + ' [' + result.mobileNo + ']'; 
+                    $('#spnNam').html(ht);
+                    $('#hndUserID').val(result.userID)
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => {
+                preloader.remove();
+            });
+    }
+
+    $('#btnFCollect').on('click', function () {
+        var ct = {
+            userId: $('#hndUserID'),
+            walletId: $('#btnGroup.btn-group-toggle').find('.btn.active').find('input').data().id,
+            amount: $('#txtAmount'),
+            remark: $('#txtRemark')
+        };
+        var IsE = { amt: ct.amount.val() < 1, rmk: ct.remark.val() == '' };
+        IsE.err = IsE.amt || IsE.rmk;
+        $v.showErrorFor(ct.amount, 'Invalid Amount', IsE.amt);
+        $v.showErrorFor(ct.remark, 'Please Enter Remark', IsE.rmk);
+        if (IsE.err)
+            return false;
+        preloader.load();
+        $.post('/wtwft', { UserID: ct.userId.val(), CommonInt: 1, CommonDecimal: ct.amount.val(), CommonStr: ct.remark.val(), CommonStr2 : $('#txtPIN').val() })
+            .done(function (result) {
+                resultReload(result);
+                if (result.statuscode === -1) {
+                    an.title = 'Oops';
+                    an.content = result.msg;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }
+                else {
+                    an.title = 'Welldone!';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                }
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    });
+</script>

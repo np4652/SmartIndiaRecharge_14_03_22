@@ -1,0 +1,45 @@
+﻿@model RoundpayFinTech.AppCode.Model.EKYCByAadharModelOTP
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    @if (Model.Statuscode == Fintech.AppCode.StaticModel.ErrorCodes.One)
+    {
+        if (Model.IsCallSDK)
+        {
+            <div id="zoop-gateway-model">
+                <div id="zoop-model-content"></div>
+            </div>
+            <script src="~/js/ekyc/zoop-sdk.min.js"></script>
+            <button onclick="openGateway()" class="btn btn-outline-info btn-sm">Open Gateway To Complete Aadhar Verification</button>
+            <script type="application/javascript">
+                // Name of the this function can be anything you want.
+                function openGateway() {
+                   // To setup gateway UI to mach your application you can
+                   // pass the gateway options but the support for it will be
+                   // added soon
+                   zoop.initDigilockerGateway();
+                   // Pass the transaction ID created at Init call
+                   zoop.openDigilockerGateway("@(Model.InitiateID)");
+                }
+            </script>
+        }
+        else
+        {
+            <h3>Fill OTP</h3>
+            <div class="form-group">
+                @Html.Label("txtOTP", "Fill OTP", new { @class = "lbl" })
+                @Html.TextBox("txtOTP", null, new { @class = "form-control text-capitalize", @placeholder = "Enter OTP", @aria_describedby = "OTPHelp", @tabindex = 4 })
+                <small id="OTPHelp" class="form-text text-danger  d-none">Invalid OTP</small>
+            </div>
+            <input type="hidden" id="refID" value="@(Model != null ? Model.ReferenceID : 0)" />
+            <button class="btn btn-outline-success btn-sm" id="btnVerifyAadharOTP">Verify</button>
+        }
+
+    }
+    else
+    {
+        <h4 class="text-danger">@Model.Msg</h4>
+    }
+    <button class="btn btn-danger btn-sm" id="mdlCancel">Cancel</button>
+</div>

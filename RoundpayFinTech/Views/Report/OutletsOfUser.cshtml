@@ -1,0 +1,581 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model bool
+@{
+    ViewData["Title"] = "Outlet's List";
+
+}
+<style>
+    select {
+        width: 100% !important;
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtM">Mobile No/User ID</label>
+                                    <input aria-describedby="txtM" class="form-control" id="txtM" tabindex="1" type="text" placeholder="Enter User Mobile No" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            @if (Model)
+                            {
+                                <div class="col-md-3 col-sm-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label class="lbl" for="ddlCriteria">Choose API</label>
+                                        <select id="ddlApi" tabindex="3" class="form-control" onchange="SelectApiDdl()">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                            @*<div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label class="lbl" for="ddlCriteria">Choose API Status</label>
+                                        <select id="ddlApiStatus" tabindex="3" class="form-control">
+                                            <option value="0">:: Select API Status :: </option>
+                                            <option value="1">APPLIED</option>
+                                            <option value="2">APPROVED</option>
+                                            <option value="3">REJECTED</option>
+                                        </select>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">API Service</label>
+                                    <select id="ddlApiService" tabindex="3" class="form-control">
+                                        <option value="0">:: Select API Service :: </option>
+                                        <option value="1">BBPS</option>
+                                        <option value="2">AEPS</option>
+                                        <option value="3">PSA</option>
+                                        <option value="4">DMT</option>
+                                        <option value="5">Outlet Status</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose API Service Status</label>
+                                    <select id="ddlApiServiceStatus" tabindex="3" class="form-control">
+                                        <option value="5">:: Select API Service Status :: </option>
+                                        <option value="0">NOT APPLIED</option>
+                                        <option value="1">APPLIED</option>
+                                        <option value="2">VERIFIED</option>
+                                        <option value="3">REJECTED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlKycStatus">KYC Status</label>
+                                    <select id="ddlKycStatus" tabindex="1" class="form-control">
+                                        <option value="0"> :: Select Status :: </option>
+                                        <option value="@KYCStatusType.INCOMPLETE">@KYCStatusType.INCOMPLETE_</option>
+                                        <option value="@KYCStatusType.APPLIED">@KYCStatusType.APPLIED_</option>
+                                        <option value="@KYCStatusType.COMPLETED">@KYCStatusType.COMPLETED_</option>
+                                        <option value="@KYCStatusType.REKYC">@KYCStatusType.REKYC_</option>
+                                        <option value="@KYCStatusType.REJECTED">@KYCStatusType.REJECTED_</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @*<div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label class="lbl" for="ddlVerifyStatus">Verify Status</label>
+                                        <select id="ddlVerifyStatus" tabindex="1" class="form-control">
+                                            <option value="0"> :: Select Status :: </option>
+                                            <option value="1">APPLIED</option>
+                                            <option value="2">VERIFIED</option>
+                                            <option value="3">REJECTED</option>
+                                        </select>
+                                    </div>
+                                </div>*@
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        <option value="@Criteria.OutletID">@nameof(Criteria.OutletID)</option>
+                                        <option value="@Criteria.OutletMobile">@nameof(Criteria.OutletMobile)</option>
+                                        <option value="@Criteria.PAN">@nameof(Criteria.PAN)</option>
+                                        <option value="@Criteria.Adhar">@nameof(Criteria.Adhar)</option>
+                                        <option value="@Criteria.DeviceId">@nameof(Criteria.DeviceId)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtSearch">Enter Criteria Text</label>
+                                    <div class="input-group" style="width: 100%;">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 input-group" style="justify-content:flex-end">
+                                <div class="input-group-append">
+                                    <span class="btn btn-outline-success border-bottom-none" id="btnExport">
+                                        <i class="far fa-file-excel"></i> Export Excel
+                                    </span>
+                                    @if (Model)
+                                    {
+                                        <span class="btn btn-outline-success border-bottom-none" id="uploadExcel">
+                                            <i class="far fa fa-upload"></i> Import Excel
+                                        </span>
+                                        <a class="btn btn-outline-info border-bottom-none" href="@Url.Action("ApiWiseDetail-Export","Report")">
+                                            <i class="fas fa-download"></i>  Download API Wise Detail
+                                        </a>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-responsive-sm" id="tblOutlets">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th>Action</th>
+                                        @if (Model)
+                                        {
+                                            <th scope="col">User</th>
+                                            <th scope="col">Role</th>
+                                        }
+                                        <th scope="col">Outlet Owner</th>
+                                        <th scope="col">Outlet Name</th>
+                                        <th scope="col">MobileNo</th>
+                                        <th scope="col">EmailID</th>
+                                        <th scope="col">Pincode</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">PAN</th>
+                                        <th scope="col">AADHAR</th>
+                                        <th scope="col">KYC Status</th>
+                                        <th scope="col">Verify Status</th>
+                                        <th scope="col">Joining</th>
+                                        <th scope="col">UpdateOn</th>
+                                        @if (Model)
+                                        {
+                                            <th scope="col">IsOutsider</th>
+                                        }
+                                        <th scope="col">State</th>
+                                        <th scope="col">City</th>
+                                        @if (Model)
+                                        {
+                                            <th scope="col">DOB</th>
+                                            <th scope="col">ShopType</th>
+                                            <th scope="col">Qualification</th>
+                                            <th scope="col">Poupulation</th>
+                                            <th scope="col">LocationType</th>
+                                            <th scope="col">Landmark</th>
+                                            <th scope="col">AlternateMobile</th>
+                                            <th scope="col">Latlong</th>
+                                            <th scope="col">BankName</th>
+                                            <th scope="col">IFSC</th>
+                                            <th scope="col">AccountNumber</th>
+                                            <th scope="col">AccountHolder</th>
+                                        }
+                                        <th class="api hide" scope="col">API Name</th>
+                                        <th class="api hide" scope="col">API Outlet Id</th>
+                                        <th scope="col">BBPS Status</th>
+                                        <th scope="col">AEPS Status</th>
+                                        <th scope="col">PSA Status</th>
+                                        <th scope="col">DMT Status</th>
+                                        <th scope="col">IRCTC Status</th>
+                                        @if (Model)
+                                        {
+                                            <th scope="col">mATM Status</th>
+                                        }
+                                        <th scope="col">IRCTC ID</th>
+                                        <th scope="col">IRCTC Expiry</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            GetApiDdl();
+            an.autoClose = 5;
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+            $("#btnSearch").click();
+
+            $('#ddlApi').change(function () {
+                let ddlApiVal = $('#ddlApi').val();
+                if (ddlApiVal > 0) {
+                    $('.api').removeClass('hide');
+                }
+                else {
+                    var check = $('.api').hasClass('hide');
+                    if (check == false) {
+                        $('.api').addClass('hide');
+                    }
+                }
+            });
+        });
+
+        var search = function (sender) {
+            var filter = {
+                TopRows: $('#ddlTop').val(),
+                MobileOrUserID: $('#txtM').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtSearch').val(),
+                IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false,
+                KycStatus: $('#ddlKycStatus').val() != undefined ? $('#ddlKycStatus').val() : 0,
+                //VerifyStatus: $('#ddlVerifyStatus').val() != undefined ? $('#ddlVerifyStatus').val() : 0,
+                ApiId: $('#ddlApi').val(),
+                //ApiStatus: $('#ddlApiStatus').val(),
+                ServiceId: $('#ddlApiService').val(),
+                ServiceStatusId: $('#ddlApiServiceStatus').val()
+            };
+            if (filter.TopRows > 4000 && sender.id.indexOf('Export') < 0) {
+                an.title = 'Exporting to excel';
+                an.content = 'Because you have selected all record!';
+                an.alert(an.type.info);
+                an.autoClose = 10;
+            }
+            if (filter.IsExport) {
+                window.location = "/OutletList-Export?" + $.param(filter);
+            } else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/OutletList',
+                    contentType: 'application/json',
+                    data: JSON.stringify(filter),
+                    success: function (result) {
+                        resultReload(result);
+                        $('.__p tbody').html(result);
+                        $('.__p tbody').html(result);
+                        $(".dropdown-toggle").dropdown();
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('tr div.dropdown-menu a.dropdown-item.rekyc').click(function () {
+                            KYCStatus($(this).closest('tr').data().itemId, 4);
+                        });
+
+                        $('tr div.dropdown-menu a.dropdown-item.btnReject').click(function () {
+                            KYCStatus($(this).closest('tr').data().itemId, 5);
+                        });
+
+                        $('tr div.dropdown-menu a.dropdown-item.doc').click(function () {
+                            showKycDocuments($(this).closest('tr').data().itemId, $(this).closest('tr').data().itemUid);
+                        });
+
+                        $('tr div.dropdown-menu a.dropdown-item.apiwiseDetail').click(function () {
+                            showApiWiseDetail($(this).closest('tr').data().itemId);
+                        });
+
+                        $('tr div.dropdown-menu a.dropdown-item.showDocumentsDetail').click(function () {
+                            showDocumentsDetail($(this).closest('tr').data().itemId);
+                        });
+                        $('tr div.dropdown-menu a.dropdown-item.btnAddonServ').click(function () {
+
+                            var userID = $(this).closest('tr').data().itemUid;
+                            var outletid = $(this).closest('tr').data().itemId;
+                            preloader.load();
+                            $.post('/get-add-serv', { UID: userID, outletID: outletid })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    $('#' + an.id).remove();
+                                    mdlA.id = 'mymodal';
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.options.keyboard = false;
+                                    mdlA.alert(mdlA.size.default);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                })
+                                .fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                            return false;
+                        });
+
+                        $('.addMatm').click(function () {
+                            AddMAtm($(this).closest('tr').data().itemId);
+                        });
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        resultReload(result);
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });
+            }
+        };
+
+        var KYCStatus = function (outletid, sts) {
+            preloader.load();
+            $.post('/KYC/updatekycsts', { outletid: outletid, sts: sts }, function (result) {
+                $("#btnSearch").click();
+                an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var showKycDocuments = function (outletid, uId) {
+            preloader.load();
+            $.post('/KYC/DocumentDetails', { oid: outletid, uid: uId }, function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                $('#outlateName').html($($('[data-item-Id="' + outletid + '"]').find('td')[2]).text());
+
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var showApiWiseDetail = function (outletid) {
+            preloader.load();
+            $.post('/ApiWiseDetail', { oid: outletid }, function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.bodyCls = 'rm-margin'
+                mdlA.alert(mdlA.size.xxlargeM);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                $('#outlateName').html($($('[data-item-Id="' + outletid + '"]').find('td')[2]).text());
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var importExcel = function () {
+            preloader.load();
+            $.get('/bindApiList', function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        $('#uploadExcel').on('click', function () {
+            importExcel();
+        })
+
+        var GetApiDdl = function () {
+            preloader.load();
+            $.get('/ApiList', function (result) {
+                for (var i = 0; i < result.length; i++) {
+                    $("#ddlApi").append('<option value="' + result[i].id + '">' + result[i].name + '</option>');
+                }
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var SelectApiDdl = function () {
+            let ddlApiVal = $('#ddlApi').val();
+            if (ddlApiVal > 0) {
+                $('#divApiStatus').removeClass('hide');
+            }
+            else {
+                var check = $('#divApiStatus').hasClass('hide');
+                if (check == false) {
+                    $('#divApiStatus').addClass('hide');
+                }
+            }
+        }
+
+        var AddMAtm = function (id) {
+            console.log('in');
+            preloader.load();
+            $.post('/APIUser/AddmAtmRequest', { id: id }, function (result) {
+                //$('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.small);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                preloader.remove();
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var showDocumentsDetail = function (uId) {
+            preloader.load();
+            $.post('/Doc/_UserDocumentDetails', { uid: uId }, function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodelDoc';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+    </script>
+}

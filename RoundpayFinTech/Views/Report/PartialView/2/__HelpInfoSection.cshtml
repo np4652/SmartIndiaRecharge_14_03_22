@@ -1,0 +1,25 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Microsoft.AspNetCore.Http;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@model RoundpayFinTech.AppCode.Model.ProcModel.CompanyProfileDetail
+@{
+    LoginResponse _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    string WhatsAppMsgLink = "https://api.whatsapp.com/send?phone=+91" + Model.CustomerWhatsAppNos + "&text=Hi My Name "+_lr.Name+" from "+_lr.OutletName+" Registered number " + _lr.MobileNo;
+}
+
+<div class="card mb-4">
+    <img class="card-img-top" src="images/contactus.jpg" alt="Card image cap">
+    <div class="card-body text-center" style="height: 150px;">
+        <h5 class="card-title" style="margin-bottom:0;"><i class="fa fa-phone" style="font-size: 16px"></i> CALL US </h5>
+        <p class="card-text" style="font-size: 13px;">@Model.CustomerCareMobileNos</p>
+
+        <h5 class="card-title" style="margin-bottom:0;"><i class="fa fa-envelope" style="font-size: 16px"></i> MAIL US </h5>
+        <p class="card-text" style="font-size: 13px;">@Model.CustomerCareEmailIds</p>
+
+        <a href="@WhatsAppMsgLink" target="_blank" class="support-chat">
+            <img src="images/chat-button.png" class="img-fluid" style="width: 113px;">
+        </a>
+    </div>
+</div>

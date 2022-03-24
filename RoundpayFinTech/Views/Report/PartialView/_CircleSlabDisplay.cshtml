@@ -1,0 +1,69 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<SlabCommission>
+
+
+<div class="col-sm-12 table-responsive">
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+        <thead class="bg-tableth">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col" style="width:29%">Circle</th>
+                <th scope="col" style="width: 12%;">CommAmt</th>
+                <th scope="col">CommType</th>
+                <th scope="col">AmtType</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @if (Model.Any())
+            {
+                int i = 1;
+                @foreach (var item in Model)
+                {
+                    if (item.Comm != 0)
+                    {
+                        <tr>
+                            <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                            <td style="width:25em;" class="align-middle">
+
+
+                                @Html.DisplayFor(modelItem => item.Circle)
+
+                            </td>
+
+                            <td style="width:20em;">
+                                @Html.DisplayFor(modelItem => item.Comm)
+                            </td>
+                            <td>
+                                @if (item.CommType == 1)
+                                {
+                                    <span class="text-danger font-weight-bold">SUR</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success font-weight-bold">COM</span>
+                                }
+
+                            </td>
+                            <td>
+                                @if (item.AmtType == 1)
+                                {
+                                    <span class="text-dark font-weight-bold">FIX</span>
+                                }
+                                else
+                                {
+                                    <span class="text-dark font-weight-bold">PER</span>
+                                }
+                            </td>
+                        </tr>
+                        i++;
+                    }
+                }
+            }
+            else
+            {
+                <tr><td colspan="4">No Record Found</td></tr>
+            }
+        </tbody>
+    </table>
+</div>

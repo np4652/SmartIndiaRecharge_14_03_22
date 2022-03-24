@@ -1,0 +1,195 @@
+﻿@using Fintech.AppCode.StaticModel
+@model APIDetailModel
+@{
+    int i = 1;
+}
+@foreach (var item in Model.SwitchedPAPIs)
+{
+    if (Model.OpTypeID == OPTypes.DMR && ApplicationSetting.IsDMTWithPIPE && !ApplicationSetting.IsMultiOperatorWithPipe)
+    {
+        if (item.OID == ApplicationSetting.PrimaryDMTOperator)
+        {
+            <tr data-item-id="@item.OID">
+                <th class="align-middle">@i</th>
+                <td class="align-middle">@item.Operator<small class="form-text text-muted mt-0">@item.OpType</small></td>
+                <td class="align-middle">
+                    <div class="container">
+                        <div class="row mr-0">
+
+                            @foreach (var apiNameID in item.APINameIDs)
+                            {
+                                bool IsAPISwitched = item.APISwitcheds.Any(apisw => apisw.APIID == apiNameID.ID && apisw.IsActive == true);
+                                int? MaxCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.MaxCount;
+                                int? FailoverCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.FailoverCount;
+                                if (IsAPISwitched)
+                                {
+                                    <div class="col-md-3 text-center">
+                                        <label class="font-weight-bold text-danger text-monospace mb-0" for="txtAPI_@Html.Raw(i + "_" + apiNameID.ID)">
+                                            @apiNameID.Name
+                                        </label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="hidden" id="hidAPI_@Html.Raw(i + "_" + apiNameID.ID)" value="@MaxCount" />
+                                            <input type="text" id="txtAPI_@Html.Raw(i + "_" + apiNameID.ID)" class="form-control text-primary text-monospace text-center" value="@MaxCount" aria-describedby="APIcountHelp" placeholder="Max Count" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text align">
+                                                    <input type="checkbox" name="chbGroupAPI_@i" id="chbAPI_@Html.Raw(i + "_" + apiNameID.ID)" @Html.Raw(IsAPISwitched ? "checked='checked'" : "") aria-describedby="helpCount_@Html.Raw(i + "_" + apiNameID.ID)" />
+                                                </span>
+                                            </div>
+                                            @if (ApplicationSetting.FailoverCountID == FailoverApiOrder.FailoverCount)
+                                            {
+                                                <input type="text" id="txtFCAPI_@Html.Raw(i + "_" + apiNameID.ID)" class="form-control text-info text-monospace text-center" value="@FailoverCount" aria-describedby="APIcountHelp" placeholder="Failover Count" />
+                                            }
+                                        </div>
+                                        <small id="helpCount_@Html.Raw(i + "_" + apiNameID.ID)" class="form-text text-muted d-none"></small>
+                                    </div>
+                                }
+
+                            }
+                            @foreach (var apiNameID in item.APINameIDs)
+                            {
+                                bool IsAPISwitched = item.APISwitcheds.Any(apisw => apisw.APIID == apiNameID.ID && apisw.IsActive == true);
+                                int? MaxCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.MaxCount;
+                                int? FailoverCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.FailoverCount;
+                                if (!IsAPISwitched)
+                                {
+                                    <div class="col-md-3 text-center">
+                                        <label class="font-weight-bold text-monospace mb-0" for="txtAPI_@Html.Raw(i + "_" + apiNameID.ID)">
+                                            @apiNameID.Name
+                                        </label>
+                                        <div class="input-group input-group-sm">
+                                            <input type="hidden" id="hidAPI_@Html.Raw(i + "_" + apiNameID.ID)" value="@MaxCount" />
+                                            <input type="text" id="txtAPI_@Html.Raw(i + "_" + apiNameID.ID)" class="form-control text-primary text-monospace text-center" value="@MaxCount" aria-describedby="APIcountHelp" placeholder="Max Count" />
+                                            <div class="input-group-append">
+                                                <span class="input-group-text align">
+                                                    <input type="checkbox" name="chbGroupAPI_@i" id="chbAPI_@Html.Raw(i + "_" + apiNameID.ID)" @Html.Raw(IsAPISwitched ? "checked='checked'" : "") aria-describedby="helpCount_@Html.Raw(i + "_" + apiNameID.ID)" />
+                                                </span>
+                                            </div>
+                                            @if (ApplicationSetting.FailoverCountID == FailoverApiOrder.FailoverCount)
+                                            {
+                                                <input type="text" id="txtFCAPI_@Html.Raw(i + "_" + apiNameID.ID)" class="form-control text-info text-monospace text-center" value="@FailoverCount" aria-describedby="APIcountHelp" placeholder="Failover Count" />
+                                            }
+                                        </div>
+                                        <small id="helpCount_@Html.Raw(i + "_" + apiNameID.ID)" class="form-text text-muted d-none"></small>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </td>
+                <td style="vertical-align: middle;">
+                    <span class="input-group-text switch switch-sm bg-white align" data-toggle="tooltip" data-placement="top" title="Down Operator">
+                        <input type="checkbox" class="switch" id="chbIsDown_@i" tabindex="2" data-isacitve="@item.IsActive" @Html.Raw(item.IsActive ? "" : "checked='checked'") />
+                        <label for="chbIsDown_@i" class="font-weight-bold lbl">DOWN</label>
+                    </span>
+                    @{
+                        var list = new SelectList(item.BackupAPIs, "ID", "Name");
+                    }
+                    <select id="ddlBackupApi_@i" aria-describedby="helpBackupAPI_@i" tabindex="4" class="custom-select custom-select-md mt-1" asp-items="@list" asp-for="@item.BackupAPIID" data-toggle="tooltip" data-placement="top" title="BackAPI">
+                        <option value="0">::NO BACKUP API::</option>
+                    </select>
+                    <select id="ddlBackupApiRet_@i" aria-describedby="helpBackupAPI_@i" tabindex="4" class="custom-select custom-select-md mt-1" asp-items="@list" asp-for="@item.BackupAPIIDRetailor" data-toggle="tooltip" data-placement="top" title="BackAPIFor Retailor">
+                        <option value="0">::(Retailor)NO BACKUP API::</option>
+                    </select>
+                    <select id="ddlRealApi_@i" aria-describedby="helpRealAPI_@i" tabindex="4" class="custom-select custom-select-md mt-1" asp-items="@list" asp-for="@item.RealAPIID" data-toggle="tooltip" data-placement="top" title="Real API">
+                        <option value="0">::NO REAl API::</option>
+                    </select>
+                    <small id="helpBackupAPI_@i" class="form-text text-muted d-none"></small>
+                </td>
+            </tr>
+            i = i + Model.SwitchedPAPIs.Count();
+        }
+
+    }
+    else
+    {
+        <tr data-item-id="@item.OID">
+            <th class="align-middle">@i</th>
+            <td class="align-middle">@item.Operator<small class="form-text text-muted mt-0">@item.OpType</small></td>
+            <td class="align-middle">
+                <div class="container">
+                    <div class="row mr-0">
+
+                        @foreach (var apiNameID in item.APINameIDs)
+                        {
+                            bool IsAPISwitched = item.APISwitcheds.Any(apisw => apisw.APIID == apiNameID.ID && apisw.IsActive == true);
+                            int? MaxCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.MaxCount;
+                            int? FailoverCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.FailoverCount;
+                            if (IsAPISwitched)
+                            {
+                                <div class="col-md-3 text-center">
+                                    <label class="font-weight-bold text-danger text-monospace mb-0" for="txtAPI_@Html.Raw(i+"_"+apiNameID.ID)">
+                                        @apiNameID.Name
+                                    </label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="hidden" id="hidAPI_@Html.Raw(i+"_"+apiNameID.ID)" value="@MaxCount" />
+                                        <input type="text" id="txtAPI_@Html.Raw(i+"_"+apiNameID.ID)" class="form-control text-primary text-monospace text-center" value="@MaxCount" aria-describedby="APIcountHelp" placeholder="Max Count" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text align">
+                                                <input type="checkbox" name="chbGroupAPI_@i" id="chbAPI_@Html.Raw(i+"_"+apiNameID.ID)" @Html.Raw(IsAPISwitched ? "checked='checked'" : "") aria-describedby="helpCount_@Html.Raw(i+"_"+apiNameID.ID)" />
+                                            </span>
+                                        </div>
+                                        @if (ApplicationSetting.FailoverCountID == FailoverApiOrder.FailoverCount)
+                                        {
+                                            <input type="text" id="txtFCAPI_@Html.Raw(i+"_"+apiNameID.ID)" class="form-control text-info text-monospace text-center" value="@FailoverCount" aria-describedby="APIcountHelp" placeholder="Failover Count" />
+                                        }
+                                    </div>
+                                    <small id="helpCount_@Html.Raw(i+"_"+apiNameID.ID)" class="form-text text-muted d-none"></small>
+                                </div>
+                            }
+
+                        }
+                        @foreach (var apiNameID in item.APINameIDs)
+                        {
+                            bool IsAPISwitched = item.APISwitcheds.Any(apisw => apisw.APIID == apiNameID.ID && apisw.IsActive == true);
+                            int? MaxCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.MaxCount;
+                            int? FailoverCount = item.APISwitcheds.Where(apisw => apisw.APIID == apiNameID.ID).FirstOrDefault()?.FailoverCount;
+                            if (!IsAPISwitched)
+                            {
+                                <div class="col-md-3 text-center">
+                                    <label class="font-weight-bold text-monospace mb-0" for="txtAPI_@Html.Raw(i+"_"+apiNameID.ID)">
+                                        @apiNameID.Name
+                                    </label>
+                                    <div class="input-group input-group-sm">
+                                        <input type="hidden" id="hidAPI_@Html.Raw(i+"_"+apiNameID.ID)" value="@MaxCount" />
+                                        <input type="text" id="txtAPI_@Html.Raw(i+"_"+apiNameID.ID)" class="form-control text-primary text-monospace text-center" value="@MaxCount" aria-describedby="APIcountHelp" placeholder="Max Count" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text align">
+                                                <input type="checkbox" name="chbGroupAPI_@i" id="chbAPI_@Html.Raw(i+"_"+apiNameID.ID)" @Html.Raw(IsAPISwitched ? "checked='checked'" : "") aria-describedby="helpCount_@Html.Raw(i+"_"+apiNameID.ID)" />
+                                            </span>
+                                        </div>
+                                        @if (ApplicationSetting.FailoverCountID == FailoverApiOrder.FailoverCount)
+                                        {
+                                            <input type="text" id="txtFCAPI_@Html.Raw(i+"_"+apiNameID.ID)" class="form-control text-info text-monospace text-center" value="@FailoverCount" aria-describedby="APIcountHelp" placeholder="Failover Count" />
+                                        }
+                                    </div>
+                                    <small id="helpCount_@Html.Raw(i+"_"+apiNameID.ID)" class="form-text text-muted d-none"></small>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </td>
+            <td style="vertical-align: middle;">
+                <span class="input-group-text switch switch-sm bg-white align" data-toggle="tooltip" data-placement="top" title="Down Operator">
+                    <input type="checkbox" class="switch" id="chbIsDown_@i" tabindex="2" data-isacitve="@item.IsActive" @Html.Raw(item.IsActive ? "" : "checked='checked'") />
+                    <label for="chbIsDown_@i" class="font-weight-bold lbl">DOWN</label>
+                </span>
+                @{
+                    var list = new SelectList(item.BackupAPIs, "ID", "Name");
+                }
+                <select id="ddlBackupApi_@i" aria-describedby="helpBackupAPI_@i" tabindex="4" class="custom-select custom-select-md mt-1" asp-items="@list" asp-for="@item.BackupAPIID" data-toggle="tooltip" data-placement="top" title="BackAPI">
+                    <option value="0">::NO BACKUP API::</option>
+                </select>
+                <select id="ddlBackupApiRet_@i" aria-describedby="helpBackupAPI_@i" tabindex="4" class="custom-select custom-select-md mt-1" asp-items="@list" asp-for="@item.BackupAPIIDRetailor" data-toggle="tooltip" data-placement="top" title="BackAPIFor Retailor">
+                    <option value="0">::(Retailor)NO BACKUP API::</option>
+                </select>
+                <select id="ddlRealApi_@i" aria-describedby="helpRealAPI_@i" tabindex="4" class="custom-select custom-select-md mt-1" asp-items="@list" asp-for="@item.RealAPIID" data-toggle="tooltip" data-placement="top" title="Real API">
+                    <option value="0">::NO REAl API::</option>
+                </select>
+                <small id="helpBackupAPI_@i" class="form-text text-muted d-none"></small>
+            </td>
+        </tr>
+    }
+
+    i++;
+}

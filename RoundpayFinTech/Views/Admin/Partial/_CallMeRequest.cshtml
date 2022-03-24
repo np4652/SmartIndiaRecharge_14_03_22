@@ -1,0 +1,41 @@
+﻿@using RoundpayFinTech.AppCode.Model
+@model IEnumerable<UserCallMeModel>
+@{int i = 1;}
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <tr data-item-id="@item.ID">
+            <th class="align-middle">@i</th>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@(i++)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act" x-placement="top-start" style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, -2px, 0px);">
+                        <h6 class="dropdown-header">Change Status</h6>
+                        <a href="javascript:void(0)" class="dropdown-item" data-item-stID="1">Requested</a>
+                        <a href="javascript:void(0)" class="dropdown-item" data-item-stID="2">Follow-up</a>
+                        <a href="javascript:void(0)" class="dropdown-item" data-item-stID="3">Call Not Picked</a>
+                        <a href="javascript:void(0)" class="dropdown-item" data-item-stID="4">Resolved</a>
+                        <a href="javascript:void(0)" class="dropdown-item" data-item-stID="5">Not Resolved</a>
+                    </div>
+                </div>
+            </td>
+            <td>@item.Name</td>
+            <td>@item.MobileNo</td>
+            <td>@item.Status</td>
+            <td><textarea type="text" id="txtRemark_@i" class="form-control"></textarea></td>
+            <td>
+                <textarea class="form-control" id="txtCallHistory_@i" name="txtCallHistory_@i" readonly  type="text">@item.CallHistory</textarea> 
+            </td>
+            <td>@item.EntryDate</td>
+        </tr>
+    }
+}
+else
+{
+    <tr>
+        <td colspan="12">
+            No Record Found
+        </td>
+    </tr>
+}

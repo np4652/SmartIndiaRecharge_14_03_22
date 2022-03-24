@@ -1,0 +1,101 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.UTRExcelMaster>
+@if (Model.Any())
+{
+    <table class="table table-sm table-borderless table-striped">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Date</th>
+                <th>Files</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{ int count = 0;
+                foreach (var item in Model)
+                {
+                    count++;
+                    <tr>
+                        <td>@count</td>
+                        <td>@item.EntryDate</td>
+                        <td>
+                            <i class="text-success fa fa-file-excel fa-2x"></i> @item.FileName
+                        </td>
+                        <td>
+                            @*@if (item.IsJobDone)
+                            {*@
+                                <a href="#" onclick="UtrStatementReconcile(@item.FileId)" class="btn btn-sm btn-outline-success">Reconcile</a>
+                            @*}*@
+                            @*else
+                            {*@
+
+                        <a href="#"  onclick="UtrStatementRemove(@item.FileId)" class="btn btn-sm btn-outline-success"><i class="fas fa-trash"></i></a>
+                            @*}*@
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+
+<script>
+    function UtrStatementReconcile(Fid) {
+        debugger
+
+
+        preloader.load()
+        $.ajax({
+            type: 'POST',
+            url: `/UtrStatementReconcile/${Fid}`,
+
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+
+            },
+            complete: () => preloader.remove()
+        });
+        preloader.remove()
+    }
+
+
+     function UtrStatementRemove(Fid) {
+        debugger
+        preloader.load()
+        $.ajax({
+            type: 'POST',
+            url: `/UtrStatementDelete/${Fid}`,
+
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                mdlA.dispose();
+                loadPartial1()
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+
+            },
+            complete: () => preloader.remove()
+        });
+        preloader.remove()
+    }
+
+</script>

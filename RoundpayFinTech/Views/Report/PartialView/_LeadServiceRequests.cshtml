@@ -1,0 +1,102 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.LeadServiceRequest;
+@{ 
+    var list = Model.Leadservicelst;
+}
+
+
+
+   
+        
+        @if (Model.Leadservicelst != null && Model.Leadservicelst.Count > 0)
+        {
+
+
+            var i = 1;
+
+            @foreach (var item in Model.Leadservicelst)
+                {
+    <tr data-item-id="@item.ID">
+        <td class="align-middle">@i</td>
+        <td class="align-middle text-capitalize">@item.Outlet</td>
+        <td class="align-middle text-capitalize">@item.Name</td>
+        <td class="align-middle text-capitalize"><span class="fa fa-info-circle text-info a_modal" aria-hidden="true" title="See Detail" data-toggle="tooltip" id="LeadDetail_@item.ID" onclick="SeeLeadDetail(@item.ID)"></span>@item.Mobile</td>
+        <td class="align-middle text-capitalize">@item.OpType</td>
+        <td class="align-middle text-capitalize">@item.LeadSubType</td>
+        <td class="align-middle text-capitalize">@item.DateTime</td>
+        @if (Model.IsAdmin)
+        {
+            <td class="align-middle">
+                <textarea id="txtRemark_@item.ID" class="form-control align-middle remarkcls" onblur="LeadUpdateAction(@item.ID)"></textarea>
+            </td>
+        }
+
+        <td class="align-middle text-capitalize">@item.Remark</td>
+        @if (Model.IsAdmin)
+        {
+            <td class="align-middle">
+                <select class="form-control leadStatuscls" id="ddlLeadStatus_@item.ID">
+                    <option value="0">:: Select :: </option>
+                    @{
+                        if (item.LeadStatus == 1)
+                        {
+                            <option value="1" selected>New Lead</option>
+                            <option value="2">Junk</option>
+                            <option value="3">Follow Up</option>
+                            <option value="4">Matured</option>
+                        }
+                        else if (item.LeadStatus == 2)
+                        {
+                            <option value="1">New Lead</option>
+                            <option value="2" selected>Junk</option>
+                            <option value="3">Follow Up</option>
+                            <option value="4">Matured</option>
+                        }
+                        else if (item.LeadStatus == 3)
+                        {
+                            <option value="1">New Lead</option>
+                            <option value="2">Junk</option>
+                            <option value="3" selected>Follow Up</option>
+                            <option value="4">Matured</option>
+                        }
+                        else
+                        {
+                            <option value="1">New Lead</option>
+                            <option value="2">Junk</option>
+                            <option value="3">Follow Up</option>
+                            <option value="4" selected>Matured</option>
+                        }
+                    }
+
+                </select>
+
+            </td>
+        }
+        <td class="align-middle">@item.ModifiedUser</td>
+        <td class="align-middle">@item.UpdatedDateTime</td>
+        <td class="align-middle">@item.PinCode</td>
+        <td class="align-middle">@item.Address</td>
+        <td class="align-middle">@item.ComplaintRemark</td>
+
+    </tr>
+                    i++;
+                }
+
+   
+
+
+        }
+        else if(Model.Leadservicelst.Count ==0)
+        {
+                <tr>
+                    <td colspan="12">
+                        No Record Found
+                    </td>
+                </tr>
+         
+        }
+@*
+
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+    *@
+@{
+}

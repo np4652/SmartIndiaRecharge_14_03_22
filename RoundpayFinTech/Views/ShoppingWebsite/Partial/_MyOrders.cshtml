@@ -1,0 +1,114 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping;
+@model List<OrderReport>;
+
+<div class="order-details">
+    <h3>
+        <i aria-hidden="true" class="icon_bag_alt"></i>
+        My Orders
+    </h3>
+    <div class="order-details-inner">
+        <table class="table table-hover table-condensed" id="cart">
+            <thead>
+                <tr>
+                    <th style="width:50%">Product</th>
+                    <th class="text-center" style="width:22%">Price</th>
+                    <th class="text-center" style="width:22%">Status</th>
+                    <th style="width:10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+
+                @if (Model != null)
+                {
+                    @if (Model.Count > 0)
+                    {
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td data-th="Product">
+                                    <a style="cursor:pointer;color:black" href="GetProductDetails/@item.ProductDetailID">
+                                        <div class="row">
+
+                                            <div class="col-sm-2 hidden-xs">
+                                                <img alt="..." class="img-responsive" src="@item.ProductImage">
+                                            </div><div class="col-sm-10">
+                                                <p>@item.ProductName</p>
+                                            </div>
+
+                                        </div>
+                                    </a>
+                                </td>
+                                <td class="text-center" data-th="Subtotal">₹ @item.SellingPrice</td>
+
+
+                                <td class="text-center" data-th="Status">
+                                    <div style="width:150px">
+                                        @{
+                                            if (item.OrderStatusID == 7)
+                                            {
+                                                <label class="text-monospace text-danger">Closed</label>
+                                            }
+                                            else if (item.OrderStatusID == 4)
+                                            {
+                                                <label class="text-monospace text-danger">Cancelled</label>
+                                            }
+                                            else if (item.OrderStatusID == 3)
+                                            {
+                                                <label class="text-monospace text-danger">Disapproved</label>
+                                            }
+                                            else
+                                            {
+                                                <label class="text-monospace text-success"> @item.Status</label>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+
+
+                                <td class="actions" data-th="" id="OrderAction">
+                                    @if (item.OrderStatusID != 7 && item.OrderStatusID != 4 && item.OrderStatusID != 8 && item.OrderStatusID != 3)
+                                    {
+                                        <button class="btn btn-danger btn-sm" data-sid="@item.OrderStatusID" data-id="@item.OrderDetailID" title="Cancel Order">
+                                            Cancel
+                                        </button>
+                                    }
+
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td>No data found</td></tr>
+                    }
+
+                }
+
+            </tbody>
+        </table>
+        <div class="cart-update text-center mt-3">
+            <a class="btn-common" href="#">CONTINUE SHOPPING</a>
+        </div>
+    </div>
+</div>
+<script>
+    $("#OrderAction button").click(function () {
+        debugger;
+        let param = {
+            OrderDetailID: $(this).attr("data-id"),
+            StatusID: 4
+        };
+        $.post('/ChangePartialOrder', param)
+            .done(result => {
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                getOrders();
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove())
+    });
+</script>

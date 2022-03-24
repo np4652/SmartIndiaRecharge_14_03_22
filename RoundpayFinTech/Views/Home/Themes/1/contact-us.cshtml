@@ -1,0 +1,195 @@
+﻿@{
+    Layout = "_LayoutSiteAdmin";
+}
+
+<style>
+    .top-30{
+        top:10%;
+    }
+</style>
+<!--Page Title-->
+<section class="page-title">
+    <div class="auto-container">
+        <h1>Contact Us</h1>
+        <ul class="bread-crumb clearfix">
+            <li><a href="~/Home/Index">Home</a></li>
+            <li>Contact Us</li>
+        </ul>
+    </div>
+</section>
+<!--End Page Title-->
+<!-- Contact Page Section -->
+<section class="contact-page-section" style="background-image: url(../siteadmin/images/img/p6.png);">
+    <div class="auto-container">
+        <div class="row clearfix">
+            <div class="contact-column col-lg-4 col-md-12 col-sm-12 order-2">
+                <div class="inner-column">
+                    <div class="sec-title">
+                        <h2>Contact Info</h2>
+                    </div>
+                    <ul class="contact-info">
+                        <li>
+                            <span class="icon fa fa-map-marker-alt"></span>
+                            <p><strong>Address</strong></p>
+                            <p>37/88a,EME ENCLAVE PHOOLBAGH COLONY MADHU NAGAR AGRA</p>
+                        </li>
+
+                        <li>
+                            <span class="icon fa fa-phone-volume"></span>
+                            <p><strong>Call Us</strong></p>
+                            <p>+91-8619429646</p>
+                        </li>
+
+                        <li>
+                            <span class="icon fa fa-envelope"></span>
+                            <p><strong>Mail Us</strong></p>
+                            <p><a href="">jitu.imr2@gmail.com</a></p>
+                        </li>
+
+
+                    </ul>
+
+                    <ul class="social-icon-two social-icon-colored">
+                        <li><a href="#"><i class="fab fa-facebook"></i></a></li>
+                        <li><a href="#"><i class="fab fa-twitter"></i></a></li>
+                        <li><a href="#"><i class="fab fa-google-plus"></i></a></li>
+                        <li><a href="#"><i class="fab fa-dribbble"></i></a></li>
+                        <li><a href="#"><i class="fab fa-pinterest"></i></a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Form Column -->
+            <div class="form-column col-lg-8 col-md-12 col-sm-12">
+                <div class="inner-column">
+                    <div class="contact-form">
+                        <div class="sec-title">
+                            <h2>Get in Touch</h2>
+                        </div>
+
+                        <div class="row clearfix">
+                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                <input type="text" name="txtName" id="txtName" placeholder="Name" required="">
+                            </div>
+
+                            <div class="col-lg-6 col-md-6 col-sm-12 form-group">
+                                <input type="text" name="txtMobileNo" id="txtMobileNo" placeholder="Phone" required="">
+                            </div>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                <input type="email" name="txtEmail" id="txtEmail" placeholder="Email" required="">
+                            </div>
+                            <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                <textarea name="txtmessage" id="txtmessage" placeholder="Message"></textarea>
+                                <small id="returnMsg"></small>
+                            </div>
+
+                            <div class="col-lg-12 col-md-12 col-sm-12 form-group">
+                                <button class="theme-btn btn-style-one " id="btnSubmitDetail" type="button">
+                                    Submit Now
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!--End Contact Page Section -->
+<!-- Map Section -->
+<section class="map-section">
+    <div class="auto-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3550.3998002484996!2d78.0039022145257!3d27.143708456643008!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x397476ba2f8abb23%3A0xd2214ccb5b8e2b8!2sEME%20Enclave%2C%20Conservancy%20Rd%2C%20Narottam%20Kunj%2C%20Agra%2C%20Uttar%20Pradesh%20282001!5e0!3m2!1sen!2sin!4v1573647363406!5m2!1sen!2sin" width="100%" height="450" frameborder="0" style="border:0;" allowfullscreen=""></iframe>
+    </div>
+</section>
+<!-- End Map Section -->
+
+
+@section scripts{
+    <script src="~/js/validator.js" asp-append-version="true"></script>
+    <script src="~/js/Tools.js"></script>
+   
+    <script>
+      
+        $(document).ready(function () {
+            an.autoClose = 65;
+            $('#btnSubmitDetail').click(function () {
+                _SendMail();
+            });
+        });
+        function _SendMail() {
+            $('#btnSubmitDetail').attr('disabled', 'disabled').text('Sending...');
+            //var $v = $validator;
+            var obj = {
+                Name : $('#txtName'),
+                Email : $('#txtEmail'),
+                MobileNo : $('#txtMobileNo'),
+                Message : $('#txtmessage')
+            }
+            if (obj.Name.val() == '') {
+                $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                obj.Name.attr('placeholder','Name is Required')
+                obj.Name.focus();
+                return false
+            }
+              if (obj.MobileNo.val() == '') {
+                $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                obj.MobileNo.attr('placeholder','MobileNo is Required')
+                obj.MobileNo.focus();
+                return false
+            }
+            if (obj.Email.val() == '') {
+                $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                obj.Email.attr('placeholder','Email is Required')
+                obj.Email.focus();
+                return false
+            }
+         
+            var GetIntouch = {
+                Name: obj.Name.val(),
+                MobileNo: obj.MobileNo.val(),
+                EmailID: obj.Email.val(),
+                Message: obj.Message.val(),
+                RequestPage: 'ContactPage'
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/GetinTouch',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(GetIntouch),
+                success: function (result) {
+                    $('#returnMsg').text(result.msg).addClass(result.statuscode == 1 ? 'text-success' : 'text-danger');
+                    $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                    obj.Name.val('');
+                    obj.Email.val('');
+                    obj.Message.val('');
+                    obj.MobileNo.val('');
+                }, statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'server error';
+                        an.alert(-1);
+                        an.show();
+                        $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(-1);
+                        an.show();
+                        $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                    }
+                },
+                error: function (xhr, result) {
+                    Alerts(result, AlertStatus.RED);
+                    $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                },
+                complete: function () {
+                    $('#btnSubmitDetail').removeAttr('disabled').text('Submit Now');
+                }
+            });
+        };
+    </script>
+}

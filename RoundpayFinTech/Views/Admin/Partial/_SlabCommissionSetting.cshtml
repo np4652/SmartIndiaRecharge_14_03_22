@@ -1,0 +1,67 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.SlabCommissionSettingRes>
+@{
+
+}
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped fixedHeader">
+        <thead>
+            <tr>
+                <th><div class="form-inline"><span class="pr-2 pt-1"><input type="checkbox" id="chkSelectAll" /></span> #</div></th>
+                <th>Slab Name</th>
+                <th>Details</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int counter = 1;
+                foreach (var item in Model)
+                {
+                    <tr data-item-id="@item.ID" data-Slab-Id="@item.SlabID" data-Operator-Id="@item.OID">
+                        <td style="width:8%"><div class="form-inline"><span class="pr-2 pt-1"><input type="checkbox" class="chkSelect" /></span> @counter</div></td>
+                        <td>@item.SlabName</td>
+                        <td>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        Genral
+                                        <input type="text" value="@item.Commission" class="text-right txtComm" placeholder="0.0" style="width:7.5em" disabled />
+                                        <div class="btn-group btn-group-sm btn-toggle btnComType">
+                                            <button class="btn @Html.Raw(item.CommissionType == 0 ? "btn-dark active" : "btn-outline-dark") border-radius-0" disabled>C</button>
+                                            <button class="btn @Html.Raw(item.CommissionType == 1 ? "btn-dark active" : "btn-outline-dark") border-radius-0" disabled>S</button>
+                                        </div>
+                                        <div class="btn-group btn-group-sm btn-toggle btnAmtType">
+                                            <button class="btn @Html.Raw(item.AmountType == 0 ? "btn-dark active" : "btn-outline-dark") border-radius-0" disabled>P</button>
+                                            <button class="btn @Html.Raw(item.AmountType == 1 ? "btn-dark active" : "btn-outline-dark") border-radius-0" disabled>F</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-2">
+                                        <span class="d-block">Real</span>
+                                        <input type="text" value="@item.RComm" class="text-right txtRComm" placeholder="0.0" style="width:7.5em" disabled />
+                                        <div class="btn-group btn-group-sm btn-toggle btnRComType">
+                                            <button class="btn @Html.Raw(item.RCommType == 0 ? "btn-dark active" : "btn-outline-dark") border-radius-0" disabled>C</button>
+                                            <button class="btn @Html.Raw(item.RCommType == 1 ? "btn-dark active" : "btn-outline-dark") border-radius-0" disabled>S</button>
+                                        </div>
+                                        <div class="btn-group btn-group-sm btn-toggle btnRAmtType">
+                                            <button class="btn @Html.Raw(item.RAmtType == 0 ? "btn-dark active" : "btn-outline-dark")  border-radius-0" disabled>P</button>
+                                            <button class="btn @Html.Raw(item.RAmtType == 1 ? "btn-dark active" : "btn-outline-dark")  border-radius-0" disabled>F</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <h1>No Data Found</h1>
+}
+<script>
+    $('table:last').fixTableHeader();
+    $('#chkSelectAll').click(e => $('.chkSelect').prop('checked', $(e.currentTarget).is(':checked')));
+</script>

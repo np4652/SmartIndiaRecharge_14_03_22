@@ -1,0 +1,13 @@
+﻿@model RoundpayFinTech.AppCode.Model.ResponseStatus
+<html>
+
+<head></head>
+<body>
+    <form action="@Model.CommonStr" method="post" name="redirectForm">
+        <input type="hidden" name="@Model.CommonStr3" value="@Model.CommonStr2" />
+    </form>
+    <script type="text/javascript">
+        document.redirectForm.submit();
+    </script>
+</body>
+</html>

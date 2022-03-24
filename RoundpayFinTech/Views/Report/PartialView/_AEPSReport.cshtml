@@ -1,0 +1,148 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RechargeReportModel;
+@{
+    var counter = 1;
+    var mdl = Model.Report;
+    decimal TotalRequestedAmount = 0;
+    decimal TotalAmount = 0;
+    decimal TotalCommission = 0;
+    decimal TotalBalance = 0;
+    var colSpan = (Model.IsAPIUser || Model.IsAdmin) ?10: 7;
+}
+
+@if (mdl.Any())
+{
+    foreach (var item in mdl)
+    {
+        if (!Model.IsAdmin && item._Type == RechargeRespType.REQUESTSENT)
+        {
+            item.Type_ = RechargeRespType._PENDING;
+        }
+        <tr data-item-id="@item.TID" data-transid="@item.TransactionID" data-apicode="@item.APICode">
+            <td>@counter</td>
+                <td>
+                    <div class="btn-group dropup">
+                        <a href="#" id="act_@counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="act">
+                            <h6 class="dropdown-header">Action Menu</h6>
+                            @if (Model.IsAdmin)
+                            {
+                                @if ((item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT || item._Type == RechargeRespType.FAILED))
+                                {
+                                    if (Model.CanSuccess)
+                                    {
+                                        <a href="#" class="dropdown-item text-success" id="succcess_@counter"><i class="far fa-check-circle"></i> Success</a>
+                                    }
+                                    if (Model.CanFail && (item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT))
+                                    {
+                                        <a href="#" class="dropdown-item text-danger" id="fail_@counter"><i class="far fa-times-circle"></i> Fail</a>
+                                    }
+                                    <a href="#" class="dropdown-item text-danger" id="stsCheck_@counter"><i class="fas fa-eye"></i> Status Check</a>
+                                }
+                                @if (Model.CanMarkDispute && (item._Type == RechargeRespType.SUCCESS))
+                                {
+                                    <a href="#" class="dropdown-item text-danger" id="fail_@counter"><i class="far fa-times-circle"></i> Fail</a>
+                                    <a href="#" class="dropdown-item text-secondary TrReceipt" id="Transaction_@counter"><i class="fas fa-angle-double-right"></i>Transaction Receipt</a>
+                                }
+                            }
+                            else
+                            {
+                                <a href="#" class="dropdown-item text-secondary TrReceipt" id="Transaction_@counter"><i class="fas fa-angle-double-right"></i>Transaction Receipt</a>
+                            }
+                        </div>
+                    </div>
+                </td>
+            
+            <td class="w-100">
+                <input type="hidden" id="lbltid" value="@item.TransactionID" />
+                <input type="hidden" id="lblvid" value="@item.VendorID" />
+                <input type="hidden" id="lblapirqid" value="@item.ApiRequestID" />
+                <input type="hidden" id="lblmoddate" value="@item.ModifyDate" />
+                <input type="hidden" id="lbldisplay" value="@item.Display1-@item.Display2-@item.Display3-@item.Display4" />
+                <input type="hidden" id="lbloption" value="@item.Optional1-@item.Optional2-@item.Optional3-@item.Optional4" />
+                <input type="hidden" id="lblCustNo" value="@item.CustomerNo" />
+                <input type="hidden" id="hidCCName" value="@item.CCName" />
+                <input type="hidden" id="lblCCMobile" value="@item.CCMobile" />
+                <input type="hidden" id="hidTDate" value="@item.EntryDate" />
+                @if (Model.IsAdmin)
+                {
+                    <span class="fa fa-info-circle text-info a_modal" name="@item.TID" data-IsPES="@(item._ServiceID==ServiceType.PublicEService)" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"></span>@item.TID
+                }
+                else
+                {
+                    @item.TransactionID
+                }
+            </td>
+            @if (Model.IsAdmin || Model.IsAPIUser)
+            {
+                <td>@item.Outlet <small class="font-weight-bold text-monospace"> [@item.OutletNo]</small></td>
+                <td>@item.O9 <small class="font-weight-bold text-monospace"> [@item.O11]</small></td>
+                <td>@item.O10</td>
+            }
+            <td>@item.ExtraParam</td>
+            <td class="text-center" style="padding:1px;"><span class="badge badge-dark">@item.Account</span></td>
+            <td><span class="badge badge-light">@item.Operator</span></td>
+            <td>@item.EntryDate</td>
+            <td class="text-right">@item.RequestedAmount</td>
+            <td class="text-right">@item.Optional2</td>
+            <td class="text-right">@item.Amount</td>
+            <td class="text-right"><span class="btn btn-sm btn-outline-@Html.Raw(!item.CommType?"success ":"danger") aupComm " name="@item.TransactionID" id="@item.TID">@item.Commission</span></td>
+            <td class="text-right">@item.Balance</td>
+
+            @if (Model.IsAdmin)
+            {
+                <td><span class="badge badge-light">@item.API</span></td>
+            }
+            <td>
+                @if (item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT)
+                {
+                    <span class="badge badge-secondary">@item.Type_</span>
+                }
+
+                @if (item._Type == RechargeRespType.FAILED)
+                {
+                    <span class="badge badge-danger">@item.Type_</span>
+                }
+                @if (item._Type == RechargeRespType.SUCCESS)
+                {
+                    <span class="badge badge-success">@item.Type_</span>
+                }
+                @if (item._Type == RechargeRespType.REFUND)
+                {
+                    <span class="badge badge-info">@item.Type_</span>
+                }
+            </td>
+            <td>@item.RefundStatus_</td>
+            <td>@item.LiveID</td>
+            <td>@item.RequestMode</td>
+            @if (Model.IsAdmin || Model.IsAPIUser)
+            {
+                <td>@item.ApiRequestID</td>
+            }
+
+
+        </tr>
+        counter = counter + 1;
+        TotalRequestedAmount += item.RequestedAmount;
+        TotalAmount += item.Amount;
+        TotalCommission += item.Commission;
+        //TotalBalance += item.Balance;
+    }
+    <tr class="text-right">
+        <td colspan="@colSpan" class="text-dark">
+            <strong>Total</strong>
+        </td>
+        <td>@TotalRequestedAmount</td>
+        <td></td>
+        <td>@TotalAmount</td>
+        <td>@TotalCommission</td>
+        <td colspan="9"></td>
+    </tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="21"><center>No Record Found</center></td>
+    </tr>
+}
+

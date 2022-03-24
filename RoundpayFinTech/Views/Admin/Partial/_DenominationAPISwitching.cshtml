@@ -1,0 +1,38 @@
+﻿@*@model IEnumerable<RoundpayFinTech.AppCode.Model.PriorityApiSwitch>*@
+@model RoundpayFinTech.AppCode.Model.DenomAPISwitch
+@{int i = 1; }
+@if (Model.Operators != null)
+{
+    foreach (var item in Model.Operators)
+    {
+        <tr data-item-Oid="@item.OID">
+            <th class="align-middle">@i</th>
+            <td class="align-middle"><label class="OPName">@item.Name</label><small class="form-text text-muted mt-0">@item.OperatorType</small></td>
+            <td class="align-middle">
+                <div class="container">
+                    <div class="row mr-0">
+                        <div class="col-md text-uppercase box text-danger" data-item-ApiId="-1">
+                            <label class="font-weight-bold text-monospace mb-0 ">
+                                BLOCK
+                            </label>
+                        </div>
+                        @if (Model.APIList != null)
+                        {
+                            foreach (var apiNameID in Model.APIList)
+                            {
+                                <div class="col-md text-uppercase box box-info text-nowrap" data-item-ApiId="@apiNameID.ID">
+                                    <label class="font-weight-bold text-monospace mb-0">
+                                        @apiNameID.Name
+                                    </label>
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </td>
+        </tr>
+        i++;
+    }
+}
+
+

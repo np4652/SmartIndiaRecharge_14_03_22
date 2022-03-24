@@ -1,0 +1,85 @@
+﻿@using Fintech.AppCode.StaticModel;
+@*--@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>*@
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.BankMaster>
+@{int i = 1; }
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.ID">
+
+
+        <td style="width:15em;">@(i++)</td>
+        <td style="width:15em;">@item.BankName</td>
+        <td style="width:10em;">
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.IFSC, new { @id = "txtIFSC" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:9em", @aria_describedby = "helpIFSC_" + i })
+
+            </div>
+            <small id="helpIFSC_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+
+        </td>
+        <td style="width:10em;">
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.AccountLimit, new { @id = "txtAcLmt" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:6em", @aria_describedby = "helpAcLmt_" + i })
+
+            </div>
+            <small id="helpAcLmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+
+        </td>
+        <td style="width:10em;">
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.Code, new { @id = "txtCode" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:6em", @aria_describedby = "helpCode_" + i })
+            </div>
+            <small id="helpIFSC_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+
+        </td>
+        <td style="width:10em;">
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.IIN, new { @id = "txtIIN" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:6em", @aria_describedby = "helpIIN_" + i })
+
+            </div>
+            <small id="helpAcLmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="IsIMPS_@i" @Html.Raw(item.IsIMPS ? "checked='checked'" : "")>
+                <label for="IsIMPS_@i"></label>
+                @Html.HiddenFor(modelItem => item.IsIMPS, new { @id = "hidIIN" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </span>
+
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isNEFT_@i" @Html.Raw(item.IsNEFT ? "checked='checked'" : "")>
+                <label for="isNEFT_@i"></label>
+                @Html.HiddenFor(modelItem => item.IsNEFT, new { @id = "hidIIN" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </span>
+
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isacveri_@i" @Html.Raw(item.IsACVerification ? "checked='checked'" : "")>
+                <label for="isacveri_@i"></label>
+                @Html.HiddenFor(modelItem => item.IsACVerification, new { @id = "hidIIN" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </span>
+
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isaeps_@i" @Html.Raw(item.ISAEPSStatus ? "checked='checked'" : "")>
+                <label for="isaeps_@i"></label>
+                @Html.HiddenFor(modelItem => item.ISAEPSStatus, new { @id = "hidIIN" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </span>
+        </td>
+        <td>@item.BankType</td>
+        @if (1 == 1)
+        {
+            string path = "/image/BankLogo/" + @item.ID + ".png";
+            <td class="text-center"><img src="@path" style="width:45px;" alt="No Logo" asp-append-version="true" /></td>
+        }
+    </tr>
+}
+<script>
+    $('#tblBank').fixTableHeader();
+</script>
+

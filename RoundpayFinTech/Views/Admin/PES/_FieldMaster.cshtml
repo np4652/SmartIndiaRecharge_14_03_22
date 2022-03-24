@@ -1,0 +1,54 @@
+﻿<!--Field Master-->
+@using RoundpayFinTech.AppCode.StaticModel;
+@model List<RoundpayFinTech.AppCode.Model.FieldMasterModel>
+
+
+<div class="table-sm table-responsive">
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-bordered table-striped table-responsive-sm">
+            <thead class="bg-tableth thead-dark">
+                <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">Service Name</th>
+                    <th scope="col">Field Name</th>
+                    <th scope="col">Data Type</th>
+                    <th scope="col">Display Order</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.OrderBy(x => x._IND).ThenBy(p => p._Name))
+                {
+                    <tr>
+                        <td class="align-items-center text-center">
+                            <div class="btn-group dropup">
+                                <a href="#" id="act_@r._ID" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                <div class="dropdown-menu" aria-labelledby="act">
+
+                                    <a href="#" class="dropdown-item text-danger" onclick="OpenAddfieldModal('@r._ID')" id="Edit_@r._ID"><i class="far fa-times-circle"></i> Edit</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@r._ServiceName</td>
+                        <td>@r._Name</td>
+                        <td>
+                            @if (r._FieldType == PESFieldType.Input)
+                            {
+                                <span>Input</span>
+                            }
+                            else if (r._FieldType == PESFieldType.DropDown)
+                            {
+                                <span>Dropdown</span>
+                            }
+                            else if (r._FieldType == PESFieldType.TextArea)
+                            {
+                                <span>TextArea</span>
+                            }
+                        </td>
+                        <td>@r._IND</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

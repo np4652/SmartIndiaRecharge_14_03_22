@@ -1,0 +1,369 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.HelperClass
+
+@model RoundpayFinTech.AppCode.Model.ProcModel.TransactionDetail
+@{
+    int i = 1;
+    decimal _totalAmount = 0;
+}
+
+<style type="text/css">
+    @@media print {
+        html, body {
+            height: 99%;
+        }
+
+        .print:last-child {
+            page-break-after: avoid;
+            page-break-inside: avoid;
+            margin-bottom: 0
+        }
+    }
+
+    #invoice {
+        padding: 30px;
+    }
+
+    .qty {
+        text-align: right;
+    }
+
+    .invoice {
+        position: relative;
+        background-color: #FFF;
+        min-height: 680px;
+        padding: 15px;
+    }
+
+        .invoice header {
+            padding: 10px 0;
+            margin-bottom: 20px;
+            border-bottom: 3px solid #3989c6;
+        }
+
+        .invoice .company-details {
+            text-align: right;
+        }
+
+            .invoice .company-details .name {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+        .invoice .contacts {
+            margin-bottom: 20px;
+        }
+
+        .invoice .invoice-to {
+            text-align: left;
+        }
+
+            .invoice .invoice-to .to {
+                margin-top: 0;
+                margin-bottom: 0;
+            }
+
+        .invoice .invoice-details {
+            text-align: right;
+        }
+
+            .invoice .invoice-details .invoice-id {
+                margin-top: 0;
+                color: #3989c6;
+            }
+
+        .invoice main {
+            padding-bottom: 50px;
+        }
+
+            .invoice main .thanks {
+                margin-top: -100px;
+                font-size: 2em;
+                margin-bottom: 50px;
+            }
+
+            .invoice main .notices {
+                padding-left: 6px;
+                border-left: 6px solid #3989c6;
+            }
+
+                .invoice main .notices .notice {
+                    font-size: 1.2em;
+                }
+
+        .invoice table tfoot td {
+            background: 0 0;
+            border-bottom: none;
+            white-space: nowrap;
+            text-align: right;
+            padding: 10px 20px;
+            font-size: 1.2em;
+            border-top: 1px solid #aaa;
+        }
+
+        .invoice table tfoot tr:first-child td {
+            border-top: none;
+        }
+
+        .invoice table tfoot tr:last-child td {
+            color: #3989c6;
+            font-size: 1.4em;
+            border-top: 1px solid #3989c6;
+        }
+
+        .invoice table tfoot tr td:first-child {
+            border: none;
+        }
+
+        .invoice footer {
+            width: 100%;
+            text-align: center;
+            color: #fff;
+            border-top: 1px solid #aaa;
+            padding: 8px 0;
+        }
+
+    @@media print {
+        .invoice {
+            font-size: 11px !important;
+            overflow: hidden !important;
+        }
+
+            .invoice footer {
+                position: absolute;
+                bottom: 15px;
+                page-break-after: always;
+            }
+
+            .invoice > div:last-child {
+                page-break-before: always;
+            }
+    }
+
+    .head-sec {
+        margin-bottom: 0 !important;
+    }
+
+        .head-sec tbody tr td {
+            background: none;
+        }
+
+    .main-table td, th {
+        border: 1px solid #aaa;
+        padding: 6px 10px;
+    }
+
+    .date {
+        font-size: 13px;
+        font-weight: 500;
+    }
+
+    .invoice-details b {
+        font-weight: 500;
+    }
+
+    .bank-detail div, .invoice-details div {
+        font-size: 14px;
+    }
+
+    .cus_modal_close_btn {
+        margin-right: 11px;
+        position: absolute;
+        z-index: 999;
+        right: 10px;
+        top: 10px;
+        color: #222;
+        opacity: 1;
+        font-weight: 600;
+    }
+
+    .receipt_logo_top {
+        position: absolute;
+        right: 0;
+        left: 0;
+        top: 0;
+    }
+
+    .receipt_logo {
+        text-align: center;
+        display: block;
+    }
+</style>
+<div class="invoice overflow-auto" id="incoice-print">
+    <div style="min-width: 600px">
+        <header>
+            <table class="head-sec">
+                <tbody>
+                    <tr class="receipt_logo_top">
+                        <td colspan="2" class="receipt_logo">
+                            <a target="_blank" href="#">
+                                <img src="~/Image/Website/@Model.WID.ToString()/logo.png" data-holder-rendered="true" style="width: 150px;" />
+                            </a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <table style="margin-top: 15px; width:100%">
+                            <tr>
+                                <td style="width:50%">
+                                    <div>
+                                        <div class="text-gray-light" style="font-weight: bold;">@Model.CompanyName</div>
+                                        <div class="address">@Model.CompanyAddress</div>
+                                        <div class="number"><a href="#" style="color: #000;">@Model.CompanyMobile</a></div>
+                                        <div class="email"><a href="mailto:@Model.CompanyEmail">@Model.CompanyEmail</a></div>
+                                    </div>
+                                </td>
+                                <td style="width: 100%;float: right;">
+                                    <div class="col invoice-details bank-detail">
+                                        <h6 class="invoice-id" style="text-align: center; margin-left: 5.5em;">BENEFICARY DETAIL</h6>
+                                        <table style="float: right;">
+                                            <tr>
+                                                <td style="text-align: left;">Beneficary Name</td>
+                                                <td>:&nbsp;</td>
+                                                <td style="text-align: left;">@Model.BeneName</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left;">Sender Number</td>
+                                                <td>:&nbsp;</td>
+                                                <td style="text-align: left;">@Model.SenderNo</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left;">Bank</td>
+                                                <td>:&nbsp;</td>
+                                                <td style="text-align: left;">@Model.BankName</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left;">Account No.</td>
+                                                <td>:&nbsp;</td>
+                                                <td style="text-align: left;">@Model.Account (@Model.IFSC)</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="text-align: left;">Date Time</td>
+                                                <td>:</td>
+                                                <td style="text-align: left;">@Model.EntryDate.ToString("dd-MMM-yyyy HH:mm:ss")</td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </tr>
+                </tbody>
+            </table>
+        </header>
+        <table border="0" cellspacing="0" cellpadding="0" style="width: 100%;" class="main-table">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">S.NO</th>
+                    <th style="width: 45%;">DESCRIPTION</th>
+                    <th style="width: 15%;">BANK REF ID</th>
+                    <th style="width: 25%;">AMOUNT (Rs.)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (@Model.lists != null)
+                {
+                    @foreach (var trn in Model.lists)
+                    {
+                        if (trn.Statuscode == RechargeRespType.SUCCESS)
+                        {
+                            <tr>
+                                <td class="no">@i</td>
+                                <td class="text-left">
+                                    @Model.Channel Transaction @trn.Status. @trn.TransactionID
+                                </td>
+                                <td class="unit">@trn.LiveID</td>
+                                <td class="qty">@trn.RequestedAmount</td>
+                            </tr>
+                            _totalAmount = _totalAmount + trn.RequestedAmount;
+                            i = i + 1;
+                        }
+                    }
+                }
+            </tbody>
+            <tfoot style="border-bottom: 1px solid #aaa; border-left: 1px solid #aaa;">
+                <tr>
+                    <td colspan="2"></td>
+                    <td style="font-size: 14px; font-weight: 600;">SUBTOTAL</td>
+                    <td class="qty" style="padding-right:6px">@(Symbols.Rupee) @_totalAmount</td>
+                </tr>
+                @if (Model.convenientFee > 0)
+                {
+                    <tr>
+                        <td colspan="2"></td>
+                        <td style="font-size: 14px; font-weight: 600;">CONVENIENCE FEES</td>
+                        <td class="qty" style="padding-right:6px">@(Symbols.Rupee) @Model.convenientFee</td>
+                    </tr>
+                }
+                <tr>
+                    <td colspan="2"></td>
+                    <td style="font-size: 16px; font-weight: 600;">GRAND TOTAL</td>
+                    <td class="qty" style="padding-right:6px">@(Symbols.Rupee) @(_totalAmount + Model.convenientFee)</td>
+                </tr>
+                <tr>
+                    <td colspan="4" style="text-align: right; font-weight: bold; border: 1px solid #aaa;">
+                        <strong>
+                            @{
+                                decimal TTotal = _totalAmount + Model.convenientFee;
+                                string substr = "0";
+                                decimal AfterDecimal = (TTotal % 1);
+                                int len = AfterDecimal.ToString().Length;
+                                int ind = AfterDecimal.ToString().IndexOf('.');
+                                if (AfterDecimal > 0)
+                                {
+                                    substr = AfterDecimal.ToString().Substring(ind + 1, len - 2);
+                                }
+
+                                int Tot = (int)TTotal;
+                                string before = ConverterHelper.O.NumberToText(Tot) + " Rupees";
+                            }
+                            @Html.Raw(before)
+                            @if (AfterDecimal != 0)
+                            {
+                                @Html.Raw(" and " + ConverterHelper.O.NumberToText(Convert.ToInt32(substr)) + " Paise")
+                            }
+                        </strong>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <div class="thanks">Thank you!</div>
+        <div class="notices">
+            <table class="head-sec" style="width:100%;">
+                <tbody>
+                    <tr>
+                        <td style="width: 45%; padding-right: 0;">
+                            <div style="font-weight:bold;">Customer Services:</div>
+                            <div class="notice">
+                                <ul style="padding: 0; list-style: none; font-size: 12px;">
+                                    <li>For any query you may contact us.</li>
+                                    <li>Please do mention the transaction Id if you wish to contact us for any issues related to this order</li>
+                                    <li>Maximum charges limited to 1% only.</li>
+                                </ul>
+                            </div>
+                        </td>
+                        <td style="width: 10%; padding-right: 0;"></td>
+                        <td style="width: 45%; padding-right: 0;">
+                            <div class="col invoice-details">
+                                <h5 class="invoice-id" style="margin-bottom:0;">SHOP DETAIL</h5>
+                                <div class="text-gray-light" style="font-weight: bold;">@Model.Name</div>
+                                <div class="address">@Model.Address</div>
+                                <div class="number"><a href="@Model.MobileNo" style="color: #000;">@Model.MobileNo</a> | <a href="mailto:@Model.Email">@Model.Email</a></div>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+        </div>
+        <footer style="width:100%;text-align:center;
+                color:#fff;
+                border-top:1px solid #aaa;
+                padding:8px 0;">
+            Payment Reciept was created on a computer and is valid without the signature and seal.
+        </footer>
+    </div>
+    <div>
+        <input type="hidden" id="hddGroupID" />
+        <button id="btnPrint" style="float: right;display:none;"></button>
+    </div>
+</div>

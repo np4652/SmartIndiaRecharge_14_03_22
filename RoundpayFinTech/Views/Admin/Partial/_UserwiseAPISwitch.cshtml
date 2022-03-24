@@ -1,0 +1,48 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<APIOpCode>
+@{int i = 1; }
+
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.OID">
+        <th class="align-middle">@i</th>
+        <td class="align-middle">@item.Operator <small class="form-text text-muted mt-0">@item.OpType</small></td>
+        <td class="align-middle">
+            <div class="row mr-0">
+                <div class="col-md-2">
+                    <div class="custom-radio">
+                        <input class="form-check-input" type="radio" name="rdoGroupAPI_@item.OID" id="chbAPI_@Html.Raw(i+"_0")" value="0" @Html.Raw(item.APIID == 0 ? "checked=checked" : "")>
+                        <label class="form-check-label" for="chbAPI_@Html.Raw(i+"_0")">
+                            Unassign
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="custom-radio">
+                        <input class="form-check-input" type="radio" name="rdoGroupAPI_@item.OID" id="chbAPI_@Html.Raw(i+"_-1")" value="-1" @Html.Raw(item.APIID == -1 ? "checked=checked" : "")>
+                        <label class="form-check-label" for="chbAPI_@Html.Raw(i+"_-1")">
+                            Disbale
+                        </label>
+                    </div>
+                </div>
+                @{
+                    IEnumerable<APIDetail> rechargeAPIs = (IEnumerable<APIDetail>)item.APINameIDs;
+                    foreach (var api in rechargeAPIs)
+                    {
+                        <div class="col-md-2">
+                            <div class="custom-radio">
+                                <input class="form-check-input" type="radio" name="rdoGroupAPI_@item.OID" id="chbAPI_@Html.Raw(i+"_"+api.ID)" value="@api.ID" @Html.Raw(item.APIID == api.ID ? "checked=checked" : "")>
+                                <label class="form-check-label" for="chbAPI_@Html.Raw(i+"_"+api.ID)">
+                                    @api.Name
+                                </label>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+            <input type="hidden" id="hidID" value="@ViewBag.UserID" />
+        </td>
+    </tr>
+    i++;
+}
+

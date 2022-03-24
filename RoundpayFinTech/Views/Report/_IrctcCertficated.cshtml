@@ -1,0 +1,46 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.IrctcCertificateModel 
+<html>
+<body style='color: black; font-family:Verdana, Geneva, sans-serif; text-align: center;'>
+    <div style='border: 5px solid tan; background:url(@Model.BgImage) no-repeat ; background-size:cover; padding:10px; height:1400px;'>
+        <table width='90%' height='100%' border='0' align='center' cellpadding='0' cellspacing='0'>
+            <tr>
+                <td height='390' colspan='2' align='center' valign='bottom'>
+                    <p style='color: #9b5800; font-size: 38px; line-height:55px; font-weight:600'> AUTHORISED RAIL - ETICKETING CENTER OF</p>
+                </td>
+            </tr>
+            <tr>
+                <td height='130' colspan='2' align='center'><img src='@Model.LogoImage' style='width:350px;object-fit: contain;' /></td>
+            </tr>
+            <tr>
+                <td height='50'>
+                    <p style=' font-size:20px; line-height:32px;'>IRCTC certificate no.@Model.IrctcID</p>
+                </td>
+                <td align='right'>
+                    <p style=' font-size:20px; line-height:32px;'>Date :@Model.joiningDate</p>
+                </td>
+            </tr>
+            <tr>
+                <td height='50'>
+                    <p style=' font-size:20px; line-height:32px;'>Scheme Under: ISC</p>
+                </td>
+                <td>&nbsp;</td>
+            </tr>
+            <tr>
+                <td height='200' colspan='2'>
+                    <p align='justify' style=' font-size:20px; line-height:32px;'> This is to certified that <strong> M/s. @Model.OutletName</strong> owned by <strong>@Model.OwnerName</strong> Located at <strong>@Model.Address</strong>, <strong> Contact : @Model.mobileNo</strong>, <strong> Email :@Model.EmailId</strong> having <strong> PAN No. : @Model.Pan</strong> is a Retail service Provider of<strong> M/s. @Model.CompanyName
+                                                             </strong>(Principal service provider of IRCTC) and is hereby authorized to book Reserved Railway E - tickets as per Rail E-ticketing Terms and conditions using <strong> ICS id : @Model.IrctcID</strong> for the general public which will be valid for a period of one year from <strong>date : @Model.ExpDate</strong></p>
+                </td>
+            </tr>
+            <tr>
+                <td height='200' colspan='2' align='right'><img src='@Model.SignImage' style='height:150px;object-fit: contain;' /></td>
+            </tr>
+            <tr>
+                <td colspan='2'>
+                    <p align='justify' style='font-size:15px; line-height:25px;'> Statutory Warning: In case any of the agent is found VIOLATING IRCTC terms and condition both the <strong>@Model.IrctcID</strong> and <strong><a href='{URl}' target='_blank'>@Model.URl</a></strong> shall be subjected to Permanent deactivation and Punitive or any other action as per Railways Act 143 and relevant guidelines issued by IRCTC in this regards.</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,145 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ProcModel.MapOperatorReq
+
+<div class="row">
+    <div class="col-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> Map Operators</h3>
+        <input type="hidden" id="hdnOID" value="@Model.OID" />
+        <hr />
+        <div class="scroll-content">
+            <div class="table-responsive table-sm">
+                <table lass="table table-bordered table-striped table-responsive" style=" width: 100%;">
+                    <thead style="background-color: #dcdbc1 !important;">
+                        <tr>
+                            <th class="text-center">Operator</th>
+                            @if (OPTypes.Prepaid == Model.OpTypeID)
+                            {
+                                <th class="text-center">Recharge Plan</th>
+                            }
+                            @if (OPTypes.DTH == Model.OpTypeID)
+                            {
+                                <th class="text-center">DTH Plan</th>
+                            }
+                            @if (ApplicationSetting.IsRoffer && OPTypes.Prepaid == Model.OpTypeID)
+                            {
+                                <th class="text-center">R-Offer Operator</th>
+                            }
+                            @if (ApplicationSetting.IsDTHInfo && OPTypes.DTH == Model.OpTypeID)
+                            {
+                                <th class="text-center">DTH Customer Info Operator</th>
+                            }
+                            @if (ApplicationSetting.IsHeavyRefresh && OPTypes.DTH == Model.OpTypeID)
+                            {
+                                <th class="text-center">DTH HeavyRefresh Operator</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-center"> @Model.OpName </td>
+                            @if (OPTypes.Prepaid == Model.OpTypeID)
+                            {
+                                <td class="text-center">
+                                    @{
+                                        var ropt = Model.OperatorList.Where(x => x.OpType == OPTypes.RechargePlan).ToList();
+                                        var listAPI = new SelectList(ropt, "OID", "Name");
+                                        var rpID = Model.OperatorList.Where(x => x.OID == Model.OID).ToList();
+                                    }
+                                    <select class="custom-select custom-select-md mb3" id="ddlRPPlan" asp-items="@listAPI" asp-for="@rpID[0].PlanOID">
+                                        <option value="0">:: Select Recharge Operator :: </option>
+                                    </select>
+                                </td>
+                            }
+                            @if (OPTypes.DTH == Model.OpTypeID)
+                            {
+                                <td class="text-center">
+                                    @{
+                                        var dthpopt = Model.OperatorList.Where(x => x.OpType == OPTypes.DTHPlan).ToList();
+                                        var listDTHAPI = new SelectList(dthpopt, "OID", "Name");
+                                        var dtpID = Model.OperatorList.Where(x => x.OID == Model.OID).ToList();
+                                    }
+                                    <select class="custom-select custom-select-md mb3" id="ddlDTHPPlan" asp-items="@listDTHAPI" asp-for="@dtpID[0].PlanOID">
+                                        <option value="0">:: Select DTH Operator :: </option>
+                                    </select>
+                                </td>
+                            }
+                            @if (ApplicationSetting.IsRoffer && OPTypes.Prepaid == Model.OpTypeID)
+                            {
+                                <td class="text-center">
+                                    @{
+                                        var roopt = Model.OperatorList.Where(x => x.OpType == OPTypes.ROffer);
+                                        var roID = Model.OperatorList.Where(x => x.OID == Model.OID).ToList();
+                                        var listroopt = new SelectList(roopt, "OID", "Name");
+                                    }
+                                    <select class="custom-select custom-select-md mb3" id="ddlRoffer" asp-items="@listroopt" asp-for="@roID[0].RofferOID">
+                                        <option value="0">:: Select Roffer Operator :: </option>
+                                    </select>
+                                </td>
+                            }
+                            @if (ApplicationSetting.IsDTHInfo && OPTypes.DTH == Model.OpTypeID)
+                            {
+                                <td class="text-center">
+                                    @{
+                                        var dcust = Model.OperatorList.Where(x => x.OpType == OPTypes.DTHCustInfo);
+                                        var listdcust = new SelectList(dcust, "OID", "Name");
+                                        var infID = Model.OperatorList.Where(x => x.OID == Model.OID).ToList();
+                                    }
+                                    <select class="custom-select custom-select-md mb3" id="ddlCustInfo" asp-items="@listdcust" asp-for="@infID[0].DTHCustInfoOID">
+                                        <option value="0">:: Select Customer Info Operator :: </option>
+                                    </select>
+                                </td>
+                            }
+                            @if (ApplicationSetting.IsHeavyRefresh && OPTypes.DTH == Model.OpTypeID)
+                            {
+                                <td class="text-center">
+                                    @{
+                                        var dhref = Model.OperatorList.Where(x => x.OpType == OPTypes.DTHHeavyRefresh);
+                                        var listdhref = new SelectList(dhref, "OID", "Name");
+                                        var hrfID = Model.OperatorList.Where(x => x.OID == Model.OID).ToList();
+                                    }
+                                    <select class="custom-select custom-select-md mb3" id="ddlHref" asp-items="@listdhref" asp-for="@hrfID[0].DTHHREFOID">
+                                        <option value="0">:: Select HeavyRefresh Operator :: </option>
+                                    </select>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+                <button class="btn btn-danger mt-3 ml-3" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#ddlHref,#ddlCustInfo,#ddlRoffer,#ddlRPPlan,#ddlDTHPPlan').on('change', function() {
+        var id = $(this).val()
+        mapOperator(id);
+    });
+
+    var mapOperator = (mOID) => {
+        var toOID = $('#hdnOID').val();
+        var toMapOID = mOID;
+        if (toMapOID == 0) {
+            return false;
+        }
+        preloader.load();
+        $.post('/m-p-op', { tooid: toOID, tomapoid: toMapOID   })
+            .done(result => {
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                //if (result.statuscode == an.type.success) {
+                //    mdlA.dispose();
+                //}
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    }
+</script>

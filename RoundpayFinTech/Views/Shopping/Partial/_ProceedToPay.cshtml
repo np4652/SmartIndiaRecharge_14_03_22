@@ -1,0 +1,426 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProceedToPay
+@{
+    decimal totalMrp = 0;
+    decimal totalDis = 0;
+    decimal totalSP = 0;
+}
+<style type="text/css">
+    .check-heading {
+        background: #34376e;
+        color: #fff;
+        padding: 0 15px;
+        margin-top: 15px;
+    }
+
+        .check-heading h1 {
+            color: #fff;
+            font-size: 30px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            line-height: 50px;
+        }
+
+    .product-details {
+        width: 100%;
+    }
+
+    th:first-child, td:first-child {
+        width: 50px;
+    }
+
+    tr .col {
+        width: auto;
+    }
+
+    .field.qty .label {
+        background: transparent;
+    }
+
+    .cart.table-wrapper .col.qty .input-text {
+        width: 55px;
+        padding-right: 0px;
+    }
+
+    .product-details #shopping-cart-table {
+        box-shadow: 0px 1px 2px #000;
+    }
+
+    .checkout-list {
+        clear: both;
+    }
+
+    .check-list {
+        display: inline-block;
+        width: 100%;
+        background: #15a4c3;
+        padding: 0 15px;
+    }
+
+        .check-list h2 {
+            float: left;
+            font-size: 26px;
+            color: #fff;
+        }
+
+        .check-list .btn.btn-primary, .check-list .btn.btn-primary:active, .check-list .btn.btn-primary:active:focus {
+            float: right;
+            margin: 0;
+            background: transparent;
+            border: unset;
+            font-size: 22px;
+            box-shadow: none !important;
+        }
+
+        .check-list .btn i.fa {
+            padding-top: 7px;
+        }
+
+    .address-list {
+        border: 1px solid #ccc;
+        min-height: 200px;
+        box-shadow: 0px 1px 0px #000;
+    }
+
+        .address-list .input-group {
+            border-bottom: 1px solid #ccc;
+        }
+
+            .address-list .input-group p {
+                margin: 0;
+                padding: 10px;
+            }
+
+            .address-list .input-group input[type="radio"] {
+                margin: 0;
+            }
+
+    .modal.checkout {
+        z-index: 99999;
+    }
+
+    .checkout .modal-dialog {
+        max-width: 800px;
+    }
+
+    .checkout .check-bdr {
+        padding: 15px;
+    }
+
+    .checkout input[type=text], .checkout input[type=email], .checkout textarea, .checkout input[type=password], .checkout input[type=tel], select {
+        margin-bottom: 10px;
+    }
+
+    .checkout input[type=text], .checkout input[type=email], .checkout textarea, .checkout input[type=password], .checkout input[type=tel] {
+        padding: 10px;
+    }
+
+    .checkout .field-tooltip.toggle {
+        right: 6px;
+        top: 9px;
+    }
+
+    .checkout .field {
+        width: 100%;
+        margin-bottom: 0 !important;
+    }
+
+    .checkout .create-account .field-required {
+        display: flex;
+    }
+
+    .checkout .field .checkbox {
+        margin-top: 12px;
+    }
+
+    .checkout .control.text-right {
+        width: 74%;
+        float: right;
+    }
+
+    .checkout .create-account .field-required .label {
+        width: 25%;
+        float: left;
+    }
+
+    .checkout .control.text-right .input-text {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .check-list h2 {
+        margin: 0;
+        padding: 5px 0;
+    }
+
+    .pay-list {
+        border: 1px solid #ccc;
+        padding: 15px 10px;
+        box-shadow: 0px 1px 0px #000;
+    }
+
+        .pay-list h3 {
+            font-size: 14px;
+            margin: 0;
+            padding: 3px 0;
+            font-weight: 600;
+        }
+
+            .pay-list h3 span {
+                font-weight: 400;
+            }
+
+                .pay-list h3 span.red {
+                    text-decoration: line-through;
+                    color: #f00;
+                }
+
+    .checkout .form-shipping-address {
+        margin-top: 15px;
+    }
+
+    .checkout .phone-tool .input-text {
+        width: 70%;
+        background: #f4f4f4;
+        border-color: #e6e6e6;
+    }
+
+    .checkout .control .select {
+        width: 100%;
+        padding: 11px;
+        background: #f4f4f4;
+        border-color: #e6e6e6;
+    }
+</style>
+
+<main id="maincontent" class="page-main">
+    <div class="layout layout-2-col row">
+        <div class="product-details cart table-wrapper">
+            <table id="shopping-cart-table" class="cart items data table">
+                <caption role="heading" aria-level="2" class="table-caption">Shopping Cart Items</caption>
+                <thead>
+                    <tr>
+                        <th class="col item" scope="col"><span>Product name</span></th>
+                        <th class="col price" scope="col"><span>MRP</span></th>
+                        <th class="col price" scope="col"><span>Discount</span></th>
+                        <th class="col price" scope="col"><span>SP</span></th>
+                        <th class="col qty" scope="col"><span>Qty</span></th>
+                        <th class="col subtotal" scope="col"><span>Subtotal</span></th>
+                        @*<th class="col actions" scope="col"><span>Action</span></th>*@
+                    </tr>
+                </thead>
+                <tbody class="cart item">
+                    @if (Model.CartDetails != null && Model.CartDetails.Any())
+                    {
+                        @foreach (var item in Model.CartDetails)
+                        {
+                            totalMrp += item.MRP * item.Quantity;
+                            totalDis += item.Discount * item.Quantity;
+                            totalSP += item.SellingPrice * item.Quantity;
+
+
+                            <tr class="item-info" data-id="@item.ID" , data-pdid="@item.ProductDetailID">
+                                <td data-th="Item" class="col item">
+                                    <a href="/Shop/Product/@item.ProductDetailID" title="@item.ProductName (@item.AdditionalTitle)" tabindex="-1" class="product-item-photo">
+                                        <span class="product-image-container product-image-container-91020514662" style="width: 90px;">
+                                            <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+                                            </span>
+                                        </span>
+                                    </a>
+                                    <div class="product-item-details">
+                                        <strong class="product-item-name">
+                                            <a href="/Shop/Product/@item.ProductDetailID">@item.ProductName (@item.AdditionalTitle)</a>
+                                        </strong>
+                                    </div>
+                                </td>
+                                <td class="col price">
+                                    <span class="price-excluding-tax">
+                                        <span class="cart-price">
+                                            <span class="price">@item.MRP</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="col price">
+                                    <span class="price-excluding-tax">
+                                        <span class="cart-price">
+                                            <span class="price">@item.Discount</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="col price">
+                                    <span class="price-excluding-tax">
+                                        <span class="cart-price">
+                                            <span class="price">@item.SellingPrice</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="col price">
+                                    <span class="price-excluding-tax">
+                                        <span class="cart-price">
+                                            <span class="price">@item.Quantity</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <!--<td class="col qty" data-th="Qty">
+                                <div class="field qty">
+                                    <label class="label" for="cart-2624-qty">
+                                        <span>@item.Quantity</span>
+                                    </label>-->
+                                @*<div class="control qty">
+                                        <a class="qty-down-fixed-onclick-page-cart" href="#"><i class="ion ion-ios-minus-empty"></i></a>
+                                        <input id="qty_@item.ProductDetailID" name="qty_@item.ProductDetailID" value="@item.Quantity" type="number" size="4" title="Qty" class="input-text qty" maxlength="12" data-validate="{required:true,'validate-greater-than-zero':true}" data-role="qty_@item.ProductDetailID">
+                                        <a class="qty-up-fixed-onclick-page-cart" href="#"><i class="ion ion-ios-plus-empty"></i></a>
+                                    </div>*@
+                                <!--</div>
+                                </td>-->
+                                <td class="col subtotal" data-th="Subtotal">
+                                    <span class="price-excluding-tax" data-label="Excl. Tax">
+                                        <span class="cart-price">
+                                            <span class="price">@(item.SellingPrice * item.Quantity)</span>
+                                        </span>
+                                    </span>
+                                </td>
+                                <!--<td colspan="100" class="col action">
+                                    <div class="actions-toolbar">
+                                        <div id="gift-options-cart-item-2624" data-bind="scope:'giftOptionsCartItem-2624'" class="gift-options-cart-item">
+                                        </div>-->
+                                @*<a class="action action-edit" href="#" title="Edit item parameters">
+                                        <span>Edit</span>
+                                    </a>*@
+                                <!--<a href="#" title="Remove item" class="action action-delete" data-post="">
+                                            <span>Remove item </span>
+                                        </a>
+                                    </div>
+                                </td>-->
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="checkout-list row">
+        <div class="col-lg-9 col-sm-12 checkout-bg">
+            <div class="check-list">
+                <h2>Shipping Address</h2>
+                <button type="button" class="btn btn-primary" id="btnNewAddress"><i class="fa fa-pencil-square-o"></i> New </button>
+            </div>
+            <div class="address-list divAddress">
+                @if (Model.Addresses != null && Model.Addresses.Any())
+                {
+                    foreach (var item in Model.Addresses)
+                    {
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="radio" id="chkAddress_@item.ID" data-Address-Id="@item.ID" name="ShippingAddress" @Html.Raw(item.IsDefault ? "checked='checked'" : "")>
+                                </div>
+                            </div>
+                            <p>@Html.Raw(item.Address)</p>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+        <div class="col-lg-3 col-sm-12">
+            <div class="check-list">
+                <h2>Payment Detail</h2>
+            </div>
+            <div class="pay-list">
+                <h3>Total Items: <span>@Html.Raw(Model.Quantity)</span></h3>
+                <h3>Total MRP: <span class="red">@Html.Raw(Model.TotalMRP)</span></h3>
+                <h3>Total Discount: <span>@Html.Raw(Model.TotalDiscount)</span></h3>
+                <h3>Selling Price: <span>@Html.Raw(Model.TotalSellingPrice)</span></h3>
+                <h3>Shipping Charge: <span>@Html.Raw(Model.ShippingCharge)</span></h3>
+                <h3>Total Cost: <span>@Html.Raw(Model.TotalCost)</span></h3>
+                <h3>Deduction From Prepaid: <span>@Html.Raw(Model.PDeduction)</span></h3>
+                @if (Model.SDeduction > 0)
+                {
+                    <h3>Deduction From Prepaid: <span>@Html.Raw(Model.SDeduction)</span></h3>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-9 col-sm-12">
+            <div class="cart main actions">
+                <a class="action continue" href="/Shopping" title="Continue Shopping">
+                    <span>Continue Shopping</span>
+                </a>
+                <a class="action continue" href="/ECommCart" title="Update Cart">
+                    <span>Update Cart</span>
+                </a>
+                <button id="btnPlaceOrder" name="update_cart_action" title="Place Order" class="action update">
+                    <span>Place Order</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+
+
+<script>
+    $('#btnNewAddress').click(() => {
+        $.post('/AddShippingAddress').done(result => {
+            mdlAp.id = 'newAddress';
+            mdlAp.show('newAddress', 'modal-lg', 'New Address', result);
+            $('button.close').click(() => {
+                mdlAp.dispose('newAddress');
+            });
+        }).fail(xhr => {
+            anEC.title = 'Oops';
+            anEC.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            anEC.alert(anEC.type.failed);
+        });
+    });
+
+    $('#btnContinueShopping').click(() => mdlA.dispose());
+
+    $('.btnRemoveItem').unbind().click(e => {
+        $.post('/RemoveItemFromCart', { ID: $(e.currentTarget).closest('tr').data().itemId }).done(result => {
+            an.id = 'removeAlert';
+            an.title = result.statuscode == an.type.success ? 'Well Done' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == an.type.success)
+                $(e.currentTarget).closest('tr').remove();
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('#btnPlaceOrder').click(() => {
+        //preloader.load();
+        if ($('input[name="ShippingAddress"]:checked').length < 1) {
+            anEC.title = "Validation Error:";
+            anEC.content = "Please select shipping address";
+            anEC.alert(anEC.type.failed);
+            //preloader.remove();
+            return false
+        };
+        let param = {
+            AddressID: $('input[name="ShippingAddress"]:checked').data().addressId,
+            PDeduction: @Model.PDeduction,
+            SDeduction: @Model.SDeduction
+        };
+        $.post('/PlaceOrder', param)
+            .done(result => {
+                anEC.id = 'OrderAlert';
+                anEC.title = result.statuscode == anEC.type.success ? 'Congratulations' : 'Oops';
+                anEC.content = result.msg;
+                anEC.alert(result.statuscode);
+                if (result.statuscode == anEC.type.success) {
+                    mdlE.dispose();
+                    $('#CartCount').html(0);
+                }
+            }).fail(xhr => {
+                anEC.title = 'Oops';
+                anEC.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                anEC.alert(anEC.type.failed);
+            }).always(() => preloader.remove());
+    });
+</script>

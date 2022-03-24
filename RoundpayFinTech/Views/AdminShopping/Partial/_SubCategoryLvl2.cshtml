@@ -1,0 +1,104 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.subCategoryModelLvl2
+@{
+    var subCategories = Model.subCategoryList;
+    ViewData["Title"] = "Sub Category";
+}
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12 p-0">
+                <div class="card">
+                    <div class="card-header bg-dark text-white pt-1 pb-1">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <button class="btn btn-sm btn-outline-light pl-2 pr-2 font-bold btnNew" data-Item-id="0"><i class="fa fa-plus-square"></i> NEW</button>
+                                <input type="hidden" value="@Model.SubCategoryID" id="hfPId" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                @if (subCategories.Any())
+                                {
+                                    int Counter = 1;
+                                    <div class="table-responsive" style="min-height:unset!important">
+                                        <table class="table table-striped table-condensed">
+                                            <thead class="bg-tableth">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Action</th>
+                                                    <th style="width:60%">SubCategory</th>
+                                                    @*<th>Min Comm Type</th>*@
+                                                    <th>Min Com</th>
+                                                    <th>IsActive</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @foreach (var item in subCategories)
+                                                {
+                                                <tr data-Parent-Id="@item.SubCategoryID" data-Subcategory-Id="@item.SubCategoryIDLvl2">
+                                                    <td>@Counter</td>
+                                                    <td>
+                                                        <div class="btn-group dropup">
+                                                            <a href="#" id="act_@Counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                                            <div class="dropdown-menu" aria-labelledby="act_@Counter">
+                                                                <h6 class="dropdown-header">Action Menu</h6>
+                                                                <a href="#" class="dropdown-item btnEditSubCategory"><span class="fa fa-edit text-success"></span> Edit</a>
+                                                                <a href="#" class="dropdown-item btnFMap"><span class="fa fa-edit text-success"></span> Map Filter</a>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td>@item.SubCategoryNameLvl2</td>
+                                                    @if (item.CommissionType)
+                                                    {
+                                                        <td>@item.Commission <span>P</span></td>
+                                                    }
+                                                    else
+                                                    {
+                                                        <td>@item.Commission <span>F</span></td>
+                                                    }
+                                                    @*<td>@(item.CommissionType == true ? Html.Raw("Percent") : Html.Raw("Flat"))</td>
+                                                    <td>@item.Commission</td>*@
+                                                    <td><input type="checkbox" disabled @Html.Raw(item.IsActive ? "checked='checked'" : "") /></td>
+                                                </tr>
+                                                    Counter++;
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <span>No Data Found</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('.dropdown-toggle').dropdown();
+    $('.btnNew').unbind().click(() => AddSubCategoryLvl2($('#hfPId').val(), 0));
+    $('.btnEditSubCategory').unbind().click(e => AddSubCategoryLvl2($(e.currentTarget).closest('tr').data().parentId, $(e.currentTarget).closest('tr').data().subcategoryId));
+    $('.btnFMap').unbind().click(e => {
+        preloader.load();
+        $.post('/GetMappedFilter', { CID: $(e.currentTarget).closest('tr').data().subcategoryId })
+            .done(result => {
+                mdlA.id = "GetFilter";
+                mdlA.content = result;
+                mdlA.title = "Map Filter";
+                mdlA.modal(mdlA.size.xlarge);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    })
+</script>

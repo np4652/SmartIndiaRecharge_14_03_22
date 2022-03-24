@@ -1,0 +1,80 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@model bool
+<style>
+    .form-group {
+        margin-bottom: 5px !important
+    }
+</style>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Send Money</h3>
+    <div class="form-group">
+        @Html.Label("txtBank", "Bank", new { @class = "lbl" })
+        <span id="LblBank" class="form-control"></span>
+    </div>
+    <div class="form-group">
+        @Html.Label("txtAccount", "Account", new { @class = "lbl" })
+        <span id="LblAccount" class="form-control"></span>
+    </div>
+    <div class="form-group">
+        @Html.Label("txtBeni", "Name", new { @class = "lbl" })
+        <span id="LblBeni" class="form-control"></span>
+    </div>
+    <div class="form-group">
+        <input id="HddBeniID" type="hidden" />
+        <input id="HidBankID" type="hidden" />
+        <input id="HidBeneMobile" type="hidden" />
+        <input id="HddIfsc" type="hidden" />
+        @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+        @Html.TextBox("txtAmount", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+        <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="custom-radio">
+                    <input class="form-check-input rbtntype" type="radio" name="rdoType" id="rdoIMPS" checked="checked">
+                    <label class="form-check-label" for="rdoIMPS">
+                        IMPS
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="custom-radio">
+                    <input class="form-check-input rbtntype" type="radio" name="rdoType" id="rdoNEFT">
+                    <label class="form-check-label" for="rdoNEFT">
+                        NEFT
+
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="Div_confirmation">
+        <button class="btn btn-outline-dark" onclick="GetCharge(this)">Send</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+    <div id="Div_confirm" style="display:none">
+        <div class="form-group">
+            @Html.Label("LblChargeAmt", "Charges", new { @class = "lbl" })
+            <span id="txtChargeAmt" class="form-control"></span>
+        </div>
+        <div class="form-group">
+            @Html.Label("LblTotalAmt", "Total", new { @class = "lbl" })
+            <span id="txtTotalAmt" class="form-control"></span>
+        </div>
+        @if (Model || ApplicationSetting.IsPinRequired)
+        {
+            <div class="form-group">
+                @Html.Label("txtSecKey", "Secure Key", new { @class = "lbl" })
+                @Html.Password("txtSecKey", null, new { @class = "form-control", @placeholder = "Enter Security Key", @aria_describedby = "secureHelp", @tabindex = 1, @autocomplete = "new-password" })
+                <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+            </div>
+        }
+        <button class="btn btn-outline-dark" onclick="SendMoney(this)">Confirm</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+
+</div>

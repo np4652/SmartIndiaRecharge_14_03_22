@@ -1,0 +1,164 @@
+﻿@model RoundpayFinTech.Models.SattlementAccountModels
+
+
+<div class="conatiner" id="UTRsetting">
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                @*@Html.Label("ddlBank", "Select Bank", new { @class = "lbl" })*@
+
+                <select class="form-control ddlgetdata" id="_bank" name="bank" aria-describedby="BankHelp1" asp-items="@Model.Bankselect">
+                    <option value="0">:: Choose Bank ::</option>
+                </select>
+                <small id="BankHelp1" class=" form-control form-text text-muted d-none"></small>
+            </div>
+
+
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                @*<label> &nbsp; </label>*@
+                <select class="form-control ddlgetdata" name="Filter">
+                    <option value="0"> Please select Transaction Type </option>
+                    <option value="UPI"> UPI </option>
+                    <option value="NEFT">NEFT</option>
+                    <option value="RTGS">RTGS</option>
+                    <option value="IMPS">IMPS</option>
+                </select>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label> Identifier </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <input type="text" name="Identifier" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>StartWith</label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <input type="text" name="startWith" class="form-control" />
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>EndWith : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <input type="text" name="endWith" class="form-control" />
+            </div>
+        </div>
+    </div>
+
+
+    <div class="col-sm-4">
+        <div class="input-group">
+
+            <div class="input-group-append">
+                <button id="btnSave" class="btn btn-outline-dark" onclick="InsertFilter()" style="position: relative; left: 43.3em; bottom: 7px; background: #007bff; color: #fff; border: none; border-radius: 6px; }">Save</button>
+
+            </div>
+        </div>
+    </div>
+    <table class="table table-sm table-borderless table-striped" id="setttingtable">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Identifier</th>
+                <th>StartWith</th>
+                <th>EndWith</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+        </table>
+</div>
+
+
+<script>
+   
+    $(".ddlgetdata").change(function () {
+        $("[name='endWith']").val("")
+        $("[name='Identifier']").val("")
+        $("[name='startWith']").val("")
+        if ($("[name='bank']").val() !== "0" )
+        {
+            GetConfiginfo()
+        }
+    })
+
+    function GetConfiginfo() {
+
+        $.post(`/UtrFilterList/${$("[name='bank'] option:selected").val()}`, {}).done(function (result) {
+            $("#setttingtable tbody").empty();
+            $.each(result, function (key, val) {
+                if (val.transactionType == $("[name='Filter'] option:selected").val()) {
+                    $("[name='endWith']").val(val.endWith);
+                    $("[name='Identifier']").val(val.identifier);
+                    $("[name='startWith']").val(val.startWith);
+                }
+                var a = `<tr><td>${key + 1}</td><td>${val.identifier}</td><td>${val.startWith}</td><td>${val.endWith}</td></tr>`
+                $("#setttingtable tbody").append(a);
+            });
+
+
+        })
+
+    }
+    function InsertFilter()
+    {
+        let data1 = {
+            transactionType: $("[name='Filter'] option:selected").val(),
+            identifier: $("[name='Identifier']").val(),
+            startWith: $("[name='startWith']").val() ,
+            endWith: $("[name='endWith']").val(),
+            bankID: $("[name='bank'] option:selected").val() ,
+            bank: $("[name='bank'] option:selected").text()
+        }
+        $.ajax({
+            type: 'POST',
+            url: '/UpdateInsertUtrFilter',
+            data: JSON.stringify(data1),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                GetConfiginfo()
+
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    }
+
+    $('#_bank').select2({ dropdownParent: "#mymodal" });
+</script>

@@ -1,0 +1,163 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@model TargetModelLvl
+@{
+
+}
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5>Target</h5>
+    @if (Model.TargetType == TargetType.Servicewise)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+                <thead class="shadow">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Services</th>
+                        <th scope="col">
+                            Roles
+                            <input class="form-control-sm-sm col-md-4 float-right" id="txtSearchRSD" type="text" placeholder="Search" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        foreach (var item in Model.Services)
+                        {
+                            <tr data-item-Oid="@item.ServiceID" data-item-Sid="@Model.SlabID">
+                                <td style="width:1em;" scope="row" class="align-middle">@i</td>
+                                <td class="align-middle" style="width:15%">
+                                   @item.ServiceName
+                                </td>
+                                <td class="align-middle">
+                                    @foreach (var _role in Model.Roles)
+                                    {
+                                        <div class="box box-info role">
+                                            <label data-item-Rid="@_role.ID">@_role.Role</label>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                            i += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.TargetType == TargetType.OpTypewise)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+                <thead class="shadow">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Operator Type</th>
+                        <th scope="col">
+                            Roles
+                            <input class="form-control-sm-sm col-md-4 float-right" id="txtSearchRSD" type="text" placeholder="Search" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        foreach (var item in Model.OpTypes)
+                        {
+                            <tr data-item-Oid="@item.ID" data-item-Sid="@Model.SlabID">
+                                <td style="width:1em;" scope="row" class="align-middle">@i</td>
+                                <td class="align-middle" style="width:15%">
+                                    <span>@item.OpType</span>
+                                </td>
+                                <td class="align-middle">
+                                    @foreach (var _role in Model.Roles)
+                                    {
+                                        <div class="box box-info role">
+                                            <label data-item-Rid="@_role.ID">@_role.Role</label>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                            i += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.TargetType == TargetType.Operatorwise)
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+                <thead class="shadow">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Operator</th>
+                        <th scope="col">
+                            Roles
+                            <input class="form-control-sm-sm col-md-4 float-right" id="txtSearchRSD" type="text" placeholder="Search" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int i = 1;
+                        foreach (var item in Model.Operators)
+                        {
+                            <tr data-item-Oid="@item.OID" data-item-Sid="@Model.SlabID">
+                                <td style="width:1em;" scope="row" class="align-middle">@i</td>
+                                <td class="align-middle" style="width:15%">
+                                    @item.Name
+                                    <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@item.OperatorType</small>
+                                </td>
+                                <td class="align-middle">
+                                    @foreach (var _role in Model.Roles)
+                                    {
+                                        <div class="box box-info role">
+                                            <label data-item-Rid="@_role.ID">@_role.Role</label>
+                                        </div>
+                                    }
+                                </td>
+                            </tr>
+                            i += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+<script>
+    $('.role').on('click', function () {
+        var param = {
+            RoleID: $(this).children().data().itemRid,
+            RoleName: $(this).children().text(),
+            OID: $(this).closest('tr').data().itemOid,
+            SlabID: $(this).closest('tr').data().itemSid,
+            OpName: $(this).closest('tr').find('td:eq(1)').text(),
+        }
+        $.post('/Target-ByRole-Edit', { param: param})
+            .done(function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'EditTarget';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('#' + mdlA.id).css('background-color', 'rgba(0,0,0,0.5)');
+                $('button.close span').click(function () {
+                    $('#EditTarget').remove();
+                    mdlA.id = 'mymodal';
+                    $('button.close span').click(function () {
+                        mdlA.dispose();
+                    });
+                });
+            })
+    })
+</script>

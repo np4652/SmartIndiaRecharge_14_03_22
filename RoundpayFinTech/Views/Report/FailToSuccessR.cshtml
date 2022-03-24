@@ -1,0 +1,377 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RechargeReportModel
+@{
+    ViewData["Title"] = "Fail To Success Transaction";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Recharge Report
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>                            
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            @if (Model.IsAdmin)
+                            {
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label class="lbl" for="ddlAPI">Choose API</label>
+                                        @{
+                                            var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                                        }
+                                        <select id="ddlAPI" tabindex="7" class="form-control" asp-items="@listAPI">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlOperator">Choose Operator</label>
+                                    @{
+                                        var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" tabindex="7" class="form-control" asp-items="@listOperator">
+                                        <option value="0">:: Select Operator :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <option value="@Criteria.OutletMobile">Outlet Mobile</option>
+                                            <option value="@Criteria.TID">TID</option>
+                                            <option value="@Criteria.VendorID">Vendor ID</option>
+                                        }
+                                        <option value="@Criteria.AccountNo">Account No.</option>
+                                        <option value="@Criteria.TransactionID">Transaction ID</option>
+                                        @if (ViewBag.RoleID == Role.Admin || ViewBag.RoleID == Role.APIUser)
+                                        {
+                                            <option value="@Criteria.APIRequestID">APIRequest ID</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                            <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                        </div>
+                                    </div>
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                            </div>
+                        </div>                        
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">TransactionID</th>
+                                        @if (!Model.IsEndUser)
+                                        {
+                                            <th scope="col">Outlet</th>
+                                        }
+                                        <th scope="col">AccountNo</th>
+                                        <th scope="col">Operator</th>
+                                        <th scope="col">DateTime</th>
+                                        <th scope="col" class="text-right">OpeningBalance</th>
+                                        <th scope="col" class="text-right">Amount</th>
+                                        <th scope="col" class="text-right">Debit</th>
+                                        <th scope="col" class="text-right">Comm</th>
+                                        <th scope="col" class="text-right">ClosingBalance</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th scope="col">API</th>
+                                        }
+                                        <th scope="col">Status</th>
+                                        <th scope="col">RefundStatus</th>
+                                        <th scope="col">Live ID</th>
+                                        @if (Model.IsAdmin || Model.IsAPIUser)
+                                        {
+                                            <th scope="col">APIRequestID</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script src="~/lib/jquery/table2excel.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+            $("#btnSearch").click();
+        });
+        var search = function (sender) {
+            var RRFilter = {
+                TopRows: $('#ddlTop').val(),
+                Status: 0,
+                OID: $('#ddlOperator').val() != undefined ? $('#ddlOperator').val() : 0,
+                APIID: $('#ddlAPI').val() != undefined ? $('#ddlAPI').val() : 0,
+                FromDate: $('#dtFromDate').val(),
+                ToDate: $('#dtToDate').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtSearch').val(),
+                IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false
+            };
+            if (RRFilter.TopRows > 4000 && sender.id.indexOf('Export') < 0) {
+                an.title = 'Exporting to excel';
+                an.content = 'Because you have selected all record!';
+                an.alert(an.type.info);
+                an.autoClose = 10;
+            }
+            if (RRFilter.IsExport) {
+                window.location = "/_FailToSuccess?" + $.param(RRFilter);
+            } else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/_FailToSuccess',
+                    contentType: 'application/json',
+                    data: JSON.stringify(RRFilter),
+                    success: function (result) {
+                        resultReload(result);
+                        $('.__p tbody').html(result);
+                        $(".dropdown-toggle").dropdown();
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $(".a_modal").click(function () {
+                            var td = $(this).parent("td");
+                            var tid = $(this).attr("name");
+                            var transid = $(td).find("#lbltid").val();
+                            var vendorid = $(td).find("#lblvid").val();
+                            var apirequest = $(td).find("#lblapirqid").val();
+                            var moddate = $(td).find("#lblmoddate").val();
+                            var options = $(td).find("#lbloption").val().split('-');
+                            var option1 = options[0];
+                            var option2 = options[1];
+                            var option3 = options[2];
+                            var option4 = options[3];
+                            var custNo = $(td).find('lblCustNo').val();
+                            $.post('/Recharge-APiUrl', { TID: tid, T: transid }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'myalert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').unbind().click(function () {
+                                    mdlA.dispose();
+                                });
+                                $("#lbltranid").text(transid);
+                                $("#lblvendorid").text(vendorid);
+                                $("#lblapirequestid").text(apirequest);
+                                $("#lblmodifydate").text(moddate);
+                                $("#lbloption1").text(option1);
+                                $("#lbloption2").text(option2);
+                                $("#lbloption3").text(option3);
+                                $("#lbloption4").text(option4);
+                                $('#lblCustNoShow').text(custNo);
+                            }).fail(function (xhr) {
+                                if (xhr.status === 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status === 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        });
+                        $('.aupComm').click(function () {
+                            var t = $(this).attr('id');
+                            var tr = $(this).attr('name');
+                            $.post('/u-comm', { t: t, tr: tr }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'uplineAlert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').click(function () {
+                                    mdlA.dispose();
+                                });
+                            }).fail(function (xhr) {
+                                if (xhr.status === 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status === 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        });                        
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        resultReload(result);
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });               
+            }
+
+        };
+
+
+    </script>
+
+
+}
+

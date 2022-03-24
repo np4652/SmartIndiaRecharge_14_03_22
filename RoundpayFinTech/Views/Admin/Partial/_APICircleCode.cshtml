@@ -1,0 +1,65 @@
+﻿@model RoundpayFinTech.AppCode.Model.APICircleCodeModel
+@if (Model != null && Model.Circles.Any())
+{
+    int count = 1;
+    foreach (var item in Model.Circles)
+    {
+        <tr data-Circle-Id="@item.ID">
+            <td>@count</td>
+            <td>@item.Circle</td>
+            <td>
+                <div class="row">
+                    @{
+                        var APIWithValue = Model.APICircleCode.Where(x => x.CircleID == item.ID || x.CircleID == 0);
+                        if (Model.APIs.Any())
+                        {
+                            foreach (var api in Model.APIs)
+                            {
+                                var m = @APIWithValue.Where(x => x.CircleID == item.ID && x.APIID == api.ID).FirstOrDefault();
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        @if (m != null)
+                                        {
+                                            <input type="text" class="form-control txtCircleAPICode" value="@m.APIcirclecode" placeholder="APICode" data-Circle-Id="@item.ID" data-API-Id="@api.ID" />
+                                        }
+                                        else
+                                        {
+                                            <input type="text" class="form-control txtCircleAPICode" placeholder="APICode" data-Circle-Id="@item.ID" data-API-Id="@api.ID" />
+                                        }
+                                        <label>@api.Name</label>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                </div>
+            </td>
+        </tr>
+        count++;
+    }
+}
+
+<script>
+    $('.txtCircleAPICode').unbind().change(e => {
+        preloader.load();
+        let ele = $(e.currentTarget);
+        console.log(ele.data())
+        let param = {
+            CircleID: ele.data().circleId,
+            APIID: ele.data().apiId,
+            APIcirclecode: ele.val()
+        };
+        $.post('/SaveAPICircleCode', param)
+            .done(result => {
+                an.id = 'responseAlert';
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    })
+</script>

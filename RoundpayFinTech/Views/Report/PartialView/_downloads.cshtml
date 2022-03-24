@@ -1,0 +1,70 @@
+﻿@model RoundpayFinTech.AppCode.Model.IrctcCertificateModel;
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Download</h5><hr />
+    </div>
+</div>
+<div class="row form-group">
+    @*<div class="col-sm-6">
+            <a class="form-control" href="/downloadpdfFile?fileName=ESC"><i class="text-danger fa fa-file-pdf"></i> Essential Service Certificate</a>
+        </div>*@
+    <div class="col-sm-6">
+        <a class="form-control btn-download" data-document-src="downloadpdfFile1?fileName=MRC" href="#" id="btn_mCert"><i class="text-danger fa fa-file-pdf"></i> Merchant Certificate</a>
+    </div>
+    <div class="col-sm-6">
+        @if (Model.IrctcID != null)
+        {
+        <a class="form-control btn-download" data-document-src="downloadpdfFileIRCTC" href="#" id="btn_irctcCert"><i class="text-danger fa fa-file-pdf"></i>IRCTC Certificate</a>
+        }
+    </div>
+
+</div>
+
+<div class="row form-group d-none">
+    <div class="col-sm-6 d-none">
+        <a class="form-control" href="~/images/MHADated24.3.2020.pdf" download="MHA.pdf"><i class="text-danger fa fa-file-pdf"></i> Ministry Of Home Affairs</a>
+    </div>
+</div>
+<script>
+   
+
+    $(".btn-download").on("click", function () {
+        let url = $(this).data().documentSrc;
+        preloader.load();
+        $.post(url)
+            .done(result => {
+                if (result.statuscode === 1) {
+                    var sampleArr = Q.base64ToArrayBuffer(result.byteArray);
+                    var blob = new Blob([sampleArr], { type: "application/pdf" });
+                    var link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.target = 'blank';
+                    link.download = result.msg;
+                    link.click();
+                }
+                else {
+                    an.title = 'Oops';
+                    an.content = result.msg;
+                    an.alert(an.type.failed);
+                }               
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    });
+</script>

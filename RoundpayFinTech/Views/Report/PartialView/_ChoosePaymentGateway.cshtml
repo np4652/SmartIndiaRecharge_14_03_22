@@ -1,0 +1,48 @@
+﻿@using RoundpayFinTech.AppCode.Model.Paymentgateway
+@model PGDisplayModel
+<style>
+    .modal-body {
+        padding: 0;
+    }
+</style>
+
+<div class="card text-center">
+    @if (Model.OID > 0 && Model.Amount > 0 && Model.WalletID > 0)
+    {
+        <div class="card-body" id="dv_pgparent" data-oid="@Model.OID" data-amount="@Model.Amount" data-wallet="@Model.WalletID">
+            @if (Model.PGs.Any() && ApplicationSetting.IsAddMoneyEnable)
+            {
+                foreach (var item in Model.PGs)
+                {
+                    <div class="mode-box mb-2 btn btn-outline-secondary" data-upgid="@item.ID">
+                        <img src="/Image/PG/@(item.PGType+".png")" alt="@item.PG" class="rounded-0">
+                    </div>
+                }
+                <input type="hidden" value="@(Model.PGs.Count()==1?"true":"false")" id="hidOnly" />
+            }
+            else
+            {
+                <span class="text-danger">Currently this service is down! Contact to customer care</span>
+            }
+        </div>
+    }
+    else
+    {
+        <span class="text-danger">Invalid parameter selection</span>
+    }
+    <div class="card-footer text-muted">
+        <button style="float: unset; clear: both; padding: 0.25rem 0.5rem; font-size: 0.875rem; line-height: 1.5; border-radius: 0.2rem; color: #fff; background-color: #dc3545; border-color: #dc3545; opacity:1 " class="close" id="mdlCancel">Close</button>
+    </div>
+</div>
+<script>
+    var CallPaymentGateway = function (upgid, oid, amount, wallet) {
+        window.open("/redirect-pg?id=" + oid + "&a=" + amount + "&w=" + wallet + "&pg=" + upgid, "_blank", "toolbar=0,width=900,height=650,left=0,top=0");
+    }
+    $('#dv_pgparent .mode-box').click(function () {
+        var upgid = $(this).data().upgid;
+        var oid = $('#dv_pgparent').data().oid;
+        var amount = $('#dv_pgparent').data().amount;
+        var wallet = $('#dv_pgparent').data().wallet;
+        CallPaymentGateway(upgid, oid, amount, wallet);
+    });
+</script>

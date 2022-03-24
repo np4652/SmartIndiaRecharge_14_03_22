@@ -1,0 +1,119 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.AdvertisementRequest>
+
+@{var CurrentDate = DateTime.Now;
+
+}
+
+
+
+@{ var counter = 1; }
+
+@if (Model.Any())
+{
+    string activecalss = "";
+    foreach (var item in Model)
+    {
+        //try
+        //{
+        //    if (Convert.ToDateTime(item.StartDate) <= CurrentDate && CurrentDate <= Convert.ToDateTime(item.EndDate))
+        //    {
+        //        activecalss = "tdacitve";
+
+
+        //    }
+        //    else
+        //    {
+        //        activecalss = "";
+
+        //    }
+
+        //}
+        //catch { }
+
+
+
+
+        <tr class="@activecalss">
+            <td>@counter</td>
+            <td>@item.Name<br />[<span>@item.MobileNo</span>]</td>
+
+            <td>@item.PackageName</td>
+
+            @if (item.Status == 1 || item.Status == 3)
+            {
+                <td>N/A</td>
+            }
+
+            else
+            {
+                <td>
+                    (@item.StartDate) <br />
+                    to <br />
+                    (@item.EndDate)
+                </td>
+
+            }
+
+            @if (item.Status == 2)
+            {
+                <td><span class="badge badge-success">Success</span><br>[<span>@item.CurrentStatus</span>]</td>
+            }
+            else if (item.Status == 3)
+
+            {
+                <td><span class="badge badge-danger">Rejected</span></td>
+            }
+
+            else
+            {
+                <td><span class="badge badge-secondary">Pending</span></td>
+            }
+
+
+            <td>@item.ContentText</td>
+
+
+            @{ var image = @item.ContentImage + ".png";
+            }
+            <td><a href="/Image/Advertisement/@image" target="_blank"><img src="/Image/Advertisement/@image"></a>
+            @*<span><i class="fa fa-ul"><a href="@item.ReturnUrl" target="_blank" style="text-align: center; POSITION: RELATIVE; LEFT: 20PX;">@item.ReturnUrl</a></i></span>*@
+
+               <a href="@item.ReturnUrl" target="_blank"><i class="fa fa-external-link" aria-hidden="true"></i></a>
+            </td>
+            
+
+
+            @if (item.Status == 1)
+            {
+                <td>
+                    <button type="button" class="btn btn-sm btn-success" onclick="approved(@item.Id,@item.UserID,2)">
+                        <i class="fa fa-check"></i>
+                    </button>
+                    <button type="button" class="btn btn-sm btn-danger ml-2" onclick="approved(@item.Id,@item.UserID,3)" id="reject_cph"><i class="fa fa-times"></i></button>
+                </td>
+
+            }
+            else
+            {
+                <td>
+                </td>
+
+            }
+
+
+
+
+
+
+            }
+
+        </tr>
+
+        activecalss = "";
+
+
+    }
+}
+
+
+

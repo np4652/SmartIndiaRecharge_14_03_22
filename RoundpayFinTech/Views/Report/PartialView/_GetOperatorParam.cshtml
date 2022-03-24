@@ -1,0 +1,60 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@model IEnumerable<OperatorParam>
+@{
+    int i = 1;
+}
+
+<div class="card-header bg-gradientorange text-white">
+    <div class="row">
+        <div class="col-sm-12 line-height-34">
+            <i class="fas fa-link"></i> Bank Master Admin
+            <div class="float-right">
+                <button type="button" class="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        </div>    
+    </div>
+</div>
+<div class="card-body">
+    <div class="table-responsive vh-1">
+        <table class="table table-bordered table-striped" id="tblBank">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">Sr. No.</th>
+                    <th scope="col">Operator Name </th>
+                    <th scope="col">Param Name </th>
+                    <th scope="col">Data Type</th>
+                    <th scope="col">Reg Ex</th>
+                    <th scope="col">Min Lenght</th>
+                    <th scope="col">Max Length</th>
+                    <th scope="col">Drop Down </th>
+                    <th scope="col">Remark</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr data-item-id="@item.ID">
+
+                        <td style="width:5em;">@(i++)</td>
+                        <td style="width:15em;">@item.OperatorName</td>
+                        <td style="width:15em;">@item.ParamName</td>
+                        <td style="width:15em;">@item.DataType</td>
+                        <td style="width:15em;">@item.RegEx</td>
+                        <td style="width:10em;">@item.MinLength</td>
+                        <td style="width:10em;">@item.MaxLength</td>
+                        <td style="width:10em;">@item.DropDown</td>
+                        <td style="width:10em;">@item.Remark</td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+
+</script>

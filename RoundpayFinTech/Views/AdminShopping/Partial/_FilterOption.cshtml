@@ -1,0 +1,26 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.FilterOption>
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <div class="col-md mb-1">
+            <div class="input-group">
+                <div class="input-group-prepend options text-nowrap">
+                    <div class="input-group-text">
+                        <input type="checkbox" class="chkOption" @Html.Raw(item.IsActive?"checked=checked":"")/>
+                    </div>
+                    <label class="form-control" data-Option-Id="@item.ID" data-Filter-Id="@item.FilterID">@item.Option</label>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <div class="col-sm-12">
+        No Data Found
+    </div>
+}
+<script>
+    $('.options').unbind().click(e => AddFilterOption($(e.currentTarget).find('label.form-control').data().optionId));
+</script>

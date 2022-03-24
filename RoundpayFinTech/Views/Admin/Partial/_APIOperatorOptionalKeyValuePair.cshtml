@@ -1,0 +1,124 @@
+﻿@using Fintech.AppCode.StaticModel
+<!--API operator optional key value mapping modal-->
+@model RoundpayFinTech.AppCode.Model.ProcModel.ApiOperatorOptionalMappingModel;
+
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5>API Operator Optional Parameter</h5>
+    <hr />
+    @if (Model.StatusCode == ErrorCodes.One)
+    {
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6" id="opname"></div>
+                <div class="col-md-6" id="apiname"></div>
+            </div>
+        </div>
+        <hr />
+        <div class="container">
+            @Html.HiddenFor(x => x._ID)
+            @Html.HiddenFor(x => x._APIID)
+            @Html.HiddenFor(x => x._OID)
+            <div class="row">
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Key1, new { @class = "form-control text-success", placeholder = "Enter API First Key" })
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Value1, new { @class = "form-control text-danger", placeholder = "Enter API First Value" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Key2, new { @class = "form-control text-success", placeholder = "Enter API Second Key" })
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Value2, new { @class = "form-control text-danger", placeholder = "Enter API Second Value" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Key3, new { @class = "form-control text-success", placeholder = "Enter API Third Key" })
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Value3, new { @class = "form-control text-danger", placeholder = "Enter API Third Value" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Key4, new { @class = "form-control text-success", placeholder = "Enter API Fourth Key" })
+                </div>
+                <div class="col-md-6">
+                    @Html.TextBoxFor(x => x._Value4, new { @class = "form-control text-danger", placeholder = "Enter API Fourth Value" })
+                </div>
+            </div>
+            <div class="row mt-2">
+                <div class="col-md-6">
+                    <button class="btn btn-success btn-block" type="button" id="savebtn">Save</button>
+                </div>
+                <div class="col-md-6">
+                    <button class="btn btn-warning btn-block" id="mdlCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="h3 text-danger text-center">Invalid API Selection</p>
+    }
+
+</div>
+
+<script>
+
+
+
+    $("#savebtn").click(function () {
+
+        var model = { _ID: $("#zID").val(), _OID: $("#zOID").val(), _APIID: $("#zAPIID").val(), _Key1: $("#zKey1").val(), _Key2: $("#zKey2").val(), _Key3: $("#zKey3").val(), _Key4: $("#zKey4").val(), _Value1: $("#zValue1").val(), _Value2: $("#zValue2").val(), _Value3: $("#zValue3").val(), _Value4: $("#zValue4").val() };
+
+        $.ajax({
+            type: 'POST',
+            url: '/SaveAOPMapping',
+            data: JSON.stringify(model),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    mdlA.dispose();
+                }
+            },
+            statusCode: {
+                500: function () {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                },
+                0: function () {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops";
+                an.content = result;
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: function () {
+                preloader.remove();
+            }
+        });
+    })
+
+
+</script>

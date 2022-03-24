@@ -1,0 +1,148 @@
+﻿<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Request</li>
+            <li class="breadcrumb-item active">UTR Statement</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white pb-1 pt-1">
+                        <div class="row">
+                            <div class="col-sm-8 text-monospace">
+                                <i class="fas fa-link"></i> UTR Statement Insert
+                            </div>
+                            <div class="col-sm-4">
+
+
+                                <div class="btn-group float-right">
+                                    <button id="btnNew" onclick="InsertUtr()" class="btn btn-outline-light btn-sm font-bold text-monospace pl-3 pr-3"><i class="fa fa-plus"></i></button>
+                                    @if (ApplicationSetting.IsErrorCodeEditable)
+                                    {
+                                <button id="btnSetting" onclick="UtrSetting()" class="btn btn-outline-light btn-sm font-bold text-monospace pl-3 pr-3"><i class="fa fa-cogs"></i></button>
+                                    }
+                                    
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        @*<table class="table table-bordered table-hover  d-none">
+                            <thead>
+                                <tr>
+                                    <th>TransactionDate</th>
+                                    <th>description</th>
+                                    <th>UTR</th>
+                                    <th>cr/dr</th>
+                                    <th>transactionAmount</th>
+                                    <th>closingAmount</th>
+                                </tr>
+                            </thead>
+                        </table>*@
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <!-- Call Partial view here -->
+                                <UTRList></UTRList>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+    <script>
+        function InsertUtr() {
+            $.post('/UtrStatementInsert')
+                .done(function (result) {
+                    mdlA.title = "Bank Statement Upload"
+                    mdlA.content = result;
+                    mdlA.id = '1mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.modal(mdlA.size.xlarge);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+
+
+        }
+
+        function UtrSetting() {
+            debugger
+            $.post('/UtrStatementSetting')
+                .done(function (result) {
+                    mdlA.title = "Bank Statement Config.";
+                    mdlA.content = result;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.modal(mdlA.size.large);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+
+
+        }
+
+
+        var loadPartial1 = () => {
+            $.post("/_UTRStatementList").done(result => $('UTRList').html(result)).fail(() => {
+                an.title = 'Oops';
+                an.content = xhr.status == 500 ? 'Server error' : 'Internet Connection was broken';
+                an.alert(an.type.failed);
+            }).always(() => { mdlA.dispose()});
+        };
+
+        $(document).ready(function () { loadPartial1() });
+    </script>
+}

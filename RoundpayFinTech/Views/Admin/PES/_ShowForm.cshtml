@@ -1,0 +1,128 @@
+﻿<!--Show form-->
+@using RoundpayFinTech.AppCode.StaticModel;
+@model List<RoundpayFinTech.AppCode.Model.FieldMasterModel>
+
+<form action="/" method="post">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="container-fluid border border-info pb-5 rounded">
+                @if (Model != null)
+                {
+                    foreach (var r in Model.OrderBy(p => p._IND))
+                    {
+                        if (r._FieldType == PESFieldType.Input)
+                        {
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-5">
+                                    @{
+                                        if (r._InputType == FieldInputType.file)
+                                        {
+                                            <div class="custom-file">
+                                                <label for="@r._ID" class="custom-file-label">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                                <input type="@r._InputType" accept="image/*,text/plain, application/pdf" class="custom-file-input" id="@("file"+r._ID)" @(r._IsRequired ? "required=required" : "") />
+                                            </div>
+                                            <span class="badge badge-warning cursor-pointer" onclick="readURL('@("file"+r._ID)');">Show On Preview</span>
+                                        }
+                                        else if (r._InputType == FieldInputType.number)
+                                        {
+                                            <label for="@r._ID">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                            <input type="@r._InputType" id="@r._ID" class="form-control" placeholder="@r._Placeholder" @(r._IsRequired ? "required=required" : "") min="@r._MinLength" max="@r._MaxLength" @(r._IsReadOnly ? "readonly='readonly'" : "") @(r._IsDisabled ? "disabled='disabled'" : "") />
+                                        }
+                                        else if (r._InputType == FieldInputType.text)
+                                        {
+                                            <label for="@r._ID">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                            <input type="@r._InputType" id="@r._ID" class="form-control" placeholder="@r._Placeholder" @(r._IsRequired ? "required=required" : "") maxlength="@r._MaxLength" @(r._IsReadOnly ? "readonly='readonly'" : "") @(r._IsDisabled ? "disabled='disabled'" : "") />
+                                        }
+                                        else
+                                        {
+                                            <label for="@r._ID">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                            <input type="@r._InputType" id="@r._ID" class="form-control" placeholder="@r._Placeholder" @(r._IsRequired ? "required=required" : "") maxlength="@r._MaxLength" @(r._IsReadOnly ? "readonly='readonly'" : "") @(r._IsDisabled ? "disabled='disabled'" : "") />
+                                        }
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else if (r._FieldType == PESFieldType.TextArea)
+                        {
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="@r._ID">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                    <textarea rows="3" id="@r._ID" placeholder="@r._Placeholder" class="form-control"></textarea>
+                                </div>
+                            </div>
+                        }
+                        else if (r._VocabID > 0 && r._FieldType == PESFieldType.DropDown)
+                        {
+                            var lst = new SelectList(r._VocabOptions, "_ID", "_Name");
+                            <div class="row mt-3">
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="@r._ID">@r._Label</label>
+
+                                    <select asp-items="@lst" id="@r._ID" class="form-control">
+                                        <option value="0">::Select::</option>
+                                    </select>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
+                <div class="row mt-4">
+                    <div class="col-md-3">
+                    </div>
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col">
+                                <button type="reset" class="btn btn-warning btn-block">Reset</button>
+                            </div>
+                            <div class="col">
+                                <button type="button" class="btn btn-success btn-block">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 img-responsive border border-warning pb-5 rounded">
+            <a href="#" id="imgzoom">
+                <img src="~/images/no-image.png" id="blah" height="200" width="300" alt="Images Preview" />
+            </a>
+            <label class="text-center mt-3 bg-warning form-control text-uppercase" id="pimgname">image preview</label>
+        </div>
+    </div>
+</form>
+
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").change(function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        //$("#pimgname").text(fileName);
+    });
+
+    //for image display
+    function readURL(input) {
+
+        console.log($("#" + input));
+
+        var fileName = $("#" + input).val().split("\\").pop();
+        $("#pimgname").text(fileName);
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+
+        if ($("#" + input)[0].files && $("#" + input)[0].files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+            }
+            reader.readAsDataURL($("#" + input)[0].files[0]);
+            //console.log($("#" + input)[0].files[0]);
+        }
+    }
+</script>
+
+

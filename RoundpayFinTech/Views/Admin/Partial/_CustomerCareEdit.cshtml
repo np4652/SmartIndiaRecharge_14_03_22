@@ -1,0 +1,58 @@
+﻿@using RoundpayFinTech.AppCode.Model.DepartmentModel
+@model CustomerCareEdit
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Customer Care Form</h5>
+    <div class=" row form-group">
+        <div class="col-md-6">
+            @Html.Label("ddlDepartment", "Department", new { @class = "lbl" })
+            <select id="ddlDepartment" aria-describedby="ddlDepth" tabindex="1" class="custom-select custom-select-md mb3" asp-items="@Model.DDLDepartment">
+                <option value="0">:: Choose Department ::</option>
+            </select>
+            <small id="ddlDepth" class="form-text text-muted d-none"></small>
+        </div>
+        <div class="col-md-6" id="dvDeptRPt">
+           <input type="hidden" value="@Model.CustomercareInfo.RoleID" id="hidRID"/>
+        </div>
+    </div>
+    <div class=" row form-group">
+        <div class="col-md-6">
+            <label class="lbl" for="txtCCName"> Customercare Name</label>
+            <input aria-describedby="slbNameHelp" class="form-control " id="txtCCName" name="txtCCName" placeholder="Enter Customercare Name" tabindex="3" type="text" value="@Model.CustomercareInfo.Name">
+            <small id="slbNameHelp" class="form-text text-muted d-none"></small>
+            <input type="hidden" id="hid" value="@Model.CustomercareInfo.ID" class="d-none" />
+        </div>
+        <div class="col-md-6">
+            <label class="lbl" for="txtMobile"> MobileNo</label>
+            <input aria-describedby="CnameHelp" class="form-control " id="txtMobile" name="txtMobile" placeholder="Enter Mobile Number" tabindex="4" type="text" value="@Model.CustomercareInfo.MobileNo">
+            <small id="CnameHelp" class="form-text text-muted d-none"></small>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-6">
+            <label class="lbl" for="txtEmail"> Email ID</label>
+            <input aria-describedby="txtEmailHelp" class="form-control " id="txtEmail" name="txtEmail" placeholder="Enter Email ID" tabindex="5" type="text" value="@Model.CustomercareInfo.EmailID">
+            <small id="txtEmailHelp" class="form-text text-muted d-none"></small>
+        </div>
+        <div class="col-md-6">
+            <label class="lbl" for="txtPin"> PinCode</label>
+            <input aria-describedby="txtPinHelp" class="form-control " id="txtPin" name="txtPin" placeholder="Enter Pincode" tabindex="6" type="text" value="@Model.CustomercareInfo.Pincode">
+            <small id="txtPinHelp" class="form-text text-muted d-none"></small>
+        </div>
+    </div>
+    <div class="row form-group">
+        <div class="col-md-12">
+            <label class="lbl" for="txtAddress">Address</label>
+            <textarea aria-describedby="CAddHelp" class="form-control " id="txtAddress" name="txtAddress" placeholder="Enter Address" tabindex="7" type="text">@Model.CustomercareInfo.Address</textarea>
+            <small id="CAddHelp" class="form-text text-muted d-none"></small>
+        </div>       
+    </div>
+    <div class="row form-group">
+        <div class="col-md-6">
+            <button class="btn btn-outline-dark mt-4" id="btnCustomerSave">Save</button>
+            <button class="btn btn-dark mt-4" id="mdlCancel">Cancel</button>
+        </div>
+    </div>
+</div>

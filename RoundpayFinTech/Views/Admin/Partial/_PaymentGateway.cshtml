@@ -1,0 +1,84 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.PaymentGateway>
+@if (Model != null && Model.Any())
+{
+    int i = 0;
+    foreach (var item in Model)
+    {
+        i++;
+        <tr data-item-id="@item.ID" data-pg-id="@item.PGID">
+            <td>@i</td>
+            <td>@item.PGID</td>
+            <td><span class="btn-link cursor-pointer btnEdit">@item.Name</span></td>
+            <td>@item.WID</td>
+            <td>@item.MerchantID</td>
+            <td>@item.MerchantKey</td>
+            <td>@item.ENVCode</td>
+            <td>@item.IndustryType</td>
+            <td>@item.SuccessURL</td>
+            <td>@item.FailedURL</td>
+            <td>@item.IsActive</td>
+            <td>@item.EntryBy</td>
+            <td>@item.EntryDate</td>
+            <td>@item.ModifyBy</td>
+            <td>@item.ModifyDate</td>
+            <td>@item.AgentType</td>
+        </tr>
+
+    }
+}
+<script>
+    $('table').fixTableHeader();
+    $('.btnEdit').click(e => {
+        preloader.load();
+        let req = {
+            id: $(e.currentTarget).closest('tr').data().pgId
+        };
+        $.post('/Admin/_PaymentGatewayById', req)
+       
+            .done(result => {
+                mdlA.id = 'mdlPGateway';
+                mdlA.title = 'Payment Gateway';
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.default);
+                preloader.remove();
+                $('#mdlCancel').click(function () {
+                    $("#mdlPGateway").modal('hide');
+                })
+                $('#btnSave').click(function () {
+                    var AddData =
+                    {
+                        ID: req.id,
+                        MerchantID: $('[name="MerchantID"]').val(),
+                        MerchantKey: $('[name="MerchantKey"]').val(),
+                        SuccessURL: $('[name="SuccessURL"]').val(),
+                        FailedURL: $('[name="FailedURL"]').val(),
+                        IsActive: $('#IsActive').val()
+                    }
+                    if ($('#IsActive').is(":checked")) {
+                        AddData.IsActive = true
+                    }
+                    else {
+                        AddData.IsActive = false
+                    }
+                    $.post('/Admin/UpdatePaymentGateway', AddData)
+                        .done(function (result) {
+                            loadPaymentGatway();
+                            $('#mdlPGateway').modal('hide');
+                            an.title = 'Succes';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+                });
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+          })
+   });
+   
+   
+</script>

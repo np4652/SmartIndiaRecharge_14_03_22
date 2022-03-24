@@ -1,0 +1,44 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@model SettlementSetting
+<div class="col-md-12">
+    @if (Model != null)
+    {
+        <input type="hidden" value="@Model.userwiseSettSetting.UserID" id="mtwrUserID"/>
+        <div class="form-group">
+            @{
+                var SetTypelist = new SelectList(Model.settlementType, "ID", "SetTType");
+                var SetTypeID = Model.userwiseSettSetting.MTRWSettleType;
+            }
+            <label class="lbl" for="ddlSettlement">MoveToRealWallet AEPS/AADHARPAY </label>
+            <select id="ddlSettlement" aria-describedby="ddlRoleHelp" class="custom-select custom-select-md mb3" asp-items="@SetTypelist" asp-for="@SetTypeID">
+                <option value="0">Choose Settlement Type</option>
+            </select>
+            <small id="ddlRoleHelp" class="form-text text-muted d-none">Choose Settlement Type</small>
+
+        </div>
+        <div class="form-group">
+            @{
+                var SetTypeMBlist = new SelectList(Model.settlementType, "ID", "SetTType");
+                var SetTypeMBID = Model.userwiseSettSetting.MTRWSettleTypeMB;
+            }
+            <label class="lbl" for="ddlSettlementForMB">MoveToRealWallet MiniBank</label>
+            <select id="ddlSettlementForMB" aria-describedby="ddlRoleHelpMB" class="custom-select custom-select-md mb3" asp-items="@SetTypeMBlist" asp-for="@SetTypeMBID">
+                <option value="0">Choose Settlement Type</option>
+            </select>
+            <small id="ddlRoleHelpMB" class="form-text text-muted d-none">Choose Settlement Type</small>
+        </div>
+        <div class="form-group">
+            <label>IsOtherWalletSettlementAsBank</label>
+            <span class="input-group-text switch switch-sm bg-white align">
+                <input type="checkbox" class="switch" id="chbIsOtStlBnkAsBank" tabindex="11" @Html.Raw(Model.userwiseSettSetting.IsOWSettleAsBank ? "checked='checked'" : "")>
+                <label for="chbIsOtStlBnkAsBank" class="font-weight-bold lbl"></label>
+            </span>
+        </div>
+        <button class="btn btn-outline-dark" id="btnChngStlmntSet">Change</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    }
+    else
+    {
+        <p>No Data Found!</p>
+    }
+</div>

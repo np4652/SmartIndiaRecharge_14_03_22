@@ -1,0 +1,52 @@
+﻿@using Fintech.AppCode.Model
+@model LoginResponse
+@if (Model != null)
+{
+    <a>
+        <i aria-hidden="true" class="fa fa-smile-o"></i>@Model.Name
+    </a>
+    <ul class="profile-ul">
+        <li>
+            <a href="Dashboard/D" class="pro-log"><i aria-hidden="true" class="fa fa-dashboard"></i>DashBoard </a>
+        </li>
+        <li>
+            <a class="pro-log"  ng-reflect-router-link="/myprofile/myorders" href="MyProfile/Orders">
+                <i aria-hidden="true" class="fa fa-list">
+                </i>My Orders
+            </a>
+        </li>
+        <li>
+
+        </li>
+        <li>
+            <a class="pro-log" href="MyProfile/WishList">
+                <i aria-hidden="true" class="fa fa-heart">
+                </i>My Wishlist
+            </a>
+        </li>
+       @* <li>
+            <a class="pro-log" routerlink="/myprofile/myaddress" ng-reflect-router-link="/myprofile/myaddress" href="/myprofile/myaddress">
+                <i aria-hidden="true" class="fa fa-address-card-o">
+                </i>My Addresss
+            </a>
+        </li>
+*@
+       @* <li>
+            <a class="pro-log" routerlink="/myprofile/accountreport" ng-reflect-router-link="/myprofile/accountreport" href="/myprofile/accountreport">
+                <i aria-hidden="true" class="fa fa-bar-chart">
+                </i>Accounts Report
+            </a>
+        </li>*@
+        <li>
+            <a class="pro-log"  id="bntlogout" asp-controller="ShoppingWebsite" asp-action="logout">
+         
+                <i aria-hidden="true" class="fa fa-sign-out">
+                </i>Logout
+            </a>
+        </li>
+    </ul>
+}
+else
+{
+    <a href="Login"><i aria-hidden="true" class="fa fa-sign-in"></i>Login </a>
+}

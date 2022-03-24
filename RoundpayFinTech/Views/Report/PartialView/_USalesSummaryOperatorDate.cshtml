@@ -1,0 +1,86 @@
+﻿@model SalesSummaryModel
+
+@{
+    var couter = 1;
+}
+
+@if (Model.userRolewiseTransactions.Count > 0)
+{
+    var TDebited = 0d;
+    var TRequested = 0d;
+    var TFailed = 0d;
+    var TFailedRequested = 0d;
+    var TCommission = 0d;
+    var TSurcharge = 0d;
+    var TGST = 0d;
+    var TTDS = 0d;
+    var TSACommission = 0d;
+    var TSAGST = 0d;
+    var TSATDS = 0d;
+    var TMDCommission = 0d;
+    var TMDGST = 0d;
+    var TMDTDS = 0d;
+    var TDTCommission = 0d;
+    var TDTGST = 0d;
+    var TDTTDS = 0d;
+
+    foreach (var item in Model.userRolewiseTransactions)
+    {
+        TDebited += item.Debited;
+        TRequested += item.Requested;
+        TFailed += item.FailedDebited;
+        TFailedRequested += item.FailedRequested;
+        TCommission += item.Commission;
+        TSurcharge += item.Surcharge;
+        TGST += item.GST;
+        TTDS += item.TDS;
+        TSACommission += item.SACommission;
+        TSAGST += item.SAGST;
+        TSATDS += item.SATDS;
+        TMDCommission += item.MDCommission;
+        TMDGST += item.MDGST;
+        TMDTDS += item.MDTDS;
+        TDTCommission += item.DTCommission;
+        TDTGST += item.DTGST;
+        TDTTDS += item.DTTDS;
+<tr>
+    <th>@couter</th>
+    <td>@(Convert.ToDateTime(item.TransactionDate).ToString("dd MMM yyyy"))</td>
+    <td>@item.Operator</td>
+    <td>@item.OutletName <small class="font-weight-bold text-monospace"> [@(item.MobileNo + "/" + item.Prefix + item.UserID)]</small></td>
+    <td>@item.Role </td>
+    <td class="text-right">@item.Debited</td>
+    <td class="text-right">@item.Requested</td>
+    <td class="text-right">@item.FailedDebited</td>
+    <td class="text-right">@item.FailedRequested</td>
+    <td class="text-right">@item.Commission</td>
+    <td class="text-right">@item.Surcharge</td>
+    <td class="text-right">@item.GST</td>
+    <td class="text-right">@item.TDS</td>
+
+    <td class="text-right">@item.SACommission</td>
+    <td class="text-right">@item.SAGST</td>
+    <td class="text-right">@item.SATDS</td>
+
+    <td class="text-right">@item.MDCommission</td>
+    <td class="text-right">@item.MDGST</td>
+    <td class="text-right">@item.MDTDS</td>
+
+    <td class="text-right">@item.DTCommission</td>
+    <td class="text-right">@item.DTGST</td>
+    <td class="text-right">@item.DTTDS</td>
+</tr>
+        couter = couter + 1;
+    }
+    <tr><th colspan="4" class="text-right">Total</th><th class="text-right">@TDebited</th><th class="text-right">@TRequested</th><th class="text-right">@TFailed</th><th class="text-right">@TFailedRequested</th><th class="text-right">@TCommission</th><th class="text-right">@TSurcharge</th><th class="text-right">@TGST</th><th class="text-right">@TTDS</th><th class="text-right">@TSACommission</th><th class="text-right">@TSAGST</th><th class="text-right">@TSATDS</th><th class="text-right">@TMDCommission</th><th class="text-right">@TMDGST</th><th class="text-right">@TMDTDS</th><th class="text-right">@TDTCommission</th><th class="text-right">@TDTGST</th><th class="text-right">@TDTTDS</th></tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="21">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+
+

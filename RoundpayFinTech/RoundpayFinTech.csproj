@@ -1,0 +1,762 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <UserSecretsId>917fc234-e5a1-4891-aa5d-a3053b28fc2d</UserSecretsId>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <Optimize>true</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\AvailableThemes\2\login-3\**" />
+    <Compile Remove="wwwroot\ShoppingWebsite\NewFolder\**" />
+    <Content Remove="wwwroot\AvailableThemes\2\login-3\**" />
+    <Content Remove="wwwroot\ShoppingWebsite\NewFolder\**" />
+    <EmbeddedResource Remove="wwwroot\AvailableThemes\2\login-3\**" />
+    <EmbeddedResource Remove="wwwroot\ShoppingWebsite\NewFolder\**" />
+    <None Remove="wwwroot\AvailableThemes\2\login-3\**" />
+    <None Remove="wwwroot\ShoppingWebsite\NewFolder\**" />
+  </ItemGroup>
+
+  <!--<ItemGroup>
+    <Compile Remove="AppCode\Model\Shopping\WebShopping\Menu.cs" />
+  </ItemGroup>-->
+
+  <ItemGroup>
+    <Content Remove="bundleconfig.json" />
+    <!--<Content Remove="Views\AdminShopping\Partial\_AddMainCategory.cshtml" />
+    <Content Remove="Views\AdminShopping\Partial\_MainCategory.cshtml" />-->
+    <Content Remove="Views\Admin\Partial\_CircleSwitchingMultiAPI.cshtml" />
+    <Content Remove="wwwroot\images\bg.jpg" />
+    <Content Remove="wwwroot\SiteConfig\Templates\0\fonts\fontawesome-webfont3e6e.woff2" />
+    <Content Remove="wwwroot\SiteConfig\Templates\0\js\bootstrap.min.js" />
+    <Content Remove="wwwroot\SiteConfig\Templates\0\js\carousel.js" />
+    <Content Remove="wwwroot\SiteConfig\Templates\0\js\jquery.min.js" />
+    <Content Remove="wwwroot\SiteConfig\Templates\2\fonts\fontawesome-webfont3e6e.woff2" />
+    <Content Remove="wwwroot\SiteConfig\Templates\2\js\bootstrap.min.js" />
+    <Content Remove="wwwroot\SiteConfig\Templates\2\js\carousel.js" />
+    <Content Remove="wwwroot\SiteConfig\Templates\2\js\jquery.min.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Image\Website\1\t1\white-logo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\SiteConfig\Templates\2\Assets\docs.theme.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\SiteConfig\Templates\2\Assets\owl.carousel.js" />
+    <_ContentIncludedByDefault Remove="wwwroot\SiteConfig\Templates\2\Assets\owl.carousel.min.css" />
+    <_ContentIncludedByDefault Remove="wwwroot\SiteConfig\Templates\2\Assets\owl.theme.default.min.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.NetCore" Version="1.8.5" />
+    <PackageReference Include="BundlerMinifier.Core" Version="3.2.447" />
+    <PackageReference Include="BundlerMinifier.TagHelpers" Version="3.2.447" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="EPPlus" Version="4.5.2.1" />
+    <PackageReference Include="GoogleAuthenticatorService.Core" Version="1.0.2" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.1.7" />
+    <PackageReference Include="Microsoft.AspNetCore.App" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Razor.Design" Version="2.1.2" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.1.1" />
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.8">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="2.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.TeamFoundationServer.ExtendedClient" Version="16.170.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.10" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
+    <PackageReference Include="QRCoder" Version="1.3.9" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
+    <PackageReference Include="Syncfusion.HtmlToPdfConverter.QtWebKit.Net.Core" Version="17.4.0.46" />
+    <PackageReference Include="System.Management" Version="5.0.0" />
+    <PackageReference Include="Tesseract" Version="4.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="AppCode\Filters\" />
+    <Folder Include="Image\ICICI\log\" />
+    <Folder Include="Image\KYC\" />
+    <Folder Include="Image\GiftImage\" />
+    <Folder Include="Image\BannerBank\" />
+    <Folder Include="Image\plandoc\" />
+    <Folder Include="Image\PESFiles\" />
+    <Folder Include="Image\WatsappImage\" />
+    <Folder Include="Image\Website\0\Popup\" />
+    <Folder Include="Image\Website\1\BannerUser\" />
+    <Folder Include="Image\Website\1\BannerSite\" />
+    <Folder Include="Image\Website\1\BannerOpType\" />
+    <Folder Include="Views\Home\Themes\1\Partial\" />
+    <Folder Include="Views\Home\Themes\2\Partial\" />
+    <Folder Include="Views\Home\Themes\3\Partial\" />
+    <Folder Include="Views\Home\Themes\4\Partial\" />
+    <Folder Include="Views\Hotel\Partial\" />
+    <Folder Include="Views\DynamicWebsite\" />
+    <Folder Include="Views\Shared\PartialView\" />
+    <Folder Include="Views\TravelWebsite\" />
+    <Folder Include="wwwroot\apk\" />
+    <Folder Include="wwwroot\AvailableThemes\4\" />
+    <Folder Include="wwwroot\images\OCR\" />
+    <Folder Include="wwwroot\Shopping\css\NewFolder\" />
+    <Folder Include="wwwroot\siteadmin\js\" />
+    <Folder Include="wwwroot\SiteConfig\Templates\2\Assets\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="bundleconfig.json" />
+    <None Include="Views\AdminShopping\AddProduct.cshtml" />
+    <None Include="Views\AdminShopping\AllProduct.cshtml" />
+    <None Include="Views\AdminShopping\category.cshtml" />
+    <None Include="Views\AdminShopping\Filter.cshtml" />
+    <None Include="Views\AdminShopping\FilterOption.cshtml" />
+    <None Include="Views\AdminShopping\Index.cshtml" />
+    <None Include="Views\AdminShopping\OrderReport.cshtml" />
+    <None Include="Views\AdminShopping\OrderReportVendor.cshtml" />
+    <None Include="Views\AdminShopping\Orders.cshtml" />
+    <None Include="Views\AdminShopping\Partial\Brand.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddMainCategory.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddCategory.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddFilter.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddFilterOption.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddSubCategoryLvl1.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddSubCategoryLvl2.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AddSubCategoryLvl3.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_AllProduct.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_BrandDetail.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_CartDetail.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_MainCategory.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_category.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_Filter.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_FIlterForEndUser.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_FilterOption.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_FilterWithOption.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_MappedFilter.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_OrderDetailList.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_OrderReport.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_OrderReportVendor.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_Orders.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ProceedToPay.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ProductDetailForUser.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ProductDetailForUserOld.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ProductDetails.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ProductForIndex.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ProductMaster.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ShippingAddress.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ShoppingCommission.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ShoppingCommissionGrid.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_ShoppingCommissionLvl.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_SubCategoryLvl1.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_SubCategoryLvl2.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_SubCategoryLvl3.cshtml" />
+    <None Include="Views\AdminShopping\Partial\_Vendor.cshtml" />
+    <None Include="Views\AdminShopping\Shop.cshtml" />
+    <None Include="Views\Admin\Affiliates\getAffiliateVendor.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AddAffiliateVendor.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AfCategoryWithRole.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AffiliatedItem.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AffiliatedVendorCommission.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AffiliateVendors.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AfSlabDetail.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_AfSlabDetailRole.cshtml" />
+    <None Include="Views\Admin\Affiliates\Partial\_GetAllAfItems.cshtml" />
+    <None Include="Views\Admin\BankMaster\BankMaster.cshtml" />
+    <None Include="Views\Admin\BankMaster\Partial\_BankMaster.cshtml" />
+    <None Include="Views\Admin\BankMaster\Partial\_BankMasterCU.cshtml" />
+    <None Include="Views\Admin\CreateEmp\EmpBulkAction.cshtml" />
+    <None Include="Views\Admin\CreateEmp\EmpReg.cshtml" />
+    <None Include="Views\Admin\CreateEmp\Partial\_EmpBulkAction.cshtml" />
+    <None Include="Views\Admin\CreateEmp\Partial\_empList.cshtml" />
+    <None Include="Views\Admin\CreateEmp\Partial\_EmpReg.cshtml" />
+    <None Include="Views\Admin\MasterRole\MasterRole.cshtml" />
+    <None Include="Views\Admin\MasterRole\Partial\_MasterRole.cshtml" />
+    <None Include="Views\Admin\News\News.cshtml" />
+    <None Include="Views\Admin\News\NewsAddNew.cshtml" />
+    <None Include="Views\Admin\News\_News.cshtml" />
+    <None Include="Views\Admin\Partial\_APICommissionDetail.cshtml" />
+    <None Include="Views\Admin\Partial\_APICommList.cshtml" />
+    <None Include="Views\Admin\Partial\_APIOpCode.cshtml" />
+    <None Include="Views\Admin\Partial\_APISTATUSCHECKList.cshtml" />
+    <None Include="Views\Admin\Partial\_APIStatusCheckListHelper.cshtml" />
+    <None Include="Views\Admin\Partial\_APISwitching.cshtml" />
+    <None Include="Views\Admin\Partial\_ChnageSlab.cshtml" />
+    <None Include="Views\Admin\Partial\_CircleSwitching.cshtml" />
+    <None Include="Views\Admin\Partial\_FundTransferPanel.cshtml" />
+    <None Include="Views\Admin\Partial\_OperatorCU.cshtml" />
+    <None Include="Views\Admin\Partial\_OperatorMaster.cshtml" />
+    <None Include="Views\Admin\Partial\_OperatorWiseOptionalMaster.cshtml" />
+    <None Include="Views\Admin\Partial\_PackageCU.cshtml" />
+    <None Include="Views\Admin\Partial\_PackageMaster.cshtml" />
+    <None Include="Views\Admin\Partial\_RechargeAPI.cshtml" />
+    <None Include="Views\Admin\Partial\_RechargeAPIs.cshtml" />
+    <None Include="Views\Admin\Partial\_SlabCU.cshtml" />
+    <None Include="Views\Admin\Partial\_SlabDetail.cshtml" />
+    <None Include="Views\Admin\Partial\_SlabDetailLVL.cshtml" />
+    <None Include="Views\Admin\Partial\_SlabMaster.cshtml" />
+    <None Include="Views\Admin\Partial\_UserwiseAPISwitch.cshtml" />
+    <None Include="Views\Admin\PES\_AddFields.cshtml" />
+    <None Include="Views\Admin\PES\_AddVocab.cshtml" />
+    <None Include="Views\Admin\PES\_FieldMaster.cshtml" />
+    <None Include="Views\Admin\PES\_OptionList.cshtml" />
+    <None Include="Views\Admin\PES\_OptionModal.cshtml" />
+    <None Include="Views\Admin\PES\_PESOPList.cshtml" />
+    <None Include="Views\Admin\PES\_ShowForm.cshtml" />
+    <None Include="Views\Admin\PES\_VocabMaster.cshtml" />
+    <None Include="Views\Admin\Popup\Partial\_Popup.cshtml" />
+    <None Include="Views\Admin\Popup\Popup.cshtml" />
+    <None Include="Views\Admin\Theme\Theme.cshtml" />
+    <None Include="Views\Admin\WebsiteSetting\GetCompanyProfile.cshtml" />
+    <None Include="Views\Admin\WebsiteSetting\Partial\_WebsiteSetting.cshtml" />
+    <None Include="Views\Admin\WebsiteSetting\WebsiteSetting.cshtml" />
+    <None Include="Views\Employee\EmpBulkAction.cshtml" />
+    <None Include="Views\Employee\Employees.cshtml" />
+    <None Include="Views\Employee\EmpTargetReport.cshtml" />
+    <None Include="Views\Employee\EmpUserList.cshtml" />
+    <None Include="Views\Employee\Index.cshtml" />
+    <None Include="Views\Employee\Partial\_AddEmployee.cshtml" />
+    <None Include="Views\Employee\Partial\_AssignEmployee.cshtml" />
+    <None Include="Views\Employee\Partial\_ChangePassword.cshtml" />
+    <None Include="Views\Employee\Partial\_Charts.cshtml" />
+    <None Include="Views\Employee\Partial\_EditUserCommitment.cshtml" />
+    <None Include="Views\Employee\Partial\_EmpBulkAction.cshtml" />
+    <None Include="Views\Employee\Partial\_Employees.cshtml" />
+    <None Include="Views\Employee\Partial\_EmpTarget.cshtml" />
+    <None Include="Views\Employee\Partial\_EmpTargetReport.cshtml" />
+    <None Include="Views\Employee\Partial\_EmpUserList.cshtml" />
+    <None Include="Views\Employee\Partial\_PSTDeatilReport.cshtml" />
+    <None Include="Views\Employee\Partial\_PSTReport.cshtml" />
+    <None Include="Views\Employee\Partial\_TertiaryReport.cshtml" />
+    <None Include="Views\Employee\PSTReport.cshtml" />
+    <None Include="Views\Employee\TertiaryReport.cshtml" />
+    <None Include="Views\FOS\Index.cshtml" />
+    <None Include="Views\FOS\UserList\AssignRetailer.cshtml" />
+    <None Include="Views\FOS\UserList\FOSUserList.cshtml" />
+    <None Include="Views\FOS\UserList\FUserList.cshtml" />
+    <None Include="Views\FOS\UserList\Partial\_AssignRetailer.cshtml" />
+    <None Include="Views\FOS\UserList\Partial\_FOSUserList.cshtml" />
+    <None Include="Views\FOS\UserList\Partial\_FUserList.cshtml" />
+    <None Include="Views\Home\Partial\_websitePopup.cshtml" />
+    <None Include="Views\Home\Themes\1\about-us.cshtml" />
+    <None Include="Views\Home\Themes\1\contact-us.cshtml" />
+    <None Include="Views\Home\Themes\1\Index.cshtml" />
+    <None Include="Views\Home\Themes\1\InviteApp.cshtml" />
+    <None Include="Views\Home\Themes\1\privacypolicy.cshtml" />
+    <None Include="Views\Home\Themes\1\service-detail.cshtml" />
+    <None Include="Views\Home\Themes\1\TermsAndCondition.cshtml" />
+    <None Include="Views\Home\Themes\2\about-us.cshtml" />
+    <None Include="Views\Home\Themes\2\contact-us.cshtml" />
+    <None Include="Views\Home\Themes\2\Index.cshtml" />
+    <None Include="Views\Home\Themes\2\InviteApp.cshtml" />
+    <None Include="Views\Home\Themes\2\privacypolicy.cshtml" />
+    <None Include="Views\Home\Themes\2\service-detail.cshtml" />
+    <None Include="Views\Home\Themes\2\TermsAndCondition.cshtml" />
+    <None Include="Views\Home\Themes\3\about-us.cshtml" />
+    <None Include="Views\Home\Themes\3\contact-us.cshtml" />
+    <None Include="Views\Home\Themes\3\Index.cshtml" />
+    <None Include="Views\Home\Themes\3\InviteApp.cshtml" />
+    <None Include="Views\Home\Themes\3\privacypolicy.cshtml" />
+    <None Include="Views\Home\Themes\3\service-detail.cshtml" />
+    <None Include="Views\Home\Themes\3\TermsAndCondition.cshtml" />
+    <None Include="Views\Home\Themes\4\about-us.cshtml" />
+    <None Include="Views\Home\Themes\4\contact-us.cshtml" />
+    <None Include="Views\Home\Themes\4\Index.cshtml" />
+    <None Include="Views\Home\Themes\4\InviteApp.cshtml" />
+    <None Include="Views\Home\Themes\4\privacypolicy.cshtml" />
+    <None Include="Views\Home\Themes\4\service-detail.cshtml" />
+    <None Include="Views\Home\Themes\4\TermsAndCondition.cshtml" />
+    <None Include="Views\Hotel\HotelList.cshtml" />
+    <None Include="Views\Hotel\HotelSingle.cshtml" />
+    <None Include="Views\Hotel\Index.cshtml" />
+    <None Include="Views\Hotel\ProceedBooking.cshtml" />
+    <None Include="Views\Hotel\SearchHotel.cshtml" />
+    <None Include="Views\Invoice\DebitNote.cshtml" />
+    <None Include="Views\Invoice\Operatorwise.cshtml" />
+    <None Include="Views\Invoice\P2A.cshtml" />
+    <None Include="Views\Invoice\Servicewise.cshtml" />
+    <None Include="Views\Invoice\Surcharge.cshtml" />
+    <None Include="Views\Railway\IR403.cshtml" />
+    <None Include="Views\Railway\IR404.cshtml" />
+    <None Include="Views\Railway\IRLogin.cshtml" />
+    <None Include="Views\Railway\IRPayment.cshtml" />
+    <None Include="Views\Seller\Affiliates\AffilietedItems.cshtml" />
+    <None Include="Views\Seller\Affiliates\Partial\_GetAffilietedItems.cshtml" />
+    <None Include="Views\Seller\CreateUser\UserReg.cshtml" />
+    <None Include="Views\Seller\Partial\CYRUS\Roffer.cshtml" />
+    <None Include="Views\Seller\Partial\MYPLANAPI\DthCustomerRecord.cshtml" />
+    <None Include="Views\Seller\Partial\MYPLANAPI\DthPlanView.cshtml" />
+    <None Include="Views\Seller\Partial\MYPLANAPI\Roffer.cshtml" />
+    <None Include="Views\Seller\Partial\MYPLANAPI\SimplePlanView.cshtml" />
+    <None Include="Views\Seller\Partial\PES\_PESOPList.cshtml" />
+    <None Include="Views\Seller\Partial\PES\_ShowForm.cshtml" />
+    <None Include="Views\Seller\Partial\VastWebPlan\DTHCustInfo.cshtml" />
+    <None Include="Views\Seller\Partial\VastWebPlan\DTHPlan.cshtml" />
+    <None Include="Views\Seller\Partial\VastWebPlan\Roffer.cshtml" />
+    <None Include="Views\Seller\Partial\VastWebPlan\SimplePlan.cshtml" />
+    <None Include="Views\User\Partial\1\_Index.cshtml" />
+    <None Include="Views\User\Partial\2\_Index.cshtml" />
+    <None Include="Views\User\Partial\3\_Index.cshtml" />
+    <None Include="Views\User\Partial\4\_Index.cshtml" />
+    <None Include="Views\WebApp\PGRedirect.cshtml" />
+    <None Include="Views\WebApp\PGRedirectUPI.cshtml" />
+    <None Include="wwwroot\images\bg.jpg" />
+    <None Include="wwwroot\js\chart\armchart\animated.js" />
+    <None Include="wwwroot\js\chart\armchart\charts.js" />
+    <None Include="wwwroot\js\chart\armchart\core.js" />
+    <None Include="wwwroot\js\chart\exporting.js" />
+    <None Include="wwwroot\js\chart\highcharts.js" />
+    <None Include="wwwroot\js\Hotel\animated-headline.js" />
+    <None Include="wwwroot\js\Hotel\daterangepicker.js" />
+    <None Include="wwwroot\js\Hotel\hotel-search.js" />
+    <None Include="wwwroot\js\Hotel\jquery.countTo.min.js" />
+    <None Include="wwwroot\js\Hotel\jquery.fancybox.min.js" />
+    <None Include="wwwroot\js\Hotel\jquery.ripples-min.js" />
+    <None Include="wwwroot\js\Hotel\main.js" />
+    <None Include="wwwroot\js\Hotel\quantity-input.js" />
+    <None Include="wwwroot\QtBinariesWindows\icudt49.dll" />
+    <None Include="wwwroot\QtBinariesWindows\icuin49.dll" />
+    <None Include="wwwroot\QtBinariesWindows\icuuc49.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qdds.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qgif.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qicns.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qico.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qjp2.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qjpeg.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qmng.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qsvg.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qtga.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qtiff.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qwbmp.dll" />
+    <None Include="wwwroot\QtBinariesWindows\imageformats\qwebp.dll" />
+    <None Include="wwwroot\QtBinariesWindows\libEGL.dll" />
+    <None Include="wwwroot\QtBinariesWindows\libGLESv2.dll" />
+    <None Include="wwwroot\QtBinariesWindows\platforms\qminimal.dll" />
+    <None Include="wwwroot\QtBinariesWindows\platforms\qoffscreen.dll" />
+    <None Include="wwwroot\QtBinariesWindows\platforms\qwindows.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Core.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Gui.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Multimedia.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5MultimediaWidgets.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Network.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5OpenGL.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Positioning.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5PrintSupport.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Qml.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Quick.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Sensors.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Sql.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Svg.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5WebChannel.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5WebKit.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5WebKitWidgets.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Qt5Widgets.dll" />
+    <None Include="wwwroot\QtBinariesWindows\Syncfusion.WebKitWrapper" />
+    <None Include="wwwroot\QtBinariesWindows\zlib1.dll" />
+    <None Include="wwwroot\Shopping\css\bootstrap\.editorconfig" />
+    <None Include="wwwroot\Shopping\fonts\fontawesome-webfont.woff2" />
+    <None Include="wwwroot\Shopping\img\icon\hotline_icon.svg" />
+    <None Include="wwwroot\Shopping\img\logo-pin-8f3771b1072e3c38bd662872f6b673a722f4b3ca2421637d5596661b4e2132cc.svg" />
+    <None Include="wwwroot\Shopping\js\bootstrap\bootstrap-datepicker.es.min.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\bootstrap-datepicker.min.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\bootstrap-datetimepicker.min.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\bootstrap-select.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\bootstrap.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\bootstrap.min.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\gijgo.min.js" />
+    <None Include="wwwroot\Shopping\js\bootstrap\jquery-3.3.1.min.js" />
+    <None Include="wwwroot\Shopping\js\clevermegamenu\clever-mega-menu.min.js" />
+    <None Include="wwwroot\Shopping\js\clevermegamenu\js_composer_front.min.js" />
+    <None Include="wwwroot\Shopping\js\hierarchy-select.js" />
+    <None Include="wwwroot\Shopping\js\hierarchy-select.min.js" />
+    <None Include="wwwroot\Shopping\js\jquery-3.4.1.min.js" />
+    <None Include="wwwroot\Shopping\js\nouislider.js" />
+    <None Include="wwwroot\Shopping\js\owl.carousel.min.js" />
+    <None Include="wwwroot\Shopping\js\scripts.js" />
+    <None Include="wwwroot\Shopping\js\vendor\bootstrap.min.js" />
+    <None Include="wwwroot\Shopping\js\vendor\jquery-1.12.4.min.js" />
+    <None Include="wwwroot\Shopping\js\vendor\popper.min.js" />
+    <None Include="wwwroot\Shopping\js\vendor\swiper.min.js" />
+    <None Include="wwwroot\Shopping\js\zoom\easyzoom.js" />
+    <None Include="wwwroot\Shopping\js\zoom\setup.js" />
+    <None Include="wwwroot\Shopping\js\zoom\xzoom.min.js" />
+    <None Include="wwwroot\Shopping\vendor\elevatezoom\jquery.elevatezoom.min.js" />
+    <None Include="wwwroot\Shopping\vendor\imagesloaded\imagesloaded.pkgd.min.js" />
+    <None Include="wwwroot\Shopping\vendor\magnific-popup\jquery.magnific-popup.min.js" />
+    <None Include="wwwroot\Shopping\vendor\photoswipe\default-skin\default-skin.svg" />
+    <None Include="wwwroot\Shopping\vendor\photoswipe\photoswipe-ui-default.min.js" />
+    <None Include="wwwroot\Shopping\vendor\photoswipe\photoswipe.min.js" />
+    <None Include="wwwroot\siteadmin\fonts\fontawesome-webfonte0a5.svg" />
+    <None Include="wwwroot\siteadmin\fonts\fontawesome-webfonte0a5.woff2" />
+    <None Include="wwwroot\siteadmin\fonts\glyphicons-halflings-regular.svg" />
+    <None Include="wwwroot\siteadmin\fonts\glyphicons-halflings-regular.woff2" />
+    <None Include="wwwroot\siteadmin\fonts\JosefinSans-Bold.svg" />
+    <None Include="wwwroot\siteadmin\fonts\JosefinSans-Light.svg" />
+    <None Include="wwwroot\siteadmin\fonts\JosefinSans-SemiBold.svg" />
+    <None Include="wwwroot\siteadmin\fonts\JosefinSans-Thin.svg" />
+    <None Include="wwwroot\siteadmin\fonts\JosefinSans.svg" />
+    <None Include="wwwroot\siteadmin\fonts\Lato-Bold.svg" />
+    <None Include="wwwroot\siteadmin\fonts\OpenSans-Bold.svg" />
+    <None Include="wwwroot\siteadmin\fonts\OpenSans-Light.svg" />
+    <None Include="wwwroot\siteadmin\fonts\OpenSans-Semibold.svg" />
+    <None Include="wwwroot\siteadmin\fonts\OpenSans.svg" />
+    <None Include="wwwroot\siteadmin\fonts\revicons90c6.svg" />
+    <None Include="wwwroot\SiteConfig\Templates\0\fonts\fontawesome-webfont3e6e.woff2" />
+    <None Include="wwwroot\SiteConfig\Templates\0\js\bootstrap.min.js" />
+    <None Include="wwwroot\SiteConfig\Templates\0\js\carousel.js" />
+    <None Include="wwwroot\SiteConfig\Templates\0\js\jquery.min.js" />
+    <None Include="wwwroot\SiteConfig\Templates\1\fonts\fontawesome-webfont3e6e.woff2" />
+    <None Include="wwwroot\SiteConfig\Templates\1\js\bootstrap.min.js" />
+    <None Include="wwwroot\SiteConfig\Templates\1\js\carousel.js" />
+    <None Include="wwwroot\SiteConfig\Templates\1\js\jquery.min.js" />
+    <None Include="wwwroot\SiteConfig\Templates\2\fonts\fontawesome-webfont3e6e.woff2" />
+    <None Include="wwwroot\SiteConfig\Templates\2\js\bootstrap.min.js" />
+    <None Include="wwwroot\SiteConfig\Templates\2\js\carousel.js" />
+    <None Include="wwwroot\SiteConfig\Templates\2\js\jquery.min.js" />
+    <None Include="wwwroot\whatsapp\JS\WhatsappChat.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="com.mobileware.transxt">
+      <HintPath>Refrences\com.mobileware.transxt.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Admin\APIErrorCode.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\BulkAction\BulkApp.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Admin\BulkAction\BulkEmail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Admin\BulkAction\BulkSms.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\BulkAction\BulkUserAction.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Admin\DepartmentRoleMaster.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_AfterLoginPopup.cshtml">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_APIErrorCode.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_ChangeRole.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_DepartmentRole.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_DepartmentRoles.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_Department.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_UpdateAPIOpTypeInterface.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_ErrorCU.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_ErrorMaster.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_PackageCU.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\PackageMaster.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_PackageMaster.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_RechargeAPIBalance.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_SMSAPI.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_SMSAPIs.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\Partial\_UserSwitchDetail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\SMSAPI.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Admin\UserSwitchDetail.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\APIUser\Index.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\DaybookDateAPIwise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\DaybookAPIDatewise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\DaybookDatewise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\FundRequestReport.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Report\FundRequestReportSelf.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_BBPSComplainStatusPopUP.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_DaybookDateAPIwise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_RechargeReport.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Report\PartialView\_TransactionUOpDateWise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_DaybookAPIDatewise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_DaybookD.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_FundRequestReportSelf.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_FailToSuccessR.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_AEPSReport.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_SlabCommissionRoleDisplay.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_USalesSummaryOperatorDate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_USalesSummaryOperator.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_USalesSummaryRDate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_USalesSummaryR.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\FailToSuccessR.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\PartialView\_MyBalance.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\AEPSReport.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\USalesSummaryOperatorDate.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\USalesSummaryOperator.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\USalesSummaryRDatewise.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Report\USalesSummaryR.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\DMTP\_BeneficiaryValidate_OTP.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\DMTP\_SendMoneyConfirm.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\DMT\_BeneficiaryValidate_OTP.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\DMT\_SendMoneyConfirm.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\MPLAN\Roffer.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\MPLAN\DTHCustInfo.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\MPLAN\DTHPlan.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="Views\Seller\Partial\Recharge\_Recharge.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Views\Shared\_Layout_APIUser.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
+    <Content Update="wwwroot\AvailableThemes\2\css\dashboard.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\AvailableThemes\2\index.html">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\AvailableThemes\3\demo.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\js\login.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\js\Shopping\AddProduct.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\css\animate.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\css\bootstrap.min.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\css\carousel\style.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\css\font-awesome.min.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\css\theme-1.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\css\theme-2.css">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\fonts\fontawesome-webfont3e6e.ttf">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\fonts\fontawesome-webfont3e6e.woff">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\template-1.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\1.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\2.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\3.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\4.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\6.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\agape-why-choose.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\bang-details-bg.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\clients\client_1.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\clients\client_2.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\clients\client_3.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\clients\client_4.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\clients\client_5.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\clients\client_6.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\feature-bg.jpg">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\icon\1.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\icon\2.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\icon\3.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\icon\4.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\icon\5.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="wwwroot\SiteConfig\Templates\2\img\icon\6.png">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

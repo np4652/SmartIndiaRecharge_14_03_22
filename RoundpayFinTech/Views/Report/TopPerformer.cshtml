@@ -1,0 +1,144 @@
+﻿@*@using RoundpayFinTech.AppCode.StaticModel;*@
+@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.ServiceMaster>
+
+@{
+    ViewData["Title"] = "Top Performer";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Select Criteria</label>
+                                    <select class="form-control" id="ddlCriteria">
+                                        <option value="1">Weak Wise</option>
+                                        <option value="2">Month Wise</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3" id="divWeak">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">Select Weak</label>
+                                    <select id="ddlWeak" class="form-control">
+                                        <option value="1">Current Weak</option>
+                                        <option value="2">Last Weak</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3 d-none" id="divMonth">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">Select Month</label>
+                                    <select id="ddlMonth" class="form-control" >
+                                        <option value="0">Previous Month</option>
+                                        <option value="1">Current Month</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlServices">Choose Services</label>
+                                    <div class="input-group">
+                                        @{
+                                            var _services = new SelectList(Model, "ServiceID", "ServiceName");
+                                            var _SID = ServiceType.Recharge;
+                                        }
+                                        <select id="ddlServices" tabindex="2" class="form-control" asp-items="@_services" asp-for="@_SID"></select>
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm table-mh">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">User Name</th>
+                                        <th scope="col">Mobile No</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col" class="text-right">TotalSale</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#ddlCriteria').change(function () {
+                $('#divWeak,#divMonth').toggleClass('d-none');
+            })
+            search();
+            $('#btnSearch').click(function () {
+                search();
+            });
+        });
+        var search = function () {
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($("#btnSearch"), 'Requesting');
+            preloader.load();
+            var filter = {
+                CommonInt: $('#ddlServices').val(),
+                CommonInt2: $('#ddlWeak').val(),
+                CommonInt3: $('#ddlMonth').val(),
+                CommonStr: $('#ddlCriteria').val() == 1 ? "WeakWise" : "MonthWise"
+            };
+            $.post('/_TopPerformer', filter)
+                .done(function (result) {
+                    $('tbody').html(result);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    btnLdr.Stop($("#btnSearch"));
+                    preloader.remove();
+                })
+        };
+    </script>
+
+
+}
+

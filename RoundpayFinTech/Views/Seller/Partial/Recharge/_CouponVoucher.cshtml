@@ -1,0 +1,60 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.CoupanReq
+
+
+
+@{
+    if (@Model.CoupanDetail != null && @Model.CoupanDetail.Count() > 0)
+    {
+        if (@Model.CoupanDetail.FirstOrDefault().Max > 0)
+        {
+            <div class="form-group">
+                @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1, onkeypress = "return isNumberwithoutdecimal(event)" })
+                <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+            </div>
+
+
+        }
+        else
+        {
+<div class="form-group row">
+    <input aria-describedby="AmountHelp" hidden class="form-control" id="txtAmount" value="0" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="">
+    <label class="lbl col-md-12">Select Denomination</label>
+    <div class="col-md-12">
+        @foreach (var itm in @Model.CoupanDetail)
+        {
+
+            <button type="reset" class="btn" onclick="_Setamount(@itm.DenominationID,this)" value="Reset">₹ @itm.DenominationID</button>
+
+
+        }
+    </div>
+    <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+</div>
+        }
+    }
+    else
+    {
+
+        <div class="form-group">
+            @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+            @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+            <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+        </div>
+
+
+    }
+}
+<script>
+
+    function _Setamount(a,b)
+    {
+       
+        $('.btn').removeClass("btn-primary");
+        $(b).addClass("btn-primary");
+        $("#txtAmount").val(a);
+
+    }
+
+</script>

@@ -1,0 +1,45 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model int
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Save IPAddress</h5>
+    @*@if (Model==Role.Admin)
+    {
+        <div class="form-group">
+            @if (Model.ID > 0)
+            {
+                <h5>@Model.UName</h5>
+                <small class="form-text text-muted mt-0">@Model.UMobile</small>
+            }
+            else
+            {
+                @Html.Label("txtMobile", "User Mobile", new { @class = "lbl" })
+                @Html.TextBox("txtMobile", Model.UMobile, new { @class = "form-control", @placeholder = "Enter User Mobile", @aria_describedby = "helpMobile", @tabindex = 1 })
+                <small id="helpMobile" class="form-text text-muted d-none"></small>
+            }
+            @Html.Hidden("hid", Model.ID, null)
+        </div>
+    }*@
+    <div class="form-group">
+        @Html.Label("txtIP", "IP", new { @class = "lbl" })
+        @Html.TextBox("txtIP", null, new { @class = "form-control", @placeholder = "xxx.xxx.xxx.xxx", @aria_describedby = "helpIP", @tabindex = 1 })
+        <small id="helpIP" class="form-text text-muted d-none"></small>
+    </div>
+    @if (Model == Role.Admin)
+    {
+        <div class="form-group">
+            <label class="lbl" for="ddlIPType">Select IP Type</label>
+            <select aria-describedby="helpType" class="form-control" id="ddlIPType" tabindex="2">
+                <option value="1">API IP</option>
+                <option value="2">Call Back IP</option>
+                <option value="3">Long Code IP</option>
+                <option value="4">Shopping IP</option>
+            </select>
+            <small id="helpType" class="form-text text-muted d-none"></small>
+        </div>
+    }
+    <button class="btn btn-outline-dark" id="btnIPSave">Save</button>
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>

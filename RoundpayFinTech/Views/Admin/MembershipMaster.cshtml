@@ -1,0 +1,392 @@
+﻿@model Fintech.AppCode.Model.Membership
+@{
+    ViewData["Title"] = "MembershipMaster";
+}
+@{
+    <style type="text/css">
+        .cus_dropdown a {
+            font-size: 13px;
+        }
+
+        .custable_responsive {
+            min-height: 350px !important;
+        }
+    </style>
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">
+                Master
+            </li>
+            <li class="breadcrumb-item active">Membership Master</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card mt-2">
+                <div class="card-header bg-gradientorange text-white pb-1 pt-1">
+                    <div class="row">
+                        <div class="col-sm-8 text-monospace">
+                            <i class="fas fa-link"></i> Membership Master
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <input id="txtSearchSlab" class="form-control text-left " placeholder="Search On List" />
+                                <div class="input-group-append">
+                                    <button id="btnNew" class="btn btn-outline-light btn-sm font-bold text-monospace pl-3 pr-3">New</button>
+                                    @*<a class="btn btn-light btn-sm" href="~/DMRModel.pdf" download="DMRCalculationMechanism" data-toggle="tooltip" data-placement="top" title="Download DMR Calculation Mechanism">
+                                            <span>
+                                                <i class="fa fa-download"></i> <i class="text-danger fa fa-file-pdf"></i>
+                                            </span>
+                                        </a>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-1">
+                    <div class="row">
+
+                    </div>
+                    <div class="table-responsive custable_responsive" style="max-height:calc(100vh - 300px)">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Actions</th>
+                                    <th>MemberShip Name</th>
+                                    <th>Coupon Count</th>
+                                    <th>CouponValue</th>
+                                    <th>Coupon Validity Days</th>
+                                    <th>Cost</th>
+                                    <th>Coupon Interval Days</th>
+                                    <th>Slab Name</th>
+                                    <th>Referral Income</th>
+                                    <th>Package Validity</th>
+                                    <th>IsActive</th>
+                                    <th>Remark</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.body-content').removeClass('container').addClass('container-fluid');
+            darkAnimBtn($('#btnNew'));
+            load();
+            $('table').fixTableHeader();
+
+
+        });
+
+        var load = function () {
+            preloader.load();
+            $.post('/MembershipMaster')
+                .done(function (result) {
+                    resultReload(result);
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    an.autoClose = 5;
+                    $("#txtSearchSlab").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#__p table tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                    $('input[name=rdoSType]').change(function () {
+                        var value = '';
+                        if (this.id == "rdoLevel")
+                            value = 'level';
+                        if (this.id == "rdoChannel")
+                            value = 'channel';
+                        $('#__p table tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                    $('tr :checkbox').change(function () {
+                        var Is = $(this).is(':checked');
+                        var _this = this;
+                        if ($(_this).attr('id').indexOf('sts_') > -1) {
+                            preloader.load();
+                            $.post('/Toggle-Membership-Status', { ID: $(this).closest('tr').data().itemId }, function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                                if (result.statuscode == an.type.success)
+                                    result.statuscode = Is ? an.type.success : an.type.info;
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }).fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+                        }
+
+
+
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        UpdateMember(this);
+                    });
+                    $('tr div.dropdown-menu a.Recharge').click(function () {
+                        if ($(this).attr('id') == undefined) {
+                            return true;
+                        }
+                        preloader.load();
+                        var slabid = 0;
+                        slabid = $(this).closest('tr').data().itemId;
+                        loadPartial(slabid)
+                    });
+                    $('tr div.dropdown-menu a.Range').click(function () {
+                        if ($(this).attr('id') == undefined) {
+                            return true;
+                        }
+                        preloader.load();
+                        var slabid = 0;
+                        slabid = $(this).closest('tr').data().itemId;
+                        loadRangeComm(slabid);
+                    });
+
+                    $('tr div.dropdown-menu a.Denom').click(function () {
+                        callDenomSlab(this, 1);
+                    })
+                    $('tr div.dropdown-menu a.Target').click(function () {
+                        preloader.load();
+                        var param = {
+                            slabid: $(this).closest('tr').data().itemId,
+                            IsAdminDefined: $(this).closest('tr').data().itemSlabtype,
+                        }
+                        var _url = param.IsAdminDefined == "False" ? "/Target" : "/Target-ByRole";
+                        $.post(_url, { param: param })
+                            .done(function (result) {
+                                resultReload(result);
+                                mdlA.content = result;
+                                mdlA.id = 'mymodalTarget';
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.xxlarge);
+                                $('[data-toggle="tooltip"]').tooltip();
+                                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                                setTimeout(function () {
+                                    $('#txtSearchRSD').focus();
+                                    $("#txtSearchRSD").on("keyup", function () {
+                                        var value = $(this).val().toLowerCase();
+                                        $('#tblRNG tbody tr').filter(function () {
+                                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                        });
+                                    });
+                                }, 500);
+                                $('.btn-toggle').click(function () {
+                                    $(this).find('.btn').toggleClass('active');
+                                    if ($(this).find('.btn-dark').length > 0) {
+                                        $(this).find('.btn').toggleClass('btn-dark');
+                                    }
+                                    if ($(this).find('.btn-outline-dark').length > 0) {
+                                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                                    }
+                                });
+                                $('input[id^="txtRMComAmt"],input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"],input[id^="txtRRMComAmt"],input[id^="txtRRComAmt"], div[id^="btnRRGroupComType_"], div[id^="btnRRGroupAmtType_"]').on('blur click', function () {
+                                    UpdateRComm(this, event);
+                                });
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request.Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(() => preloader.remove());
+                    });
+                    $('tr div.dropdown-menu a.DTHCommission').click(function () {
+                        if ($(this).attr('id') == undefined) {
+                            return true;
+                        }
+                        preloader.load();
+                        var slabid = 0;
+                        slabid = $(this).closest('tr').data().itemId;
+                        loadDTHCommission(slabid)
+                    });
+
+                    $('tr div.dropdown-menu a.btnSpecialComm').click(function () {
+                        callSpecialCommSlab(this, 1);
+                    })
+
+                    $('a.copySlab').click((e) => {
+                        let slabid = 0;
+                        slabid = $(e.currentTarget).closest('tr').data().itemId;
+                        copySlabWin(slabid);
+                        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                        $('#btncopySlab').click(() => _CopySlab(slabid));
+                    });
+                });
+        };
+        var UpdateMember = function (sender) {
+            if ($.inArray($(sender).text(), ['Edit', 'New']) < 0) {
+                return true;
+            }
+            preloader.load();
+            var id = 0;
+            if ($(sender).text() === 'Edit') {
+                id = $(sender).closest('tr').data().itemId;
+            }
+            $.post('/Membership-Edit/' + id).done(function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                var ctMember = {
+                    snam: $('#txtMembershipName'), mcost: $('#txtCostOfMembership'), mrem: $('#txtRemark'), btn: $('#btnSlbSave'), hid: $('#hid'), chbIsCouponAllowed: $('#chbIsReal'), mcount: $('#txtCouponCount'), mvalue: $('#txtCouponValue'), mvalidity: $('#txtCouponValidityDays'), mslab: $('#ddlSlabName'), minterval: $('#txtCouponInterval'), referralincome: $('#txtReferralIncome'), packagevalidity: $('#txtPackageValidity')
+                };
+                ctMember.btnTxt = ctMember.btn.html();
+                setTimeout(function () {
+                    ctMember.snam.focus();
+                }, 500);
+                ctMember.btn.click(function () {
+                    if (ctMember.btnTxt !== ctMember.btn.html()) {
+                        return false;
+                    }
+
+
+                    btnLdr.addClass = 'btn-dark';
+                    btnLdr.removeClass = 'btn-outline-dark';
+                    btnLdr.Start(ctMember.btn, 'Requesting');
+                    var IsE = { snam: ctMember.snam.val().trim() == '', mcost: ctMember.mcost.val().trim() == '', mcount: ctMember.mcount.val().trim() == '', mvalue: ctMember.mvalue.val().trim() == '', mvalidity: ctMember.mvalidity.val().trim() == '', mslab: ctMember.mslab.val() == '0', misCoupanAllowed: ctMember.chbIsCouponAllowed.is(':checked'), interval: ctMember.minterval.val() == '', packagevalidity: ctMember.packagevalidity.val() == '' }
+                    $v.showErrorFor(ctMember.snam, 'Field can not be empty!', IsE.snam);
+                    $v.showErrorFor(ctMember.mcost, 'Field can not be empty!', IsE.mcost);
+                    $v.showErrorFor(ctMember.mcount, 'Field can not be empty!', IsE.mcount);
+                    $v.showErrorFor(ctMember.mvalue, 'Field can not be empty!', IsE.mvalue);
+                    $v.showErrorFor(ctMember.mvalidity, 'Field can not be empty!', IsE.mvalidity);
+                    $v.showErrorFor(ctMember.minterval, 'Field can not be empty!', IsE.interval);
+                    $v.showErrorFor(ctMember.packagevalidity, 'Field can not be empty!', IsE.packagevalidity);
+                    IsE.err = (IsE.snam);
+                    if (IsE.misCoupanAllowed && (IsE.err || IsE.mcost || IsE.mcount || IsE.mvalidity || IsE.mvalue || IsE.mvalidity || IsE.interval || IsE.packagevalidity)) {
+
+                        btnLdr.Stop(ctMember.btn);
+                        return false;
+
+
+                    }
+                    else {
+
+                        if (IsE.err || IsE.mcost || IsE.packagevalidity) {
+                            btnLdr.Stop(ctMember.btn);
+                            return false;
+                        }
+                    }
+
+                    var MembershipMaster = {
+                        ID: ctMember.hid.val(),
+                        Remark: ctMember.mrem.val(),
+                        MemberShipType: ctMember.snam.val(),
+                        CouponCount: ctMember.mcount.val().trim() == '' ? 0 : ctMember.mcount.val().trim(),
+                        CouponValue: ctMember.mvalue.val().trim() == '' ? 0 : ctMember.mvalue.val().trim(),
+                        IsCouponAllowed: ctMember.chbIsCouponAllowed.is(':checked'),
+                        CouponValidityDays: ctMember.mvalidity.val().trim() == '' ? 0 : ctMember.mvalidity.val().trim(),
+                        IsActive: true,
+                        Cost: ctMember.mcost.val(),
+                        SlabID: ctMember.mslab.val(),
+                        MinInterval: ctMember.minterval.val().trim() == '' ? 0 : ctMember.minterval.val().trim(),
+                        ReferralIncome: ctMember.referralincome.val() == '' ? 0 : ctMember.referralincome.val(),
+                        PackageValidity: ctMember.packagevalidity.val() == '' ? 0 : ctMember.packagevalidity.val()
+                    }
+                    an.id = 'myalert';
+                    an.parent = $('#alertmsg');
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Membership-Edit',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(MembershipMaster),
+                        success: function (result) {
+                            resultReload(result);
+                            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            btnLdr.Stop(ctMember.btn);
+                            if (result.statuscode == an.type.success) {
+                                mdlA.dispose();
+                                load();
+                            }
+                        },
+                        error: function (xhr, result) {
+                            an.title = "Oops! Error";
+                            an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                            an.alert(an.type.failed);
+                            if (result === 'parsererror') {
+                                reload();
+                            }
+                            btnLdr.Stop(ctMember.btn);
+                        }
+                    });
+                });
+
+                ctMember.chbIsCouponAllowed.change(function () {
+                    ($(this).is(':checked')) ? $("#_membershipHide").show() : $("#_membershipHide").hide()
+                })
+            }).fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+        function isNumber(evt, a) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                if (charCode == 46) {
+                    if ($(a).val().indexOf('.') != -1) {
+                        return false;
+                    }
+                    return true;
+                }
+                return false;
+            }
+            return true;
+        }
+        function isNumberwithoutdecimal(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+
+
+                return false;
+            }
+            return true;
+        }
+
+
+    </script>
+}

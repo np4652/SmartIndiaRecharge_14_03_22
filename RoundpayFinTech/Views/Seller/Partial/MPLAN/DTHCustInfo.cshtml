@@ -1,0 +1,70 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.SubMplanDTHCustomerInfo
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Consumer Info</h3>
+        <hr />
+    </div>
+    @if (Model.Records != null)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="scroll-content">
+                <div class="container">
+                    <table>
+                        <thead>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Plan Name</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].PlanName</th>
+                            </tr>
+                            <tr>
+                                <td>Customer Name</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].CustomerName</th>
+                            </tr>
+                            <tr>
+                                <td>Balance</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].Balance</th>
+                            </tr>
+                            <tr>
+                                <td>Last Recharge Amount</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].Lastrechargeamount</th>
+                            </tr>
+                            <tr>
+                                <td>Next Recharge Date</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].NextRechargeDate</th>
+                            </tr>
+                            <tr>
+                                <td>Last Recharge Date</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].Lastrechargedate</th>
+                            </tr>
+                            <tr>
+                                <td>Monthly Recharge</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].MonthlyRecharge</th>
+                            </tr>
+                            <tr>
+                                <td>Status</td>
+                                <td>:</td>
+                                <th>@Model.Records[0].Status</th>
+                            </tr>
+                        </tbody>
+                        
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h2 class="text-danger">Oops! Customer information not availble</h2>
+    }
+</div>

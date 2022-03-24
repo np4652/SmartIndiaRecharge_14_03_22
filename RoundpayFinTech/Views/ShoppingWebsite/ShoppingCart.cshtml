@@ -1,0 +1,163 @@
+﻿<div class="bg">
+    <div class="mm-page mm-slideout " id="mm-0">
+        <div class="shopping-cart-steps">
+            <div class="container d-none d-sm-block">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="cart-steps">
+                            <ul class="clearfix">
+                                <li class="active">
+                                    <div class="inner">
+                                        <span class="step">01</span><span class="inner-step">Shopping Cart</span>
+                                    </div>
+                                </li>
+                                <li class="proceedcheckout">
+                                    <div class="inner">
+                                        <span class="step">02</span><span class="inner-step">Checkout </span>
+                                    </div>
+                                </li>
+                                <li class="orderCompleted">
+                                    <div class="inner">
+                                        <span class="step">03</span><span class="inner-step">Order Completed </span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="ShoppingCart">
+        </div>
+    </div><!---->
+</div>
+
+<script>
+
+
+     $(document).ready(function () {
+         ShoppinCartDetails();
+
+     });
+     var ProceedToCheckOut = () => {
+         preloaderSmall.load();
+         $.post('/proceedcheckout', {})
+             .done(function (result) {
+                 preloaderSmall.remove();
+                 if (result.statuscode == -2) {
+                     window.location.href = result.msg;
+                     return;
+                 }
+                 $('#ShoppingCart').html(result);
+                 $('.proceedcheckout').addClass('active');
+             })
+             .fail(function (xhr) {
+                 an.title = 'Oops';
+                 an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                 an.alert(an.type.failed);
+                 reject(xhr);
+             })
+     }
+
+        var ShippingAddress = (id) => {
+      var address=$('#Address_'+id).text().trim();
+      var UserName=$('#custname_'+id).text().trim();
+     let dvdeladdress=$('#dvdeladdress');
+      dvdeladdress.empty();
+     dvdeladdress.append(`<b>${UserName} </b>
+                                 <br>	${address}`);
+     }
+
+     var Ordercompleted = () => {
+         $.post('/ordercompleted')
+             .done(result => {
+                 $('.orderCompleted').addClass('active');
+                 $('#ShoppingCart').html(result);
+                 CartDetails();
+             }).fail(xhr => {
+                 an.title = 'Oops';
+                 an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                 an.alert(an.type.failed);
+             }).always(() => preloader.remove());
+     }
+
+     $(document).on('click', '#btnPlaceOrder', function(){
+         debugger;
+             preloader.load();
+             if ($('input[name="ShippingAddress"]:checked').length < 1) {
+                 an.title = "Validation Error:";
+                 an.content = "Please select shipping address";
+                 an.alert(an.type.failed);
+                 preloader.remove();
+                 return false;
+             };
+
+               let param = {
+             AddressID: $('input[name="ShippingAddress"]:checked').data().addressId,
+             PDeduction: $('#txtPWallet').val(),
+             SDeduction: $('#txtSWallet').val()
+         };
+         $.post('/placecartorder', param)
+             .done(result => {
+                 an.id = 'OrderAlert';
+                 an.title = result.statuscode == an.type.success ? 'Congratulations' : 'Oops';
+                 an.content = result.msg;
+                 an.alert(result.statuscode);
+                 if (result.statuscode == an.type.success) {
+                     Ordercompleted();
+                 }
+                 preloader.remove();
+             }).fail(xhr => {
+                 an.title = 'Oops';
+                 an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                 an.alert(an.type.failed);
+             }).always(() => preloader.remove());
+
+    });
+
+      $(document).on('click', '#btnNewAddress', function(){
+        //  alert('1');
+          //preloaderSmall.load();
+           $.post('ShoppingWebsite/_ShippingAddress/${0}').done(result => {
+           preloaderSmall.remove();
+           mdlA.id = "newAddress";
+           mdlA.title = "New Address";
+           mdlA.content = result;
+           mdlA.modal(mdlA.size.large);
+         });
+    });
+
+    function EditAddress(Id) {
+            //preloader.load();
+            $.post(`ShoppingWebsite/_ShippingAddress/${Id}`).done(function (result) {
+               // console.log(result);
+                preloaderSmall.remove();
+                mdlA.id = "newAddress";
+                mdlA.title = "Update Address";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large);
+            });
+        }
+        function DeleteAddress(Id) {
+            //preloader.load();
+            $.post(`ShoppingWebsite/_DeleteShippingAddress/${Id}`).done(function (result) {
+                preloaderSmall.remove();
+                 ProceedToCheckOut();
+                 an.id = 'ShippingAddress';
+                 an.title = result.statuscode == an.type.success ? 'Congratulations' : 'Oops';
+                 an.content = result.msg;
+                 an.alert(result.statuscode);
+            }).fail(function () {
+                an.title = "Oops !";
+                an.content = "Server Error";
+                an.alert(an.type.failed);
+            });
+        }
+
+
+</script>
+
+
+
+
+

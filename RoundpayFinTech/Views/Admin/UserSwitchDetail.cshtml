@@ -1,0 +1,181 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model SwitchingViewModel
+@{
+    ViewData["Title"] = "Userswitched Detail";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i>@ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtM">User Mobile</label>
+                                    <input aria-describedby="txtM" class="form-control" id="txtM" tabindex="5" type="text" placeholder="Enter User Mobile No" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="lbl" for="ddlOType">Choose OPType</label>
+                                @{
+                                    var Oplist = new SelectList(Model.opTypes, "ID", "OpType");
+                                    var OPTypeID = OPTypes.Prepaid;
+                                }
+                                <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID"></select>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="form-group">
+                                    <label class="text-white" for="btnExport">btnSearch</label>
+                                    <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                </div>
+                            </div>
+                            @*<div class="col-md-1 col-sm-1 col-xs-1">
+            <div class="form-group">
+                <label class="text-white" for="btnExport">btnExport</label>
+                <span class="btn btn-outline-success far fa-file-excel" style="font-size:20px;" id="btnExport"></span>
+            </div>
+        </div>*@
+                        </div>
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblUserSwitch">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Action</th>
+                                        <th>Outlet</th>
+                                        <th>Role</th>
+                                        <th>Operator</th>
+                                        <th>API</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+            });
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+            $('#btnSearch').click();
+        });
+        var search = function (sender) {
+            var _this = sender;
+            var m = $('#txtM').val();
+            m = m == undefined || m == null ? '' : m;
+            if (sender.id.indexOf('Export') > -1) {
+                window.location = "/u-switch-detail?" + $.param({ m: m });
+            }
+            else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.post('/u-switch-detail', { m: m, OpTypeID: $('#ddlOType').val() })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#tblUserSwitch tbody').html(result);
+                        $('.btnUnassign').click(function () {
+                            var opID = $(this).closest('tr').data().itemId;
+                            var userID = $(this).closest('tr').data().itemUserid;
+                            var SwitchAPIUser = { UserID: userID, OID: opID, APIID: 0 }
+                            preloader.load();
+                            $.ajax({
+                                type: 'POST',
+                                url: '/user-switch-api',
+                                data: JSON.stringify(SwitchAPIUser),
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                success: function (result) {
+                                    resultReload(result);
+                                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == an.type.success) {
+                                        search(_this);
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (xhr, result) {
+                                    an.title = "Oops";
+                                    an.content = result;
+                                    an.alert(an.type.failed);
+                                    if (result === 'parsererror') {
+                                        reload();
+                                    }
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                        })
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                        btnLdr.Stop($('#btnSearch'));
+                    });
+            }
+        };
+    </script>
+
+
+}
+

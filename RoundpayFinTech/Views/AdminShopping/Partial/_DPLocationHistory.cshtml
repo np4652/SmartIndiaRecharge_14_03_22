@@ -1,0 +1,42 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.DPLocationList
+@if (Model.Status == 1 && Model.Locations.Any())
+{
+    int Counter = 1;
+    <div class="row">
+        <div class="table-responsive" style="max-height:calc(100vh - 290px)">
+            <table class="table table-striped table-condensed" id="tblGrid">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>#</th>
+                        <th>Type</th>
+                        <th>Date</th>
+                        <th>Lat</th>
+                        <th>Long</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Locations)
+                    {
+                        <tr data-id="@item.Id">
+                            <td>@Counter</td>
+                            <td>@item.DeliveryTypeID</td>
+                            <td>@item.EntryDate</td>
+                            <td>@item.Lat</td>
+                            <td>@item.Long</td>
+                        </tr>
+                        Counter++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <tr>
+        <td colspan="5">No Data Found</td>
+    </tr>
+}
+<script>
+
+</script>

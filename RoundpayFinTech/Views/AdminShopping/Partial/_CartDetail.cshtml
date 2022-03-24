@@ -1,0 +1,136 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.CartDetail>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            @if (Model.Any())
+            {
+                <table class="table table-borderless table-striped">
+                    <thead class="bg-info text-white">
+                        <tr>
+                            <th>#</th>
+                            <th colspan="2">Detail</th>
+                            <th>Rate</th>
+                            <th>Quantity</th>
+                            <th class="text-right">Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int counter = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr data-item-Id="@item.ID">
+                                    <td class="align-middle">@counter</td>
+                                    <td class="align-middle cartimg"><img src="/image/Products/@item.ProductID/@item.ImgUrl" /></td>
+                                    <td class="align-middle"><span class="pl-4">@item.ProductName</span></td>
+                                    <td class="align-middle">@Html.Raw(item.SellingPrice.ToString("0.00"))</td>
+                                    <td class="align-middle" style="width:150px">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <span class="btn btn-sm btn-outline-danger pt-2 btnChangeQuantity" data-Operator-Type="minus"><i class="fa fa-minus"></i></span>
+                                            </div>
+                                            <input type="text" value="@item.Quantity" class="form-control text-right" />
+                                            <div class="input-group-append">
+                                                <span class="btn btn-sm btn-outline-success pt-2 btnChangeQuantity" data-Operator-Type="plus"><i class="fa fa-plus"></i></span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td class="align-middle text-right pl-3">@((item.Quantity*item.SellingPrice).ToString("0.00"))</td>
+                                    <td class="align-middle text-center"><span class="btnRemoveItem"><i class=" text-danger fa fa-times fa-2x"></i></span></td>
+                                </tr>
+                                counter++;
+                            }
+                            <tr>
+                                <td colspan="7" class="text-right">
+                                    <span class="btn btn-success" id="btnContinueShopping">Continue Shopping</span>
+                                    <span class="btn btn-info" id="btnProceed">Proceed To Pay</span>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <h4 class="text-monospace text-danger">No Item Found !!</h4>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $('input').numeric({
+        numericType: 'number',
+        maxLength: 5
+    });
+
+    $('#btnContinueShopping').click(() => mdlA.dispose());
+
+    $('.btnRemoveItem').unbind().click(e => {
+        $.post('/RemoveItemFromCart', { ID: $(e.currentTarget).closest('tr').data().itemId }).done(result => {
+            an.id = 'removeAlert';
+            an.title = result.statuscode == an.type.success ? 'Well Done' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode == an.type.success)
+                $(e.currentTarget).closest('tr').remove();
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('#btnProceed').click(() => {
+        preloader.load();
+        $('.modal').remove();
+        $.post('/ProceedToPay').done(result => {
+            mdlA.id = "ProccedToPay";
+            mdlA.title = "Proceed To Pay";
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.large);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    var fnChangeQuantity = e => {
+        let ele = $(e.currentTarget).closest('tr');
+        let param = {
+            ItemID: ele.data().itemId,
+            Quantity: ele.find('td:eq(4) input').val()
+        };
+        $.post('/ChangeQuantity', param).done(result => {
+            console.log(result);
+            if (result.statuscode === an.type.success) {
+                ele.find('td:eq(5)').html(result.commonStr);
+                ItemInCart();
+            }
+            else {
+                /*$('#CartDetail .close').click();*/
+                an.title = 'Oops';
+                an.content = result.msg;
+                an.alert(an.type.failed);
+                console.log(ele.find('td:eq(4)').html());
+                ele.find('td:eq(4) input').val(result.commonStr);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    };
+
+    $('input').unbind().change(e => fnChangeQuantity(e));
+
+    $('.btnChangeQuantity').unbind().click(e => {
+        let _Type = $(e.currentTarget).data().operatorType,
+            _ele = $(e.currentTarget).closest('td').find('input'),
+            PreQuantity = parseInt(_ele.val()),
+            NewQuantity = _Type === 'plus' ? PreQuantity + 1 : PreQuantity > 0 ? PreQuantity - 1 : 0;
+        _ele.val(NewQuantity);
+        fnChangeQuantity(e);
+    });
+</script>

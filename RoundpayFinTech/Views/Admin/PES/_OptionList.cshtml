@@ -1,0 +1,54 @@
+﻿<!--Options List-->
+@model List<RoundpayFinTech.AppCode.Model.VocabList>
+@{ 
+    var counter = 1;
+}
+
+<input type="hidden" id="hid_VMID" value="@(Model.Count>0?Model.First()._VMID:0)" />
+<input type="hidden" id="hid_ID" value="0" />
+<hr style="height:1px;background-image: linear-gradient(141deg, #9fb8ad 0%, #1fc8db 51%, #2cb5e8 75%)" />
+<div class="table-responsive table-sm mt-3">
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+        <thead class="bg-tableth">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Action</th>
+                <th>Name</th>
+                <th>Display Order</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Count > 0 && Model.First()._Name != null)
+            {
+                foreach (var r in Model.OrderByDescending(x => x._ID))
+                {
+                    <tr data-item-id="@r._ID">
+                        <td>#</td>
+                        <td>
+                            <span class="btn btn-sm btn-outline-danger" id="btnVocabOpEdit_@counter" data-toggle="tooltip" data-placement="top" title="Edit" data-item-name="@r._Name" data-item-ind="@r._IND" >
+                                <i class="fas fa-edit"></i>
+                            </span>
+                        </td>
+                        <td>@r._Name</td>
+                        <td>@r._IND</td>
+                    </tr>
+                    counter++;
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="4" class="text-center text-danger">No Options added yet for this vocab !</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+<script>
+    $('[id^=btnVocabOpEdit]').on('click', function () {
+        var optID = $(this).closest('tr').data().itemId;
+        $('#hid_ID').val(optID);
+        $('#OptionName').val($(this).data().itemName);
+        $('#Ind').val($(this).data().itemInd);
+    });
+</script>

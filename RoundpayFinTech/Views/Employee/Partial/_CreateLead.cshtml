@@ -1,0 +1,54 @@
+﻿<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            <label class="lbl" for="txtName">Name</label>
+            <input type="text" class="form-control text-capitalize" id="txtName" placeholder="Enter Name" aria_describedby="nameHelp" />
+            <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+        </div>
+        <div class="form-group">
+            <label class="lbl" for="txtEmail">Email</label>
+            <input type="text" class="form-control text-capitalize" id="txtEmail" placeholder="Enter Email" aria_describedby="emailHelp" />
+            <small id="EmpCodeHelp" class="form-text text-muted d-none">Email is mandatory</small>
+        </div>
+        <div class="form-group">
+            <label class="lbl" for="txtMobile">Mobile Number</label>
+            <input type="text" class="form-control text-capitalize" id="txtMobile" placeholder="Enter Mobile Number" aria_describedby="mobileHelp" />
+            <small id="mobileHelp" class="form-text text-muted d-none">Mobile number is mandatory</small>
+        </div>
+        <div class="form-group">
+            <label class="lbl" for="txtMessage">Message</label>
+            <textarea rows="5" class="form-control text-capitalize" id="txtMessage" placeholder="Enter Message" aria_describedby="messageHelp"></textarea>
+            <small id="messageHelp" class="form-text text-muted d-none">Message is mandatory</small>
+        </div>
+        <div class="form-group text-right">
+            <button type="button" class="btn btn-success" id="btnCreate" value="CREATE">Create</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#btnCreate').click(() => {
+        preloader.load();
+        let param = {
+            Name: $('#txtName').val(),
+            UserEmail: $('#txtEmail').val(),
+            MobileNo: $('#txtMobile').val(),
+            Message: $('#txtMessage').val()
+        };
+        $.post('/Employee/CreateLead1', param).done(result => {
+            an.id = "myAlert";
+            an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            $('#txtName').val('');
+            $('#txtEmail').val('');
+            $('#txtMobile').val('');
+            $('#txtMessage').val('');
+
+        }).fail(xhr => {
+            an.title = "Oops! Error";
+            an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove())
+    });
+</script>

@@ -1,0 +1,76 @@
+﻿@model UserListModel
+@if (Model != null)
+{
+    @if (Model.userList.userReports != null)
+    {
+        @for (int i = 0; i < Model.userList.userReports.Count; i++)
+        {
+            <tr data-item-id="@Model.userList.userReports[i].ID">
+                <th scope="row">@(i + 1)</th>
+                <td>
+                    <div class="btn-group dropup">
+                        <a href="#" id="act@(i + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="act">
+                            <h6 class="dropdown-header">Action Menu</h6>
+                            @if (Model.userList.CanFundTransfer)
+                            {
+                                <a href="#" class="dropdown-item" id="ft_@i">Fund Transfer</a>
+                            }
+                            <a href="UserLedger/@(Model.userList.userReports[i].MobileNo)" class="dropdown-item" name="@Model.userList.userReports[i].ID" target="_blank">View Ledger</a>
+                        </div>
+                    </div>
+                </td>
+                <td>
+                    @Model.userList.userReports[i].OutletName <small class="font-weight-bold text-monospace">
+                        [@(Model.userList.userReports[i].Prefix + Model.userList.userReports[i].ID)]
+                    </small>
+                </td>
+                <td>@Model.userList.userReports[i].MobileNo</td>
+
+                <td class="text-right">@Model.userList.userReports[i].Balance</td>
+                <td class="text-right">@Model.userList.userReports[i].BCapping</td>
+                @if (Model.userBalnace.IsUBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].UBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].UCapping</td>
+                }
+                @if (Model.userBalnace.IsBBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].BBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].BBCapping</td>
+                }
+                @if (Model.userBalnace.IsIDBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].CBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].CCapping</td>
+                }
+                @if (Model.userBalnace.IsPacakgeBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].IDBalnace</td>
+                    <td class="text-right">@Model.userList.userReports[i].IDCapping</td>
+                }
+                @if (Model.userBalnace.IsCBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].PacakgeBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].PackageCapping</td>
+                }
+
+                <td>@Model.userList.userReports[i].Slab</td>
+                <td>@Model.userList.userReports[i].JoinDate </td>
+                <td>@Model.userList.userReports[i].JoinBy <input type="hidden" value="@Model.userList.userReports[i].CommRate" /></td>
+                <td>
+
+                        @Html.Raw(Model.userList.userReports[i].Status ? "Active" : "Inactive")
+
+                </td>
+                <td>
+
+                        @Html.Raw(Model.userList.userReports[i].IsOTP ? "Active" : "Inactive")
+                </td>
+                <td>@Model.userList.userReports[i].KYCStatus</td>
+
+            </tr>
+        }
+    }
+}
+

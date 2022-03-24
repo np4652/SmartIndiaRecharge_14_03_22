@@ -1,0 +1,190 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "UserWise Limit";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">UserWise Limit</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i>UserWise Limit
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row form-group mb-1">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <input id="txtSearchUser" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="Enter User @Html.Raw(Model?"ID":"MobileNo")" type="number" />
+                                <small id="helpSearch" class="form-text text-danger d-none" data-isid="@Model"></small>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <h5 id="uName" class="text-uppercase text-info"></h5>
+                                <small id="otName" class="form-text text-muted mt-0"></small>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <div class="float-right ">
+                                    <input class="form-control d-none" id="txtSearch" type="text" placeholder="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblUserwiseAPI">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:5%;">#</th>
+                                        <th scope="col" style="width:15%;">Operator</th>
+                                        <th scope="col" style="width:80%;">Limit</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            setTimeout(function () {
+                $('#txtSearchUser').focus();
+            }, 500);
+
+            $('#txtSearchUser').on('change', function () {
+                $('#uName').html('Name');
+                $('#otName').html('Outletname');
+                $('#__p tbody').html('');
+                $('#rdoIsDenom').addClass('d-none')
+                var umob = $('#txtSearchUser').val();
+                var isid = $('#helpSearch').data().isid;
+                var IsE = { mob: isid ? false : !$v.$IsMob(umob) }
+                IsE.err = (IsE.mob)
+                $v.showErrorFor($('#txtSearchUser'), 'Enter a valid mobile number!', IsE.mob);
+                if (IsE.err) {
+                    return false;
+                }
+                preloader.load();
+                $.post('/UserInfo', { MobileNo: umob })
+                    .done(function (result) {
+                        resultReload(result);
+                        if (result.id == 0) {
+                            an.title = 'Oops';
+                            an.content = 'This is invalid user';
+                            an.alert(an.type.failed);
+                        }
+                        else if (result.id > 0) {
+                            preloader.load();
+                            $('#uName').html(result.name);
+                            $('#otName').html(result.outletName);
+                            $.post('/User-Wise-Limit', { UserID: result.id })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    $('#__p tbody').html(result);
+                                    $('#txtSearch').removeClass('d-none');
+                                    
+                                    $('input[id^=txtUsedLimit_]').change(function () {
+                                        var opID = $(this).closest('tr').data().itemId;
+                                        var UsedLimit = $(this).val();
+                                        var userID = $('#hidID').val();
+                                        var UserLimitReq = { UserID: userID, OID: opID, UsedLimit: UsedLimit }
+                                        preloader.load();
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '/UserWiseLimitCU',
+                                            data: JSON.stringify(UserLimitReq),
+                                            dataType: 'json',
+                                            contentType: 'application/json',
+                                            success: function (result) {
+                                                resultReload(result);
+                                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            },
+                                            statusCode: {
+                                                500: function () {
+                                                    an.title = 'Oops';
+                                                    an.content = 'Server error';
+                                                    an.alert(an.type.failed);
+                                                },
+                                                0: function () {
+                                                    an.title = 'Oops';
+                                                    an.content = 'Internet Connection was broken';
+                                                    an.alert(an.type.failed);
+                                                }
+                                            },
+                                            error: function (xhr, result) {
+                                                an.title = "Oops";
+                                                an.content = result;
+                                                an.alert(an.type.failed);
+                                                if (result === 'parsererror') {
+                                                    reload();
+                                                }
+                                            },
+                                            complete: function () {
+                                                preloader.remove();
+                                            }
+                                        });
+                                    })
+                                })
+                                .catch(function (xhr, e, msg) {
+                                    $('#uName').html('Name');
+                                    $('#otName').html('Outletname');
+                                    $('#__p tbody').html('');
+                                })
+                                .fail(function (xhr) {
+                                    $(this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                    $('#uName').html('Name');
+                                    $('#otName').html('Outletname');
+                                    $('#__p tbody').html('');
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        }
+                    })
+                    .catch(function (xhr, e, m) {
+
+                    })
+                    .fail(function (xhr) {
+                        $(this).attr('checked', Is == false);
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+        });
+    </script>
+}

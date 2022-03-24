@@ -1,0 +1,73 @@
+﻿@model IEnumerable<CalculatedGSTEntry>
+
+@{
+    var couter = 1;
+}
+
+@if (Model.Any())
+{
+    var TotalRequested = 0M;
+    var TotalDebited = 0M;
+    var TotalGSTTax = 0M;
+    var TotalTDS = 0M;
+    var TotalDisc = 0M;
+    var TotalNet = 0M;
+    var TotalSGST = 0M;
+    var TotalIGST = 0M;
+    var TotalAll = 0M;
+
+    foreach (var item in Model)
+    {
+        var SGST = Math.Round((item.State == item.CompanyState ? item.NetAmount * 0.09M : 0),2,MidpointRounding.AwayFromZero);
+        var IGST = Math.Round((item.State == item.CompanyState ? 0 : item.NetAmount * 0.18M),2,MidpointRounding.AwayFromZero);
+        var Total = Math.Round(( item.NetAmount + SGST + SGST + IGST),2,MidpointRounding.AwayFromZero);
+        item.NetAmount = Math.Round(item.NetAmount, 2, MidpointRounding.AwayFromZero);
+        TotalRequested += item.RequestedAmount;
+        TotalDebited += item.Amount;
+        TotalGSTTax += item.GSTTaxAmount;
+        TotalTDS += item.TDSAmount;
+        TotalDisc += item.Discount;
+        TotalNet += item.NetAmount;
+        TotalSGST += SGST;
+        TotalIGST += IGST;
+        TotalAll += Total;
+
+
+<tr>
+    <th>@couter</th>
+    <th>@item.InvoiceID</th>
+    <td>@item.Name <small class="text-muted">@(item.ByAdminUser ?"[ByAdmin]":"")</small></td>
+    <td>@item.OutletName<small class="font-weight-bold text-monospace"> [@item.Mobile]</small></td>
+    <td>@item.State</td>
+    <td>@item.PAN</td>
+    <td>@item.GSTIN</td>
+    <td class="text-right">@item.RequestedAmount</td>
+    @*<td class="text-right">@item.TDSAmount</td>*@
+    @*<td class="text-right">@item.GSTTaxAmount</td>*@
+    <td class="text-right">@item.Discount </td>
+    <td class="text-right">@item.NetAmount</td>
+    <td class="text-right">@SGST</td>
+    <td class="text-right">@SGST</td>
+    <td class="text-right">@IGST</td>
+    <td class="text-right">@Total</td>
+</tr>
+        couter = couter + 1;
+    }
+    <tr>
+    <th colspan="7" class="text-right">Total</th>
+    <th class="text-right">@TotalRequested</th>
+    @*<th class="text-right">@TotalDebited</th>
+    <th class="text-right">@TotalGSTTax</th>*@
+    <th class="text-right">@TotalDisc</th><th class="text-right">@TotalNet</th><th class="text-right">@TotalSGST</th><th class="text-right">@TotalSGST</th><th class="text-right">@TotalIGST</th><th class="text-right">@TotalAll</th></tr>
+}
+else
+{
+    <tr>
+        <td colspan="17" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+
+    </tr>
+}
+
+

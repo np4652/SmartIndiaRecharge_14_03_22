@@ -1,0 +1,181 @@
+﻿@model Fintech.AppCode.Model.SlabModel
+@{
+    int i = 1;
+    int J = 1;
+}
+@foreach (var item in Model.slabMasters)
+{
+    <tr data-item-id="@item.ID" data-item-slabType="@item.IsAdminDefined">
+        <td style="width:1em;" scope="row">@i</td>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#" class="dropdown-item">Edit</a>
+                    <a href="#" class="dropdown-item Recharge" id="RCS@(i)">Recharge Commission Slab</a>
+                    <a href="#" class="dropdown-item Range" id="RNG@(J++)">Range Commission Slab</a>
+                    @if (ApplicationSetting.IsDenominationIncentive && Model.IsAdmin)
+                    {
+                        <a href="#" class="dropdown-item Denom" id="RNG@(J++)">
+                            Denomination Slab
+                        </a>
+                    }
+                    @if (ApplicationSetting.IsTarget && Model.IsAdmin)
+                    {
+                        <a href="#" class="dropdown-item Target" id="TRG@(J++)">Target</a>
+                    }
+                    <a href="#" class="dropdown-item DTHCommission" id="DTH@(i)">DTH Commission</a>
+                    @if (ApplicationSetting.IsShopping)
+                    {
+                        <a href="#" class="dropdown-item btnACS">Affiliate Commission Slab</a>
+                    }
+                    @if (ApplicationSetting.IsCircleSlabShow && Model.IsAdmin)
+                    {
+                        <a href="#" class="dropdown-item btnCircleSlab">CircleSlab For APIUsers</a>
+                    }
+                    @if (ApplicationSetting.IsECommerceAllowed)
+                    {
+                        <a href="#" class="dropdown-item btnEComm">ECommerce Commission Slab</a>
+                    }
+                    @if (ApplicationSetting.IsSpecialCommission)
+                    {
+                        <a href="#" class="dropdown-item btnSpecialComm">Special Commission Slab</a>
+                    }
+                    @if (ApplicationSetting.IsMultiLevel && Model.IsAdmin && item.IsMultiLevel == 1 && item.IsAdminDefined == true)
+                    {
+                        <a href="#" id="RCS@(i)" class="dropdown-item btnMultiLevel">Multi Level Slab</a>
+                    }
+                    <a href="#" class="dropdown-item" id="GiComm">GI Commission Slab</a>
+                </div>
+            </div>
+        </td>
+        <td>
+            <b>@item.Slab</b>
+            <small id="slabHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                @Html.Raw(item.IsAdminDefined ? "Level" : "Channel")
+                @Html.Raw(" , <u><a href='#' class='text-info copySlab'>COPY SLAB</a></u>")
+                @Html.Raw(" , <u><a href='/Userlist?slabname=" + item.Slab + "' class='text-info'>" + item.TotalUser + " Users</a></u>")
+            </small>
+            @if (item.TotalUser == 0)
+            {
+                <span style="position:relative;top:-35px;left:95%;color:red" data-toggle="tooltip" data-placement="top" title="Delete" class="deleteSlab">
+                    <i class="fa fa-times"></i>
+                </span>
+            }
+        </td>
+        <td>@item.Remark</td>
+        <td>@item.EntryDate</td>
+        <td>@item.ModifyDate</td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="sts_@item.ID" @Html.Raw(item.IsActive ? "checked='checked'" : "") />
+                <label for="sts_@item.ID"></label>
+            </span>
+        </td>
+        @if (Model.IsAdmin && ApplicationSetting.IsB2CEnabled)
+        {
+            <td>
+                @if (item.IsAdminDefined)
+                {
+                    @if (item.IsSigunupSlabID)
+                    {
+                        <span class="text-success">Active</span>
+                    }
+                    else
+                    {
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" id="signup_@item.ID" />
+                            <label for="signup_@item.ID"></label>
+                        </span>
+                    }
+                }
+            </td>
+        }
+        @*@if (Model.IsWebsite || Model.IsAdmin)
+            {*@
+        <td>
+            @if (item.IsB2B)
+            {
+                <span class="text-success">Yes</span>
+            }
+            else
+            {
+                <span class="text-dark">No</span>
+            }
+        </td>
+        @*}*@
+
+    </tr>
+    i++;
+}
+<script>
+
+    $('.btnCircleSlab').unbind().click(e => {
+        var SlabID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/CircleSlab', { SlabID })
+            .done(result => {
+                mdlA.content = result;
+                mdlA.id = 'circleSlab';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    });
+    $('.btnACS').unbind().click(e => {
+        let param = {
+            slabid: $(e.currentTarget).closest('tr').data().itemId,
+            IsAdminDefined: $(e.currentTarget).closest('tr').data().itemSlabtype,
+        };
+        $.post('/Af-Slab-Detail', param)
+            .done(result => {
+                mdlA.content = result;
+                mdlA.id = 'AFCommission';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    });
+    $('.btnEComm').unbind().click(e => {
+        preloader.load();
+        let ele = $(e.currentTarget).closest('tr').data();
+        let param = {
+            slabid: ele.itemId,
+            IsAdminDefined: ele.itemSlabtype,
+        };
+        $.post('/_ShoppingCommission', param)
+            .done(result => {
+                mdlA.id = 'AFCommission';
+                mdlA.title = 'Shopping Commission';
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+    $('.deleteSlab').unbind().click(e => {
+        console.log($(e.currentTarget).closest('tr').data());
+        let slabId = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/Admin/DeleteSlabAsync', { slabId: slabId }).done(result => {
+            an.title = result.statuscode === 1 ? 'well done' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === 1) {
+                load();
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        });
+    });    
+</script>

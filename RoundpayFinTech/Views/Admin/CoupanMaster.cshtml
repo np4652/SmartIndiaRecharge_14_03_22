@@ -1,0 +1,310 @@
+﻿@{
+    ViewData["Title"] = "CouponMaster";
+}
+@{
+    <style type="text/css">
+        .cus_dropdown a {
+            font-size: 13px;
+        }
+
+        .custable_responsive {
+            min-height: 350px !important;
+        }
+
+        /* width */
+        ::-webkit-scrollbar {
+           
+            height: 5px !important;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+        }
+
+    </style>
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">
+                Master
+            </li>
+            <li class="breadcrumb-item active">Coupon Master</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card mt-2">
+                <div class="card-header bg-gradientorange text-white pb-1 pt-1">
+                    <div class="row">
+                        <div class="col-sm-8 text-monospace">
+                            <i class="fas fa-link"></i> Coupan Master
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <input id="txtSearchCoupan" class="form-control text-left " placeholder="Search On List" />
+                                <div class="input-group-append">
+                                    <button id="btnNew" class="btn btn-outline-light btn-sm font-bold text-monospace pl-3 pr-3">New</button>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-1">
+
+                    <div class="table-responsive custable_responsive" style="max-height:calc(100vh - 300px)">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Actions</th>
+                                    <th>Operator</th>
+                                    <th>Voucher Type</th>
+                                    <th>MinAmount</th>
+                                    <th>MaxAmount</th>
+                                    <th>Remark</th>
+                                    <th>IsActive</th>
+                                    <th>Last Modify Date</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.body-content').removeClass('container').addClass('container-fluid');
+            load();
+            $('table').fixTableHeader();
+        });
+
+        var load = function () {
+            preloader.load();
+            $.post('/Coupan-Master')
+                .done(function (result) {
+                    resultReload(result);
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    an.autoClose = 5;
+                    $("#txtSearchCoupan").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#__p table tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        UpdateCoupon(this);
+                    });
+                    $('.CouponVoucher').click(function () {
+                        CouponVoucher(this)
+                    });
+                    $('.CouponSetting').click(function () {
+                        CouponSetting(this)
+                    });
+                });
+        };
+        var UpdateCoupon = function (sender) {
+            if ($.inArray($(sender).text(), ['Edit', 'New']) < 0) {
+                return true;
+            }
+            //preloader.load();
+            var id = 0;
+            if ($(sender).text() === 'Edit') {
+                id = $(sender).closest('tr').data().itemId;
+            }
+            $.post('/CoupanEdit/' + id).done(function (result) {
+                // resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                ThumbGrid(id);
+                var ctCoupon = { voctype: $("#txtVoucherType"), voremark: $("#txtRemark"), voopid: $("#ddlOperator"), btn: $("#btnCopSave"), _min: $('#minAmt'), _max: $('#maxAmt') };
+                var Denomination = [];
+                ctCoupon.btn.click(function () {
+                    var IsE = { snam: ctCoupon.voctype.val().trim() == '', rem: ctCoupon.voremark.val().trim() == '', ddl: ctCoupon.voopid.val() == "0", _max: $('#maxAmt').val() == "", _min: $('#minAmt').val() == "", _maxmin: ($('#minAmt').val() <= $('#maxAmt').val()) }
+                    $v.showErrorFor(ctCoupon._min, 'Enter Min Amount.', IsE._min);
+                    $v.showErrorFor(ctCoupon._max, 'Enter Max Amount.', IsE._max);
+                    $v.showErrorFor(ctCoupon.voctype, 'Field can not be empty!', IsE.snam);
+                    $v.showErrorFor(ctCoupon.voremark, 'Field can not be empty!', IsE.rem);
+                    $v.showErrorFor(ctCoupon.voopid, 'Please Select!', IsE.ddl);
+                    $v.showErrorFor(ctCoupon._min, 'Max  should be greater then min.', !IsE._maxmin);
+                    if (IsE.snam || IsE.rem || IsE.ddl || IsE._max || IsE._min || !IsE._maxmin) {
+                        return false;
+                    }
+                    var CouponMaster = {
+                        ID: id,
+                        OID: ctCoupon.voopid.val(),
+                        VoucherType: ctCoupon.voctype.val(),
+                        Remark: ctCoupon.voremark.val(),
+                        Max: ctCoupon._max.val(),
+                        Min: ctCoupon._min.val(),
+                        IsActive: true
+                    }
+
+                    an.id = 'myalert';
+                    an.parent = $('#alertmsg');
+                    $.ajax({
+                        type: 'POST',
+                        url: '/Coupon-Edit',
+                        dataType: 'json',
+                        contentType: 'application/json',
+                        data: JSON.stringify(CouponMaster),
+                        success: function (result) {
+                            mdlA.dispose();
+                            load();
+                            resultReload(result);
+                            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+
+                            if (result.statuscode == an.type.success) {
+                                mdlA.dispose();
+                                load();
+                            }
+                        },
+                        error: function (xhr, result) {
+                            an.title = "Oops! Error";
+                            an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                            an.alert(an.type.failed);
+                            if (result === 'parsererror') {
+                                reload();
+                            }
+                        }
+                    });
+                });
+            }).fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+
+
+        var CouponVoucher = function (sender) {
+            var id = $(sender).closest('tr').data().itemId;
+            CouponVoucher1(id);
+        };
+
+        function CouponVoucher1(id) {
+
+            $.post('/CoupanVoucher/'+id).done(function (result) {
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.title = "Coupon Voucher";
+                mdlA.options.backdrop = 'static';
+                mdlA.modal(mdlA.size.large);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                var ctCoupon = { voctype: $("#txtVoucherType"), voremark: $("#txtRemark"), voopid: $("#ddlOperator"), btn: $("#btnCopSave") };
+            }).fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+
+
+        }
+        var CouponSetting = function (sender) {
+
+            //preloader.load();
+
+
+            var id = $(sender).closest('tr').data().itemId;
+           var name= $(sender).closest('tr').find("td").eq(2).html()
+            $.post(`/CoupanSetting/${id}/${name}`).done(function (result) {
+
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.title = 'Coupon Setting';
+                mdlA.modal(mdlA.size.large);
+                //$('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+
+               // var ctCoupon = { voctype: $("#txtVoucherType"), voremark: $("#txtRemark"), voopid: $("#ddlOperator"), btn: $("#btnCopSave") };
+
+            }).fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+        function ActveDeactveMaster(a,b)
+        {
+            var Is = $(b).is(':checked');
+            var _this = this;
+            if (a > -1) {
+                preloader.load();
+                $.post('/Toggle-CouponMaster-Status', {ID:a}, function (result) {
+                    resultReload(result);
+                    an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                    if (result.statuscode == an.type.success)
+                        result.statuscode = Is ? an.type.success : an.type.info;
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+            }
+            
+
+        }
+
+        function UploadExcel(id) {
+
+            $.post(`/CouponUpload/${id}`).done(function (result) {
+                var mdlA1 = mdlA;
+                mdlA1.content = result;
+                mdlA1.id = 'mymodal1';
+                mdlA1.title = "Upload";
+                mdlA1.options.backdrop = 'static';
+                mdlA1.modal(mdlA1.size.default);
+            }).fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        }
+        var ThumbGrid = (id) => {
+            $.post('/CouponVoucherImageList/' + id, {}).done(result => $('ImageGrid').html(result)).fail(() => { })
+        }
+
+        function isNumberwithoutdecimal(evt) {
+            evt = (evt) ? evt : window.event;
+            var charCode = (evt.which) ? evt.which : evt.keyCode;
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+            return true;
+        }
+    </script>
+}

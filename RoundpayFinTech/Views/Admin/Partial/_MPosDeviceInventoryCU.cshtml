@@ -1,0 +1,131 @@
+﻿@model RoundpayFinTech.AppCode.Model.MPosDeviceInventoryModel
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">@Html.Raw(Model.ID == 0 ? "Add New MPOS Device" : "Update MPOS Device")</h5><hr />
+        <input type="hidden" id="hfdID" value="@Model.ID" />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    @Html.Label("ddlVendor", "Choose Vendor", new { @class = "lbl" })
+                    @{
+                        var Vendors = new SelectList(Model.VendorDdl, "ID", "VendorName");
+                    }
+                    <select id="ddlVendor" aria-describedby="roleHelp" class="form-control" asp-items="@Vendors" asp-for="@Model.VendorId">
+                        @*<option value="0">:: Select Vendor ::</option>*@
+                    </select>
+                    <small id="roleHelp" class="form-text text-muted d-none">Vendor is mandatory</small>
+                </div>
+                <div id="gridDetail" style="width: 100%;">
+                    <div class="col-md-12">
+                        @Html.Label("ddlDevice", "Choose Device", new { @class = "lbl" })
+                        <select id="ddlDevice" aria-describedby="roleHelp" class="form-control" asp-for="@Model.DeviceModelId">
+                            <option value="0">:: Select Device ::</option>
+                        </select>
+                        <small id="roleHelp" class="form-text text-muted d-none">Device is mandatory</small>
+                    </div>
+                    <div class="col-md-12">
+                        <label class="lbl" for="txtSrNo">Device Serial No.</label>
+                        <textarea class="form-control" rows="5" id="txtSrNo" placeholder="Enter Serial Number(Comma separated for multiple)" aria_describedby="nameHelp">@Model.DeviceSerial</textarea>
+                        @*<input type="text" class="form-control " id="txtSrNo" placeholder="Enter Serial Number" aria_describedby="nameHelp" value="@Model.DeviceSerial" />*@
+                        <small id="nameHelp" class="form-text text-muted d-none">Serial Number is mandatory</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-dark" id="btnCreate">@Html.Raw(Model.ID == 0 ? "Create" : "Update")</button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        if (@Model.ID == 0) {
+            $('#gridDetail').hide();
+        }
+        else {
+            getDeviceDdl();
+        }
+    });
+
+    $('#ddlVendor').change(() => getDeviceDdl());
+
+    $('#btnCreate').click(function () {
+        if ($('#ddlVendor').val() <= 0) {
+            an.title = 'Oops';
+            an.content = 'Select Vendor';
+            an.alert(an.type.warning);
+            return;
+        }
+        if ($('#ddlDevice').val() <= 0) {
+            an.title = 'Oops';
+            an.content = 'Select Device';
+            an.alert(an.type.warning);
+            return;
+        }
+        if ($('#txtSrNo').val().trim() == "") {
+            an.title = 'Oops';
+            an.content = 'Device Serial required';
+            an.alert(an.type.warning);
+            return;
+        }
+        preloader.load();
+        let param = {
+            ID: @Model.ID,
+            VendorId: $('#ddlVendor').val(),
+            DeviceModelId: $('#ddlDevice').val(),
+            DeviceSerial: $('#txtSrNo').val()
+        }
+        $.post('/MPosDeviceCUP', param)
+            .done(function (result) {
+                //console.log(result);
+                if (result.statuscode == 1) {
+                    an.title = 'Success';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                    _load();
+                } else {
+                    an.title = 'Oops';
+                    an.content = 'Record update failed. Try again.';
+                    an.alert(an.type.failed);
+                }
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });
+
+    var getDeviceDdl = function () {
+        let id = $('#ddlVendor').val();
+        if (id > 0) {
+            $.post('/GetMasterDeviceList', { id: id })
+                .done(function (result) {
+                    $('#ddlDevice').empty();
+                    $.each(result, function () {
+                        $('#ddlDevice').append($("<option />").val(this.id).text(this.modelName));
+                    });
+                    if (@Model.VendorId == parseInt($('#ddlVendor').val())) {
+                        $('#ddlDevice option[value="@Model.DeviceModelId"]').attr("selected", "selected");
+                    }
+                    else {
+                        $('#ddlDevice option[value="0"]').attr("selected", "selected");
+                    }
+                    $('#gridDetail').show();
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+    }
+</script>

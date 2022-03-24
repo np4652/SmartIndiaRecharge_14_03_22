@@ -1,0 +1,234 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>
+@{int i = 1; }
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.OID">
+        <th style="width:1em;" class="align-middle">@i</th>
+        <td style="width:5em" class="align-middle">
+            <div class="input-group-text">
+                <label style="position:relative;top:-23px;left:-8px" for="fIcon_@item.OID"><i class="text-info fas fa-upload"></i></label>
+                <input id="fIcon_@item.OID" type="file" class="d-none fIcon" />
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@(i++)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item">Edit</a>
+                        <a href="#" class="dropdown-item" name="@item.OID-@item.Name">Optional Parameter Setting</a>
+
+                        @*@if (@item.OpType == OPTypes.BankAccountOpening)*@
+                            @if (@item.ServiceID == ServiceType.AccountOpening)
+                            {
+                                <a href="#" class="dropdown-item" name="@item.OID-@item.Name">Account Opening Setting</a>
+                            }
+                            @if (ApplicationSetting.IsPlanServiceUpdated && (item.OpType == OPTypes.Prepaid || item.OpType == OPTypes.DTH))
+                            {
+                                <a href="#" class="dropdown-item" data-oid="@item.OID" data-opt="@item.OpType" data-opname="@item.Name">Map Operators</a>
+                            }
+                        </div>
+                </div>
+                <img src="/Image/operator/@(item.OID).png" alt="@(item.OID).png" style="height:37px;margin-left: 17px;">
+            </div>
+
+        </td>
+        <td class="align-middle">
+            <span class="badge badge-secondary"> @item.Name</span>
+            <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@Html.Raw(item.IsBBPS ? item.OperatorType + ", BBPS" + (item.IsBilling ? ", Billing" : ", No Billing") : item.OperatorType)</small>
+        </td>
+        <td class="align-middle">
+            <div class="input-group">
+                @Html.TextBoxFor(modelItem => item.OPID, new { @id = "txtOPID" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpOPID_" + i })
+
+                @Html.HiddenFor(modelItem => item.OPID, new { @id = "hidOPID" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+                <div class="input-group-append">
+                    <i class="fas fa-info-circle text-muted pt-2 cursor-pointer input-group-text" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                </div>
+            </div>
+            <small id="helpOPID_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+        </td>
+        @if (ApplicationSetting.IsPlanServiceUpdated)
+        {
+            if (item.OpType == OPTypes.Prepaid || item.OpType == OPTypes.DTH)
+            {
+                <td style="text-align: center;">
+
+                    <span class="switch switch-sm" data-toggle="tooltip" data-placement="top" title="" data-original-title="Check Plan For Recharge Amount!">
+                        <input type="checkbox" class="switch" id="isAmtVldt_@i" @Html.Raw(item.IsAmountValidation ? "checked='checked'" : string.Empty)>
+                        <label for="isAmtVldt_@i"></label>
+                    </span>
+
+                    <span class="btn btn-sm btn-outline-info mt-2" data-optype="@item.OpType" id="btnUpdatePlan_@i" data-toggle="tooltip" data-placement="bottom" title="" data-original-title="Update Plan!"><i class="fas fa-plane-departure"></i> Update Plan</span>
+                </td>
+            }
+            else
+            {
+                <td>NA</td>
+            }
+        }
+
+        <td class="align-middle">
+            <div class="form-inline">
+                <textarea class="form-control" rows="2" cols="30" id="txtTollFree_@i" placeholder="xxxx-xxx-xxxxx" aria-describedby="helpTollFree_@i">@item.TollFree</textarea>
+                @Html.HiddenFor(modelItem => item.TollFree, new { @id = "hidTollFree" + i, @class = "form-control text-center", @style = "width:4em" })
+            </div>
+            <small id="helpTollFree_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+        </td>
+        <td class="text-right">@item.Min</td>
+        <td class="text-right">@item.Max</td>
+        <td>@item.HSNCode</td>
+        <td>@item.StartWith</td>
+        <td>@item.BusinessModel</td>|
+        <td class="align-middle">
+            <select id="ddlCircleValidation" aria-describedby="helpCVT" tabindex="10" class="custom-select custom-select-md mb3 ddlCircleValidation" asp-for="@item.CircleValidationType">
+                <option value="0">NO</option>
+                <option value="1">TABLE</option>
+                <option value="2">API</option>
+            </select>
+        </td>
+
+        <td>@item.ExactNess</td>|
+        @*<td>
+            <span class="switch switch-sm">
+                @Html.Raw(item.IsActive ? "UP" : "DOWN")
+            </span>
+        </td>*@
+        @if (ApplicationSetting.IsShowPDFPlan)
+        {
+            <td class="align-middle">
+                <input type="file" id="opImageUpload_@i" class="d-none" />
+                <label for="opImageUpload_@i" class="cursor-pointer btn" data-toggle="tooltip" data-placement="top" title="Upload Operator Plan">
+                    <i class="fa fa-upload" aria-hidden="true"></i>
+                </label>
+
+                <label class="cursor-pointer btn" data-toggle="tooltip" data-placement="top" title="View Operator Plan">
+                    @{ string pdfFileName = item.OID + ".pdf";}
+                    <a href="../Image/planDoc/@pdfFileName" target="_blank"><i class="fa fa-eye-slash" aria-hidden="true"></i></a>
+                </label>
+            </td>
+        }
+        @if (ApplicationSetting.IsBillerUpdate)
+        {
+            <td class="align-middle">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <i class="fas fa-sync text-danger pt-2 cursor-pointer input-group-text" data-toggle="tooltip" data-placement="top" title="Click To Update Biller Info for <b><i class='text-danger'>@item.Name</i><b>" id="iBillerID_@i" data-html="true"></i>
+                    </div>
+                    @Html.TextBoxFor(modelItem => item.BillerID, new { @id = "txtBillerID" + i, @class = "form-control text-center", @placeholder = "Biller ID", @aria_describedby = "helpBillerID_" + i })
+
+                    @Html.HiddenFor(modelItem => item.BillerID, new { @id = "hidBillerID" + i, @class = "form-control text-center", @placeholder = "0.0" })
+                </div>
+                <small id="helpBillerID_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+            </td>
+        }
+    </tr>
+
+}
+
+
+<script>
+    var _URL = window.URL || window.webkitURL;
+    $('.fIcon').change(e => {
+        let _Oid = $(e.currentTarget).closest('tr').data().itemId;
+        let _id = $(e.currentTarget).attr('id');
+        if ((file = $('#' + _id)[0].files[0])) {
+            img = new Image();
+            var objectUrl = _URL.createObjectURL(file);
+            img.src = objectUrl;
+            img.onload = function () {
+                if (this.width > 300 || this.height > 322) {
+                    an.title = 'Opps';
+                    an.content = "Please select image of size 320 by 320 ";
+                    an.alert(an.type.failed);
+                    return false;
+                }
+                else {
+                    var formData = new FormData();
+                    formData.append('file', $('#' + _id)[0].files[0]);
+                    formData.append('OID', _Oid);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/upload-OperatorIcon',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: result => {
+                            an.title = result.statuscode == an.type.success ? "Welldone" : "Oops";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        },
+                        error: xhr => {
+                            an.title = "Oops! Error";
+                            an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                            an.alert(-1);
+                            btnLdr.Stop(element.btn);
+                        },
+                        complete: () => $(e.currentTarget).val('')
+                    })
+                }
+                // _URL.revokeObjectURL(objectUrl);
+            };
+
+        }
+    });
+    $('[id^=iBillerID_]').click(function () {
+        var _this = this;
+        var IsE = $($($(this).parent()).next()[0]).val() == '';
+        $v.showErrorFor($($($(this).parent()).next()[0]), 'First Input Biller ID', IsE);
+        if (IsE === true) {
+            return true;
+        }
+        var id = $(_this).closest('tr').data().itemId;
+        preloader.load();
+        $.post('/update-biller', { ID: id })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+    $('#iBillerIDAll').unbind().click(function () {
+        var id = -1;
+        preloader.load();
+        $.post('/update-biller', { ID: id, OpID: $('#ddlOType').val() })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+    $('[id^=txtBillerID]').change(function () {
+        var _this = this;
+        var id = $(_this).closest('tr').data().itemId;
+        var IsE = $($(_this).next()[0]).val() == $(_this).val();
+        $v.showErrorFor($(_this), 'No change detected', IsE);
+        if (IsE === true) {
+            return true;
+        }
+        preloader.load();
+        $.post('/billerid', { ID: id, billerID: $(_this).val() })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $($(_this).next()[0]).val($(_this).val());
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+
+</script>

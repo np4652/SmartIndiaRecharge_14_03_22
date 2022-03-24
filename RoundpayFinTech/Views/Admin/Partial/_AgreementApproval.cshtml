@@ -1,0 +1,54 @@
+﻿@model RoundpayFinTech.AppCode.Model.AAUserData;
+@{
+    var counter = 1;
+}
+
+@if (Model.AAUser != null)
+{
+    foreach (var item in Model.AAUser)
+    {
+        <tr>
+            <th>@counter</th>
+            <td class="text-center">@item.MobileNo</td>
+            <td class="text-center">
+                <input class="form-control" id="txtOutletName_@counter" placeholder="Enter OutletName" tabindex="1" type="text" value="@item.OutletName">
+            </td>
+            <td class="text-center">
+                <input class="form-control" id="txtEmail_@counter" placeholder="Enter Email" tabindex="1" type="text" value="@item.Email">
+            </td>
+            <td class="text-center">
+                <input class="form-control" id="txtPAN_@counter" placeholder="Enter PAN" tabindex="1" type="text" value="@item.PAN">
+            </td>
+            <td class="text-center">
+                <input class="form-control" id="txtAADHAR_@counter" placeholder="Enter AADHAR" tabindex="1" type="text" value="@item.AADHAR">
+            </td>
+            <td class="text-center">
+                <input class="form-control" id="txtRemark_@counter" placeholder="Enter Remark" tabindex="1" type="text" value="@item.AgreementRemark">
+            </td>
+            <td class="text-center">
+                @if (item.Agreementstatus)
+                {
+                    <span class="btn btn-sm btn-outline-success disabled" ><i class="fas fa-check-circle"></i> Approved</span>
+                }
+                else
+                {
+                    <span class="btn btn-sm btn-outline-info" id="Approve_@counter" data-uid="@item.UserID"><i class="fas fa-check"></i> Approve</span>
+                }
+            </td>
+            @*<td class="text-center">
+                    <span class="btn btn-sm btn-outline-info" id="Collect_@counter" data-uid="@item.UserID" data-nam="@item.OutletName" data-mob="@item.Mobile"><i class="fas fa-wallet"></i> Collect</span>
+                    <span class="btn btn-sm btn-outline-primary mt-1" id="FTAS_@counter" data-uid="@item.UserID" data-nam="@item.OutletName" data-mob="@item.Mobile"><i class="fas fa-money-check-alt"></i> Fund Transfer</span>
+                </td>*@
+        </tr>
+        counter += 1;
+    }
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="10">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

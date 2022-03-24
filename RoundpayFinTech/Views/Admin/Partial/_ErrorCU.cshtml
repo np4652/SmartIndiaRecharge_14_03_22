@@ -1,0 +1,62 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ErrorCodeDetail
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>ErrorCode Details</h3>
+        <hr />
+    </div>
+    @if (ApplicationSetting.IsErrorCodeEditable)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="scroll-content">
+                <div class="container">
+                    <div class="form-group">
+                        @Html.Label("txtError", "Error", new { @class = "lbl" })
+                        @Html.TextBox("txtError", Model.Error, new { @class = "form-control text-capitalize", @placeholder = "Enter Error", @aria_describedby = "txtErrorHelp", @tabindex = 1 })
+                        <small id="txtErrorHelp" class="form-text text-muted d-none">Error field is mandatory</small>
+                        <input type="hidden" id="hid" value="@Model.EID" class="d-none" />
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("txtCode", "Error Code", new { @class = "lbl" })
+                        @Html.TextBox("txtCode", Model.Code, new { @class = "form-control", @placeholder = "Enter Error Code", @aria_describedby = "opCode", @tabindex = 2 })
+                        <small id="opCode" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("ddlErrorType", "Error Type", new { @class = "lbl" })
+                        @{
+                            var list = new SelectList(ViewBag.Types, "ID", "ErrorType");
+                        }
+                        <select id="ddlErrorType" aria-describedby="errType" tabindex="4" class="custom-select custom-select-md mb3" asp-items="@list" asp-for="@Model.ErrType"></select>
+                        <small id="errType" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="form-group">
+                        @Html.Label("ddlStatus", "Transaction Status", new { @class = "lbl" })
+                        <select id="ddlStatus" aria-describedby="helpCVT" tabindex="10" class="custom-select custom-select-md" asp-for="@Model.Status">
+                            <option value="0">:: Choose Status ::</option>
+                            <option value="@RechargeRespType.PENDING">@RechargeRespType._PENDING</option>
+                            <option value="@RechargeRespType.SUCCESS">@RechargeRespType._SUCCESS</option>
+                            <option value="@RechargeRespType.FAILED">@RechargeRespType._FAILED</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" id="chbIsDown" tabindex="24" @(Model.IsDown ? "checked='checked'" : "")>
+                            <label for="chbIsDown" class="font-weight-bold lbl">IsDown</label>
+                        </span>
+                        <span class="switch switch-sm">
+                            <input type="checkbox" class="switch" id="chbIsResend" tabindex="24" @(Model.IsResend ? "checked='checked'" : "")>
+                            <label for="chbIsResend" class="font-weight-bold lbl">IsResend(IsEnable)</label>
+
+                        </span>
+                    </div>
+                    <div class="form-group">
+                        <button type="button" class="btn btn-outline-dark" id="btnErrDetails" tabindex="12">Save Error Detail</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

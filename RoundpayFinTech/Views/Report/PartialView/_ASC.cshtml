@@ -1,0 +1,55 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Configuration;
+@model List<Fintech.AppCode.Model.Reports.AccountSummary>
+
+@{
+    var counter = 1;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model)
+    {
+        <tr>
+            <th>@counter</th>
+            <td>
+                @item.OutletName [@item.Mobile]
+                <span class="fa fa-info-circle text-info a_modal" style="cursor:pointer;" data-amob="@item.Mobile" aria-hidden="true" title="" data-toggle="tooltip" data-original-title="Account Statement Detail"></span>
+            </td>
+            @if (ApplicationSetting.IsAreaMaster)
+            {
+                <td class="text-right">@item.Area</td>
+            }
+            @if (@item.IsPrepaid)
+            {
+                <td class="text-right">@item.Balance</td>
+            }
+            @if (@item.IsUtility)
+            {
+                <td class="text-right">@item.UBalance</td>
+            }
+            <td class="text-right">@item.Opening</td>
+            <td class="text-right">@item.Sales</td>
+            <td class="text-right">@item.Lsale</td>
+            <td class="text-center">@item.LSDate</td>
+            <td class="text-right">@item.CCollection</td>
+            <td class="text-right">@item.LCollection</td>
+            <td class="text-center">@item.LCDate</td>
+            <td class="text-right">@item.Closing</td>
+            <td class="text-center">
+                <span class="btn btn-sm btn-outline-info" id="Collect_@counter" data-uid="@item.UserID" data-nam="@item.OutletName" data-mob="@item.Mobile"><i class="fas fa-wallet"></i> Collect</span>
+                <span class="btn btn-sm btn-outline-primary mt-1" id="FTAS_@counter" data-uid="@item.UserID" data-nam="@item.OutletName" data-mob="@item.Mobile"><i class="fas fa-money-check-alt"></i> Fund Transfer</span>
+            </td>
+        </tr>
+        counter += 1;
+    }
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="10">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

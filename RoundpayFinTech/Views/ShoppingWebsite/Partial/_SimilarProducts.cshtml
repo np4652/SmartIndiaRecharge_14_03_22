@@ -1,0 +1,30 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model List<SimilarProducts>;
+<div  class="row">
+    @if (Model != null)
+    {
+        @foreach (var item in Model)
+        {
+            <div  class="col-6 col-md-2 cus-padding-pro-sec">
+                <div  class="product-single">
+                    <div  class="product-thumb">
+                        <span  class="off">&#8377; @item.Discount /- off</span>
+                        <a href="GetProductDetails/@item.POSId">
+                            <img  alt="" src="@item.FrontImage">
+                        </a>
+                    </div>
+                    <div  class="product-title">
+                        <h4 >
+                            <a  href="GetProductDetails/@item.POSId">
+                                @item.Title
+                            </a>
+                        </h4>
+                    </div><div  class="product-price-rating">
+                        <span >&#8377; @item.SellingPrice /-</span>
+                        <del >&#8377; @item.MRP /-</del>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>

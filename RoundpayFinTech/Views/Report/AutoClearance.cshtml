@@ -1,0 +1,475 @@
+﻿@{
+    ViewData["Title"] = "Auto Clearance";
+}
+<style>
+    .cus_start_btn {
+        font-size: 14px;
+        margin-top: 3px;
+        border-radius: 0;
+        padding: 4px 5px;
+    }
+
+    .cus_card_body {
+        padding: 10px;
+        height: 25vh;
+    }
+   
+        .cus_box_sec .task_sec {
+            font-size: 24px;
+        }
+        .cus_box_sec .task_para_sec {
+            font-size: 15px;
+        }
+        footer
+        {
+            position:absolute
+        }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fas fa-space-shuttle"></i> @ViewData["Title"] </h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Auto Pending Clearing Page</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        Status checking
+                    </div>
+                    <input type="hidden" id="hdnStsRech" value="0" />
+                    <input type="hidden" id="hdnStsDMT" value="0" />
+                    <input type="hidden" id="hdnStsAEPS" value="0" />
+                    <input type="hidden" id="hdnStsPG" value="0" />
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-header bg-info text-white">Recharge Pendings</div>
+                                    <div class="card-body cus_card_body">
+                                        <div class="row">
+                                            <div class="col-md-6 pr-0">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="txtRechTime" data-mvr="1" value="1" placeholder="Minutes...">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pr-0 pl-0">
+                                                <button class="btn btn-primary cus_start_btn" id="btnStsRech">Processing!</button>
+                                            </div>
+                                        </div>
+                                        <div class="fa-3x cus_box_sec" id="spnRech">
+                                            <h1 class="task_sec">Processing!</h1><p class="task_para_sec">New Hit will be in <span class="text-success">5:00</span> mins!</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-muted" data-ctrr="0" id="dvCtrR">Hit Count : <b> 0</b></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-header bg-info text-white">DMT Pendings</div>
+                                    <div class="card-body cus_card_body">
+                                        <div class="row">
+                                            <div class="col-md-6 pr-0">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="txtDMTTime" data-mvd="5" value="5" placeholder="Minutes...">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pr-0 pl-0">
+                                                <button class="btn btn-primary cus_start_btn" id="btnStsDMT">Processing!</button>
+                                            </div>
+                                        </div>
+                                        <div class="fa-3x cus_box_sec" id="spnDMT">
+                                            <h1 class="task_sec">Processing!</h1><p class="task_para_sec">New Hit will be in <span class="text-success">5:00</span> mins!</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-muted" data-ctrd="0" id="dvCtrD">Hit Count : <b> 0</b></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-header bg-info text-white">AEPS Pendings</div>
+                                    <div class="card-body cus_card_body">
+                                        <div class="row">
+                                            <div class="col-md-6 pr-0">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="txtAEPSTime" data-mva="5" value="5" placeholder="Minutes...">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pr-0 pl-0">
+                                                <button class="btn btn-primary cus_start_btn" id="btnStsAEPS">Processing!</button>
+                                            </div>
+                                        </div>
+                                        <div class="fa-3x cus_box_sec" id="spnAEPS">
+                                            <h1 class="task_sec">Processing!</h1><p class="task_para_sec">New Hit will be in <span class="text-success">5:00</span> mins!</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-muted" data-ctra="0" id="dvCtrA">Hit Count : <b> 0</b></div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                                <div class="card text-center">
+                                    <div class="card-header bg-info text-white">PG Pendings</div>
+                                    <div class="card-body cus_card_body">
+                                        <div class="row">
+                                            <div class="col-md-6 pr-0">
+                                                <div class="form-group">
+                                                    <input type="text" class="form-control" id="txtPGTime" data-mvp="5" value="5" placeholder="Minutes...">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6 pr-0 pl-0">
+                                                <button class="btn btn-primary cus_start_btn" id="btnStsPG">Processing!</button>
+                                            </div>
+                                        </div>
+                                        <div class="fa-3x cus_box_sec" id="spnPG">
+                                            <h1 class="task_sec">Processing!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" >5:00</span> mins!</p>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer text-muted" data-ctrp="0" id="dvCtrP">Hit Count : <b> 0</b></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(() => {
+            AEPSPendings();
+            RechPendings();
+            DMTPendings();
+            PGPendings();
+        });
+
+        $('#btnStsRech').on('click', () => {
+            var btnRech = $('#btnStsRech');
+            var btRText = btnRech.html();
+            if (btRText == "Stop") {
+                $('#hdnStsRech').val("1");
+                btnRech.html('Stopping!');
+            }
+            else if (btRText == "Start") {
+                var mnt = $('#txtRechTime').val();
+                if (mnt < 1) {
+                    an.title = 'Error';
+                    an.content = ' Minimum time is 1 minutes!';
+                    an.alert(an.type.failed);
+                    return;
+                }
+                $('#hdnStsRech').val("0");
+                var mntR = $('#txtRechTime').val();
+                $('#txtRechTime').data('mvr', mntR);
+                btnRech.html('Stop');
+                RechPendings();
+            }
+        });
+
+        var RechPendings = () => {
+            if ($('#hdnStsRech').val() == "1") {
+                return false;
+            }
+            else {
+                btnRechP = $('#btnStsRech');
+                btnRechP.html('Stop');
+                var ctr = $('#dvCtrR').data('ctrr');
+                $('#dvCtrR b').html(++ctr);
+                $('#dvCtrR').data('ctrr', ctr);
+                $('#spnRech').html('<i class="fas fa-cog fa-spin text-info"></i>');
+                $.post('/_AutoClr-rech')
+                    .done(function (result) {
+                        if (btnRechP.html() == "Stopping") {
+
+                        }
+                        else {
+                            btnRechP.html('Start');
+                            $('#hdnStsRech').val("0");
+                            var mntR = $('#txtRechTime').data('mvr');
+                            var dt = new Date();
+                            var time = moment(dt.getTime() + mntR * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                            $('#spnRech').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" >' + time + '</span> !</p>');
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        var mntR = $('#txtRechTime').data('mvr');
+                        var dt = new Date();
+                        var time = moment(dt.getTime() + mntR * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                        $('#spnRech').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" >' + time +'</span> !</p>');
+                        mntR = mntR < 1 ? (1000 * 60) : (mntR * 1000 * 60);
+                        if ($('#hdnStsRech').val() == "0") {
+                            setTimeout(function () { RechPendings(); }, mntR);
+                        }
+                    });
+            }
+        }
+
+        $('#btnStsDMT').on('click', () => {
+            var btnDMT = $('#btnStsDMT');
+            var btDText = btnDMT.html();
+            if (btDText == "Stop") {
+                $('#hdnStsDMT').val("1");
+                btnDMT.html('Stopping!');
+            }
+            else if (btDText == "Start") {
+                var mntD = $('#txtDMTTime').val();
+                if (mntD < 5) {
+                    an.title = 'Error';
+                    an.content = ' Minimum time is 5 minutes!';
+                    an.alert(an.type.failed);
+                    return;
+                }
+                $('#hdnStsDMT').val("0");
+                var mntD = $('#txtDMTTime').val();
+                $('#txtDMTTime').data('mvd', mntD);
+                btnDMT.html('Stop');
+                DMTPendings();
+            }
+        });
+
+        var DMTPendings = () => {
+            if ($('#hdnStsDMT').val() == "1") {
+                return false;
+            }
+            else {
+                btnDMTP = $('#btnStsDMT');
+                btnDMTP.html('Stop');
+                var ctr = $('#dvCtrD').data('ctrd');
+                $('#dvCtrD b').html(++ctr)
+                $('#dvCtrD').data('ctrd', ctr);
+                $('#spnDMT').html('<i class="fas fa-cog fa-spin text-info"></i>');
+                $.post('/_AutoClr-dmt')
+                    .done(function (result) {
+                        if (btnDMTP.html() == "Stopping") {
+
+                        }
+                        else {
+                            btnDMTP.html('Start');
+                            $('#hdnStsDMT').val("0");
+                            var mntD = $('#txtDMTTime').data('mvd');
+                            var dt = new Date();
+                            var time = moment(dt.getTime() + mntD * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                            $('#spnDMT').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" id="DMTTmr">' + time + '</span> mins!</p>');
+                            $('#txtDMTTime').data('mvd', mntD);
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        var mntD = $('#txtDMTTime').data('mvd');
+                        var dt = new Date();
+                        var time = moment(dt.getTime() + mntD * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                        $('#spnDMT').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" id="DMTTmr">' + time+'</span> mins!</p>');
+                        $('#txtDMTTime').data('mvd', mntR);
+                        mntD = mntD < 5 ? (1000 * 60) : (mntD * 1000 * 60);
+                        if ($('#hdnStsDMT').val() == "0") {
+                            setTimeout(function () { DMTPendings(); }, mntD);
+                        }
+                    });
+            }
+        }
+
+        $('#btnStsAEPS').on('click', () => {
+            var btnAeps = $('#btnStsAEPS');
+            var btAText = btnAeps.html();
+            if (btAText == "Stop") {
+                $('#hdnStsAEPS').val("1");
+                btnAeps.html('Stopping!');
+            }
+            else if (btAText == "Start") {
+                var mnt = $('#txtAEPSTime').val();
+                if (mnt < 5) {
+                    an.title = 'Error';
+                    an.content = ' Minimum time is 5 minutes!';
+                    an.alert(an.type.failed);
+                    return;
+                }
+                $('#hdnStsAEPS').val("0");
+                btnAeps.html('Stop');
+                $('#txtAEPSTime').data('mva', $('#txtAEPSTime').val());
+                AEPSPendings();
+            }
+        });
+
+        var AEPSPendings = () => {
+            if ($('#hdnStsAEPS').val() == "1") {
+                return false;
+            }
+            else {
+                btnAepsP = $('#btnStsAEPS');
+                btnAepsP.html('Stop');
+                var ctr = $('#dvCtrA').data('ctra');
+                $('#dvCtrA b').html(++ctr)
+                $('#dvCtrA').data('ctra', ctr);
+                $('#spnAEPS').html('<i class="fas fa-cog fa-spin text-info"></i>');
+                $.post('/_AutoClr-aeps')
+                    .done(function (result) {
+                        if (btnAepsP.html() == "Stopping") {
+
+                        }
+                        else {
+                            btnAepsP.html('Start');
+                            $('#hdnStsAEPS').val("0");
+                            var mntA = $('#txtAEPSTime').data('mva');
+                            var dt = new Date();
+                            var time = moment(dt.getTime() + mntA * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                            $('#spnAEPS').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" >' + time + '</span>!</p>');
+                            $('#txtAEPSTime').data('mva', mntA);
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        var mntA = $('#txtAEPSTime').data('mva');
+                        var dt = new Date();
+                        var time = moment(dt.getTime() + mntA * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                        $('#spnAEPS').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success" >' + time +'</span>!</p>');
+                        $('#txtAEPSTime').data('mva', mntA);
+                        mntA = mntA < 5 ? (1000 * 60) : (mntA * 1000 * 60);
+                        if ($('#hdnStsAEPS').val() == "0") {
+                            setTimeout(function () { AEPSPendings(); }, mntA);
+                        }
+                        
+                    });
+            }
+        }
+
+        $('#btnStsPG').on('click', () => {
+            var btnPG = $('#btnStsPG');
+            var btPText = btnPG.html();
+            if (btPText == "Stop") {
+                $('#hdnStsPG').val("1");
+                btnPG.html('Stopping!');
+            }
+            else if (btPText == "Start") {
+                var mnt = $('#txtPGTime').val();
+                if (mnt < 5) {
+                    an.title = 'Error';
+                    an.content = ' Minimum time is 5 minutes!';
+                    an.alert(an.type.failed);
+                    return;
+                }
+                $('#hdnStsPG').val("0");
+                btnPG.html('Stop');
+                $('#txtPGTime').data('mvp', $('#txtPGTime').val());
+                PGPendings();
+            }
+        });
+
+        var PGPendings = () => {
+            if ($('#hdnStsPG').val() == "1") {
+                return false;
+            }
+            else {
+                btnPGP = $('#btnStsPG');
+                btnPGP.html('Stop');
+                var ctr = $('#dvCtrP').data('ctrp');
+                $('#dvCtrP b').html(++ctr)
+                $('#dvCtrP').data('ctrp', ctr);
+                $('#spnPG').html('<i class="fas fa-cog fa-spin text-info"></i>');
+                $.get('/BulkStatusCheckPG')
+                    .done(function (result) {
+                        if (btnPGP.html() == "Stopping") {
+
+                        }
+                        else {
+                            btnPGP.html('Start');
+                            $('#hdnStsPG').val("0");
+                            var mntP = $('#txtPGTime').data('mvp');
+                            var dt = new Date();
+                            var time = moment(dt.getTime() + mntP * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                            $('#spnPG').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success">' + time + '</span> mins!</p>');
+                            $('#txtPGTime').data('mvp', mntP);
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        var mntP = $('#txtPGTime').data('mvp');
+                        var dt = new Date();
+                        var time = moment(dt.getTime() + mntP * 1000 * 60).format('DD MMM YY hh:mm:ss a');
+                        $('#spnPG').html('<h1 class="task_sec">Task Completed!</h1><p class="task_para_sec">New Hit will be in <span class="text-success">' + time +'</span> mins!</p>');
+                        $('#txtPGTime').data('mvp', mntP);
+                        mntP = mntP < 5 ? (1000 * 60) : (mntP * 1000 * 60);
+                        if ($('#hdnStsPG').val() == "0") {
+                            setTimeout(function () { PGPendings(); }, mntP);
+                        }
+                    });
+            }
+        }
+
+
+    </script>
+}

@@ -1,0 +1,117 @@
+﻿@{
+    ViewData["Title"] = "Callback Request Data";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Callback Request</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Callback Request
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row mb-2">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                <input class="form-control mt-4" id="txtSearch" type="text" placeholder="Search" />
+                            </div>
+                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+                                <button id="btnSearch" tabindex="8" class="btn btn-outline-dark mt-4">Search</button>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">RequestDate</th>
+                                        <th scope="col">CallbackRequest</th>
+                                        <th scope="col">Path</th>
+                                        <th scope="col">Method</th>
+                                        <th scope="col">RequestIP</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+                            $(document).ready(function () {
+                                GetData($('#ddlTop').val(), '');
+                                $('#btnSearch').click(function () {
+                                    GetData($('#ddlTop').val(), $('#txtSearch').val());
+                                });
+                            });
+                            var GetData = function (t, s) {
+                                $.post('/')
+                                preloader.load();
+                                $.post('/_CallbackData', { t, s })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        $('.__p tbody').html(result);
+                                        setTimeout(function () {
+                                            $('#txtSearch').unbind().focus();
+                                            $("#txtSearch").unbind().on("keyup", function () {
+                                                var value = $(this).val().toLowerCase();
+                                                $('.__p tbody tr').filter(function () {
+                                                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                                });
+                                            });
+                                        }, 500);
+                                        $('.__p tbody tr textarea').unbind().focus(function () {
+                                            $(this).select();
+                                        });
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                    });
+                            }
+    </script>
+
+
+}

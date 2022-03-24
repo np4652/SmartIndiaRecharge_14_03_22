@@ -1,0 +1,149 @@
+﻿@using Fintech.AppCode.StaticModel
+@model APIDetailModel
+@{ int i = 1;}
+@foreach (var item in Model.aPIOpCodes)
+{
+    if (Model.OpTypeID == OPTypes.DMR && ApplicationSetting.IsDMTWithPIPE && !ApplicationSetting.IsMultiOperatorWithPipe)
+    {
+        if (item.OID == 11)
+        {
+            <tr data-item-id="@item.OID">
+                <th class="align-middle">@i</th>
+                <td class="align-middle">
+                    @item.Operator<small class="form-text text-muted mt-0">@item.OpType</small>
+                    <!--for setting optional param for api-->
+                    <input type="hidden" id='opname_@(item.OID+"_"+item.Operator)' value="@(item.OID+"_"+item.Operator)" /><!--for setting optional param for api-->
+                </td>
+                <td class="align-middle">
+                    <div class="row mr-0">
+                        @foreach (KeyValuePair<string, string> apiItem in item.APIs)
+                        {
+                            string apiname = apiItem.Key;
+                            string OpCode = apiItem.Value;
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <input type="hidden" id="hidOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" />
+                                    <small class="font-weight-bold text-monospace" for="txtOp_@Html.Raw(i + "_" + apiname.Split('~')[1])">@Html.Raw(apiname.Split('~')[0].Replace(" ", ""))</small>
+                                    <i class="fas fa-plus-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Set operator optional parameters for @apiname.Split('~')[0].Replace(" ", "") API" id="iAOKV_@(item.OID+"_"+apiname.Split('~')[1])" data-apiop="@(apiname.Split('~')[0].Replace(" ", ""))"></i>
+                                    @if (ApplicationSetting.IsCircleSlabShow)
+                                    {
+                                        <i class="far fa-dot-circle ml-1 text-danger cursor-pointer" data-toggle="tooltip" data-placement="top" title="Set Circle APIOpCode @apiname.Split('~')[0].Replace(" ", "") API" id="iAOC_@(item.OID+"_"+apiname.Split('~')[1])" data-apiop="@(apiname.Split('~')[0].Replace(" ", ""))"></i>
+                                    }
+                                    <input type="text" id="txtOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" class="form-control" placeholder="OpCode" value="@((OpCode??string.Empty).Contains("~")?OpCode.Split('~')[0]:OpCode)" aria-describedby="helpOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" />
+                                    <input type="text" id="txtBillOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" class="form-control" placeholder="BillOpCode" value="@((OpCode??string.Empty).Contains("~")?OpCode.Split('~')[1]:OpCode)" aria-describedby="helpBillOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" />
+                                    <small id="helpOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" class="form-text text-danger d-none">Error</small>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </td>
+            </tr>
+            i = i + Model.aPIOpCodes.Count();
+        }
+    }
+    else
+    {
+        <tr data-item-id="@item.OID">
+            <th class="align-middle">@i</th>
+            <td class="align-middle">
+                @item.Operator<small class="form-text text-muted mt-0">@item.OpType</small>
+                <!--for setting optional param for api-->
+                <input type="hidden" id='opname_@(item.OID+"_"+item.Operator)' value="@(item.OID+"_"+item.Operator)" /><!--for setting optional param for api-->
+            </td>
+            <td class="align-middle">
+                <div class="row mr-0">
+                    @foreach (KeyValuePair<string, string> apiItem in item.APIs)
+                    {
+                        string apiname = apiItem.Key;
+                        string OpCode = apiItem.Value;
+                        <div class="col-md-2">
+                            <div class="form-group">
+                                <input type="hidden" id="hidOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" />
+                                <small class="font-weight-bold text-monospace" for="txtOp_@Html.Raw(i + "_" + apiname.Split('~')[1])">@Html.Raw(apiname.Split('~')[0].Replace(" ", ""))</small>
+                                <i class="fas fa-plus-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Set operator optional parameters for @apiname.Split('~')[0].Replace(" ", "") API" id="iAOKV_@(item.OID+"_"+apiname.Split('~')[1])" data-apiop="@(apiname.Split('~')[0].Replace(" ", ""))"></i>
+                                @if (ApplicationSetting.IsCircleSlabShow)
+                                {
+                                    <i class="far fa-dot-circle ml-1 text-danger cursor-pointer" data-toggle="tooltip" data-placement="top" title="Set Circle APIOpCode @apiname.Split('~')[0].Replace(" ", "") API" id="iAOC_@(item.OID+"_"+apiname.Split('~')[1])" data-apiop="@(apiname.Split('~')[0].Replace(" ", ""))"></i>
+                                }
+                                <input type="text" id="txtOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" class="form-control" placeholder="OpCode" value="@((OpCode??string.Empty).Contains("~")?OpCode.Split('~')[0]:OpCode)" aria-describedby="helpOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" />
+                                <input type="text" id="txtBillOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" class="form-control" placeholder="BillOpCode" value="@((OpCode??string.Empty).Contains("~")?OpCode.Split('~')[1]:OpCode)" aria-describedby="helpBillOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" />
+                                <small id="helpOp_@Html.Raw(i + "_" + apiname.Split('~')[1])" class="form-text text-danger d-none">Error</small>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </td>
+        </tr>
+    }
+    i++;
+}
+
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+
+    $("[id^='iAOKV_']").on('click', function () {
+        preloader.load();
+        var _this = this;
+        var data = $(this).attr('id')
+        $.post('/AOPMapping/', { A: data.split('_')[2], O: data.split('_')[1] }).done(function (result) {
+            resultReload(result);
+            mdlA.content = result;
+            mdlA.id = 'mymodal';
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.default);
+            $('button.close span,#mdlCancel').unbind().click(function () {
+                mdlA.dispose();
+            });
+            var opname = $($($($(_this).closest('tr')).find('td')[0]).find('input[type="hidden"]')).attr('id').split('_')[2];
+            $("#opname").text(opname);
+            var apiname = $(_this).data().apiop;
+            $("#apiname").text(apiname);
+
+        }).catch(function (xhr, e, msg) {
+
+        }).fail(function (xhr) {
+            if (xhr.status == 500) {
+                an.title = 'Oops';
+                an.content = 'Server error';
+                an.alert(an.type.failed);
+            }
+            if (xhr.status == 0) {
+                an.title = 'Oops';
+                an.content = 'Internet Connection was broken';
+                an.alert(an.type.failed);
+            }
+        }).always(function () {
+            preloader.remove();
+        });
+    });
+    $("[id^='iAOC_']").on('click', function () {
+        preloader.load();
+        var data = $(this).attr('id')
+        $.post('/API-OpCode-Circle/', { A: data.split('_')[2], O: data.split('_')[1] }).done(function (result) {
+            resultReload(result);
+            mdlA.content = result;
+            mdlA.id = 'aoCircleModel';
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.xlarge);
+            $('button.close span,#mdlCancel').unbind().click(function () {
+                mdlA.dispose();
+            });
+            $('[data-toggle="tooltip"]').tooltip();
+        }).catch(function (xhr, e, msg) {
+
+        }).fail(function (xhr) {
+            if (xhr.status == 500) {
+                an.title = 'Oops';
+                an.content = 'Server error';
+                an.alert(an.type.failed);
+            }
+            if (xhr.status == 0) {
+                an.title = 'Oops';
+                an.content = 'Internet Connection was broken';
+                an.alert(an.type.failed);
+            }
+        }).always(function () {
+            preloader.remove();
+        });
+    });
+</script>

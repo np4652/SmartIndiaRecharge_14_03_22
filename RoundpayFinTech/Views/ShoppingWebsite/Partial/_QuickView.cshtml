@@ -1,0 +1,102 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model AllProductInfo;
+
+<style>
+    .product-details-desc {
+        border-right: 0;
+        padding-right: 0px;
+    }
+</style>
+<div class="row">
+    @if (Model != null)
+    {
+        <div class="col-lg-4">
+            <div class="tab-content">
+
+                <div class="tab-pane fade in show active" id="product-1">
+                    <div class="product-details-thumb">
+                        <img alt="" src="@Model.FrontImage">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="product-2">
+                    <div class="product-details-thumb">
+                        <img alt="" src="@Model.BackImage">
+                    </div>
+                </div>
+                <div class="tab-pane fade" id="product-3">
+                    <div class="product-details-thumb">
+                        <img alt="" src="@Model.SideImage">
+                    </div>
+                </div>
+            </div>
+            <ul class="nav nav-tabs products-nav-tabs horizontal quick-view mt-10">
+                <li>
+                    <a class="active" data-toggle="tab" href="#product-1">
+                        <img alt="" src="@Model.FrontImage_100">
+                    </a>
+                </li>
+                <li>
+                    <a data-toggle="tab" href="#product-2"><img alt="" src="@Model.BackImage_100"></a>
+                </li>
+                <li><a data-toggle="tab" href="#product-3"><img alt="" src="@Model.SideImage_100"></a></li>
+            </ul>
+        </div>
+        <div class="col-lg-8">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="product-details-desc">
+                        <h2>@Model.Title</h2>
+                        <div class="product-price-rating">
+                            <div class="del-price-sec">
+                                <del> &#8377; @Model.MRP/-</del>
+                            </div><span> &#8377; @Model.SellingPrice/-</span>
+                            <span class="off">&#8377; @Model.Discount off</span>
+                            <div class="pro-list-heart">
+                                <a class="product-wishlist" onclick="AddWishListProduct(@ViewData["PosID"].ToString())" href="javascript:void(0);"  title="Add to WishList">
+                                    <i aria-hidden="true" class="fa fa-heart"></i>
+                                </a>
+                            </div>
+                            <div class="">
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star"></i>
+                                <i class="fa fa-star-o"></i>
+                            </div>
+                        </div><!---->
+                        @if (Model.filters != null)
+                        {
+                            @foreach (var item in Model.filters)
+                            {
+                                <div class="filter mt-10">
+
+                                    <label>@item.name</label>
+                                    <ul class="list-none">
+                                        <!---->
+                                        @foreach (var item1 in item.option_Lists)
+                                        {
+                                            <li>
+                                                <a class="active"> @item1.OptionName</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        }
+                        <div class="product-highlight-des">
+                            <h3>Product Highlights</h3>
+                            <div class="d-none d-sm-block pro-desc-highlight quick-pro-list-scroll">
+                                @Html.Raw(@Model.Description)
+                            </div>
+                        </div>
+                        <div class="add-to-get mt-10">
+                            <a href="javascript:void(0);"  onclick="AddToCart('@ViewData["PosID"].ToString()',@ViewData["PosID"].ToString(),1)" class="add-to-cart">Add to Cart</a>
+                            <a class="add-to-cart buynow" href="javascript:void(0);" onclick="BuyNow(@ViewData["PosID"].ToString())" >Buy Now</a>
+                            <a class="add-to-cart compare" target="_blank" href="GetProductDetails/@ViewData["PosID"].ToString()">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>

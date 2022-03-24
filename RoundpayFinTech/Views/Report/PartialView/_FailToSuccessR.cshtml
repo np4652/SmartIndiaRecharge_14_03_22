@@ -1,0 +1,93 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RechargeReportModel;
+@{ 
+    var couter = 1;
+    var mdl = Model.Report;
+}
+
+@if (mdl.Any())
+{
+    foreach (var item in mdl)
+    {
+        if (!Model.IsAdmin && item._Type == RechargeRespType.REQUESTSENT)
+        {
+            item.Type_ = RechargeRespType._PENDING;
+        }
+<tr data-item-id="@item.TID">
+    <td>@couter</td>    
+    <td class="w-100">
+        <input type="hidden" id="lbltid" value="@item.TransactionID" />
+        <input type="hidden" id="lblvid" value="@item.VendorID" />
+        <input type="hidden" id="lblapirqid" value="@item.ApiRequestID" />
+        <input type="hidden" id="lblmoddate" value="@item.ModifyDate" />
+        <input type="hidden" id="lbloption" value="@item.Optional1-@item.Optional2-@item.Optional3-@item.Optional4" />
+        <input type="hidden" id="lblCustNo" value="@item.CustomerNo" />
+        @if (Model.IsAdmin)
+        {
+            <span class="fa fa-info-circle text-info a_modal" name="@item.TID" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"></span>@item.TID
+        }
+        else
+        {
+            @item.TransactionID
+        }
+    </td>
+    @if (!Model.IsEndUser)
+    {
+        <td>@item.Outlet <small class="font-weight-bold text-monospace"> [@item.OutletNo]</small></td>}
+    }
+    <td><span class="badge badge-dark">@item.Account</span></td>
+    <td><span class="badge badge-light">@item.Operator</span></td>
+    <td>@item.EntryDate</td>
+    <td class="text-right">@item.LastBalance</td>
+    <td class="text-right"><span class="badge badge-pill">@item.RequestedAmount</span></td>
+    <td class="text-right">@item.Amount</td>
+    <td class="text-right"><span class="btn btn-sm btn-outline-@Html.Raw(!item.CommType?"success ":"danger") aupComm " name="@item.TransactionID" id="@item.TID">@item.Commission</span></td>
+    <td class="text-right">@item.Balance</td>
+
+    @if (Model.IsAdmin)
+    {
+        <td><span class="badge badge-light">@item.API</span></td>
+    }
+    <td>
+        @if (item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT)
+        {
+            <span class="badge badge-secondary">@item.Type_</span>
+        }
+
+        @if (item._Type == RechargeRespType.FAILED)
+        {
+            <span class="badge badge-danger">@item.Type_</span>
+        }
+        @if (item._Type == RechargeRespType.SUCCESS)
+        {
+            <span class="badge badge-success">@item.Type_</span>
+        }
+        @if (item._Type == RechargeRespType.REFUND)
+        {
+            <span class="badge badge-info">@item.Type_</span>
+        }
+    </td>
+    <td>@item.RefundStatus_</td>
+    <td>@item.LiveID</td>
+    @if (Model.IsAdmin || Model.IsAPIUser)
+    {
+        <td>@item.ApiRequestID</td>
+
+    }
+</tr>
+        couter = couter + 1;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="17"></td>
+
+    </tr>
+    <tr>
+        <td colspan="17">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

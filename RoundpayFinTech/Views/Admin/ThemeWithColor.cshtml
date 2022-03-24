@@ -1,0 +1,51 @@
+﻿@{
+    ViewData["Title"] = "9c34176d6b9710399c3cf3128acc6b24";
+}
+<div class="container-fluid">
+    <h2>9c34176d6b9710399c3cf3128acc6b24</h2>
+    <div id="__p">
+        <div class="row mb-1">
+            <div class="col-md-4 col-sm-4 col-xs-4">
+                <input id="txt" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="9c34176d6b9710399c3cf3128acc6b24" />
+            </div>
+        </div>
+
+        <section id="themeWithColor">
+            <!--ThemeWithColor will be bind here at run time-->
+        </section>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('#txt').on('change', function () {
+                var txt = $('#txt').val();
+                preloader.load();
+                $.post('/ThemeWithColor', { txt: txt })
+                    .done(function (result) {
+                        $('#themeWithColor').html(result);                        
+                    })
+                    .catch(function (xhr, e, m) {
+
+                    })
+                    .fail(function (xhr) {
+                        $(this).attr('checked', Is == false);
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+        });
+    </script>
+}

@@ -1,0 +1,370 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model APIDetailModel
+@{
+    ViewData["Title"] = "API Switching";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row form-group mb-1">
+                            <div class="col-md-3">
+                                <input id="txtSearchOp" class="form-control text-left" placeholder="Search Operator" />
+                            </div>
+                            <div class="col-md-3">
+                                @{
+                                    var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                                    var OPTypeID = OPTypes.Prepaid;
+                                }
+                                <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID"></select>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="btn-group float-right ">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <label class="btn btn-outline-dark" id="btnBulk">Bulk</label>
+                                        </div>
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                <input type="checkbox" class="switch" id="chbIsSms" tabindex="2" checked="checked">
+                                                <label for="chbIsSms" class="font-weight-bold lbl">App Notification</label>
+                                            </span>
+                                        </div>
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                <input type="checkbox" class="switch" id="chbIsEmail" tabindex="2" checked="checked">
+                                                <label for="chbIsEmail" class="font-weight-bold lbl">EMAIL</label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <button id="btnUpdateDSts" class="btn btn-outline-dark">Update Down Status</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" style="width:15%;">Operator</th>
+                                        <th scope="col" style="width:75%;">
+                                            API List With Priority[
+                                            @if (ApplicationSetting.FailoverCountID == FailoverApiOrder.FailoverCount)
+                                            {
+                                                <small class="text-sm-center text-monospace"><span class="badge badge-primary">LEFT Box</span> is used to PRIORITY and <span class="badge badge-info">RIGHT Box</span> is used to FAIL OVER APIList from Max to Min for multiple switch</small>
+
+                                            }
+                                            else
+                                            {
+                                                <small class="text-muted text-sm-center">Box is used to PRIORITY from Maximum to Minimum if multiple switch exists</small>
+                                            }
+                                            ]
+                                        </th>
+                                        <th scope="col" style="width:15%;">Backup API</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        const _loadOpTypeWiseAPIs = () => {
+            preloader.load();
+            $.post('/Admin/APIs', { OpTypeId: $('#ddlOType').val() }).done(result => {
+                mdlA.id = "APIsWin";
+                mdlA.title = "APIs";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.xlarge);
+            }).catch(function (xhr, e, msg) {
+                console.log(msg)
+            }).fail(function (xhr) {
+                $(this).attr('checked', Is == false);
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+        $(document).ready(function () {
+            preloader.load();
+            an.autoClose = 5;
+            _loadPartial();
+            $('#ddlOType').change(function () {
+                _loadPartial();
+            })
+            $('#btnBulk').click(e => _loadOpTypeWiseAPIs());
+        });
+        var _loadPartial = function () {
+            $.post('/API-Switching', { OpTypeID: $('#ddlOType').val() })
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    setTimeout(function () {
+                        $('#txtSearchOp').focus();
+                        $("#txtSearchOp").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblAPIOpCode tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    $('[data-toggle="tooltip"]').tooltip();
+                    var oid = 0;
+                    $('[id^=ddlBackupApi],[id^=ddlRealApi]').change(function () {
+                        oid = $(this).closest('tr').data().itemId;
+                        var BackUpAPI = parseInt($(this).closest('tr').find('[id^=ddlBackupApi]').val());
+                        var BackUpAPIRetailor = parseInt($(this).closest('tr').find('[id^=ddlBackupApiRet]').val());
+                        var RealAPIID = parseInt($(this).closest('tr').find('[id^=ddlRealApi]').val());
+                        var _this = this;
+                        if (BackUpAPI > -1) {
+                            var APISwitched = { OID: oid, APIID: BackUpAPI, RealAPIID: RealAPIID, BackupAPIIDRetailor: BackUpAPIRetailor }
+                            preloader.load();
+                            $.ajax({
+                                type: 'POST',
+                                url: '/change-backup-api',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                data: JSON.stringify(APISwitched),
+                                success: function (result) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $(_this).addClass('is-invalid');
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $(_this).addClass('is-valid');
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                        }
+                    });
+                    $('[id^=txtAPI],[id^=chbAPI],[id^=txtFCAPI]').on('change', function () {
+                        var thisID = $(this).attr('id');
+                        oid = $(this).closest('tr').data().itemId;
+                        var APIID = 0, MaxCount = 1, FailoverCount = 1, IsActive = false, hidApiID = 0;
+                        var hidApi = thisID.indexOf('txtAPI') ? $(thisID.replace('txtAPI', 'hidAPI')) : $(thisID.replace('chbAPI', 'hidAPI'));
+                        APIID = thisID.split('_')[2];
+                        var IsTB = thisID.indexOf('txtAPI') > -1;
+                        var IsTBFC = thisID.indexOf('txtFCAPI') > -1;
+                        var ctrl = { txtAPI: $('input'), txtFCAPI: $('input') }
+                        if (IsTB) {
+                            ctrl.txtAPI = $(this);
+                            MaxCount = $(this).val();
+                            IsActive = $('#' + thisID.replace('txtAPI', 'chbAPI')).is(':checked');
+                            ctrl.txtFCAPI = $('#' + thisID.replace('txtAPI', 'txtFCAPI'));
+                            FailoverCount = ctrl.txtFCAPI.val();
+                        }
+                        else if (IsTBFC) {
+                            ctrl.txtFCAPI = $(this);
+                            FailoverCount = $(this).val();
+                            IsActive = $('#' + thisID.replace('txtFCAPI', 'chbAPI')).is(':checked');
+                            ctrl.txtAPI = $('#' + thisID.replace('txtFCAPI', 'txtAPI'));
+                            MaxCount = ctrl.txtAPI.val();
+                        } else {
+                            ctrl.txtAPI = $('#' + thisID.replace('chbAPI', 'txtAPI'));
+                            MaxCount = ctrl.txtAPI.val();
+                            IsActive = $('#' + thisID).is(':checked');
+                            ctrl.txtFCAPI = $('#' + thisID.replace('chbAPI', 'txtFCAPI'));
+                            if (ctrl.txtFCAPI.length) {
+                                FailoverCount = ctrl.txtFCAPI.val();
+                            }
+                        }
+                        if ((IsTB || IsTBFC) && !IsActive) {
+                            return;
+                        }
+                        MaxCount = MaxCount.trim() === '' ? '1' : MaxCount.trim();
+                        MaxCount = isNaN(MaxCount) ? 1 : parseInt(MaxCount);
+                        ctrl.txtAPI.val(MaxCount);
+                        if (ctrl.txtFCAPI.length) {
+                            FailoverCount = FailoverCount.trim() === '' ? '1' : FailoverCount.trim();
+                            FailoverCount = isNaN(FailoverCount) ? 1 : parseInt(FailoverCount);
+                            ctrl.txtFCAPI.val(FailoverCount);
+                        }
+                        var APISwitched = { OID: oid, APIID, MaxCount, IsActive, FailoverCount }
+                        preloader.load();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/switch-api',
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            data: JSON.stringify(APISwitched),
+                            success: function (result) {
+                                resultReload(result);
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    ctrl.txtAPI.addClass('is-invalid');
+                                    if (ctrl.txtFCAPI.length) {
+                                        ctrl.txtFCAPI.addClass('is-invalid');
+                                    }
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    ctrl.txtAPI.addClass('is-valid');
+                                    if (ctrl.txtFCAPI.length) {
+                                        ctrl.txtFCAPI.addClass('is-invalid');
+                                    }
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (result) {
+                                checkError(result);
+                                an.title = 'Oops';
+                                an.content = 'An error occured!';
+                                an.alert(an.type.failed);
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+                    });
+                    $('[id^=chbIsDown]').change(function () {
+                        btnUpdateDSts = $('#btnUpdateDSts');
+                        btnTxt = btnUpdateDSts.html();
+                        darkAnimBtn(btnUpdateDSts);
+                        $(this).closest('span').addClass('is-info');
+                        btnUpdateDSts.unbind().click(function () {
+                            if (btnTxt !== btnUpdateDSts.html())
+                                return false;
+                            var DataKV = [];
+                            $('[id^=chbIsDown]').each(function () {
+                                oid = $(this).closest('tr').data().itemId;
+                                if (($(this).data().isacitve === 'True' ? true : false) == $(this).is(':checked')) {
+                                    var IsAct = !$(this).is(':checked')
+                                    DataKV.push({ Key: oid, Value: IsAct });
+                                }
+                            });
+                            if (DataKV.length === 0) {
+                                an.title = 'Info';
+                                an.content = 'No change detected!'
+                                an.alert(an.type.info);
+                                return false;
+                            }
+                            var IsEmail = $('#chbIsEmail').is(':checked');
+                            var IsSMS = $('#chbIsSms').is(':checked');
+                            var UpdateDownStatusReq = { IsEmail: IsEmail, IsSMS: IsSMS, DataKVs: DataKV }
+                            btnLdr.addClass = 'btn-dark';
+                            btnLdr.removeClass = 'btn-outline-dark';
+                            btnLdr.Start(btnUpdateDSts, 'Updating...');
+                            preloader.load();
+                            $.ajax({
+                                type: 'POST',
+                                url: '/update-down-status',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                data: JSON.stringify(UpdateDownStatusReq),
+                                success: function (result) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        rel(5);
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    btnLdr.Stop(btnUpdateDSts);
+                                    preloader.remove();
+                                }
+                            });
+                        });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    console.log(msg)
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+       
+    </script>
+}

@@ -1,0 +1,80 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.Master_Role>;
+
+@{
+
+    int count = 1;
+
+
+
+}
+@if (@Model != null && @Model.Count() > 0 &&  ApplicationSetting.IsReferral == true)
+{
+    @foreach (var mdl in Model)
+    {
+
+        <tr data-item-id="@mdl.ID">
+            <td>
+                @count
+            </td>
+            <td>
+                @mdl.Role
+            </td>
+            <td>
+                <input name="edit_name" onkeypress="return isNumber(event,this)" onchange="editDataRole(@mdl.ID,this)" value=@mdl.SignupAmount>
+
+            </td>
+
+           
+        </tr>
+        count++;
+    }
+}
+
+else
+{
+    <tr rowspan="2">
+        <td colspan="20"><center>No Record Found.</center></td>
+    </tr>
+}
+
+<script>
+
+    function editDataRole(id, a) {
+        debugger
+
+        var row = $(a).parents('tr');
+        var data = {
+            ID: id,
+            SignupAmount: $(a).val()
+        }
+        console.log(data);
+
+        $.post('/UpdateMaster_Role/', data).done(function (result) {
+            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            load1()
+        }).fail(function (xhr) {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+
+    }
+
+    function isNumber(evt, a) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            if (charCode == 46) {
+                if ($(a).val().indexOf('.') != -1) {
+                    return false;
+                }
+                return true;
+            }
+            return false;
+        }
+        return true;
+    }
+</script>

@@ -1,0 +1,202 @@
+﻿@{
+    ViewData["Title"] = "Lead Detail";
+
+}
+<style>
+    .cus-btn {
+        padding: 6px 10px;
+        font-size: 11px;
+        margin: 0 5px;
+        background: #009688;
+        color: #fff;
+        border: 0;
+        border-radius: 2px;
+    }
+</style>
+<link href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.min.css" rel="stylesheet" />
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Master</a></li>
+            <li class="breadcrumb-item active">User Subscription Report</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <i class="fas fa-link"></i> User Subscription Report
+                            </div>
+                            <div class="col-md-1 pl-1 pr-1">
+                                <select id="ddlTop" tabindex="1" class="form-control form-control-sm">
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                    <option value="500">500</option>
+                                    <option value="1000">1000</option>
+                                    <option value="1500">1500</option>
+                                    <option value="2000">2000</option>
+                                    <option value="2500">2500</option>
+                                    <option value="3000">3000</option>
+                                    <option value="4000">4000</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 pl-1 pr-1">
+                                <input id="txtMobile" class="form-control form-control-sm text-left" placeholder="Enter Mobile No." />
+                            </div>
+                            <div class="col-md-2 pl-1 pr-1">
+                                <div class="input-group">
+                                    <select id="ddlStatus" tabindex="1" class="form-control form-control-sm">
+                                        <option value="Transfer">Transfer </option>
+                                        <option value="FollowUP">FollowUP</option>
+                                        <option value="Matured">Matured</option>
+                                        <option value="Junk">Junk</option>
+                                        <option value="All">All</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1 pl-1 pr-1 d-none" id="divOnlyToday">
+                                <div class="input-group">
+                                    <select id="ddlTodayOnly" tabindex="1" class="form-control form-control-sm">
+                                        <option value="0">This Weak</option>
+                                        <option value="1">Only Today</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-1 pl-1 pr-1">
+                                <input type="text" class="form-control form-control-sm" id="dtAssignDate" placeholder="dd MM yyyy"/>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="input-group-append">
+                                    <div class="btn-group">
+                                        <button id="btnSearch" tabindex="8" class="btn btn-outline-dark cus-btn">Search</button>
+                                        <span class="btn btn-sm btn-outline-success far fa-file-excel pt-2 cus-btn" style="font-size:15px;" id="btnExport"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pt-1">
+                        <div class="row">
+                            <div class="col-sm-12 col-sm-12 pl-1 pr-1">
+                                <div class="table-responsive" style="max-height:calc(100vh - 284px)">
+                                    <table class="table table-bordered table-striped" id="tblOPD">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th scope="col">#</th>
+                                                <th scope="col" style="min-width:150px">Name</th>
+                                                <th scope="col">Email</th>
+                                                <th scope="col">Mobile No</th>
+                                                <th scope="col" style="min-width:200px">Message</th>
+                                                <th scope="col" style="min-width:200px">Remarks</th>
+                                                <th scope="col" style="min-width:200px">Update Remarks</th>
+                                                <th scope="col" class="text-nowrap">Request Status</th>
+                                                <th scope="col" class="text-nowrap">Next Followup</th>
+                                                <th scope="col">EntryDate</th>
+                                                <th scope="col" style="min-width:250px">TransferToOther</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/table2excel.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            let qs = getQueryString();
+            if (qs && qs.status) {
+                $('#ddlStatus').find('[value="' + qs.status + '"]').prop('selected', true);
+            }
+            _load();
+            $('table').fixTableHeader();
+            $("#btnSearch").click(() => _load());
+            $('#ddlStatus').change(e => {
+                if ($(e.currentTarget).val() === 'FollowUP') {
+                    $('#divOnlyToday').removeClass('d-none');
+                }
+                else {
+                    $('#divOnlyToday').addClass('d-none');
+                }
+            });
+            $('#btnExport').unbind().click(function () {
+                $("#__p").table2excel({
+                    exclude: ".table table-hover .table-responsive-sm .table-bordered .table-striped",
+                    name: "Worksheet Name",
+                    filename: "UserSubscriptionCustomer.xls"
+                });
+            });
+        });
+
+        var _load = () => {
+            preloader.load();
+            let param = {
+                TopRows: $('#ddlTop').val(),
+                Request: $('#ddlStatus').val(),
+                MobileNo: $("#txtMobile").val(),
+                OnlyTodayFollowup: $('#ddlTodayOnly').val() === '0' ? false : true,
+                AssignDate: $('#dtAssignDate').val()
+            };
+            console.log(param);
+            $.post('/Employee/_LeadDetail', param)
+                .done(result => $('#__p tbody').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var updateAgainstLead = e => {
+            let ele = $(e.currentTarget).closest('tr');
+            let param = {
+                Id: ele.data().itemId,
+                RequestStatus: ele.find('.ddlReqStatus').val(),
+                NextFollowupDate: ele.find('.dtNextDate').val(),
+                Remark: ele.find('.txtRemark').val(),
+                Message: ele.find('.txtMessage').val()
+            };
+            console.log(param)
+            let cls = $(e.currentTarget).attr('class');
+            if (cls.indexOf('dtNextDate') !== -1 && param.RequestStatus !== 'FollowUP') {
+                console.log(cls.indexOf('dtNextDate'));
+                console.log(param.RequestStatus);
+                return false
+            }
+
+            $.post('/Employee/UpdateAgainstLead', param)
+                .done(function (result) {
+                    resultReload(result);
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    _load();
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        $('#dtAssignDate').datetimepicker({
+            format: 'DD MMM Y'
+        });
+    </script>
+}
+

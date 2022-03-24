@@ -1,0 +1,140 @@
+﻿
+
+<!DOCTYPE html>
+
+<html>
+<head>
+
+
+    <meta charset="utf-8">
+    <title>Home</title>
+    <base href="/">
+    <meta http-equiv="Cache-control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link id="favicon" rel="icon" type="image/x-icon">
+    <link href="~/ShoppingWebsite/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/font-awesome.min.css">
+    <!-- For Menu Open Close-->
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/cssanimation.min.css" />
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/ShopingWebsite.css" />
+
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/helper.css">
+
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/style.css">
+
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/responsive.css">
+
+    <!-- For zoom start -->
+    <script src="/ShoppingWebsite/zoom/js/jquery.js"></script>
+    <script type="text/javascript" src="/ShoppingWebsite/zoom/dist/xzoom.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="/ShoppingWebsite/zoom/dist/xzoom.css" media="all" />
+    <script src="/ShoppingWebsite/zoom/js/setup.js"></script>
+    <link type="text/css" rel="stylesheet" media="all" href="/ShoppingWebsite/zoom/fancybox/jquery.fancybox.css" />
+    <script type="text/javascript" src="/ShoppingWebsite/zoom/fancybox/jquery.fancybox.js"></script>
+    <!-- For zoom end -->
+    @*<link rel="stylesheet" href="~/ShoppingWebsite/css/jquery.mmenu.css">*@
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/elegant.css">
+    <link rel="stylesheet" href="https://unpkg.com/ngx-bootstrap/datepicker/bs-datepicker.css">
+    <script src="~/ShoppingWebsite/js/vendor/jquery-3.2.1.min.js"></script>
+</head>
+<body>
+    <div id="alertmsg"></div>
+
+    <section class="header">
+        <div class="sticker header-bottom custum-back-img" id="navbar">
+            <div class="container-fluid">
+                <div class="row align-items-center" style="background-color: linear-gradient(to right, #26558d, #3472bf);">
+                    <div class="col-lg-4" id="HeaderMenu">
+                    </div>
+
+                    <div class="col-lg-4 cus-header-searchbox-padding">
+                        <div class="search-box">
+                            <span class="iconSearch _2Ysz"><i aria-hidden="true" id="mySearch" onclick="ProductSearch()" class="fa fa-search"></i></span>
+                            <ng2-completer imagefield="assets/images/products/cart/thumb-1.jpg" _nghost-dxj-c9="" class="ng-pristine ng-valid ng-touched">
+                                <div class="completer-holder autocomplete" ctrcompleter="">
+
+                                    <input id="myInput"
+                                           autocapitalize="off" autocomplete="off" autocorrect="off"
+                                           class="completer-input ng-pristine ng-valid ng-touched textboxAuto form-control"
+                                           type="search"
+                                           name=""
+                                           placeholder="Search for Products" maxlength="524288" tabindex="0">
+
+                                    <select class="form-control" id="ddlsearchinput" style="display:none"></select>
+
+
+                                </div>
+                            </ng2-completer>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 mobile-bg">
+                        <div class="mini-cart currency-bar cus-currency-bar pull-right">
+                            <ul>
+                                <!---->
+
+                                <li>
+                                    <div id="cartDetails"></div>
+
+                                </li><!---->
+
+
+                                <li>
+                                    <div id="ProfileInfo"></div>
+
+                                </li><!---->
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="main-wrapper">
+        <div id="alertmsg"></div>
+        @RenderBody()
+    </div>
+    <section class="footer" id="footer">
+    </section>
+    <button type="button" class="btn" id="scrollUp"><i class="fa fa-angle-up"></i></button>
+    <script src="~/ShoppingWebsite/js/bootstrap.min.js"></script>
+    <script src="~/js/component.alert.js"></script>
+
+    <script src="~/js/component.modal.js"></script>
+    <script src="~/ShoppingWebsite/js/jquery.mmenu.js"></script>
+    @*<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"></script>*@
+    <script src="~/ShoppingWebsite/js/ShoppingWebSite.js"></script>
+
+    <script src="~/ShoppingWebsite/js/ShoppingWebsiteTheme.js"></script>
+    <script src="~/ShoppingWebsite/js/ShoppingSearchFilter.js"></script>
+
+
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/owl.carousel.min.css">
+    <link rel="stylesheet" href="~/ShoppingWebsite/css/owl.theme.default.css">
+    <script src="~/ShoppingWebsite/js/owl.carousel.js"></script>
+
+
+    @RenderSection("scripts", false)
+</body>
+</html>
+<script>
+    var input = document.getElementById("myInput");
+    input.addEventListener("keyup", function (event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+            document.getElementById("mySearch").click();
+        }
+    });
+    function ProductSearch() {
+        preloaderSmall.load();
+        var word = document.getElementById("myInput").value
+        $.post('/MySearch', { Words: word})
+            .done(function (result) {
+                window.location.href = "ProductList/S/" + result.subCategoryId;
+                preloaderSmall.remove();
+            }).fail(xhr => console.log(xhr.responseText))
+    }
+</script>
+

@@ -1,0 +1,150 @@
+﻿@{
+    ViewData["Title"] = "API ErrorCode";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Error Master</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row mb-1 form-group">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <input id="txtSearchOp" class="form-control text-left" placeholder="Search Error" />
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" style="width:15%;">Error</th>
+                                        <th scope="col" style="width:85%;">APIGroup List</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('/API-ErCode')
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    setTimeout(function () {
+                        $('#txtSearchOp').focus();
+                        $("#txtSearchOp").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblAPIOpCode tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    $('input[id^=txtOp_]').on('change', function () {
+                        preloader.load();
+                        var EID = $(this).closest('tr').data().itemId;
+                        var APICode = $(this).val();
+                        var fieldName = $(this).attr('id');
+                        var hidapiID = $('#' + fieldName.replace('txtOp', 'hidOp'));
+                        var GroupID = fieldName.split('_')[2];
+                        if (APICode == '') {
+                            preloader.remove();
+                            return false;
+                        }
+                        var IsE = { opcode: APICode.length > 300 }
+                        $v.showErrorFor($(this), 'Exceed max length 300!', IsE.opcode);
+                        IsE.err = (IsE.opcode)
+                        if (IsE.err) {
+                            preloader.remove();
+                            return false;
+                        }
+                        if (APICode === hidapiID.val()) {
+                            preloader.remove();
+                            return true;
+                        }
+                        var APIOpCode = { EID, GroupID, APICode }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/API-Er-Code',
+                            data: JSON.stringify(APIOpCode),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    hidapiID.val(APICode);
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (xhr, result) {
+                                an.title = "Oops";
+                                an.content = result;
+                                an.alert(an.type.failed);
+                                if (result === 'parsererror') {
+                                    reload();
+                                }
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+                    });
+                })
+                .catch(function () {
+                })
+                .fail(function () {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        });
+    </script>
+}
+

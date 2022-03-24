@@ -1,0 +1,38 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.SlabDetailModel
+
+@{
+    var couter = 1;
+    var mdl = Model.SlabDetails;
+}
+
+@if (mdl.Any())
+{
+    foreach (var item in mdl)
+    {
+        <tr class="tr_bstatus" data-item="@item.BackUpApiStatus">
+            <td scope="col">@couter</td>
+            <td scope="col">@item.Operator<small class="form-text text-muted mt-0">@(item.IsBBPS?item.OperatorType+", BBPS": item.OperatorType)</small></td>
+            <td scope="col">@item.SPKey</td>
+            <td scope="col">@item.IsBilling</td>
+            <td scope="col">@item.BusinessModel</td>
+            <td scope="col">@item.Comm</td>
+            <td scope="col">@(item.CommType == 0 ? "COM" : "SUR")</td>
+            <td scope="col">@(item.AmtType == 0 ? "PER" : "FIX")</td>
+            <td scope="col">@item.Min.ToString() - @item.Max.ToString()</td>
+        </tr>
+        couter = couter + 1;
+    }    
+}
+else
+{
+    <tr>
+        <td colspan="8"></td>
+
+    </tr>
+    <tr>
+        <td colspan="8">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

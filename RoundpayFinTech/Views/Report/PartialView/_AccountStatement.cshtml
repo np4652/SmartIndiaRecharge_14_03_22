@@ -1,0 +1,74 @@
+﻿@using Fintech.AppCode.StaticModel;
+@{
+    var HaveChild = (bool)ViewBag.HaveChild;
+    var SelfMobile = (string)ViewBag.SelfMobile;
+}
+
+@model List<RoundpayFinTech.AppCode.Model.ProcModel.ProcUserLedgerResponse>
+
+@{
+    var counter = 1;
+    var _Role = ViewBag.RoleID == null ? 0 : (int)ViewBag.RoleID;
+    var cls = "";
+    decimal TotalDebit = 0;
+    decimal TotalCredit = 0;
+    decimal CurentBalance = 0;
+    var colSpan = HaveChild == true ? 5 : 4;
+}
+
+@if (Model.Count > 0)
+{
+    for (int i = 0; i < Model.Count; i++)
+    {
+        if (Model[i].ServiceID == ServiceType.FundTransfer || Model[i].ServiceID == ServiceType.FundDeduction)
+        {
+            if (Model[i].LType)
+            {
+                cls = "text-danger";
+            }
+            else
+            {
+                cls = "text-success";
+            }
+        }
+        else
+        {
+            cls = "";
+        }
+
+        <tr class="@(cls)">
+            <th>@counter</th>
+            <td>@Model[i].TID</td>
+            <td>@Model[i].EntryDate</td>
+            @if (HaveChild)
+            {
+                <td>@Model[i].User.Split('-')[0] <small class="font-weight-bold text-monospace"> [@Model[i].User.Split('-')[1]/@Model[i].UserID]</small></td>
+            }
+            <td>@Model[i].Description</td>
+            <td class="text-right">@Model[i].Debit</td>
+            <td class="text-right">@Model[i].Credit</td>
+            <td class="text-right">@Model[i].CurentBalance</td>
+            <td>@Model[i].Remark</td>
+        </tr>
+        TotalDebit += Model[i].Debit;
+        TotalCredit += Model[i].Credit;
+        CurentBalance += Model[i].CurentBalance;
+        counter += 1;
+    }
+    <tr class="text-right text-white bg-blue">
+        <td colspan="@colSpan"> Total</td>
+        <td>@TotalDebit</td>
+        <td>@TotalCredit</td>
+        <td>@CurentBalance</td>
+        <td colspan="3"></td>
+    </tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="10">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

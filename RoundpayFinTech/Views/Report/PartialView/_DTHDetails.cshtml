@@ -1,0 +1,150 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.DTHSubscriptionReport;
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Details</h3>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12" id="">
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txttechname", "Technician Name :", new { @class = "lbl" })
+                        <label class=""><b>@Model.TechnicianName</b></label>
+
+
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txttechmobile", "Technician Mobile :", new { @class = "lbl" })
+                        <label class=""><b>@Model.TechnicianMobile</b></label>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-6">
+                        @Html.Label("txtcustid", "Customer ID :", new { @class = "lbl" })
+                        <label class=""><b>@Model.CustomerID</b></label>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtstbid", "STB ID :", new { @class = "lbl" })
+                        <label class=""><b>@Model.STBID</b></label>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-6">
+                        @Html.Label("txtvcno", "VC No :", new { @class = "lbl" })
+                        <label class=""><b>@Model.VCNO</b></label>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtremark", "Remark :", new { @class = "lbl" })
+
+                        <label class=""><b>@Model.Remark</b></label>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txtapprovaltime", "Approval Time :", new { @class = "lbl" })
+                        <label class=""><b>@Model.ApprovalTime</b></label>
+
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtinstalltime", "Installation Time :", new { @class = "lbl" })
+                        <label class=""><b>@Model.InstallationTime</b></label>
+
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-6">
+                        @Html.Label("txtinstallcharge", "Installtion Charges :", new { @class = "lbl" })
+                        <label class=""><b>@Model.InstalltionCharges</b></label>
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="lbl" for="ddlstatus" id="sts">Status :</label>
+                        @if (Model.BookingStatus == 2)
+                        {
+                            <label class="text-info"><b>Forward To Engineer</b></label>
+                        }
+                        @if (Model.BookingStatus == 3)
+                        {
+                            <label class="text-primary"><b>Installing</b></label>
+                        }
+                        @if (Model.BookingStatus == 4)
+                        {
+                            <label class="text-success"><b>Completed</b></label>
+                        }
+                        @if (Model.BookingStatus == 5)
+                        {
+                            <label class="text-danger"><b>Rejected</b></label>
+                        }
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-6">
+                        @Html.Label("txtarea", "Area/Locality :", new { @class = "lbl" })
+                        <label class=""><b>@Model.Area</b></label>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtcity", "City :", new { @class = "lbl" })
+                        <label class=""><b>@Model.City</b></label>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-6">
+                        @Html.Label("txtstate", "State :", new { @class = "lbl" })
+                        <label class=""><b>@Model.State</b></label>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtpincode", "Pincode :", new { @class = "lbl" })
+
+                        <label class=""><b>@Model.Pincode</b></label>
+                    </div>
+                </div>
+                <div class="form-group row">
+
+                    <div class="col-sm-6">
+                        @Html.Label("txtstate", "Address :", new { @class = "lbl" })
+                        <label class=""><b>@Model.Address</b></label>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtpincode", "Gender :", new { @class = "lbl" })
+
+                        <label class=""><b>@Model.Gender</b></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/js/datepickerHelper.js"></script>
+<script>
+
+    var FDate = DTPicker($('#dtapprovaltime'), new Date().toDateString(), function () { },
+        function () {
+
+        });
+
+    var tdate = TimePicker($('#dtapprovaltimeOnly'), new Date(), function () { }, function () { });
+
+
+
+    var installdate = DTPicker($('#dtinstalldate'), new Date().toDateString(), function () { },
+        function () {
+
+        });
+
+    var installdate = TimePicker($('#dtinstalltime'), new Date(), function () { }, function () { });
+
+</script>
+
+

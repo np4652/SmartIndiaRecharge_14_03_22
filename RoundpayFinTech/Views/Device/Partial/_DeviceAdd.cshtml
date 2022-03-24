@@ -1,0 +1,98 @@
+﻿@model List<RoundpayFinTech.AppCode.Model.ProcModel.DeviceMaster>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" id="btnClose" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h3>Select Device</h3><hr />
+
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div id="deviceList">
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="device-container" onclick="DeviceRegister(@item.ID)">
+                        <div class="list-item">
+                            <img src='~/Image/FPDevice/@item.Img' />
+                        </div>
+                    </div>
+                }
+            }
+            <div id="deviceSearching"></div>
+        </div>
+
+        <div id="deviceInfo" class="device-info" style="display:none">
+            <h5>Selected Device Info</h5>
+            <table class="table table-borderless">
+                <thead>
+                    <tr>
+                        <td>Device Model</td>
+                        <td>Device ID</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span id="deviceModel"></span></td>
+                        <td><span id="deviceID"></span></td>
+                        <td><input type="hidden" id="LocalDeviceID" /></td>
+                    </tr>
+                </tbody>
+            </table>
+            <a class="btn btn-outline-info btn-lg" id="saveDevice" onclick="SaveDevice()">Save Device</a>
+        </div>
+
+        <div id="deviceSaved" style="display:none">
+            Device Saved Successfully
+        </div>
+    </div>
+    <input type="hidden" id="hfSelectedDevice" />
+</div>
+<style>
+    .device-container {
+        display: inline-block;
+    }
+
+        .device-container .list-item {
+            border: 1px solid #eee;
+            cursor: pointer;
+            margin-right: 10px;
+            width: 210px;
+        }
+
+            .device-container .list-item:hover {
+                box-shadow: 1px 1px 6px 0px #9a9da1;
+            }
+
+            .device-container .list-item img {
+                width: 200px;
+            }
+
+    .device-info {
+        padding: 15px;
+        margin-top: 15px;
+        border: 1px solid #eee;
+    }
+
+        .device-info .btn {
+            margin: 14px 42%;
+        }
+    #deviceSearching {
+        text-align: center;
+        padding: 10px;
+        font-size: 18px;
+        font-weight: 500;
+        margin-top: 10px;
+    }
+
+    #deviceSaved {
+        text-align: center;
+    font-size: 20px;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: green;
+    letter-spacing: .5px;
+    }
+</style>

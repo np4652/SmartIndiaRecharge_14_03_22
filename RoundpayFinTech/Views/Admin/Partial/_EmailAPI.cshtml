@@ -1,0 +1,144 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model EmailAPIDetail
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> Email Setting</h3>
+        <hr />
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    @Html.Label("txtFromEmail", "Email", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtFromEmail", Model.FromEmail, new { @class = "form-control text-capitalize", @placeholder = "Enter Email", @aria_describedby = "emailHelp", @tabindex = 1 })
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted d-none">Email is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtPassword", "Password", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtPassword", Model.Password, new { @type = "text", @class = "form-control", @placeholder = "Enter Password", @aria_describedby = "pwdHelp", @tabindex = 2 })
+                    </div>
+                    <small id="pwdHelp" class="form-text text-muted d-none">Password is mandatory</small>
+                </div>
+
+                <div class="form-group">
+                    @{
+                        var list = new SelectList(Model.Provider, "ProviderID", "ProviderName");
+                    }
+                    <label class="lbl" for="ddlMailProvider">Email Provider</label>
+                    <select aria-describedby="helpBL" class="form-control" id="ddlMailProvider" tabindex="1" asp-items="@list" asp-for="@Model.ID">
+                        <option> :: Choose Provider Name :: </option>
+                    </select>
+                    <small id="helpBL" class="form-text text-muted d-none">Choose Host Name</small>
+
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtHost", "Host Name", new { @class = "lbl" })
+                    @Html.TextBox("txtHost", Model.HostName, new { @class = "form-control", @placeholder = "Enter Host Name", @aria_describedby = "hostHelp", @tabindex = 3 })
+                    <small id="hostHelp" class="form-text text-muted d-none">Host is mandatory</small>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("txtUserMailId", "User Mail ID", new { @class = "lbl" })
+                    @Html.TextBox("txtUserMailId", Model.UserMailID, new { @class = "form-control", @placeholder = "Enter User Mail ID" })
+                </div>
+
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("ddlPort", "Port", new { @class = "lbl" })
+                        <select id="ddlPort" aria-describedby="methodHelp" tabindex="4" class="custom-select custom-select-md mb3" asp-for="@Model.Port">
+                            <option> :: Select Port ::</option>
+                            @{if (Model.Port != 0)
+                                {
+                                    <option selected="selected" value="@Model.Port">@Model.Port  </option>
+                                }
+                            }
+
+                            @*<option value="25">25</option>
+                                <option value="465">465</option>
+                                <option value="587">587</option>*@
+                        </select>
+
+                        <small id="methodHelp" class="form-text text-muted d-none">Transaction Type is mandatory</small>
+                    </div>
+
+                    <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+
+                    <div class="col-md form-group">
+                        @Html.Label("chbIsActive", "Is Active", new { @class = "lbl" })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align">
+                                <input type="checkbox" class="switch" id="chbIsActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "")>
+
+                                <label for="chbIsActive" class="font-weight-bold lbl"></label>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("chbIsSSL", "Is SSL", new { @class = "lbl" })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align">
+                                <input type="checkbox" class="switch" id="chbIsSSL" name="chbIsSSL" @Html.Raw(Model.IsSSL ? "checked='checked'" : "")>
+
+                                <label for="chbIsSSL" class="font-weight-bold lbl"></label>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-dark" id="btnSaveAPI" tabindex="7">Save Email API</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    // $("#chbIsSSL").prop("checked", false);
+    $("#ddlMailProvider").change(function () {
+        var selectedText = $(this).find("option:selected").text();
+        var selectedValue = $(this).val();
+       // alert(selectedValue);
+        if (selectedValue == ':: Choose Provider Name ::') {
+            var textBox = document.getElementById("txtHost");
+            textBox.value = ':: Choose Provider Name First ::';
+            document.getElementById("ddlPort").options.length = 0;
+            $("#chbIsSSL").prop("checked", false);
+        }
+        else {
+            var res = selectedValue.split("-");
+            var textBox = document.getElementById("txtHost");
+            textBox.value = res[2];
+            // alert(res[4]);
+            var checked = res[4];
+            // console.log(checked)
+            if (checked == 'True') {
+                $("#chbIsSSL").prop("checked", true);
+            }
+            else {
+
+                $("#chbIsSSL").prop("checked", false);
+            }
+            document.getElementById("ddlPort").options.length = 0;
+            var port = res[3].split(",");
+            var select = document.getElementById("ddlPort");
+            var options = port;
+            for (var i = 0; i < options.length; i++) {
+                var opt = options[i];
+                var el = document.createElement("option");
+                el.textContent = opt;
+                el.value = opt;
+                select.appendChild(el);
+            }
+        }
+
+    });
+
+</script>

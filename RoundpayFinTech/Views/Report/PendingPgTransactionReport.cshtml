@@ -1,0 +1,189 @@
+﻿
+@{
+    ViewData["Title"] = "Pending Payment Gateway Transaction";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i>@ViewData["Title"] </h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                        <div class="float-right">
+                            <button class="btn btn-sm btn-outline-light" id="btnBulkFail">Bulk Fail</button>
+                        </div>
+                    </div>
+                    <div class="card-body p-2">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive table-sm">
+                                    <table class="table table-bordered table-striped table-responsive-sm" id="tblPendings">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th>#</th>
+                                                @*<th><input type="checkbox" disabled="disabled" /></th>*@
+
+                                                <th><input type="checkbox" id="chbfail_All" /></th>
+                                                <th style="min-width:188px;">Action</th>
+                                                <th>UserName</th>
+                                                <th>RequestedAmount</th>
+                                                <th>Amount</th>
+                                                <th>Type</th>
+                                                <th>PgCharge</th>
+                                                <th>PGName</th>
+                                                <th>OrderDate</th>
+                                                <th>@*Transaction*@ Mode</th>
+                                                <th>OPID</th>
+                                                <th>TransactionID</th>
+                                                <th>VendorID</th>
+                                                <th class="text-nowrap">Live ID</th>
+                                                <th>RequestMode</th>
+                                                <th>SurCharge</th>
+                                                <th>Wallet</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(() => {
+            _loadGrid()
+            $('#btnBulkFail').click(() => _bulkFail());
+            setTimeout(function () {
+                $.get('/BulkStatusCheckPG')
+                    .done((result) => {
+                        console.log(result);
+                    })
+                    .fail((xhr) => {
+                        if (xhr.status === 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status === 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(() => { });
+
+                $('#chbfail_All').change(function () {
+                    debugger;
+                    var IsChecked = $(this).is(':checked');
+                    $('[id^=chbfail]').each(function () {
+                        $(this).prop('checked', IsChecked);
+                    });
+                });
+                $('[id^=chbfail]').change(function () {
+                    if (!$(this).is(':checked'))
+                        $('#chbfail_All').prop('checked', false);
+                });
+                var TIDs = [];
+                $('[id^=chbfail]').each(function () {
+                    if ($(this).is(':checked') && $('#chbfail_All').attr('id') !== $(this).attr('id')) {
+                        TIDs.push($(this).closest('tr').data().itemId);
+                    }
+                });
+            }, 1000);
+            $('#tblPendings').fixTableHeader();
+        });
+
+        var _loadGrid = () => {
+            $.ajax({
+                type: 'POST',
+                url: '/_PendingPGTransactionReport',
+                contentType: 'application/json',
+                success: (result) => {
+                    resultReload(result);
+                    $('.__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('.a_modal').click(e => moreDetail(e.currentTarget));
+                },
+                statusCode: {
+                    500: () => {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: () => {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: (xhr, result) => {
+                    resultReload(result);
+                    an.title = "Oops";
+                    an.content = result;
+                    an.alert(an.type.failed);
+                },
+                complete: () => {
+                    btnLdr.Stop($("#btnSearch"));
+                    preloader.remove();
+                }
+            });
+        }
+
+        var _bulkFail = () => {
+            var _html = `<div class="col-md-12 mb-3"> <button type="button" class="close pull-right" aria-label="Close">
+                            <span aria-hidden="true">&times;</span></button></div><div class="col-md-12">
+                            <label>Remark</label>
+                            <textarea class="form-control mb-3" id="txtRemark"></textarea>
+                            <button class="btn btn-success mb-3" id="bntGo">GO</button></div>`;
+            mdlA.content = _html;
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.small);
+            $('button.close').click(function () {
+                mdlA.dispose();
+            });
+
+            $('#bntGo').on('click', function () {
+                const _CommanRemark = $('#txtRemark').val();
+                $('#tblPendings tr input[type="checkbox"]:checked').each(function () {
+                    $(this).closest('tr').find('.textRemark').val(_CommanRemark);
+                    $(this).closest('tr').find('button[data-type="3"]').click();
+                });
+                mdlA.dispose();
+            });
+        }
+
+        var moreDetail = (sender) => {
+            var param = {
+                TID: $(sender).closest('tr').data().itemTid,
+                TransactionID: $(sender).closest('span').text(),
+                VendorID: $(sender).closest('tr').find('td:eq(11)').text(),
+                LastModified: $(sender).data().itemLastmodify
+            };
+            $.post('/PGTransaction-log', param)
+                .done((result) => {
+                    $('#' + an.id).remove();
+                    mdlA.id = 'mymodel';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.xlarge);
+                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                });
+        }
+    </script>
+}

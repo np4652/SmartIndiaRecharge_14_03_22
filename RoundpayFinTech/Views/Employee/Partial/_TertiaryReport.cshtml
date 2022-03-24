@@ -1,0 +1,128 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.TertiaryReport>
+@{
+    int i = 1;
+}
+@if (Model.Any())
+{
+
+    <table class="table table-bordered">
+        <thead class="bg-tableth">
+            <tr>
+                <th colspan="11"><strong>Team Data</strong></th>
+                <th colspan="8"><strong>Prepaid Recharge</strong></th>
+                <th colspan="8"><strong>DMT</strong></th>
+                <th colspan="8"><strong>BBPS</strong></th>
+                <th colspan="8"><strong>AEPS</strong></th>
+                <th><strong>Date</strong></th>
+            </tr>
+            <tr>
+                <th class="text-nowrap text-monospace">#</th>
+                <th class="text-nowrap text-monospace">AM</th>
+                <th class="text-nowrap text-monospace">Sales Head</th>
+                <th class="text-nowrap text-monospace">Circle Head</th>
+                <th class="text-nowrap text-monospace">ZBM</th>
+                <th class="text-nowrap text-monospace">ASM</th>
+                <th class="text-nowrap text-monospace">TSM</th>
+                <th class="text-nowrap text-monospace">User</th>
+                <th class="text-nowrap text-monospace">OutletName</th>
+                <th class="text-nowrap text-monospace">UserMobile</th>
+                <th class="text-nowrap text-monospace">UserRole</th>
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ter Growth</th>
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ter Growth</th>
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ter Growth</th>
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ter Growth</th>
+                <th class="text-nowrap text-monospace">Entry Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.AM</td>
+                    <td>@item.SHDetail</td>
+                    <td>@item.CDetail</td>
+                    <td>@item.ZDetail</td>
+                    <td>@item.ADetail</td>
+                    <td>@item.TSMDetail</td>
+                    <td>@item.User</td>
+                    <td>@item.User</td>
+                    <td>@item.UserMobile</td>
+                    <td>@item.URole</td>
+                    <td>@item.LMPrepaid</td>
+                    <td>@item.LMTDPrepaid</td>
+                    <td>@item.MTDPrepaid</td>
+                    <td>@item.TOLMTDPrepaid</td>
+                    <td>@item.TOLMPrepaid</td>
+                    <td>@item.TOMTDPrepaid</td>
+                    <td></td>
+                    <td></td>
+                    <td>@item.LMDMT</td>
+                    <td>@item.LMTDDMT</td>
+                    <td>@item.MTDDMT</td>
+                    <td>@item.TOLMTDDMT</td>
+                    <td>@item.TOLMDMT</td>
+                    <td>@item.TOMTDDMT</td>
+                    <td></td>
+                    <td></td>
+                    <td>@item.LMBBPS</td>
+                    <td>@item.LMTDBBPS</td>
+                    <td>@item.MTDBBPS</td>
+                    <td>@item.TOLMTDBBPS</td>
+                    <td>@item.TOLMBBPS</td>
+                    <td>@item.TOMTDBBPS</td>
+                    <td></td>
+                    <td></td>
+                    <td>@item.LMAEPS</td>
+                    <td>@item.LMTDAEPS</td>
+                    <td>@item.MTDAEPS</td>
+                    <td>@item.TOLMTDAEPS</td>
+                    <td>@item.TOLMAEPS</td>
+                    <td>@item.TOMTDAEPS</td>
+                    <td></td>
+                    <td></td>
+                    <td>@item.EntryDate</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}
+
+
+
+else
+{
+    <div class="col-sm-12 text-danger text-monospace">No Data Found</div>
+}
+<script>
+    $('table').fixTableHeader();
+</script>

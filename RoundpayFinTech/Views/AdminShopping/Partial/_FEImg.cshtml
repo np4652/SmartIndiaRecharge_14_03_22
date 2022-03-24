@@ -1,0 +1,85 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.FEImgList
+@if (Model.Statuscode == 1 && Model.ImgList.Any())
+{
+    int Counter = 1;
+    foreach (var item in Model.ImgList)
+    {
+        <tr data-ImgId="@item.ID" data-imgpath="@item.FileName">
+            <td>@Counter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@Counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@Counter">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item btnDel"><span class="fa fa-edit text-success"></span> Delete</a>
+                        <a href="#" class="dropdown-item btnEdit"><span class="fa fa-edit text-success pr-1"></span> Edit</a>
+                    </div>
+                </div>
+            </td>
+            <td><a id="imgOpen_@item.ID" class="openImage" href="javascript:void(0);">@item.FileName</a></td>
+            <td>@item.ImgType</td>
+            <td>@item.CategoryID</td>
+            <td data-chkId="@item.ID">
+                <span class="input-group-text switch switch-sm bg-white align ">
+                    <input type="checkbox" class="switch" id="chkActive_@item.ID" @Html.Raw(item.IsActive ? "checked='checked'" : "") />
+                    <label for="chkActive_@item.ID" class="font-weight-bold lbl">IsActive</label>
+                </span>
+            </td>
+            @*<td><input type="checkbox" disabled @Html.Raw(item.IsActive ? "checked='checked'" : "") /></td>*@
+        </tr>
+        Counter++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="5">No Data Found</td>
+    </tr>
+}
+<script>
+    $('.btnDel').unbind().click(e => DelImg($(e.currentTarget).closest('tr').data().imgid));
+    $('#tblFilter tr :checkbox').change(function () {
+        let id = $(this).closest('tr').data().imgid;
+        var IsChecked = false;
+        if ($(this).is(':checked')) {
+            IsChecked = true;
+        }
+        UpdateFEImage(id, IsChecked);
+    });
+    $('#tblFilter a.openImage').click(e => {
+        console.log(e.currentTarget);
+        let path = $(e.currentTarget).closest('tr').data().imgpath;
+        if (path != null && path.trim() != '') {
+            let _src = 'Image/ECommFE/' + path;
+            console.log(_src);
+            let _div = `<div class="imagePreview text-center">
+                <img src="${_src}" style="max-width:270px;height: auto";>
+            </div>`;
+            mdlA.id = "ImagePreview";
+            mdlA.title = "Preview";
+            mdlA.content = _div;
+            mdlA.modal(mdlA.size.large);
+        }
+    });
+    $('.dropdown-toggle').dropdown();
+  
+
+       $('.btnEdit').click(e => {
+           let ID = $(e.currentTarget).closest('tr').data().imgid;
+         //  console.log(ID);
+          // alert(ID);
+           preloader.load();
+           $.post('/_FEImgUpdate', { id: ID })
+               .done(result => {
+                   mdlA.content = result;
+                   mdlA.id = 'AddFEImg';
+                   mdlA.title = 'FE Images';
+                   mdlA.modal(mdlA.size.default);
+               })
+               .fail(xhr => {
+                   an.title = 'Oops';
+                   an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                   an.alert(an.type.failed);
+               }).always(() => preloader.remove());
+    });
+</script>

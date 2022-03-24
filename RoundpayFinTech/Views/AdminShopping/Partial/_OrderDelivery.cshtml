@@ -1,0 +1,56 @@
+﻿@model List<RoundpayFinTech.AppCode.Model.Shopping.OrderDeliveryResp>
+@if (Model.Any())
+{
+    int Counter = 1;
+    foreach (var item in Model)
+    {
+        <tr data-id="@item.Id">
+            <td>@Counter</td>
+            @*<td>
+                    <div class="btn-group dropup">
+                        <a href="#" id="act_@Counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="act_@Counter">
+                            <h6 class="dropdown-header">Action Menu</h6>
+                            <a href="#" class="dropdown-item btnUp"><span class="fa fa-edit text-success"></span> Update</a>
+                            <a href="#" class="dropdown-item btnLoc"><span class="fa fa-edit text-success"></span> History</a>
+                        </div>9766808838
+                    </div>
+                </td>*@
+            <td>@item.DPName</td>
+            <td>@item.DPMobile</td>
+            <td>@item.DPLat, @item.DPLong</td>
+            <td data-chkId="@item.Id">
+                <span class="input-group-text switch switch-sm bg-white align ">
+                    <input type="checkbox" class="switch" id="chkActive_@item.Id" @Html.Raw(item.IsPicked ? "checked='checked'" : "") />
+                    <label for="chkActive_@item.Id" class="font-weight-bold lbl">IsPicked</label>
+                </span>
+            </td>
+            <td data-chkId="@item.Id">
+                <span class="input-group-text switch switch-sm bg-white align ">
+                    <input type="checkbox" class="switch" id="chkActive_@item.Id" @Html.Raw(item.IsDelivered ? "checked='checked'" : "") />
+                    <label for="chkActive_@item.Id" class="font-weight-bold lbl">IsDelivered</label>
+                </span>
+            </td>
+            <td>@item.ProductName</td>
+            <td>@item.Quantity</td>
+            <td>@item.CustomerName</td>
+            <td>@item.CustomerMobile</td>
+            <td>@item.CustomerAddress, @item.CustomerLandmark, @item.CustomerArea, @item.CustomerPinCode</td>
+            <td>@item.CustomerLat, @item.CustomerLong</td>
+            <td>@item.VendorOutlet</td>
+            <td>@item.VendorMobile</td>
+            <td>@item.VendorAddress</td>
+            <td>@item.VendorLat, @item.VendorLong</td>
+        </tr>
+        Counter++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="16" class="text-danger">No Data Found</td>
+    </tr>
+}
+<script>
+    $('.dropdown-toggle').dropdown();
+</script>

@@ -1,0 +1,129 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DocTypeMaster>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Document Type Detail</h5>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm" id="tblRSD">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col" style="width:2%">#</th>
+                    <th scope="col">DocName</th>
+                    <th scope="col">Uploaded Document</th>
+                    <th scope="col">Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    var i = 1;
+                    var KYCStatus = 0;
+                }
+                @foreach (var item in Model)
+                {
+                    <tr data-item-id="@item.ID" data-doc-id="@item.DocTypeID">
+                        @if ((item.Msg ?? "") == "")
+                        {
+                            <th class="align-middle" style="width:1em;" scope="row">
+                                @if (i == 1)
+                                {
+                                    KYCStatus = item.KYCStatus;
+                                    <input type="hidden" id="hidOutletID" value="@item.OutletID" />
+                                }
+                            </th>
+                            <td class="align-middle pt-1">
+                                <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="right" title="Remark: @item.Remark"></i>
+                                @Html.DisplayFor(modelItem => item.DocName)&nbsp;<label class="text-danger">@( item.IsOptional ? "" : "*")</label>
+                            </td>
+                            <td class="align-middle">
+
+                                @if (item.DocUrl == "")
+                                {
+                                    <input type='file' id="dimageUpload_@i" class="d-none" />
+                                    <label for="dimageUpload_@i" class="btn btn-outline-dark btn-sm">Upload</label>
+                                }
+                                else
+                                {
+                                    @if (item.VerifyStatus == DocVerifyType.NOTUPLOADED || item.VerifyStatus == DocVerifyType.REJECTED)
+                                    {
+                                        <span>
+                                            <input type='file' id="dimageUpload_@i" class="d-none" />
+                                            <label for="dimageUpload_@i" class="btn btn-outline-secondary btn-sm">Change</label>
+                                        </span>
+                                    }
+                                    <a target="_blank" href="/DownloadKYC/@item.ID" name="@item.DocUrl" class="btn btn-outline-info btn-sm btnView">View</a>
+                                }
+                                @{
+                                    var Reason = item.ModifyDate;
+                                    var cls = "text-dark";
+                                    if (item.VerifyStatus == DocVerifyType.REJECTED)
+                                    {
+                                        cls = "text-danger";
+                                        Reason = "Rejected Due To:" + item.DRemark;
+                                    }
+                                    else if (item.VerifyStatus == DocVerifyType.NOTVERIFIED)
+                                    {
+                                        cls = "text-info";
+                                        Reason = "Under screening";
+                                    }
+                                    else if (item.VerifyStatus == DocVerifyType.VERIFIED)
+                                    {
+                                        cls = "text-success";
+                                        Reason = "Document has been verified";
+                                    }
+                                }
+                                <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Document Status: @Reason"></i>
+                            </td>
+                            <td class="@cls align-middle">
+                                @Html.DisplayFor(modelItem => DocVerifyType.DicDocVerify[item.VerifyStatus])
+                                @if (DocVerifyType.REJECTED == item.VerifyStatus)
+                                {
+                                    <br />
+                                    <small> Due To: @item.DRemark</small>
+                                }
+                            </td>
+                        }
+                        else
+                        {
+                            <td colspan="4">
+                                <center>@item.Msg</center>
+                            </td>
+                        }
+                    </tr>
+
+
+                    i++;
+                }
+
+            </tbody>
+            <tfoot class="font-italic ">
+                <tr>
+                    <td colspan="4" class="w-100">
+                        <label class="text-info text-left">(Only .jpeg, .jpg, .png, .gif, .pdf files are allowed and file size not more than 200 KB.)</label>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="w-100">
+                        <label class="text-danger text-left">* Required For KYC Completion</label>
+                    </td>
+                    <td>
+                        @{
+                            var btnText = "Apply for KYC";
+                        }
+                        @if (KYCStatus == 1 || KYCStatus == 4 || KYCStatus == 5)
+                        {
+                            btnText = KYCStatus == 4 ? "Apply for REKYC" : btnText;
+                            btnText = KYCStatus == 5 ? "KYC rejected REAPPLY" : btnText;
+                            <button id="btnApplyKYC" class="btn btn-primary btn-sm">@btnText</button>
+                        }
+                        else
+                        {
+                            <span class="btn btn-secondary btn-sm">@Html.Raw(KYCStatus == 3 ? "KYC COMPLETED" : "KYC APPLIED")</span>
+                        }
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>

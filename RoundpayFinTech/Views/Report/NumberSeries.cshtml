@@ -1,0 +1,235 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<OperatorDetail>
+@{
+    ViewData["Title"] = "Number Series List CircleWise";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Number Series Setting
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row mb-0">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlOperator">Choose Operator</label>
+                                    @{
+                                        if (Model != null)
+                                        {
+                                            var Ops = new SelectList(Model, "OID", "Name");
+                                            <select class="form-control" asp-items="Ops" id="ddlOperator"></select>
+                                        }
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-8 col-sm-8 col-xs-8 mt-4">
+                                <div class="float-right form-group">
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append"><button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button></div>
+                                    </div>
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                                @*<div class="float-right ">
+                                        <input class="form-control" id="txtSearch" type="text" placeholder="Search" />
+                                    </div>*@
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%;">#</th>
+                                        <th scope="col" style="width:15%;">Circle</th>
+                                        <th scope="col" style="width:80%">
+                                            Number Series List
+                                            <small class="text-monospace text-sm-center">(To delete any existing series just type <b>-1</b> on related text box)</small>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('#txtSearch').focus();
+                $("#txtSearch").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $('#__p tbody tr').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            }, 500);
+            an.autoClose = 5;
+            var NumList = function () {
+                var id = $('#ddlOperator').val();
+                preloader.load();
+                $.post('/_NumberSeries', { OID: id })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#__p tbody').html(result);
+                        $('.operator').html($('#ddlOperator :selected').text());
+                        $('[id^=txtNS]').unbind().on('change', function () {
+                            var n = $(this).val();
+                            if (n.length != 4 && n != '-1') {
+                                an.title = "Oops";
+                                an.content = 'Number Series should be numeric and length must be 4';
+                                an.alert(an.type.failed);
+                                return false;
+                            }
+                            var _n = $(this).attr('old-num');
+                            var c = this.id.split('_')[1];
+                            NumListHelper(id, c, n, _n, 0, 0);
+                        });
+                    }).catch(function (xhr, e, m) {
+
+                    }).fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            var NumListHelper = function (id, c, n, _n, f, i) {
+                preloader.load();
+                $.post('/num-u', { o: id, c: c, n: n, _n: _n, f: f, i: i })
+                    .done(function (result) {
+                        resultReload(result);
+                        if (result.statuscode !== undefined) {
+                            if (result.statuscode == an.type.failed) {
+                                an.title = "Oops";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }
+                            else if (result.statuscode == an.type.success) {
+                                if (result.flag == undefined) {
+                                    an.title = "Well done";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    NumList();
+                                } else {
+                                    mdlA.id = 'mymodel';
+                                    mdlA.content = '<div class="col-md-12" id="dvConfirmation">'
+                                        + '<button type = "button" class="close" aria-label="Close">'
+                                        + '<span aria-hidden="true">&times;</span></button>'
+                                        + '<h5>Confirmation</h5>' +
+                                        result.msg
+                                        + '<div class="form-group"></div> <button class="btn btn-outline-dark mr-2" id="btnConfirm">Yes</button><button class="btn btn-dark" id="mdlCancel">No</button></div>';
+                                    mdlA.alert(mdlA.size.default);
+                                    $('button.close span,#mdlCancel').unbind().click(function () {
+                                        mdlA.dispose();
+                                    });
+                                    $('#btnConfirm').click(function () {
+                                        $('button.close span,#mdlCancel').click();
+                                        setTimeout(function () {
+                                            NumListHelper(id, c, n, _n, result.flag, result.eyed);
+                                        }, 200);
+                                    });
+                                }
+
+                            }
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            NumList();
+            $('#ddlOperator').on('change', function () {
+                NumList();
+            });
+            $('#btnSearch').click(function () {
+                preloader.load();
+                $.post('/check-num-s', { n: $('#txtSearch').val() })
+                    .done(function (result) {
+                        resultReload(result);
+                        if (result.statuscode !== undefined) {
+                            if (result.statuscode == an.type.failed) {
+                                an.title = "Oops";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }
+                            else if (result.statuscode == an.type.success) {
+                                an.title = "Well done";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }
+                        }
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+        });
+    </script>
+}
+
+

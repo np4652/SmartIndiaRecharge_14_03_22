@@ -1,0 +1,56 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model OpertorMessage
+@*<link href="~/lib/bootstrap/dist/css/bootstrap-select.css" rel="stylesheet" />*@
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container--default .select2-selection--multiple {
+        border: 1px solid #c5c5c5e0 !important;
+        padding-bottom: 8px;
+        padding-top: 5px;
+        border-radius:0!important
+    }
+</style>
+<div class="card-body">
+
+    <div class="row">
+        <div class="form-group col-md-6">
+
+            @Html.Label("ddlMessage", "Choose Message", new { @class = "lbl" })
+            <select class="form-control" id="ddlMessage" onchange="GetMessage(this)" aria-describedby="nameMessage">
+                <option selected value="0">:: Choose Message ::</option>
+                @if (Model.MasterMessage != null)
+                {
+                    @foreach (var item in Model.MasterMessage)
+                    {
+                        <option value="@item.ID">@item.FormatType</option>
+                    }
+                }
+            </select>
+        </div>
+        <div class="form-group col-md-6">
+            @Html.Label("ddlOperator", "Operator", new { @class = "lbl" })
+            <select class="form-control" id="ddlOperator" multiple onchange="ReplaceValue(this)">
+                @if (Model.Operator != null)
+                {
+                    @foreach (var item in Model.Operator)
+                    {
+                        <option value="@item.OID" data-count="">@item.Name</option>
+                    }
+                }
+            </select>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="form-group col-md-12">
+            @Html.Label("txtTempMessage", "Message", new { @class = "lbl" })
+            <textarea id="txtTempMessage" class="form-control" rows="4" cols="20" db aria-describedby="nameTempMessage"></textarea>
+            <small id="nameTempMessage" class="form-text text-muted d-none">Message is mandatory</small>
+        </div>
+    </div>
+</div>
+<script>
+    $('#ddlMessage').select2();
+    $('#ddlOperator').select2({ placeholder: 'Select an option', closeOnSelect: false });
+</script>
+

@@ -1,0 +1,29 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ChannelUnderCategory>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close" id="closeEditTarget">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-uppercase text-info">Channels </h5>
+        <hr />
+    </div>
+</div>
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+        <h5 class="text-primary">@item.Category</h5>
+        <hr class="mt-0"/>
+        <div class="row form-group">
+            @foreach (var channel in item.channels)
+            {
+                <div class="col-md">
+                    <div class="input-group-text">
+                        <img src="/Image/Channels/@(channel.ID + ".png")" alt="1.png" style="height:37px;">
+                        <span class="pl-2"> @channel.ChannelName</span>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}

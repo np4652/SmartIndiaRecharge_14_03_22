@@ -1,0 +1,167 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode;
+@using RoundpayFinTech.AppCode;
+@using Microsoft.AspNetCore.Hosting;
+@using Newtonsoft.Json;
+@using RoundpayFinTech.AppCode.HelperClass;
+@using RoundpayFinTech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IHostingEnvironment _env
+@{
+    LoginResponse _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+
+    LoginResponse _lrEmp = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponseEmp);
+
+    LoginML loginML = new LoginML(HttpContextAccessor, _env);
+    var WebInfo = loginML.GetWebsiteInfo();
+    UserML userML = new UserML(HttpContextAccessor, _env);
+    var Cprofile = userML.GetCompanyProfileApp(WebInfo.WID);
+    if (_lr != null)
+    {
+        if (_lr.LoginTypeID == LoginType.ApplicationUser)
+        {
+            ViewData["IsMarkedGreen"] = _lr.IsMarkedGreen;
+            ViewData["IsPaymentGateway"] = _lr.IsPaymentGateway;
+            if (_lr.RoleID < 1)
+            {
+                Layout = "_LoginLayout";
+            }
+            else if (_lr.RoleID == Role.Admin)
+            {
+                Layout = "_Layout";
+            }
+            else if (_lr.RoleID == Role.Retailor_Seller)
+            {
+
+                Layout = "_Layout_Seller";
+                if (ApplicationSetting.DynamicWebsiteType == Fintech.AppCode.StaticModel.DynamicWebsiteType.Disabled)
+                {
+                    Layout = "_Layout_Seller";
+                }
+                else
+                {
+                    if (_lr.LaunchPreferences == LaunchPreferences.DynamicWebSiteIndex)
+                    {
+                        Layout = "_LayoutShopingWebsite";
+                    }
+                    else
+                    {
+                        Layout = "_Layout_Seller";
+                    }
+
+                }
+
+
+            }
+            else if (_lr.RoleID == Role.APIUser)
+            {
+                Layout = "_Layout_APIUser";
+            }
+            else if (_lr.RoleID == Role.MasterWL)
+            {
+                Layout = "_Layout_MasterWL";
+            }
+            else if (_lr.RoleID == Role.FOS)
+            {
+                Layout = "_Layout_FOS";
+            }
+            else
+            {
+                Layout = "_Layout_User";
+            }
+        }
+        else if (_lr.LoginTypeID == LoginType.CustomerCare)
+        {
+            Layout = "_Layout_CustomerCare";
+        }
+        else
+        {
+            Layout = "_LoginLayout";
+        }
+    }
+
+    else if (_lrEmp != null)
+    {
+        if (_lrEmp.LoginTypeID == LoginType.Employee)
+        {
+            if (_lrEmp.RoleID == EmployeeRole.Sales_Head)
+            {
+                Layout = "_Layout_Emp";
+            }
+            else if (_lrEmp.RoleID == EmployeeRole.State_Head)
+            {
+                Layout = "_Layout_Emp";
+            }
+            else if (_lrEmp.RoleID == EmployeeRole.ASM)
+            {
+                Layout = "_Layout_Emp";
+            }
+            else if (_lrEmp.RoleID == EmployeeRole.TSM)
+            {
+                Layout = "_Layout_Emp";
+            }
+            else if (_lrEmp.RoleID == EmployeeRole.Cluster_Head)
+            {
+                Layout = "_Layout_Emp";
+            }
+            else
+            {
+                Layout = "_LoginLayout";
+            }
+        }
+    }
+    else
+    {
+        switch (ApplicationSetting.DynamicWebsiteType)
+        {
+            case DynamicWebsiteType.Shopping: //ShoppingWebsite
+                Layout = "_LayoutShopingWebsite";
+                break;
+            case DynamicWebsiteType.Travel:  //TravelWebsite
+                Layout = "_LoginLayout";
+                break;
+            default:
+                Layout = "_LoginLayout";//Corporate Layout ByDefault
+                break;
+        }
+    }
+
+    ViewData["CName"] = Cprofile.Name;
+    ViewData["HTitle"] = Cprofile.HeaderTitle;
+    ViewData["WID"] = WebInfo.WID;
+    ViewData["Host"] = WebInfo.AbsoluteHost;
+    ViewData["AppName"] = Cprofile.AppName;
+    ViewData["Theme"] = WebInfo.ThemeId;
+    ViewData["CustomerCareMobileNos"] = Cprofile.CustomerCareMobileNos;
+    ViewData["Address"] = Cprofile.Address;
+<script>
+        var ThemeId =@WebInfo.ThemeId;
+        var CName = '@Cprofile.Name';
+        const isSocialAlert = '@ApplicationSetting.IsSocialAlert';
+        @{
+
+            var RoleName = "";
+            var jsonString = ApplicationSettingSerializecs.SerializeStaticClass(typeof(@ApplicationSetting));
+            jsonString = !string.IsNullOrEmpty(jsonString) ? jsonString.Replace("&quot;", "'"):"";
+            if (_lr!=null) {
+
+                RoleName = !string.IsNullOrEmpty(Convert.ToString(_lr.RoleName)) ? Convert.ToString(_lr.RoleName) : "";
+            }
+
+        }
+
+
+        const serverSetting =
+        {
+
+            roleName:'@RoleName',
+
+            applicationSetting: JSON.parse('@Html.Raw(@jsonString)')
+
+        };
+
+</script>
+}

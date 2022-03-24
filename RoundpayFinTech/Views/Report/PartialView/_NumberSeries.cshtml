@@ -1,0 +1,41 @@
+﻿@using Fintech.AppCode.Model.Reports
+@model NumberSeriesListWithCircle
+
+@{
+    var i = 1;
+    if (Model == null)
+    {
+        return;
+    }
+}
+
+@foreach (var item in Model.CircleList)
+{
+    <tr data-item-id="@item.ID">
+        <th class="align-middle">@i</th>
+        <td class="align-middle">@item.Circle <small class="form-text text-muted mt-0 operator" style="font-size:70%"></small></td>
+        <td class="align-middle">
+            <div class="row mr-0">
+                <div class="col-md-1 col-sm-2 col-lg-1 mb-1">
+                    <input type="text" class="form-control switch is-info" id="@Html.Raw("txtNS_" + item.ID + "_0")" value="" placeholder="New Series" old-num="" />
+                </div>
+                @{
+                    var sls = Model.SeriesList.Where(x => x.CircleID == item.ID);
+                    var j = 1;
+                }
+                @foreach (var series in sls)
+                {
+                    if (!string.IsNullOrEmpty(series.Number))
+                    {
+                        <div class="col-md-1 col-sm-2 col-lg-1 mb-1">
+                            <input type="text" class="form-control" id="@Html.Raw("txtNS_"+item.ID+"_"+j)" value="@series.Number" old-num="@series.Number"/>
+                        </div>
+                        j++;
+                    }
+
+                }
+            </div>
+        </td>
+    </tr>
+    i++;
+}

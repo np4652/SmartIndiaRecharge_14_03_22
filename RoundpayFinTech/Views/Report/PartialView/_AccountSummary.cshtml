@@ -1,0 +1,66 @@
+﻿@model Fintech.AppCode.Model.Reports.AccountSummary
+@{
+    var WalletID = ViewBag.WalletID;
+ }
+<table class="table table-hover table-responsive-sm mb-0" id="asum">
+<thead class="shadow">
+    <tr>
+        <th class="text-right border-right text-muted" scope="col">Opening</th>
+        <th class="text-right border-right text-muted" scope="col">Purchase</th>
+        <th class="text-right border-right text-muted" scope="col">FundDeduct</th>
+        <th class="text-right border-right text-muted" scope="col">Commission</th>
+        <th class="text-right border-right text-muted" scope="col">CCFCommission</th>
+        <th class="text-right border-right text-muted" scope="col">Refunded</th>
+
+
+        @if (WalletID == 3)
+        {
+            <th class="text-right border-right text-muted" scope="col">Requested</th>
+            <th class="text-right border-right text-muted" scope="col">Credited</th>
+            <th class="text-right border-right text-muted" scope="col">Debited</th>
+            <th class="text-right border-right text-muted" scope="col">Settled</th>
+        }
+        else
+        {
+            <th class="text-right border-right text-muted" scope="col">Debited</th>
+            <th class="text-right border-right text-muted" scope="col">Requested</th>
+            <th class="text-right border-right text-muted" scope="col">Pur.Return</th>
+        }
+        <th class="text-right border-right text-muted" scope="col">CCF</th>
+        <th class="text-right border-right text-muted" scope="col">FundTransfer</th>
+        <th class="text-right border-right text-muted" scope="col">Surcharge</th>
+	     <th class="text-right border-right text-muted" scope="col">Debit Comm</th>
+        <th class="text-right border-right text-muted" scope="col">OtherCharge</th>
+        <th class="text-right border-right text-muted" scope="col">Expected</th>
+    </tr>
+</thead>
+<tbody>
+    <tr>
+        <th class="text-right border-right text-success" scope="row">  @Model.Opening</th>
+        <th class="text-right border-right text-success" scope="row">  @Model.Purchase</th>
+        <th class="text-right border-right text-success" scope="row">  @Model.FundDeducted</th>
+        <th class="text-right border-right text-success" scope="row">  @Model.Commission</th>
+        <th class="text-right border-right text-success" scope="row">  @Model.CCFCommission</th>
+        <th class="text-right border-right text-success" scope="row">  @Model.Refunded</th>
+        @if (WalletID == 3)
+        {
+            <th class="text-right border-right text-success" scope="row">  @Model.Requested</th>
+            <th class="text-right border-right text-muted" scope="row">  @Model.Debited</th>
+            <th class="text-right border-right text-muted" scope="row">  @Model.Debited2202</th>
+        }
+        else
+        {
+            <th class="text-right border-right text-muted" scope="row">  @Model.Debited</th>
+            <th class="text-right border-right text-danger" scope="row">  @Model.Requested</th>
+        }
+
+        <th class="text-right border-right text-danger" scope="row">  @Model.Return  </th>
+        <th class="text-right border-right text-danger" scope="row">  @Model.CCF</th>
+        <th class="text-right border-right text-danger" scope="row">  @Model.FundTransfered</th>
+        <th class="text-right border-right text-danger" scope="row">  @Model.Surcharge</th>
+	    <th class="text-right border-right text-danger" scope="row">  @Model.DCommission</th>
+        <th class="text-right border-right text-danger" scope="row">  @Model.OtherCharge</th>
+        <th class="text-right border-right text-primary" scope="row">  @Model.Expected</th>
+    </tr>
+</tbody>
+</table>

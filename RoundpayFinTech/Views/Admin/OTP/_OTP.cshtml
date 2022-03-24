@@ -1,0 +1,13 @@
+﻿<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Fill OTP</h3>
+    <div class="form-group">
+        @Html.Label("txtOTP", "Fill OTP", new { @class = "lbl" })
+        @Html.TextBox("txtOTP", null, new { @class = "form-control text-capitalize", @placeholder = "Enter OTP", @aria_describedby = "OTPHelp", @tabindex = 4 })
+        <small id="OTPHelp" class="form-text text-danger  d-none">Invalid OTP</small>
+    </div>
+    <button class="btn btn-outline-dark" id="btnOTPChange">Submit</button>
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>

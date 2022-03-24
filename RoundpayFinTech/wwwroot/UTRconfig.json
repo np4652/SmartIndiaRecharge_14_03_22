@@ -1,0 +1,10 @@
+[
+  {
+    "bank": "510 ARMY BASE W/S CREDIT COOP PRIMARY BANK LTD.",
+    "transactionType": "UPI",
+    "identifier": "UPI",
+    "startWith": "//",
+    "endWith": "/",
+    "bankID": "1948"
+  }
+]

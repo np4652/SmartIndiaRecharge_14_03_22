@@ -1,0 +1,218 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.APIDetail>
+@{
+    ViewData["Title"] = "Admin Daybook(APIDatewise)";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34 text-monospace">
+                            <div class="col-sm-8">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-4">
+                                <input class="form-control" id="txtSearch" type="text" placeholder="Search" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group" id="dvAPI">
+                                    <label class="lbl" for="ddlAPI">API</label>
+                                    @{
+                                        var APIs = new SelectList(Model, "ID", "Name");
+                                    }
+                                    @if (APIs.Any())
+                                    {
+                                        <select id="ddlAPI" tabindex="7" class="form-control" asp-items="APIs">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    }
+                                    else
+                                    {
+                                        <select id="ddlAPI" tabindex="7" class="form-control">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    }
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                        <small id="Small4" class="form-text text-muted d-none"></small>
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" class="btn btn-outline-dark">Search</button>
+                                            <button class="btn btn-outline-success far fa-file-excel" id="btnExport"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm" id="dvDaybook">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblDaybook">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th width="1%"></th>
+                                        <th class="text-right">#</th>
+                                        <th>TDate</th>
+                                        <th class="text-right">TotalHits</th>
+                                        <th class="text-right text-nowrap">Total(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right">SuccessHits</th>
+                                        <th class="text-right text-nowrap">Success(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right">RefundHits</th>
+                                        <th class="text-right text-nowrap">Refund(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right">FailedHits</th>
+                                        <th class="text-right text-nowrap">Failed(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right">PendingHits</th>
+                                        <th class="text-right text-nowrap">Pending(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right text-nowrap">APICommission(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right text-nowrap">Direct Commission(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right text-nowrap">Direct Incentive(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-right text-nowrap">TeamCommission(<i class="fas fa-rupee-sign"></i>)</th>
+                                        @if (ApplicationSetting.IsGSTEnable)
+                                        {
+                                            <th scope="col" class="text-right text-nowrap">GSTTax(<i class="fas fa-rupee-sign"></i>)</th>
+                                        }
+                                        <th scope="col" class="text-right text-nowrap">TDS(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">Profit(<i class="fas fa-rupee-sign"></i>)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            search();
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+        });
+        var search = function (sender) {
+            var IsExport = sender!=undefined && sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false;
+            if (IsExport == true) {
+                window.location = "/DaybookAPIDatewise-Export?" + $.param({ FromDate: $('#dtFromDate').val(), ToDate: $('#dtToDate').val(), a: $('#ddlAPI').val() });
+            }
+            else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.post('/Daybook-APIDatewise', { FromDate: $('#dtFromDate').val(), ToDate: $('#dtToDate').val(), a: $('#ddlAPI').val() })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#tblDaybook tbody').html(result);
+                        setTimeout(function () {
+                            $('#txtSearch').focus();
+                            $("#txtSearch").unbind().on("keyup", function () {
+                                var value = $(this).val().toLowerCase();
+                                $('#tblDaybook tbody tr').filter(function () {
+                                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                });
+                            });
+                            $('#tblDaybook tr.clickable').click(function () {
+                                $($($(this).find('td')[0]).find('i')).toggleClass('fa-plus-square fa-minus-square');
+                            });
+                        }, 500);
+                    })
+                     .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    })
+                    .always(() => {
+                        preloader.remove();
+                        btnLdr.Stop($('#btnSearch'));
+                    });
+            }
+        };
+    </script>
+
+
+}
+

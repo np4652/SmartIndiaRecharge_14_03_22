@@ -1,0 +1,342 @@
+﻿@model RoundpayFinTech.AppCode.Model.Employee.ReasonAndPurpuse
+@{
+    var purpuseList = Model.Purpuse.Any() ? Model.Purpuse : new List<RoundpayFinTech.AppCode.Model.Employee.Purpuse>();
+    var reasonList = Model.Purpuse.Any() ? Model.Resaon : new List<RoundpayFinTech.AppCode.Model.Employee.ReasonToUseOBrand>();
+    var pList = new SelectList(purpuseList, "PurpuseID", "PurpuseDetail");
+    var rList = new SelectList(reasonList, "ReasonID", "Reason");
+}
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Meeting</h5><hr />
+        <input type="hidden" id="hfdID" value="@Model.Id" />
+    </div>
+    <div class="col-12">
+        <div class="row">
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="lbl" for="txtmobileno">Mobile No</label>
+                    <input type="text" class="form-control text-capitalize" id="txtmobileno" placeholder="Enter Mobile No" aria_describedby="nameHelp" onchange="Search();" />
+                    <small id="nameHelp" class="form-text text-muted d-none">MobileNo is mandatory</small>
+                </div>
+            </div>
+            <div class="col-sm-2">
+                <div class="form-group"></div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl" for="txtName">Name</label>
+                    <input type="text" class="form-control text-capitalize" id="txtName" placeholder="Enter Name" aria_describedby="nameHelp" />
+                    <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl" for="txtOutletName">Outlet Name</label>
+                    <input type="text" class="form-control text-capitalize" id="txtOutletName" placeholder="Enter Outlet Name" aria_describedby="outletnameHelp" />
+                    <small id="outletnameHelp" class="form-text text-muted d-none">Outlet Name is mandatory</small>
+                </div>
+            </div>
+            @*<div class="col-md-6">
+            <div class="form-group">
+                <label class="lbl" for="txtArea">Area</label>
+                <input type="text" class="form-control text-capitalize" id="txtArea" placeholder="Enter Area" aria_describedby="areaHelp" disabled="disabled" />
+                <small id="areaHelp" class="form-text text-muted d-none">Area is mandatory</small>
+            </div>
+        </div>*@
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl" for="txtpincode">Pin Code</label>
+                    <input type="text" class="form-control text-capitalize" id="txtpincode" placeholder="Enter PinCode" aria_describedby="pincodeHelp" onchange="SearchArea();"></>
+                    <small id="pincodeHelp" class="form-text text-muted d-none">Pin Code is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl">Area</label>
+                    <select class="form-control" name="Area" id="ddlarea">
+                        <option value="">--Select Area--</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl">Purpose</label>
+                    <select class="form-control" name="purpuse" id="ddlpurpuse" asp-items="@pList">
+                        <option value="">--Select Purpuse--</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl">Consumption <small class="text-danger text-monospace">[Calculate Monthly]</small></label>
+                    <input type="text" class="form-control text-capitalize" id="txtconsumptions" placeholder="Enter Consumption" aria_describedby="consumptionHelp" />
+                    <small id="consumptionHelp" class="form-text text-muted d-none">Consumption is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    &nbsp;
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text align">
+                                <input type="checkbox" id="chkUsingOtherbrands" name="otherbrands" />
+                            </span>
+                        </div>
+                        <label class="form-control" for="chkUsingOtherbrands">Is Using Other Brands</label>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Reason to Use Other Brands</label>
+                    <select class="form-control" name="Reason" id="ddlreason" asp-items="@rList" disabled="disabled">
+                        <option value="0">--Choose Reason--</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Brand Name</label>
+                    <input type="text" class="form-control" id="txtBrandName" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">Enter Brand Name</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Recharge</label>
+                    <input type="text" class="form-control" id="txtRecharge" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Bill Payment</label>
+                    <input type="text" class="form-control" id="txtBillPayment" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Money Transfer</label>
+                    <input type="text" class="form-control" id="txtMoneyTransfer" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">AEPS</label>
+                    <input type="text" class="form-control" id="txtAEPS" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Mini ATM</label>
+                    <input type="text" class="form-control" id="txtMINIATM" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Insurance</label>
+                    <input type="text" class="form-control" id="txtInsurance" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Hotel/Flight Booking</label>
+                    <input type="text" class="form-control text-capitalize" id="txtHotel" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Pan Card</label>
+                    <input type="text" class="form-control text-capitalize" id="txtPan" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="lbl">Vehicle Insurance</label>
+                    <input type="text" class="form-control text-capitalize" id="txtVehicle" placeholder="Enter How Much" aria-describedby="howmuchHelp" disabled="disabled" />
+                    <small id="howmuchHelp" class="form-text text-muted d-none">How much is mandatory</small>
+                </div>
+            </div>
+            <div id="divUpload" class="col-md-10 offset-md-1 hide">
+                <div class="form-group">
+                    <input type='file' id="dimageUpload1" onchange="uploadImage()" class="custom-file-input" />
+                    <label id="lbdlogoUpload" for="dimageUpload1" class="custom-file-label">Upload Shop Image</label>
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="lbl">Remark</label>
+                    <textarea rows="4" class="form-control text-capitalize" id="txtremark" placeholder="Enter Remark" aria-describedby="remarkHelp"></textarea>
+                    <small id="remarkHelp" class="form-text text-muted d-none">Remark is mandatory</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 text-right">
+                    <button type="button" class="btn btn-success" id="btnCreate" value="CREATE">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $(".custom-file-input").on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        });
+    });
+
+    Q.geoLoaction();
+    $('#btnCreate').click(function () {
+        createmeeting()
+    });
+
+
+    $('#txtmobileno').numeric({
+        numericType: 'number',
+        maxLength: 9
+    });
+
+    $('#txtpincode').numeric({
+        numericType: 'number',
+        maxLength: 5
+    });
+
+    $('#txtconsumptions,#txthowmuch').numeric({
+        numericType: 'decimal',
+        maxLength: 11
+    });
+
+    var createmeeting = function () {
+        let param = {
+            MobileNo: $('#txtmobileno').val(),
+            Name: $('#txtName').val(),
+            OutletName: $('#txtOutletName').val(),
+            Area: $('#ddlarea').val(),
+            Pincode: $('#txtpincode').val(),
+            Consumption: $('#txtconsumptions').val(),
+            Otherbrandconsumption: $('#txthowmuch').val(),
+            Remark: $('#txtremark').val(),
+            Isusingotherbrands: $('#chkUsingOtherbrands').is(':checked'),
+            RechargeConsumption: $('#txtRecharge').val(),
+            BillPaymentConsumption: $('#txtBillPayment').val(),
+            MoneyTransferConsumption: $('#txtMoneyTransfer').val(),
+            AEPSConsumption: $('#txtAEPS').val(),
+            MiniATMConsumption: $('#txtMINIATM').val(),
+            InsuranceConsumption: $('#txtInsurance').val(),
+            HotelConsumption: $('#txtHotel').val(),
+            PanConsumption: $('#txtPan').val(),
+            VehicleConsumption: $('#txtVehicle').val(),
+            PurposeId: $('#ddlpurpuse').val(),
+            Purpose: $('#ddlpurpuse option:selected').text(),
+            BrandName: $('#txtBrandName').val(),
+            ReasonId: $('#ddlreason').val(),
+            Reason: $('#ddlreason').val() === '0' ? "" : $('#ddlreason option:selected').text(),
+            Latitute: geoLoactionDetail.Latitude,
+            Longitute: geoLoactionDetail.Longitute
+        };
+        $.post('/Employee/CreateMeeting1', param).done(result => {
+
+            an.id = "myAlert";
+            an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            mdlA.dispose();
+            _loadGrid();
+        }).fail(xhr => {
+            an.title = "Oops! Error";
+            an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+            an.alert(an.type.error);
+        }).always(() => preloader.remove())
+    }
+
+    function Search() {
+        let param = {
+            MobileNo: $('#txtmobileno').val(),
+        };
+        if (param.MobileNo.length === 10) {
+            preloader.load();
+            $.post('/Employee/GetUserdetailsbyNo', param)
+                .done(result => {
+                    if (result.statusCode === 1) {
+                        $('#txtName').val(result.name).attr('disabled', 'disabled');
+                        $('#txtOutletName').val(result.outletName).attr('disabled', 'disabled');
+                        $('#txtArea').val(result.area).attr('disabled', 'disabled');
+                        $('#txtpincode').val(result.pincode).attr('disabled', 'disabled');
+                        SearchArea();
+                    }
+                    else {
+                        $('#txtName').val(result.name).removeAttr('disabled');
+                        $('#txtOutletName').val(result.name).removeAttr('disabled');
+                        $('#txtArea').val(result.name).removeAttr('disabled');
+                        $('#txtpincode').val(result.name).removeAttr('disabled');
+                    }
+                    $('#divUpload').removeClass('hide');
+                })
+                .fail(xhr => {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.error);
+                })
+                .always(() => preloader.remove())
+        }
+        else {
+            $('#txtName').val('').removeAttr('disabled');
+            $('#txtOutletName').val('').removeAttr('disabled');
+            $('#txtArea').val('').removeAttr('disabled');
+            $('#txtpincode').val('').removeAttr('disabled');
+        }
+    }
+
+    function SearchArea() {
+        let param = {
+            Pincode: $('#txtpincode').val(),
+        };
+        $.post('/Employee/GetAreabyPincode', param).done(result => {
+            $('#ddlarea').empty().append(result.map(r => `<option value="${r.area}">${r.area}</option>`));
+            console.log(result);
+        }).fail(xhr => {
+            an.title = "Oops! Error";
+            an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+            an.alert(an.type.error);
+        }).always(() => preloader.remove())
+    }
+
+    $('#chkUsingOtherbrands').click(function () {
+        if ($(this).is(':checked')) {
+            $('#txtRecharge').removeAttr('disabled');
+            $('#txtBillPayment').removeAttr('disabled');
+            $('#txtMoneyTransfer').removeAttr('disabled');
+            $('#txtAEPS').removeAttr('disabled');
+            $('#txtMINIATM').removeAttr('disabled');
+            $('#txtInsurance').removeAttr('disabled');
+            $('#txtPan').removeAttr('disabled');
+            $('#txtHotel').removeAttr('disabled');
+            $('#txtVehicle').removeAttr('disabled');
+            $('#ddlreason').removeAttr('disabled');
+            $('#txtBrandName').removeAttr('disabled');
+        } else {
+            $('#txtRecharge').attr('disabled', 'disabled');
+            $('#txtBillPayment').attr('disabled', 'disabled');
+            $('#txtMoneyTransfer').attr('disabled', 'disabled');
+            $('#txtAEPS').attr('disabled', 'disabled');
+            $('#txtMINIATM').attr('disabled', 'disabled');
+            $('#txtInsurance').attr('disabled', 'disabled');
+            $('#txtPan').attr('disabled', 'disabled');
+            $('#txtHotel').attr('disabled', 'disabled');
+            $('#txtVehicle').attr('disabled', 'disabled');
+            $('#ddlreason').attr('disabled', 'disabled');
+            $('#txtBrandName').attr('disabled', 'disabled');
+        }
+    });
+</script>

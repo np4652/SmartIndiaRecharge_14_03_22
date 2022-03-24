@@ -1,0 +1,123 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.PSTReportEmp>
+@{
+    int i = 1;
+}
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="bg-tableth">
+            <tr>
+                <th>#</th>
+                <th class="text-nowrap">AM</th>
+                <th class="text-nowrap">Sales Head</th>
+                <th class="text-nowrap">Circle Head</th>
+                <th>ZBM</th>
+                <th>ASM</th>
+                <th>TSM</th>
+                <th>DistributorName</th>
+                @*<th>Firm/OutletName</th>*@
+                <th>DistributorMobile</th>
+                <th class="text-right text-nowrap">PrimaryLM (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">PrimaryLMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">PrimaryMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">ACH% </th>
+                <th class="text-right text-nowrap">SecoundaryLM (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SecoundaryLMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SecoundaryMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">ACH% </th>
+                <th class="text-right text-nowrap">TertiaryLM (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">TertiaryLMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">TertiaryMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">ACH% </th>
+                <th class="text-right text-nowrap">TOutletLM (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">TOutletLMTD(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">TOutletMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">ACH% </th>
+                <th class="text-right text-nowrap">PackageLM (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">PackageLMTD(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">PackageMTD (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">ACH% </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr data-User-ID="@item.UserID">
+                <td>@i</td>
+                <td>@item.AM [@item.AMMobileNo]</td>
+                <td>@item.SHDetail</td>
+                <td>@item.CDetail</td>
+                <td>@item.ZDetail</td>
+                <td>@item.ADetail</td>
+                <td>@item.TSMDetail</td>
+                <td>@item.User</td>
+                @*<td></td>*@
+                <td>@item.UserMobile</td>
+                <td class="text-right">@item.PriLM</td>
+                <td class="text-right">@item.PriLMTD</td>
+                <td class="text-right">@item.Pri</td>
+                <td class="text-right">@item.PGrowth</td>
+                <td class="text-right">@item.SecLM</td>
+                <td class="text-right">@item.SecLMTD</td>
+                <td class="text-right">@item.Sec</td>
+                <td class="text-right">@item.SGrowth</td>
+                <td class="text-right">@item.TerLM</td>
+                <td class="text-right">@item.TerLMTD</td>
+                <td class="text-right">@item.Ter</td>
+                <td class="text-right">@item.TGrowth</td>
+                <td class="text-right">@item.TOutletLM</td>
+                <td class="text-right">@item.TOutletLMTD</td>
+                <td class="text-right">@item.TOutlet</td>
+                <td class="text-right">@item.OGrowth</td>
+                <td class="text-right">@item.PackageSellLM</td>
+                <td class="text-right">@item.PackageSellLMTD</td>
+                <td class="text-right">@item.PackageSell</td>
+                <td class="text-right">@item.PackageGrowth</td>
+            </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td class="text-center">No Record Found !</td>
+        </tr>
+    </table>
+}
+<script>
+    (() => {
+        $('table').fixTableHeader();
+        $('.moreInfo').click(e => {
+            if ($(e.currentTarget).attr('class').indexOf('fa-minus-square') != -1) {
+                $('.childTable').addClass('d-none');
+                $('.moreInfo').removeClass('fa-minus-square').addClass('fa-plus-square ');
+                return
+            }
+            if ($(e.currentTarget).closest('tr').next('.childTable').find('table').attr('class') != undefined) {
+                $('.childTable').addClass('d-none');
+                $('.moreInfo').removeClass('fa-minus-square').addClass('fa-plus-square ');
+                $(e.currentTarget).closest('tr').next('.childTable').removeClass('d-none');
+                $(e.currentTarget).toggleClass('fa-plus-square fa-minus-square');
+            }
+            else {
+                let param = {
+                    UserID: $(e.currentTarget).closest('tr').data().userId,
+                    FromDate: $("#dtFromDate").val(),
+                    ToDate: $("#dtToDate").val()
+                };
+                $.post('/Employee/PSTDeatilReport', param)
+                    .done(result => {
+                        $('.childTable').addClass('d-none');
+                        $('.moreInfo').removeClass('fa-minus-square').addClass('fa-plus-square ');
+                        $(e.currentTarget).closest('tr').next('.childTable').html('<td colspan="13">' + result + '</td>');
+                        $(e.currentTarget).closest('tr').next('.childTable').removeClass('d-none');
+                        $(e.currentTarget).toggleClass('fa-plus-square fa-minus-square')
+                    })
+                    .always(() => preloader.load());
+            }
+        })
+    })();
+</script>

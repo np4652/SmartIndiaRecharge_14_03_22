@@ -1,0 +1,228 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.APIDaybookDatewise>
+@{
+    var couter = 1;
+}
+
+@if (Model.Any())
+{
+    var TotalHits = 0;
+    var TotalAmount = 0M;
+    var SuccessHits = 0;
+    var SuccessAmount = 0M;
+    var RefundHits = 0;
+    var RefundAmount = 0M;
+    var FailedHits = 0;
+    var FailedAmount = 0M;
+    var PendingHits = 0;
+    var PendingAmount = 0M;
+    var Commission = 0M;
+    var Incentive = 0M;
+    var APICommission = 0M;
+    var TeamCommission = 0M;
+    var GSTTaxAmount = 0M;
+    var TDSAmount = 0M;
+    var Profit = 0M;
+
+    foreach (var item in Model)
+    {
+        TotalHits += item.TotalHits;
+        TotalAmount += item.TotalAmount;
+        SuccessHits += item.SuccessHits;
+        SuccessAmount += item.SuccessAmount;
+        RefundHits += item.RefundHits;
+        RefundAmount += item.RefundAmount;
+        FailedHits += item.FailedHits;
+        FailedAmount += item.FailedAmount;
+        PendingHits += item.PendingHits;
+        PendingAmount += item.PendingAmount;
+        Commission += item.Commission;
+        Incentive += item.Incentive;
+        TeamCommission += item.TeamCommission;
+        APICommission += item.APICommission;
+        GSTTaxAmount += item.GSTTaxAmount;
+        TDSAmount += item.TDSAmount;
+        Profit += item.Profit;
+        var SubTotalHits = 0;
+        var SubTotalAmount = 0M;
+        var SubSuccessHits = 0;
+        var SubSuccessAmount = 0M;
+        var SubRefundHits = 0;
+        var SubRefundAmount = 0M;
+        var SubFailedHits = 0;
+        var SubFailedAmount = 0M;
+        var SubPendingHits = 0;
+        var SubPendingAmount = 0M;
+        var SubCommission = 0M;
+        var SubIncentive = 0M;
+        var SubAPICommission = 0M;
+        var SubTeamCommission = 0M;
+        var SubGSTTaxAmount = 0M;
+        var SubTDSAmount = 0M;
+        var SubProfit = 0M;
+        var Subcouter = 1;
+<tr class="clickable cursor-pointer" data-toggle="collapse" data-target="#grpRows_@couter" aria-expanded="false" aria-controls="grpRows_@couter">
+    <td><i class="fa fa-plus-square" aria-hidden="true"></i></td>
+    <th class="text-right">@couter</th>
+    <td class="text-nowrap">@item.API</td>
+    <td class="text-nowrap">@item.EntryDate.ToString("dd MMM yyyy")</td>
+    <td class="text-right">@item.TotalHits</td>
+    <td class="text-right">@item.TotalAmount</td>
+    <td class="text-right">@item.SuccessHits</td>
+    <td class="text-right">@item.SuccessAmount</td>
+    <td class="text-right">@item.RefundHits</td>
+    <td class="text-right">@item.RefundAmount</td>
+    <td class="text-right">@item.FailedHits</td>
+    <td class="text-right">@item.FailedAmount</td>
+    <td class="text-right">@item.PendingHits</td>
+    <td class="text-right">@item.PendingAmount</td>
+    <td class="text-right">@item.APICommission</td>
+    <td class="text-right">@item.Commission</td>
+    <td class="text-right">@item.Incentive</td>
+    <td class="text-right">@item.TeamCommission</td>
+    @if (ApplicationSetting.IsGSTEnable)
+    {
+        <td class="text-right">@item.GSTTaxAmount</td>
+    }
+    <td class="text-right">@item.TDSAmount</td>
+    <td class="text-right @(item.Profit>0?"text-success":"text-danger")">@item.Profit</td>
+</tr>
+        <tr>
+            <td id="grpRows_@couter" class="collapse" colspan="19">
+                <table class="table table-hover table-striped table-secondary table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th class="border-0 text-right">#</th>
+                            <th class="border-0">Operator</th>
+                            <th class="text-right">TotalHits</th>
+                            <th class="text-right text-nowrap">Total(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right">SuccessHits</th>
+                            <th class="text-right text-nowrap">Success(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right">RefundHits</th>
+                            <th class="text-right text-nowrap">Refund(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right">FailedHits</th>
+                            <th class="text-right text-nowrap">Failed(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right">PendingHits</th>
+                            <th class="text-right text-nowrap">Pending(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right text-nowrap">APICommission(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th scope="col" class="text-right text-nowrap">Commission(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th scope="col" class="text-right text-nowrap">Incentive(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th scope="col" class="text-right text-nowrap">TeamCommission(<i class="fas fa-rupee-sign"></i>)</th>
+                            @if (ApplicationSetting.IsGSTEnable)
+                            {
+                                <th scope="col" class="text-right text-nowrap">GSTTax(<i class="fas fa-rupee-sign"></i>)</th>
+                            }
+                            <th scope="col" class="text-right text-nowrap">TDS(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th scope="col" class="text-right text-nowrap">Profit(<i class="fas fa-rupee-sign"></i>)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subItem in item.Daybooks)
+                        {
+                            SubTotalHits += subItem.TotalHits;
+                            SubTotalAmount += subItem.TotalAmount;
+                            SubSuccessHits += subItem.SuccessHits;
+                            SubSuccessAmount += subItem.SuccessAmount;
+                            SubRefundHits += subItem.RefundHits;
+                            SubRefundAmount += subItem.RefundAmount;
+                            SubFailedHits += subItem.FailedHits;
+                            SubFailedAmount += subItem.FailedAmount;
+                            SubPendingHits += subItem.PendingHits;
+                            SubPendingAmount += subItem.PendingAmount;
+                            SubCommission += subItem.Commission;
+                            SubIncentive += subItem.Incentive;
+                            SubTeamCommission += subItem.TeamCommission;
+                            SubAPICommission += subItem.APICommission;
+                            SubGSTTaxAmount += subItem.GSTTaxAmount;
+                            SubTDSAmount += subItem.TDSAmount;
+                            SubProfit += subItem.Profit;
+                        <tr>
+                            <th class="text-right">@Subcouter</th>
+                            <td class="text-nowrap">@subItem.Operator</td>
+                            <td class="text-right">@subItem.TotalHits</td>
+                            <td class="text-right">@subItem.TotalAmount</td>
+                            <td class="text-right">@subItem.SuccessHits</td>
+                            <td class="text-right">@subItem.SuccessAmount</td>
+                            <td class="text-right">@subItem.RefundHits</td>
+                            <td class="text-right">@subItem.RefundAmount</td>
+                            <td class="text-right">@subItem.FailedHits</td>
+                            <td class="text-right">@subItem.FailedAmount</td>
+                            <td class="text-right">@subItem.PendingHits</td>
+                            <td class="text-right">@subItem.PendingAmount</td>
+                            <td class="text-right">@subItem.APICommission</td>
+                            <td class="text-right">@subItem.Commission</td>
+                            <td class="text-right">@subItem.Incentive</td>
+                            <td class="text-right">@subItem.TeamCommission</td>
+                            @if (ApplicationSetting.IsGSTEnable)
+                            {
+                                <td class="text-right">@subItem.GSTTaxAmount</td>
+                            }
+                            <td class="text-right">@subItem.TDSAmount</td>
+                            <td class="text-right">@subItem.Profit</td>
+                        </tr>
+                            Subcouter = Subcouter + 1;
+                        }
+                    <tr>
+                        <th colspan="2" class="text-right">Total</th>
+                        <th class="text-right">@SubTotalHits</th>
+                        <th class="text-right">@SubTotalAmount</th>
+                        <th class="text-right">@SubSuccessHits</th>
+                        <th class="text-right">@SubSuccessAmount</th>
+                        <th class="text-right">@SubRefundHits</th>
+                        <th class="text-right">@SubRefundAmount</th>
+                        <th class="text-right">@SubFailedHits</th>
+                        <th class="text-right">@SubFailedAmount</th>
+                        <th class="text-right">@SubPendingHits</th>
+                        <th class="text-right">@SubPendingAmount</th>
+                        <th class="text-right">@SubAPICommission</th>
+                        <th class="text-right">@SubCommission</th>
+                        <th class="text-right">@SubIncentive</th>
+                        <th class="text-right">@SubTeamCommission</th>
+                        @if (ApplicationSetting.IsGSTEnable)
+                        {
+                            <th class="text-right">@SubGSTTaxAmount</th>
+                        }
+                        <th class="text-right">@SubTDSAmount</th>
+                        <th class="text-right">@SubProfit</th>
+                    </tr>
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        couter = couter + 1;
+
+    }
+<tr>
+    <th colspan="4" class="text-right">Total</th>
+    <th class="text-right">@TotalHits</th>
+    <th class="text-right">@TotalAmount</th>
+    <th class="text-right">@SuccessHits</th>
+    <th class="text-right">@SuccessAmount</th>
+    <th class="text-right">@RefundHits</th>
+    <th class="text-right">@RefundAmount</th>
+    <th class="text-right">@FailedHits</th>
+    <th class="text-right">@FailedAmount</th>
+    <th class="text-right">@PendingHits</th>
+    <th class="text-right">@PendingAmount</th>
+    <th class="text-right">@APICommission</th>
+    <th class="text-right">@Commission</th>
+    <th class="text-right">@Incentive</th>
+    <th class="text-right">@TeamCommission</th>
+    @if (ApplicationSetting.IsGSTEnable)
+    {
+        <th class="text-right">@GSTTaxAmount</th>
+    }
+    <th class="text-right">@TDSAmount</th>
+    <th class="text-right">@Profit</th>
+</tr>
+}
+else
+{
+    <tr>
+        <td colspan="22" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+
+

@@ -1,0 +1,274 @@
+﻿@using Fintech.AppCode.HelperClass
+@using Fintech.AppCode.StaticModel
+@model InvoiceResponseModel
+@{
+    Layout = "_LayoutInvoice";
+    ViewData["Title"] = "Summary";
+    var P2ASummary = new List<InvoiceSummaryResponse>();
+    var P2PSummary = new List<InvoiceSummaryResponse>();
+    var RCMSummary = new List<InvoiceSummaryResponse>();
+    var SurchargeSummary = new List<InvoiceSummaryResponse>();
+    if (Model.invoiceSummaries != null)
+    {
+        P2PSummary = Model.invoiceSummaries.Where(x => x.BillingModel == "P2P").ToList();
+        P2ASummary = Model.invoiceSummaries.Where(x => x.BillingModel == "P2A").ToList();
+        RCMSummary = Model.invoiceSummaries.Where(x => x.BillingModel == "RCM").ToList();
+        SurchargeSummary = Model.invoiceSummaries.Where(x => x.BillingModel == "SUR").ToList();
+    }
+    var counter = 0;
+    var RequestedTotal = 0M;
+    var AmountTotal = 0M;
+    var DiscountTotal = 0M;
+    var TDSTotal = 0M;
+}
+
+
+<div style="margin-top: 2em;">
+    <div id="div_print">
+        @if (P2PSummary.Count > 0)
+        {
+            var TotalNetAmount = 0M;
+            <h3 class="text-center"><b>P2P Summary</b></h3>
+            <table class="table table-bordered mb-3">1  
+                <tbody>
+                    <tr>
+                        <td colspan="2" style="padding: 0;border:0;">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>S. No.</th>
+                                        <th>Service</th>
+                                        <th class="text-right">TXN AMT</th>
+                                        <th class="text-right">CHRG AMT</th>
+                                        <th class="text-right">DIS</th>
+                                        <th class="text-right">Net Amount</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in P2PSummary)
+                                    {
+                                        RequestedTotal = RequestedTotal + item.Requested;
+                                        AmountTotal = AmountTotal + item.Amount;
+                                        DiscountTotal = DiscountTotal + item.CommAmount;
+                                        TotalNetAmount = TotalNetAmount + (item.Amount - item.CommAmount);
+                                        counter++;
+                                        <tr>
+                                            <th>@counter</th>
+                                            <td class="text-right">@item.OpType</td>
+                                            <td class="text-right">@item.Requested</td>
+                                            <td class="text-right">@item.Amount</td>
+                                            <td class="text-right">@item.CommAmount</td>
+                                            <td class="text-right">@(Math.Round((item.Amount * 100 / 118),2))</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <th colspan="2" class="text-right">Total</th>
+                                        <th class="text-right">@RequestedTotal</th>
+                                        <th class="text-right">@AmountTotal</th>
+                                        <th class="text-right">@DiscountTotal</th>
+                                        <th class="text-right">@(Math.Round((TotalNetAmount * 100 / 118),2))</th>
+                                    </tr>
+                                    @{
+                                        RequestedTotal = 0M;
+                                        AmountTotal = 0M;
+                                        DiscountTotal = 0M;
+                                        TotalNetAmount = 0M;
+                                    }
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        @if (P2ASummary.Count > 0)
+        {
+            var TotalApplicableGST = 0M;
+            counter = 0;
+            <h3 class="text-center"><b>P2A Summary</b></h3>
+            <table class="table table-bordered mb-3">
+                <tbody>
+                    <tr>
+                        <td colspan="2" style="padding: 0;border:0;">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>S. No.</th>
+                                        <th>Service</th>
+                                        <th class="text-right">TXN AMT</th>
+                                        <th class="text-right">CHRG AMT</th>
+                                        <th class="text-right">DIS</th>
+                                        <th class="text-right">TDS On Commission</th>
+                                        <th class="text-right">ApplicableGST</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in P2ASummary)
+                                    {
+                                        RequestedTotal = RequestedTotal + item.Requested;
+                                        AmountTotal = AmountTotal + item.Amount;
+                                        DiscountTotal = DiscountTotal + item.CommAmount;
+                                        TDSTotal = TDSTotal + item.TDSAmount;
+                                        TotalApplicableGST = TotalApplicableGST + item.GSTTaxAmount;
+                                        counter++;
+                                        <tr>
+                                            <th>@counter</th>
+                                            <td class="text-right">@item.OpType</td>
+                                            <td class="text-right">@item.Requested</td>
+                                            <td class="text-right">@item.Amount</td>
+                                            <td class="text-right">@item.CommAmount</td>
+                                            <td class="text-right">@item.TDSAmount</td>
+                                            <td class="text-right">@(item.Amount - item.CommAmount)</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <th colspan="2" class="text-right">Total</th>
+                                        <th class="text-right">@RequestedTotal</th>
+                                        <th class="text-right">@AmountTotal</th>
+                                        <th class="text-right">@DiscountTotal</th>
+                                        <th class="text-right">@TDSTotal</th>
+                                        <th class="text-right">@TotalApplicableGST</th>
+                                    </tr>
+                                    @{
+                                        RequestedTotal = 0M;
+                                        AmountTotal = 0M;
+                                        DiscountTotal = 0M;
+                                        TDSTotal = 0M;
+                                        TotalApplicableGST = 0M;
+                                    }
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        @if (RCMSummary.Count > 0)
+        {
+            counter = 0;
+            <h3 class="text-center"><b>RCM Summary</b></h3>
+            <table class="table table-bordered mb-3">
+                <tbody>
+                    <tr>
+                        <td colspan="2" style="padding: 0;border:0;">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>S. No.</th>
+                                        <th>Service</th>
+                                        <th class="text-right">TXN AMT</th>
+                                        <th class="text-right">CHRG AMT</th>
+                                        <th class="text-right">DIS</th>
+                                        <th class="text-right">TDS On Commission</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in RCMSummary)
+                                    {
+                                        RequestedTotal = RequestedTotal + item.Requested;
+                                        AmountTotal = AmountTotal + item.Amount;
+                                        DiscountTotal = DiscountTotal + item.CommAmount;
+                                        TDSTotal = TDSTotal + item.TDSAmount;
+                                        counter++;
+                                        <tr>
+                                            <th>@counter</th>
+                                            <td class="text-right">@item.OpType</td>
+                                            <td class="text-right">@item.Requested</td>
+                                            <td class="text-right">@item.Amount</td>
+                                            <td class="text-right">@item.CommAmount</td>
+                                            <td class="text-right">@item.TDSAmount</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <th colspan="2" class="text-right">Total</th>
+                                        <th class="text-right">@RequestedTotal</th>
+                                        <th class="text-right">@AmountTotal</th>
+                                        <th class="text-right">@DiscountTotal</th>
+                                        <th class="text-right">@TDSTotal</th>
+                                    </tr>
+                                    @{
+                                        RequestedTotal = 0M;
+                                        AmountTotal = 0M;
+                                        DiscountTotal = 0M;
+                                        TDSTotal = 0M;
+                                    }
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        @if (SurchargeSummary.Count > 0)
+        {
+            counter = 0;
+            <h3 class="text-center"><b>SURCHARGE Summary</b></h3>
+            <table class="table table-bordered mb-3">
+                <tbody>
+                    <tr>
+                        <td colspan="2" style="padding: 0;border:0;">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>S. No.</th>
+                                        <th>Service</th>
+                                        <th class="text-right">TXN AMT</th>
+                                        <th class="text-right">CHRG AMT</th>
+                                        <th class="text-right">SUR</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in SurchargeSummary)
+                                    {
+                                        RequestedTotal = RequestedTotal + item.Requested;
+                                        AmountTotal = AmountTotal + item.Amount;
+                                        DiscountTotal = DiscountTotal + item.CommAmount;
+                                        counter++;
+                                        <tr>
+                                            <th>@counter</th>
+                                            <td class="text-right">@item.OpType</td>
+                                            <td class="text-right">@item.Requested</td>
+                                            <td class="text-right">@item.Amount</td>
+                                            <td class="text-right">@item.CommAmount</td>
+                                        </tr>
+                                    }
+                                    <tr>
+                                        <th colspan="2" class="text-right">Total</th>
+                                        <th class="text-right">@RequestedTotal</th>
+                                        <th class="text-right">@AmountTotal</th>
+                                        <th class="text-right">@DiscountTotal</th>
+                                    </tr>
+                                    @{
+                                        RequestedTotal = 0M;
+                                        AmountTotal = 0M;
+                                        DiscountTotal = 0M;
+                                    }
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+    </div>
+</div>
+<div class="btn btn-lg btn-primary w-100 mb-4" onclick="printdiv('div_print');">Print <i class="fas fa-print"></i></div>
+@section scripts{
+    <script>
+        function printdiv(printpage) {
+            var headstr = "";
+            var footstr = "";
+            var newstr = document.all.item(printpage).innerHTML;
+            var oldstr = document.body.innerHTML;
+            document.body.innerHTML = headstr + newstr + footstr;
+            window.print();
+            document.body.innerHTML = oldstr;
+            return false;
+        }
+
+    </script>
+}

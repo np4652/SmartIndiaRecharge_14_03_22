@@ -1,0 +1,571 @@
+﻿@model APIDetailModel
+@{
+    var _Model = Model.aPIDetail;
+    var lst = Model.selectLists;
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+    </style>
+    <div class="col-3 ">
+        <div class="mb-1">
+            <h5 class="mb-0 mt-0">Replacement Values</h5>
+            <small class="text-uppercase text-monospace">Click on <i class="far fa-clone" data-toggle="tooltip" data-placement="top" title="COPY"></i> button to copy</small>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan btn-sm form-control" aria-describedby="spnMob">{MOBILE}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnMob" data-toggle="tooltip" data-placement="top" title="{MOBILE}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnAmt">{AMOUNT}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnAmt" data-toggle="tooltip" data-placement="top" title="{AMOUNT}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="_spnAmt">{_AMOUNT}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="_spnAmt" data-toggle="tooltip" data-placement="top" title="{_AMOUNT}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOpr">{OPERATOR}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOpr" data-toggle="tooltip" data-placement="top" title="{OPERATOR}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnTID">{TID}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnTID" data-toggle="tooltip" data-placement="top" title="{TID}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnVENDID">{VENDORID}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnVENDID" data-toggle="tooltip" data-placement="top" title="{VENDORID}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOPTIONAL1">{OPTIONAL1}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOPTIONAL1" data-toggle="tooltip" data-placement="top" title="{OPTIONAL1}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOPTIONAL2">{OPTIONAL2}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOPTIONAL2" data-toggle="tooltip" data-placement="top" title="{OPTIONAL2}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOPTIONAL3">{OPTIONAL3}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOPTIONAL3" data-toggle="tooltip" data-placement="top" title="{OPTIONAL3}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOPTIONAL4">{OPTIONAL4}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOPTIONAL4" data-toggle="tooltip" data-placement="top" title="{OPTIONAL4}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOutletID">{OUTLETID}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOutletID" data-toggle="tooltip" data-placement="top" title="{OUTLETID}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnOutletMob">{CUSTMOB}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnOutletMob" data-toggle="tooltip" data-placement="top" title="{CUSTMOB}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnLoc">{GEOCODE}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnLoc" data-toggle="tooltip" data-placement="top" title="{GEOCODE}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnPin">{PINCODE}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnPin" data-toggle="tooltip" data-placement="top" title="{PINCODE}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnBFID">{REFID}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnBFID" data-toggle="tooltip" data-placement="top" title="{REFID}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnBFID">{RECHTYPE}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnRchID" data-toggle="tooltip" data-placement="top" title="{RECHTYPE}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span class="btn btn-cyan  btn-sm form-control" aria-describedby="spnDt">{DATE}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnDt" data-toggle="tooltip" data-placement="top" title="{DATE}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-9">
+        <h3 class="mb-0 mt-0 bg-white rounded "> API Form</h3>
+        <hr />
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    @Html.Label("txtName", "Name", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtName", _Model.Name, new { @class = "form-control text-success", @placeholder = "Enter Name", @aria_describedby = "nameHelp", @tabindex = 1 })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align" style="padding:0;">
+                                <select class="form-control-sm" id="ddlApiType" tabindex="2" style="border:0;" asp-for="@_Model.APIType">
+                                    <option value="1">General</option>
+                                    <option value="2">Lapu</option>
+                                    <option value="3">Real</option>
+                                    <option value="4">Manual</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                    <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtURL", "API URL", new { @class = "lbl" })
+                    @Html.TextArea("txtURL", _Model.URL, new { @class = "form-control text-danger", @placeholder = "Enter API URL", @aria_describedby = "urlHelp", @tabindex = 3 })
+                    <small id="urlHelp" class="form-text text-muted d-none">URL is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtStsChkURL", "Status Check URL", new { @class = "lbl" })
+                    <select style="float:right;" class="text-danger" id="ddldateFormat" asp-for="@_Model.DFormatID">
+                        <option value="0">:: Date Format(If Required) ::</option>
+                        <option value="1">yyyy-MM-dd</option>
+                        <option value="2">yyyy-MMM-dd</option>
+                        <option value="3">yy-MM-dd</option>
+                        <option value="4">dd-MMM-yyyy</option>
+                        <option value="5">dd-MMM-yy</option>
+                        <option value="6">dd MMM yyyy</option>
+                        <option value="7">dd MMM yy</option>
+                    </select>
+                    @Html.TextArea("txtStsChkURL", _Model.StatusCheckURL, new { @class = "form-control", @placeholder = "Enter Status Check URL", @aria_describedby = "stsURLHelp", @tabindex = 4 })
+                    <small id="stsURLHelp" class="form-text text-muted d-none">Status Check URL is not mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtBalURL", "Balance URL", new { @class = "lbl" })
+                    @Html.TextArea("txtBalURL", _Model.BalanceURL, new { @class = "form-control", @placeholder = "Enter Balance URL", @aria_describedby = "balURLHelp", @tabindex = 5 })
+                    <small id="balURLHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtDisURL", "Dispute URL", new { @class = "lbl" })
+                    @Html.TextArea("txtDisURL", _Model.DisputeURL, new { @class = "form-control", @placeholder = "Enter Dispute URL", @aria_describedby = "disURLHelp", @tabindex = 6 })
+                    <small id="disURLHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtFetchBill", "Fetch Bill URL", new { @class = "lbl" })
+                    @Html.TextArea("txtFetchBill", _Model.FetchBillURL, new { @class = "form-control", @placeholder = "Enter FetchBill URL", @aria_describedby = "billFetchURLHelp", @tabindex = 7 })
+                    <small id="billFetchURLHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtValidateURL", "Validate URL", new { @class = "lbl" })
+                    @Html.TextArea("txtValidateURL", _Model.ValidateURL, new { @class = "form-control", @placeholder = "Enter Validate URL", @aria_describedby = "billValidateURLHelp", @tabindex = 7 })
+                    <small id="billValidateURLHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("ddlGroup", "API Group", new { @class = "lbl" })
+                        <select id="ddlGroup" tabindex="21" class="custom-select custom-select-md" asp-items="@lst" asp-for="@(_Model.GroupID)">
+                            <option value="0" class="text-info">New Group</option>
+                        </select>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtGroupName", "Group Name", new { @class = "lbl" })
+                        @Html.TextBox("txtGroupName", _Model.GroupName, new { @class = "form-control", @placeholder = "Enter Group Name", @aria_describedby = "txtGroupNameHelp", @tabindex = 8 })
+                        <small id="txtGroupNameHelp" class="form-text text-muted d-none">Group Name can not empty</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtGroupCode", "Group Code", new { @class = "lbl" })
+                        @Html.TextBox("txtGroupCode", _Model.GroupCode, new { @class = "form-control", @placeholder = "Enter Group Code", @aria_describedby = "txtGroupCodeHelp", @tabindex = 8 })
+                        <small id="txtGroupCodeHelp" class="form-text text-muted d-none">Group Code is mandatory</small>
+                    </div>
+                    <div class="col-md form-group @(ApplicationSetting.IsDMTWithPIPE?"":"d-none")">
+                        @Html.Label("txtMaxLimitPerTransaction", "Enter MaxLimitPerTransaction", new { @class = "lbl" })
+                        @Html.TextBox("txtMaxLimitPerTransaction", _Model.MaxLimitPerTransaction, new { @class = "form-control", @placeholder = "Enter MaxLimitPerTransaction", @aria_describedby = "MaxLimitPerTransactionH", @tabindex = 35 })
+                        <small id="MaxLimitPerTransactionH" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtBillNoKey", "BillNoKey", new { @class = "lbl" })
+                        @Html.TextBox("txtBillNoKey", _Model.BillNoKey, new { @class = "form-control", @placeholder = "Enter BillNoKey Key", @aria_describedby = "BillNoKeyHelp", @tabindex = 8 })
+                        <small id="BillNoKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtBillDateKey", "BillDateKey", new { @class = "lbl" })
+                        @Html.TextBox("txtBillDateKey", _Model.BillDateKey, new { @class = "form-control", @placeholder = "Enter BillDateKey", @aria_describedby = "BillDateKeyHelp", @tabindex = 9 })
+                        <small id="BillDateKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtDueDateKey", "DueDateKey", new { @class = "lbl" })
+                        @Html.TextBox("txtDueDateKey", _Model.DueDateKey, new { @class = "form-control", @placeholder = "Enter DueDateKey", @aria_describedby = "DueDateKeyHelp", @tabindex = 10 })
+                        <small id="DueDateKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtBillAmountKey", "BillAmountKey", new { @class = "lbl" })
+                        @Html.TextBox("txtBillAmountKey", _Model.BillAmountKey, new { @class = "form-control", @placeholder = "Enter BillAmountKey", @aria_describedby = "BillAmountKeyHelp", @tabindex = 11 })
+                        <small id="BillAmountKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtCustomerNameKey", "CustomerNameKey", new { @class = "lbl" })
+                        @Html.TextBox("txtCustomerNameKey", _Model.CustomerNameKey, new { @class = "form-control", @placeholder = "Enter CustomerNameKey", @aria_describedby = "CustomerNameKeyHelp", @tabindex = 12 })
+                        <small id="CustomerNameKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtBillStatusKey", "BillStatusKey", new { @class = "lbl" })
+                        @Html.TextBox("txtBillStatusKey", _Model.BillStatusKey, new { @class = "form-control", @placeholder = "Enter BillStatus Key", @aria_describedby = "txtBillStatusKeyHelp", @tabindex = 13 })
+                        <small id="txtBillStatusKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtBillStatusValue", "BillStatusValue", new { @class = "lbl" })
+                        @Html.TextBox("txtBillStatusValue", _Model.BillStatusValue, new { @class = "form-control", @placeholder = "Enter BillStatus Value", @aria_describedby = "txtBillStatusValueHelp", @tabindex = 14 })
+                        <small id="txtBillStatusValueHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtBalanceKey", "BalanceKey", new { @class = "lbl" })
+                        @Html.TextBox("txtBalanceKey", _Model.BalanceKey, new { @class = "form-control", @placeholder = "Enter BalanceKey Value", @aria_describedby = "txtBalanceKeyHelp", @tabindex = 15 })
+                        <small id="txtBalanceKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlMethodBill", "Bill Method Type", new { @class = "lbl" })
+                        <select id="ddlMethodBill" aria-describedby="billmethodHelp" tabindex="16" class="custom-select custom-select-md mb3" asp-for="@_Model.BillReqMethod">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                        </select>
+                        <small id="billmethodHelp" class="form-text text-muted d-none">Bill Method is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlResTypeBill", "Response Type", new { @class = "lbl" })
+
+                        <select id="ddlResTypeBill" aria-describedby="resHelp" tabindex="17" class="custom-select custom-select-md mb3" asp-for="@_Model.BillResTypeID">
+                            <option value="1">JSON</option>
+                            <option value="2">XML</option>
+                            <option value="4">STRING</option>
+                        </select>
+                        <small id="resHelp" class="form-text text-muted d-none">Response is mandatory</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtAdditionalInfoListKey", "AdditionalInfoListKey", new { @class = "lbl" })
+                        @Html.TextBox("txtAdditionalInfoListKey", _Model.AdditionalInfoListKey, new { @class = "form-control", @placeholder = "Enter AdditionalInfoList Key", @aria_describedby = "txtAdditionalInfoListKeyHelp", @tabindex = 17 })
+                        <small id="txtAdditionalInfoListKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtAdditionalInfoKey", "AdditionalInfoKey", new { @class = "lbl" })
+                        @Html.TextBox("txtAdditionalInfoKey", _Model.AdditionalInfoKey, new { @class = "form-control", @placeholder = "Enter AdditionalInfoKey", @aria_describedby = "txtAdditionalInfoKeyHelp", @tabindex = 17 })
+                        <small id="txtAdditionalInfoKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtAdditionalInfoValue", "AdditionalInfoValue", new { @class = "lbl" })
+                        @Html.TextBox("txtAdditionalInfoValue", _Model.AdditionalInfoValue, new { @class = "form-control", @placeholder = "Enter AdditionalInfoValue", @aria_describedby = "txtAdditionalInfoValueeHelp", @tabindex = 17 })
+                        <small id="txtAdditionalInfoValueHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtValidationStatusKey", "Validation Status Key", new { @class = "lbl" })
+                        @Html.TextBox("txtValidationStatusKey", _Model.ValidationStatusKey, new { @class = "form-control", @placeholder = "Enter StatusName Key", @aria_describedby = "stsNameHelp", @tabindex = 18 })
+                        <small id="stsNameHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtValidationStatusValue", "Validation Status Value", new { @class = "lbl" })
+                        @Html.TextBox("txtValidationStatusValue", _Model.ValidationStatusValue, new { @class = "form-control", @placeholder = "Enter Validation Status Value", @aria_describedby = "stsNameHelp", @tabindex = 18 })
+                        <small id="stsNameHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtStatusName", "Status Key", new { @class = "lbl" })
+                        @Html.TextBox("txtStatusName", _Model.StatusName, new { @class = "form-control", @placeholder = "Enter StatusName Key", @aria_describedby = "stsNameHelp", @tabindex = 18 })
+                        <small id="stsNameHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtLiveID", "Live ID Key", new { @class = "lbl" })
+                        @Html.TextBox("txtLiveID", _Model.LiveID, new { @class = "form-control", @placeholder = "Enter Live ID Key", @aria_describedby = "liveHelp", @tabindex = 19 })
+                        <small id="liveHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtVendorID", "Vendor ID Key", new { @class = "lbl" })
+                        @Html.TextBox("txtVendorID", _Model.VendorID, new { @class = "form-control", @placeholder = "Enter Vendor ID Key", @aria_describedby = "vendorHelp", @tabindex = 20 })
+                        <small id="vendorHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtErrKey", "ErrorCode Key", new { @class = "lbl" })
+                        @Html.TextBox("txtErrKey", _Model.ErrorCodeKey, new { @class = "form-control", @placeholder = "Enter ErrorCode Key", @aria_describedby = "errCodeHelp", @tabindex = 21 })
+                        <small id="errCodeHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtMsgKey", "Message Key", new { @class = "lbl" })
+                        @Html.TextBox("txtMsgKey", _Model.MsgKey, new { @class = "form-control", @placeholder = "Enter Message Key", @aria_describedby = "msgHelp", @tabindex = 22 })
+                        <small id="msgHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtSuccess", "Success Codes", new { @class = "lbl" })
+                    @Html.TextBox("txtSuccess", _Model.SuccessCode, new { @class = "form-control", @placeholder = "Enter Codes", @aria_describedby = "errSucHelp", @tabindex = 23 })
+                    <small id="errSucHelp" class="form-text text-muted">Hint : Comma(,) seprated codes eg:-SUCCESS,successfull,2</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtFail", "Failed Codes", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtFail", _Model.FailCode, new { @class = "form-control", @placeholder = "Enter Codes", @aria_describedby = "errFailHelp", @tabindex = 24 })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align">
+                                <input type="checkbox" class="switch" id="chbOpDown" tabindex="25" @Html.Raw(_Model.IsOpDownAllow ? "checked='checked'" : "")>
+                                <label for="chbOpDown" class="font-weight-bold lbl">IsOpDownAllow</label>
+                            </span>
+                        </div>
+                    </div>
+                    <small id="errFailHelp" class="form-text text-muted">Hint : Comma(,) seprated codes eg:-FAILED,failure,3</small>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-6 form-group">
+                        @Html.Label("txtFirstDelimiter", "First Delimiter", new { @class = "lbl" })
+                        @Html.TextBox("txtFirstDelimiter", _Model.FirstDelimiter, new { @class = "form-control", @placeholder = "Enter First Delimiter", @aria_describedby = "smlFirstDelimiter", @tabindex = 12 })
+                        <small id="smlFirstDelimiter" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md-6 form-group">
+                        @Html.Label("txtSecondDelimiter", "Second Delimiter", new { @class = "lbl" })
+                        @Html.TextBox("txtSecondDelimiter", _Model.SecondDelimiter, new { @class = "form-control", @placeholder = "Enter Second Delimiter", @aria_describedby = "smlSecondDelimiter", @tabindex = 12 })
+                        <small id="smlSecondDelimiter" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("ddlMethod", "Method Type", new { @class = "lbl" })
+                        <select id="ddlMethod" aria-describedby="methodHelp" tabindex="26" class="custom-select custom-select-md mb3" asp-for="@_Model.RequestMethod">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                        </select>
+                        <small id="methodHelp" class="form-text text-muted d-none">Method is mandatory</small>
+                    </div>
+                    <input type="hidden" id="hid" value="@_Model.ID" class="d-none" />
+                    <div class="col-md form-group">
+                        @Html.Label("ddlResType", "Response Type", new { @class = "lbl" })
+
+                        <select id="ddlResType" aria-describedby="resHelp" tabindex="27" class="custom-select custom-select-md mb3" asp-for="@_Model.ResponseTypeID">
+                            <option value="1">JSON</option>
+                            <option value="2">XML</option>
+                            <option value="3">CSV</option>
+                            <option value="4">STRING</option>
+                            <option value="5">OTHER</option>
+                            <option value="6">Delimiter</option>
+                        </select>
+                        <small id="resHelp" class="form-text text-muted d-none">Response is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlSurType", "Surcharge Type", new { @class = "lbl" })
+                        <select id="ddlSurType" aria-describedby="resHelp" tabindex="28" class="custom-select custom-select-md mb3" asp-for="@_Model.SurchargeType">
+                            <option value="1">Surcharge</option>
+                            <option value="2">CCF</option>
+                            <option value="3">CCF Without GST</option>
+                        </select>
+                        <small id="resHelp" class="form-text text-muted d-none">Response is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlContentType", "Post Type", new { @class = "lbl" })
+                        <select id="ddlContentType" aria-describedby="resHelp" tabindex="29" class="custom-select custom-select-md mb3" asp-for="@_Model.ContentType">
+                            <option value="1">x-www-form-urlencoded</option>
+                            <option value="2">application-json</option>
+                            <option value="3">query-string</option>
+                        </select>
+                        <small id="resHelp" class="form-text text-muted d-none">Response is mandatory</small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-9 form-group">
+                        @Html.Label("txtFixedOutletID", "FixedOutletID", new { @class = "lbl" })
+                        <div class="input-group">
+                            @Html.TextBox("txtFixedOutletID", _Model.FixedOutletID, new { @class = "form-control text-capitalize", @placeholder = "Enter Fixed OutletID if exists", @aria_describedby = "FixedOutletIDHelp", @tabindex = 30 })
+                            <div class="input-group-append">
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chbOutletRequired" tabindex="31" @Html.Raw(_Model.IsOutletRequired ? "checked='checked'" : "")>
+                                    <label for="chbOutletRequired" class="font-weight-bold lbl">IsOutlet Required</label>
+                                </span>
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chbOutletManual" tabindex="32" @Html.Raw(_Model.IsOutletManual ? "checked='checked'" : "")>
+                                    <label for="chbOutletManual" class="font-weight-bold lbl">IsOutlet Manual</label>
+                                </span>
+                                @if (!Model.IsWLAPIAllowed || Model.IsAdmin)
+                                {
+                                    <span class="input-group-text switch switch-sm bg-white align">
+                                        <input type="checkbox" class="switch" id="chbInSwitch" tabindex="32" @Html.Raw(_Model.InSwitch ? "checked='checked'" : "")>
+                                        <label for="chbInSwitch" class="font-weight-bold lbl">InSwitch</label>
+                                    </span>
+                                }
+                            </div>
+                        </div>
+                        <small id="FixedOutletIDHelp" class="form-text text-muted d-none">Fixed Outlet ID is not mandatory</small>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        @Html.Label("txtRefferenceKey", "ReffKey", new { @class = "lbl" })
+                        <div class="input-group">
+                            @Html.TextBox("txtRefferenceKey", _Model.RefferenceKey, new { @class = "form-control ", @placeholder = "Enter Reffenrence Key", @aria_describedby = "txtRefferenceKeyH", @tabindex = 33 })
+                        </div>
+                        <small id="txtRefferenceKeyH" class="form-text text-muted d-none">Invalid Reffernce Key</small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    @Html.Label("txtRemark", "Enter Remark", new { @class = "lbl" })
+                    @Html.TextArea("txtRemark", _Model.Remark, new { @class = "form-control", @placeholder = "Enter Remark here", @aria_describedby = "remHelp", @tabindex = 33 })
+                    <small id="remHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                @if (ApplicationSetting.IsRPOnly)
+                {
+                    <div class="form-row">
+                        <div class="col-md form-group">
+                            @Html.Label("txtVenderMailKey", "VenderMail", new { @class = "lbl" })
+                            @Html.TextBox("txtVenderMailKey", _Model.VenderMail, new { @class = "form-control", @placeholder = "Enter VenderMail ", @aria_describedby = "VenderMailHelp", @tabindex = 8 })
+                            <small id="VenderMailHelp" class="form-text text-muted d-none"></small>
+                        </div>
+                        <div class="col-md form-group">
+                            @Html.Label("txtHandoutIDKey", "HandoutID", new { @class = "lbl" })
+                            @Html.TextBox("txtHandoutIDKey", _Model.HandoutID, new { @class = "form-control", @placeholder = "Enter HandoutID ", @aria_describedby = "HandoutIDKeyHelp", @tabindex = 9 })
+                            <small id="HandoutIDKeyHelp" class="form-text text-muted d-none"></small>
+                        </div>
+                        <div class="col-md form-group">
+                            @Html.Label("txtMobilenoKey", "Mobileno", new { @class = "lbl" })
+                            @Html.TextBox("txtMobilenoKey", _Model.Mobileno, new { @class = "form-control", @placeholder = "Enter Mobileno", @aria_describedby = "MobilenoHelp", @tabindex = 10 })
+                            <small id="MobilenoHelp" class="form-text text-muted d-none"></small>
+                        </div>
+                        <div class="col-md form-group">
+                            @Html.Label("txtWhatsAppNoKey", "WhatsAppNo", new { @class = "lbl" })
+                            @Html.TextBox("txtWhatsAppNoKey", _Model.WhatsAppNo, new { @class = "form-control", @placeholder = "Enter WhatsAppNo", @aria_describedby = "WhatsAppNoKeyHelp", @tabindex = 11 })
+                            <small id="WhatsAppNoKeyHelp" class="form-text text-muted d-none"></small>
+                        </div>
+
+                    </div>
+                }
+                <div class="form-row">
+                    <div class="col-md form-group col-lg-3 col-md-3 col-sm-3">
+
+                        @Html.Label("txtPartneruserIDKey", "PartneruserID", new { @class = "lbl" })
+                        @Html.TextBox("txtPartneruserIDKey", _Model.PartnerUserID, new { @class = "form-control", @placeholder = "Enter Partner User ID", @aria_describedby = "PartneruserIDKeyHelp", @tabindex = 11 })
+                        <small id="PartneruserIDKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group col-lg-3 col-md-3 col-sm-3">
+                        @Html.Label("txtAPIOutletIDMob", "APIOutletIDMob", new { @class = "lbl" })
+                        @Html.TextBox("txtAPIOutletIDMob", _Model.APIOutletIDMob, new { @class = "form-control", @placeholder = "Enter APIOutletIDMob", @aria_describedby = "APIOutletIDMobHelp", @tabindex = 25 })
+                        <small id="APIOutletIDMobHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group col-lg-2 col-md-2 col-sm-2">
+                        @Html.Label("txtGeoCodeAGT", "GeoCodeAGT", new { @class = "lbl" })
+                        @Html.TextBox("txtGeoCodeAGT", _Model.GeoCodeAGT, new { @class = "form-control", @placeholder = "Enter GeoCodeAGT", @aria_describedby = "GeoCodeAGTHelp", @tabindex = 25 })
+                        <small id="GeoCodeAGTHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group col-lg-2 col-md-2 col-sm-2">
+                        @Html.Label("txtGeoCodeMOB", "GeoCodeMOB", new { @class = "lbl" })
+                        @Html.TextBox("txtGeoCodeMOB", _Model.GeoCodeMOB, new { @class = "form-control", @placeholder = "Enter GeoCodeMOB", @aria_describedby = "GeoCodeMOBbHelp", @tabindex = 25 })
+                        <small id="GeoCodeMOBbHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group col-lg-2 col-md-2 col-sm-2">
+                        @Html.Label("txtGeoCodeINT", "GeoCodeINT", new { @class = "lbl" })
+                        @Html.TextBox("txtGeoCodeINT", _Model.GeoCodeINT, new { @class = "form-control", @placeholder = "Enter APIOutletIDMob", @aria_describedby = "GeoCodeINTHelp", @tabindex = 25 })
+                        <small id="GeoCodeINTHelp" class="form-text text-muted d-none"></small>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookTIDKey", "HookTIDKey", new { @class = "lbl" })
+                        @Html.TextBox("txtHookTIDKey", _Model.HookTIDKey, new { @class = "form-control", @placeholder = "Enter HookTIDKey ", @aria_describedby = "HookTIDKeyHelp", @tabindex = 8 })
+                        <small id="HookTIDKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookStatusKey", "HookStatusKey", new { @class = "lbl" })
+                        @Html.TextBox("txtHookStatusKey", _Model.HookStatusKey, new { @class = "form-control", @placeholder = "Enter HookStatusKey ", @aria_describedby = "HookStatusKeyHelp", @tabindex = 9 })
+                        <small id="HookStatusKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlHookResTypeID", "Hook RespType", new { @class = "lbl" })
+
+                        <select id="ddlHookResTypeID" aria-describedby="resHelp" tabindex="17" class="custom-select custom-select-md mb3" asp-for="@_Model.HookResTypeID">
+                            <option value="1">JSON</option>
+                            <option value="2">XML</option>
+                            <option value="4">STRING</option>
+                            <option value="6">Delimiter</option>
+                        </select>
+                        <small id="resHelp" class="form-text text-muted d-none">Response is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookVendorKey", "HookVendorKey", new { @class = "lbl" })
+                        @Html.TextBox("txtHookVendorKey", _Model.HookVendorKey, new { @class = "form-control", @placeholder = "Enter HookVendorKey", @aria_describedby = "HookVendorKeyHelp", @tabindex = 11 })
+                        <small id="HookVendorKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+
+                        @Html.Label("txtHookLiveIDKey", "HookLiveIDKey", new { @class = "lbl" })
+                        @Html.TextBox("txtHookLiveIDKey", _Model.HookLiveIDKey, new { @class = "form-control", @placeholder = "Enter HookLiveIDKey", @aria_describedby = "HookLiveIDKeyHelp", @tabindex = 11 })
+                        <small id="HookLiveIDKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookBalanceKey", "HookBalanceKey", new { @class = "lbl" })
+                        @Html.TextBox("txtHookBalanceKey", _Model.HookBalanceKey, new { @class = "form-control", @placeholder = "Enter HookBalanceKey", @aria_describedby = "HookBalanceKeyHelp", @tabindex = 25 })
+                        <small id="HookBalanceKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookSuccessCode", "HookSuccessCode", new { @class = "lbl" })
+                        @Html.TextBox("txtHookSuccessCode", _Model.HookSuccessCode, new { @class = "form-control", @placeholder = "Enter HookSuccessCode", @aria_describedby = "HookSuccessCodeHelp", @tabindex = 25 })
+                        <small id="HookSuccessCodeHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookFailCode", "HookFailCode", new { @class = "lbl" })
+                        @Html.TextBox("txtHookFailCode", _Model.HookFailCode, new { @class = "form-control", @placeholder = "Enter HookFailCode", @aria_describedby = "HookFailCodebHelp", @tabindex = 25 })
+                        <small id="HookFailCodebHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtHookMsgKey", "HookMsgKey", new { @class = "lbl" })
+                        @Html.TextBox("txtHookMsgKey", _Model.HookMsgKey, new { @class = "form-control", @placeholder = "Enter HookMsgKey", @aria_describedby = "HookMsgKeyHelp", @tabindex = 25 })
+                        <small id="HookMsgKeyHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 form-group">
+                        @Html.Label("txtBFAPICode", "BFAPICode", new { @class = "lbl" })
+                        @Html.TextBox("txtBFAPICode", _Model.BillFetchAPICode, new { @class = "form-control", @placeholder = "Enter Bill Fetch APICode", @aria_describedby = "BFAPICode", @tabindex = 12 })
+                        <small id="BFAPICode" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        @Html.Label("txtHookFirstDelimiter", "Hook First Delimiter", new { @class = "lbl" })
+                        @Html.TextBox("txtHookFirstDelimiter", _Model.HookFirstDelimiter, new { @class = "form-control", @placeholder = "Enter Hook First Delimiter", @aria_describedby = "smlHookFirstDelimiter", @tabindex = 12 })
+                        <small id="smlHookFirstDelimiter" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        @Html.Label("txtHookSecondDelimiter", "Hook Second Delimiter", new { @class = "lbl" })
+                        @Html.TextBox("txtHookSecondDelimiter", _Model.HookSecondDelimiter, new { @class = "form-control", @placeholder = "Enter Hook Second Delimiter", @aria_describedby = "smlHookSecondDelimiter", @tabindex = 12 })
+                        <small id="smlHookSecondDelimiter" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-dark" id="btnSaveAPI" tabindex="34">Save Recharge API</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+            </div>
+    </div>
+</div>

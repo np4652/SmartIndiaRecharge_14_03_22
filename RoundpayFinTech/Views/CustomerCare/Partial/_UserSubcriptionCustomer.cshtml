@@ -1,0 +1,42 @@
+﻿@using Fintech.AppCode.Model;
+@model GetinTouctListModel
+@{ int i = 0;}
+@if (Model != null)
+{
+    @if (Model.GetIntouchList != null)
+    {
+        @foreach (var data in Model.GetIntouchList)
+        {
+    <tr data-item-id="@Model.GetIntouchList[i].ID">
+        <th scope="row">@(i + 1)</th>
+        <td>@data.Name</td>
+        <td>@data.EmailID</td>
+        <td>@data.MobileNo</td>
+        <td><textarea class="form-control" rows="2" cols="25" style="border-style:None;" disabled="disabled">@data.Message</textarea></td>
+        <td>@data.EntryData</td>
+        <td>
+            <div>
+                <textarea class="form-control" rows="2" cols="25" style="border-style:None;" id="txtRemarks" ></textarea>
+            </div>
+        </td>
+        <td><textarea class="form-control" rows="2" cols="35" style="border-style:None;" disabled="disabled">@data.Remarks</textarea></td>
+        <td>
+            <select class="form-control" id="ddlReqStatus_@i" data-item-id="data.ID" asp-for="@data.RequestStatus">
+                <option value="Transfer">Transfer </option>
+                <option value="Junk">Junk</option>
+                <option value="FollowUP">FollowUP</option>
+                <option value="Matured">Matured</option>
+            </select>
+        </td>
+    </tr>
+            i++;
+        }
+    }
+}
+
+
+
+
+
+
+

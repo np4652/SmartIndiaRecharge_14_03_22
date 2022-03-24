@@ -1,0 +1,760 @@
+﻿@using Newtonsoft.Json
+@using Fintech.AppCode.HelperClass
+@model RoundpayFinTech.AppCode.ThirdParty.HotelAPI.TekTvlHotelProceedBookingReq;
+@{ 
+    ViewData["Title"] = "Procced Booking";
+    ViewData["HTitle"] = "Hotel";
+}
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Mirrored from techydevs.com/demos/themes/html/trizen-demo/trizen/flight-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 28 Apr 2021 09:20:30 GMT -->
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="TechyDevs">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  
+    <!-- Favicon -->
+    <link rel="icon" href="website-assets/images/favicon.png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+    <!-- Template CSS Files -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/line-awesome.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery.fancybox.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/daterangepicker.css" rel="stylesheet" />
+    <link href="~/siteadmin/css/animate.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/animated-headline.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery-ui.css" rel="stylesheet" />
+    <link href="~/css/Hotel/flag-icon.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/style.css" rel="stylesheet" />
+    <link href="~/css/Hotel/search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/tooltip.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-autocomplete.css" rel="stylesheet" />
+    <style type="text/css">
+        .btn-link-top {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero-box:after {
+            opacity: 0;
+            background-color: #0d233e;
+        }
+
+        .navbar {
+            padding: 0 1rem;
+        }
+        ._RoomType .roomLeft {
+            width: 25%;
+        }
+
+        ._RoomType .roomRight {
+            width: 75%;
+        }
+
+        ._RoomType .titleWidth {
+            width: 33.38%;
+        }
+
+        .price1 {
+            width: 100%;
+            column-span: all;
+            column-count: 2;
+            padding: 15px;
+        }
+
+        .makeFlex.appendTop40.roomTypePrice {
+            display: block;
+        }
+
+        .price1 .p2 {
+            padding-left: 15px;
+        }
+
+        .room-flex {
+            display: inline-flex;
+        }
+
+        .roomcombo1 {
+            width: 80%;
+        }
+
+        .comboPrice {
+            width: 20%;
+            border-right: solid 1px #bababa;
+            border-bottom: solid 9px #bababa;
+            background: #fff6e7;
+        }
+
+        .makeFlex.column.perfectCenter.noShrink {
+            padding-top: 60%;
+        }
+
+            .makeFlex.column.perfectCenter.noShrink.OpenCombinationSelect {
+                padding-top: 25%;
+            }
+
+        .info-area {
+            clear: both;
+        }
+
+       /* .bg-greenhead {
+            background: #fff;
+        }
+
+        .navbar.navbar-expand-lg.sticky-top .mr-auto {
+            margin-right: auto !important;
+            margin: 0 auto;
+        }*/
+
+      /*  #menu .navbar-nav .nav-link {
+            color: #3c3c3c !important;
+        }
+
+        .contact-form-action .form-control {
+            box-shadow: 0 0 10px #f1f1f1;
+        }*/
+        .sticky-top {
+            z-index: 999 !important;
+        }
+
+        #menu .navbar-nav .show .nav-link {
+            color: #fff !important;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+        }
+    </style>
+</head>
+<body>
+    @if (Model.blockresponse != null)
+    {
+
+    }
+    @Html.Hidden("hdnRoomIndex", Model.RoomIndexes)
+    @Html.Hidden("hdnsearchJson", Model.searchJson)
+
+    <form action="/Book-Hotel-Room" method="post" id="frmBookNow">
+        <input type="hidden" name="req" id="req"/>
+        <input type="hidden" name="SearchJsonData" id="SearchJsonData" />
+    </form>
+    <!-- start cssload-loader -->
+    <!-- ================================
+                START HEADER AREA
+    ================================= -->
+
+
+    <header class="header-area">
+
+
+        <div class="header-menu-wrapper padding-right-100px padding-left-100px box-shadow">
+            <form method="post" action="/Hotel/SearchHotel" class="row align-items-center" id="frmSearch">
+                <div class="search-widget-uistyles__OuterWrapDiv-f6e3g4-0 bhdKLn">
+                    <div class="container-fluid">
+                        <div class="dweb-commonstyles__CenteredSpaceWrap-sc-13fxsy5-0 search-widget-uistyles__WrapperStyle-f6e3g4-6 cgGKLF cPwTXt padt10 pb-3">
+                            <h1 class="text-white">Book Now</h1>
+                            <div class="row" style="display:none">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-9">
+                                    <div class="dweb-commonstyles__FlexItem-sc-13fxsy5-3 eaRCts">
+                                        <div class="search-widget-uistyles__SearchWrapperArea-f6e3g4-7 jrobqk2">
+                                            <div>
+                                                <div class="search-widget-autosuggeststyles__AutocompleteWrapperStyles-d4g22y-0 KICXE">
+                                                    @*<label class="search-widget-uistyles__SearchLabelStyle-f6e3g4-11 dJpQMM">AREA, LANDMARK OR HOTEL NAME</label>
+                                                        <input name="" type="text" autocomplete="off" id="downshift-1-input" placeholder="Search by location or airport" class="search-widget-uistyles__SearchInputStyle-f6e3g4-12 fggKmC" value="">*@
+
+                                                    <label class="text-white">Destination / Hotel Name</label>
+                                                    <div class="form-group autocomplete">
+                                                        <input class="form-control" id="txthotel" type="text" autocomplete="off" placeholder="Enter city or property">
+                                                        @*<input class="form-control" id="txthotel" type="text" placeholder="Enter city or property" autocomplete="off" onkeyup="return BindCityDropdown($(this).val())">*@
+                                                        <select class="form-control" id="ddlhotelsearch" style="display:none"></select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="search-widget-uistyles__DepartureArrivalWrapper-f6e3g4-9 jPfNQr">
+                                            <div>
+                                                <!--<label class="search-widget-uistyles__SearchLabelStyle-f6e3g4-11 dJpQMM">CHECKIN</label>
+                                                <input placeholder="Travel Dates" id="search-widget-checkin-input" class="date-range form-control fggKmC" type="text" name="daterange-single" readonly>-->
+                                                <!--<input type="text"  class="search-widget-uistyles__SearchInputStyle-f6e3g4-12 fggKmC" value="">-->
+
+                                                <label class="text-white">Check-in</label>
+                                                <div class="form-group">
+                                                    <input class="date-range form-control" type="text" name="daterange-single" id="CheckInDate" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="search-widget-uistyles__DepartureArrivalWrapper-f6e3g4-9 jPfNQr">
+                                            <div>
+                                                <label class="text-white">Check-out</label>
+                                                <div class="form-group">
+                                                    <input class="date-range form-control" type="text" name="daterange-single" id="CheckOutDate" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="search-widget-uistyles__PaxWrapperStyle-f6e3g4-10 iYBfWV">
+                                            <label class="text-white">Guests & Rooms</label>
+                                            <div class="form-group">
+                                                <div class="dropdown dropdown-contain gty-container btnDropdownToggle">
+                                                    <a class="dropdown-toggle dropdown-btn pl-3 pt-1 pb-0" href="#" role="button" data-toggle="dropdown" aria-expanded="false">
+                                                        <span class="adult" data-text="Adult" data-text-multi="Adults">0 Adult</span>
+                                                        -
+                                                        <span class="children" data-text="Child" data-text-multi="Children">0 Children</span>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-wrap" id="count-guest">
+                                                        <div class="dropdown-item">
+                                                            <div class="qty-box d-flex align-items-center justify-content-between">
+                                                                <div class="roomsGuests">
+                                                                    <div class="roomsGuestsTop">
+                                                                        <div class="addRoomRow pt-2 pb-0">
+                                                                            <div class="addRoomLeft">
+                                                                                <p class="darkText font16 latoBlack capText appendBottom10 m-0">ROOM 1</p>
+                                                                                <small><!--Data will be here at runtime--></small>
+                                                                            </div>
+                                                                            <div class="addRoomRight mt-2">
+                                                                                <div class="addRooomDetails">
+                                                                                    <div class="col-sm-12 p-0">
+                                                                                        <div class="row">
+                                                                                            <div class="col-sm-6">
+                                                                                                <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                    <span class="latoBold font12 grayText">Adults <br />(Above 12 Years) </span>
+                                                                                                </p>
+                                                                                            </div>
+                                                                                            <div class="col-sm-6">
+                                                                                                <div class="input-group mb-3 adultCounter">
+                                                                                                    <div class="input-group-prepend">
+                                                                                                        <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                            <i class="fa fa-minus"></i>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                    <input type="text" value="1" readonly class="form-control p-1 text-center" placeholder="0" />
+                                                                                                    <div class="input-group-prepend">
+                                                                                                        <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                            <i class="fa fa-plus"></i>
+                                                                                                        </button>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+
+
+
+
+                                                                                    <div>
+                                                                                        <div class="col-sm-12 p-0">
+                                                                                            <div class="row">
+                                                                                                <div class="col-sm-6">
+                                                                                                    <p class="makeFlex spaceBetween appendBottom10 mt-2">
+                                                                                                        <span class="latoBold font12 grayText">Children <br />(1 - 12 Years) </span>
+                                                                                                    </p>
+                                                                                                </div>
+                                                                                                <div class="col-sm-6">
+                                                                                                    <div class="input-group mb-3 childCounter">
+                                                                                                        <div class="input-group-prepend">
+                                                                                                            <button class="btn btn-outline-primary btn-sm decNumber" type="button">
+                                                                                                                <i class="fa fa-minus"></i>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                        <input type="text" value="0" readonly class="form-control p-1 text-center childInput" placeholder="0" />
+                                                                                                        <div class="input-group-prepend">
+                                                                                                            <button class="btn btn-outline-primary btn-sm incNumber" type="button">
+                                                                                                                <i class="fa fa-plus"></i>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        </div>
+
+                                                                                        <div class="divChild" style="display:none">
+                                                                                            <ul class="childAgeList appendBottom10 mb-3">
+                                                                                                <!--data will be here at runtime-->
+                                                                                            </ul>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="roomsGuestsBottom">
+                                                                        <button type="button" class="btnAddRoom" id="hsw_add_another_room_btn">+ ROOM </button>
+                                                                        <button type="button" class="primaryBtn btnApply capText" id="hsw_apply_changes_btn">Apply</button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <!-- end dropdown -->
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                                <div class="col-sm-2">
+                                    <div>
+                                        <label class="text-white"></label>
+                                        <div class="form-group">
+                                            <button type="button" id="btnSearch" class="btn btn-info btn-sm mt-2">Update Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+
+            <!-- end container-fluid -->
+        </div>
+        <!-- end header-menu-wrapper -->
+    </header>
+    <!-- ================================
+             END HEADER AREA
+    ================================= -->
+    <!-- ================================
+        END BREADCRUMB AREA
+    ================================= -->
+
+
+
+
+
+
+    <div class="container bg-white py-5 my-4 px-4">
+        <div class="row">
+            <div class="col-sm-8 px-2">
+                <form action="/ProceedBooking" method="post" id="frmProceedBooking">
+                    <div class="singleUserInfo">
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="inputEmail4">Title </label>
+                                <select class="form-control" id="ddltitle">
+                                    <option value="Mr" selected="selected">Mr</option>
+                                    <option value="Mrs">Mrs</option>
+                                    <option value="Miss">Miss</option>
+                                    <option value="Ms">Ms</option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputEmail4">Lead Passenger<span class="text-danger">  </span> </label>
+                                <select class="form-control" id="ddllead">
+                                    <option value="Yes">
+                                        Yes
+                                    </option>
+                                    <option value="No">
+                                        No
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputEmail4">Passenger Type </label>
+                                @*<input type="text" class="form-control" id="FirstName" required placeholder="First Name">*@
+                                <select class="form-control" id="passengertype">
+                                    <option value="Adult">
+                                        Adult
+                                    </option>
+                                    <option value="Child">
+                                        Child
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="inputPassword4">First Name  </label>
+                                <input type="text" style="text-transform:capitalize" autocomplete="off" class="form-control" id="FirstName" aria-describedby="sfirstname" placeholder="First Name">
+                                <small id="sfirstname" class="form-text text-muted d-none">First Name is mandatory</small>
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputPassword4">Middle Name</label>
+                                <input type="text" style="text-transform:capitalize" class="form-control" id="Middlename" placeholder="Middle Name">
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputPassword4">Last Name  </label>
+                                <input type="text" style="text-transform:capitalize" class="form-control" id="LastName" aria-describedby="slasttname" placeholder="Last Name">
+                                <small id="slasttname" style="text-transform:capitalize" class="form-text text-muted d-none">Last Name is mandatory</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-5">
+                                <label for="Phoneno">Phone No.</label>
+                                <input type="text" maxlength="15" class="form-control" autocomplete="off" aria-describedby="phonenum" id="Phoneno" placeholder="Enter Phone Number">
+                                @*@Html.TextBox("Phoneno", null, new { @class = "form-control", @placeholder = "Enter Phone Number", @aria_describedby = "whatsappHelp", @tabindex = 2 })*@
+                                <small id="phonenum" class="form-text text-muted d-none">Phoneno  is mandatory</small>
+                            </div>
+                            <div class="form-group col-md-5">
+                                <label for="inputAddress2">Email</label>
+                                <input type="email" class="form-control" autocomplete="off" aria-describedby="semal" id="Email" placeholder="Email">
+                                <small id="semal" class="form-text text-muted d-none">Email  is mandatory</small>
+                            </div>
+                            <div class="form-group col-md-2">
+                                <label for="inputCity">Age</label>
+                                <input type="number" class="form-control" aria-describedby="sage" id="Age">
+                                <small id="sage" class="form-text text-muted d-none">Age is mandatory</small>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col-md-3">
+                                <label for="PassportNo">Pan </label>
+                                <input type="text" style="text-transform:uppercase" class="form-control" aria-describedby="span" id="txtpanno">
+                                <small id="span" class="form-text text-muted d-none">Pan  is mandatory</small>
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="PassportNo">Passport No. (if applicable)</label>
+                                <input type="text" class="form-control" id="PassportNo">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="PassportIssueDate">Passport Issue Date</label>
+                                <input type="date" class="form-control" id="PassportIssueDate">
+                            </div>
+                            <div class="form-group col-md-3">
+                                <label for="PassportExpDate">Passport Exp Date</label>
+                                <input type="date" class="form-control" id="PassportExpDate">
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="button" class="btn btn-primary btnAddMember">Add Member Details</button>
+                </form>
+
+
+            </div>
+
+            <div class="col-sm-4 px-3">
+                <table class="table table-bordered">
+                    <tr>
+                        <td>No. of Adults : </td>
+                        <td>@Model.NoOfPerson</td>
+                    </tr>
+
+                    <tr>
+                        <td>No. of Child : </td>
+                        <td>@Model.NoOfChild</td>
+                    </tr>
+
+                    <tr>
+                        <td>No. of Room(s) : </td>
+                        <td>@Model.NoOfRooms</td>
+                    </tr>
+
+                    <tr>
+                        <td>Check-In Date : </td>
+                        <td>@Model.CheckInDate</td>
+                    </tr>
+
+                    <tr>
+                        <td>Check-Out Date : </td>
+                        <td>@Model.CheckOutDate</td>
+                    </tr>
+                </table>
+                <label id="errorMsg" class="text-danger" style="display:none"></label>
+                <div class="col-sm-12 text-center">
+                    <button type="submit" class="btn btn-success mt-5 form-control bookNow" id="bookNow">Book Now</button>
+
+                </div>
+            </div>
+        </div>
+        <section class="h-50">
+            <div class="row mt-12 p-3 personTableOuter" id="dvGuest" style="display:none">
+                <div class="col-sm-12 table-responsive">
+                    <table class="table table-bordered personTable">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Lead Passenger</th>
+                                <th>Phone No.</th>
+                                <th>Email</th>
+                                <th>Age</th>
+                                <th>Pan No.</th>
+                                <th>Passport No.</th>
+                                <th>Passport Issue Date</th>
+                                <th>Passport Expiry Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--Data will be here at run time-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            @if (Model.blockresponse != null)
+            {
+                <report style="display:none">
+                    <div id="receipt">
+                        @if (Model.blockresponse.IsError)
+                        {
+                            <table style="width:100%">
+                                <tr>
+                                    <td class="text-center" colspan="2">
+                                        <img src="~/images/Hotel/Error.png" style="width:50px;" />
+                                        <h2 class="text-danger">Failed</h2>
+                                        <h3 style="color: #dc3545">@Model.blockresponse.Msg</h3>
+                                        <input type="hidden" id="hdnIsError" value="0" />
+                                    </td>
+                                </tr>
+                            </table>
+                        }
+                        else
+                        {
+                            <input type="hidden" id="hdnIsError" value="0" />
+                            <table style="width:100%">
+                                <tr>
+                                    <td class="text-center" colspan="2">
+                                        @if (Model.blockresponse.Statuscode == 1)
+                                        {
+                                            <img src="~/images/Hotel/BookSuccess.png" style="width:50px;" />
+                                            <h2 class="text-success">SUCCESS</h2>
+                                        }
+                                    </td>
+                                </tr>
+                            </table>
+                            <table style="width: 100%;border:1px solid #dee2e6;" class="table">
+                                <thead>
+                                    <tr>
+                                        <th colspan="2" style="text-align: center;border:0">
+                                            <h5>TRANSACTION DETAIL</h5>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><b>Hotel Name :</b></td>
+                                        <td>@Model.blockresponse.HotelName</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Destination :</b></td>
+                                        <td>@Model.blockresponse.DestinationName</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Check In :</b></td>
+                                        <td>@Model.blockresponse.CheckInDate</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Check Out :</b></td>
+                                        <td>@Model.blockresponse.CheckOutDate</td>
+                                    </tr>
+                                    <tr class="bg-g">
+                                        <td><b>Amount :</b></td>
+                                        <td>@Model.blockresponse.Amount</td>
+                                    </tr>
+
+                                    <tr class="bg-g">
+                                        <td><b>Transaction ID :</b></td>
+                                        <td>@Model.blockresponse.TrnsactionID</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Booking ID :</b></td>
+                                        <td>@Model.blockresponse.BookingId</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Confirmation No :</b></td>
+                                        <td>@Model.blockresponse.ConfirmationNo</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Transaction Date :</b></td>
+                                        <td>@Model.blockresponse.TranDate.ToString("dd-MMM-yyyy HH:mm:ss")</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><b>Total :</b></td>
+                                        <td><b>@(Model.blockresponse.Amount) </b></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        }
+                    </div>
+                </report>
+            }
+        </section>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/Common/jquery-ui.js"></script>
+    @*<script src="~/lib/jquery/dist/popper.min.js"></script>*@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>*@
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/js/Hotel/daterangepicker.js"></script>
+    <script src="~/js/Common/owl.carousel.min.js"></script>
+    <script src="~/js/Hotel/jquery.fancybox.min.js"></script>
+    <script src="~/js/Hotel/jquery.countTo.min.js"></script>
+    <script src="~/js/Hotel/animated-headline.js"></script>
+    <script src="~/js/Hotel/jquery.ripples-min.js"></script>
+    <script src="~/js/Hotel/quantity-input.js"></script>
+    <script src="~/js/Hotel/main.js"></script>
+    <script src="~/js/Hotel/hotel-search.js"></script>
+    <script src="~/js/validator.js"></script>
+    <script src="~/js/site.js"></script>
+
+    <script type="text/javascript">
+        let totalPersonCount = @(@Model.NoOfPerson + Model.NoOfChild);
+        let _table = $(".personTableOuter").find(".personTable");
+        $(document).ready(function () {
+                     
+            if ($('#hdnIsError')[0]) {
+                let html = $('#receipt').html();
+                mdlA.title = " ";
+                mdlA.content = html;
+                /* mdlA.options.backdrop = 'static';*/
+                mdlA.modal(mdlA.size.auto, function () {
+                    window.location.href = "/Hotel/SearchHotel";
+                });
+            }
+
+            $('#errorMsg').hide();
+            _table.hide();
+            let _req = { HotelRoomsDetails: [] };
+            _req.HotelCode = "@Model.HotelCode";
+            _req.ResultIndex = "@Model.ResultIndex";
+            _req.TraceId = "@Model.TraceId";
+            _req.GuestNationality = "IN";
+            _req.NoOfRooms = "@Model.NoOfRooms";
+            _req.HotelName = "@Model.HotelName";
+            @*_req.IsPANMandatory = "@Model.IsPANMandatory";
+            _req.IsPassportMandatory = "@Model.IsPassportMandatory";*@
+            let roomIndex = JSON.parse($("#hdnRoomIndex").val());
+            _req.HotelRoomsDetails = roomIndex;
+
+            $("#bookNow").on("click", function () {
+
+                $('#errorMsg').hide();
+                let searchJson = JSON.parse($("#hdnsearchJson").val());
+
+                let adultsArr = [], childArr = [];
+                let _addedMemberCount = _table.find("tbody").find("tr").length;
+                if(_addedMemberCount==totalPersonCount){
+                    _table.find("tbody").find("tr").each(function () {
+                        let personDetails = JSON.parse($(this).attr("data-persondetails"));
+                        if (personDetails.Age <= 12) {
+                            childArr.push(personDetails);
+                        }
+                        else {
+                            adultsArr.push(personDetails);
+                        }
+                    })
+                }
+                else{
+                    $('#errorMsg').show();
+                    $('#errorMsg').text("Add " + totalPersonCount + " member(s) to book.");
+                    return;
+                }
+
+                let newarr=[];
+                for (let i = 0; i < searchJson.RoomGuests.length; i++) {
+                    _req.HotelRoomsDetails[i].HotelPassenger = [];
+                    for (let j = 0; j < searchJson.RoomGuests[i].NoOfAdults; j++) {
+                        _req.HotelRoomsDetails[i].HotelPassenger.push(adultsArr[0]);
+                        adultsArr.shift();
+                    }
+                    for (let j = 0; j < searchJson.RoomGuests[i].NoOfChild; j++) {
+                        _req.HotelRoomsDetails[i].HotelPassenger.push(childArr[0]);
+                        childArr.shift();
+                    }
+                }
+                $("#req").val(JSON.stringify(_req));
+                $("#SearchJsonData").val($('#hdnsearchJson').val());
+                $("#frmBookNow").submit();
+            });
+            $(".btnAddMember").on("click", function () {
+
+                $('#errorMsg').hide();
+                var passengertype=$("#passengertype").val();
+                var ct = {
+                    lead: $('#ddllead') , passengertype: $('#passengertype'),fname: $('#FirstName'),lname: $('#LastName'), mob: $('#Phoneno'),email: $('#Email'),age: $('#Age'),pan:$('#txtpanno')
+                };
+
+                var IsE = {
+                    fname: ($v.$IsNum(ct.fname.val()) || ct.fname.val().trim() == '' || ct.fname.val().length > 50),
+                    lname: ($v.$IsNum(ct.lname.val()) || ct.lname.val().trim() == '' || ct.lname.val().length > 50),
+                    mob:  (ct.lead.val()== 'Yes' && ct.mob.val()== '' || (ct.lead.val()== 'Yes' &&  !$v.$IsNum(ct.mob.val()))) ,
+                    email: (ct.lead.val()== 'Yes' && ct.email.val()== ''),
+                    age: (ct.passengertype.val()== 'Child' && ct.age.val()== '' || (ct.passengertype.val()== 'Child' && ct.age.val()>12 || ct.age.val()<1)),
+                    pan: (ct.lead .val()== 'Yes' && ct.pan.val()== '')
+                }
+                $v.showErrorFor(ct.fname, 'First Name is non-numeric mandatory field and length is not more than 50', IsE.fname);
+                $v.showErrorFor(ct.lname, 'Last Name is non-numeric mandatory field and length is not more than 50', IsE.lname);
+                $v.showErrorFor(ct.mob, 'Mobile number is mandatory for lead passenger', IsE.mob);
+                $v.showErrorFor(ct.email, 'Email is mandatory  for lead passenger', IsE.email);
+                $v.showErrorFor(ct.age, 'Age is mandatory  for child age between 1 to 12 years', IsE.age);
+                $v.showErrorFor(ct.pan, 'Pan is mandatory', IsE.pan);
+                IsE.err = (IsE.fname || IsE.lname || IsE.mob || IsE.age || IsE.pan || IsE.email);
+                if (IsE.err ) {
+                    return false;
+                }
+                let _addedMemberCount = _table.find("tbody").find("tr").length;
+
+                var leadp=ct.lead.val()=='Yes'?true:false;
+
+                if (_addedMemberCount < totalPersonCount) {
+                    let _personDetails = {
+                        Title: $("#ddltitle").val(),
+                        LeadPassenger:leadp,
+                        FirstName: $("#FirstName").val(),
+                        Middlename: $("#Middlename").val(),
+                        LastName: $("#LastName").val(),
+                        Phoneno: $("#Phoneno").val(),
+                        Email: $("#Email").val(),
+                        Age: $("#Age").val(),
+                        Pan: $("#txtpanno").val(),
+                        PassportNo: $("#PassportNo").val(),
+                        PassportIssueDate: $("#PassportIssueDate").val(),
+                        PassportExpDate: $("#PassportExpDate").val()
+                    };
+
+                    let _tr = `<tr data-persondetails='${JSON.stringify(_personDetails)}'>
+                            <td>${_personDetails.Title} ${_personDetails.FirstName} ${_personDetails.Middlename} ${_personDetails.LastName}</td>
+                            <td> ${_personDetails.LeadPassenger}</td>
+                            <td>${_personDetails.Phoneno}</td>
+                            <td>${_personDetails.Email}</td>
+                            <td>${_personDetails.Age}</td>
+                            <td>${_personDetails.Pan}</td>
+                            <td>${_personDetails.PassportNo}</td>
+                            <td>${_personDetails.PassportIssueDate}</td>
+                            <td>${_personDetails.PassportExpDate}</td>
+                            <td>
+                                <button type='button' class='btn btn-sm btn-info' onclick='$(this).parents("tr").remove()'>Remove</button>
+                            </td>
+                        </tr>`;
+                    _table.find("tbody").append(_tr);
+
+                    resetForm();
+                    $('#dvGuest').show();
+                    _table.show();
+                }
+                else {
+
+                    $('#errorMsg').show();
+                    $('#errorMsg').text("You can add max " + totalPersonCount + " member(s).");
+                }
+
+            })
+            var resetForm = () => { $("form").find("input").val("");
+                $("form").find("select").prop('selectedIndex',0);
+            }
+        })
+    </script>
+
+</body>
+
+
+</html>

@@ -1,0 +1,81 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Configuration;
+@model BillFetchReportModel;
+@{
+    var counter = 1;
+    var mdl = Model.Report;
+    decimal Opening = 0;
+    decimal TotalRequestedAmount = 0;
+    decimal TotalAmount = 0;
+    decimal TotalCommission = 0;
+    decimal Closing = 0;
+    var colSpan = Model.IsAdmin == true ? 7 : 6;
+}
+
+
+
+@if (mdl.Any())
+{
+    foreach (var item in mdl)
+    {
+        if (!Model.IsAdmin && item._Type == RechargeRespType.REQUESTSENT)
+        {
+            item.Type_ = RechargeRespType._PENDING;
+        }
+        if (counter == 1)
+        {
+            Opening = item.LastBalance;
+            Closing = item.Balance;
+        }
+
+
+
+        <tr data-item-id="@item.ID">
+            <td>@counter</td>
+            <td>
+
+                @if (Model.IsAdmin || Model.IsWLAPIAllowed)
+                {
+                    <span class="fa fa-info-circle text-info a_modal" name="@item.ID" title="Transaction More Detail" data-toggle="tooltip"></span>
+                    @item.BillNumber
+                }
+                else
+                {
+                    @item.BillNumber
+                }
+            </td>
+            <td>@item.Outlet <small class="font-weight-bold text-monospace"> [@item.OutletNo]</small></td>
+            <td>@item.Account</td>
+            <td>@item.Operator</td>
+            <td>@item.EntryDate</td>
+            <td>@item.PaymentStatus</td>
+            <td>
+                @if (item.Status == StatusType.SUCCESS)
+                {
+                    <span class="badge badge-success">@item.Status</span>
+                }
+                @if (item.Status == StatusType.FAIL)
+                {
+                    <span class="badge badge-danger">@item.Status</span>
+                }
+
+            </td>
+            <td>@item.Reason</td>
+
+            @if (Model.IsAdmin || Model.IsWLAPIAllowed)
+            {
+                <td>@item.API</td>
+            }
+        </tr>
+        counter += 1;
+    }
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="20"><center>No Record Found</center></td>
+    </tr>
+}
+
+
+

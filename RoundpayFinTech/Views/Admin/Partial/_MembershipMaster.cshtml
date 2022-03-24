@@ -1,0 +1,54 @@
+﻿@model Fintech.AppCode.Model.Membership
+@{
+    int i = 1;
+    int J = 1;
+}
+@foreach (var item in Model.membershipMasters)
+{
+   
+<tr data-item-id="@item.ID" data-item-slabType="@item.ID">
+    <th style="width:1em;" scope="row">@i</th>
+
+    <td>
+        <div class="btn-group dropup">
+            <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+            <div class="dropdown-menu" aria-labelledby="act">
+                <h6 class="dropdown-header">Action Menu</h6>
+                <a href="#" class="dropdown-item">Edit</a>
+            </div>
+        </div>
+    </td>
+    <td>
+        <b>@item.MemberShipType</b>
+
+    </td>
+    <td>@item.CouponCount</td>
+    <td>@item.CouponValue</td>
+    <td>@item.CouponValidityDays</td>
+    <td>@item.Cost</td>
+    <td>@item.MinInterval</td>
+    <td>
+        @item.SlabName
+        @{
+            if (!string.IsNullOrEmpty(@item.SlabName))
+            {
+                <small id="slabHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                    @Html.Raw(item.IsAdminDefined ? "Level" : "Channel")
+                </small>
+            }
+        }
+    </td>
+    <td>@item.ReferralIncome</td>
+    <td>@item.PackageValidity</td>
+    <td>
+        <span class="switch switch-sm">
+            <input type="checkbox" class="switch" id="sts_@item.ID" @Html.Raw(item.IsActive ? "checked='checked'" : "") />
+            <label for="sts_@item.ID"></label>
+        </span>
+    </td>
+    <td>
+        @item.Remark
+    </td>
+</tr>
+            i++;
+        }

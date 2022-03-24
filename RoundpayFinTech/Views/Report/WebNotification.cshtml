@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "Web Notification Report";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-7">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="input-group">
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="1000">1000</option>
+                                        <option value="5000">5000</option>
+                                        <option value="0">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    @*<div class="input-group-prepend">
+                                        <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    </div>*@
+                                    <input aria-describedby="txtddTrID" class="form-control" id="txtMobile" name="txtddTrID" placeholder="Enter mobile no or title" tabindex="2" type="text" value="">
+                                    <div class="input-group-append"><button id="btnSearch" tabindex="6" class="btn btn-outline-light"><i class="fa fa-search"></i></button></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <div class="btn-group d-none float-right" id="btnGroupAction">
+                                <button id="btnDeleteNotification" class="btn btn-outline-danger border-radius-0 border-bottom-0" data-Action-Id="1" data-toggle="tooltip" data-original-title="Delete">
+                                    <i class="fa fa-trash"></i>
+                                </button>
+                                <button id="btnDeActivateNotification" class="btn btn-outline-primary border-radius-0 border-bottom-0" data-Action-Id="2" data-toggle="tooltip" data-original-title="Deactive">
+                                    <i class="fa fa-ban"></i>
+                                </button>
+                            </div>
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col"><span class="pr-2"><input type="checkbox" id="chkSelectAll" data-toggle="tooltip" data-original-title="Select All" /></span>#</th>
+                                        <th scope="col">Mobile</th>
+                                        <th scope="col" style="width:20%">Title</th>
+                                        <th scope="col" style="width:40%">Message</th>
+                                        <th scope="col">IsSeen</th>
+                                        <th scope="col">IsActive</th>
+                                        <th scope="col" style="width:15%">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            preloader.load();
+            an.autoClose = 5;
+            $("#btnSearch").click(function () {
+                var req = { TopRows: $("#ddlTop").val(), MobileNo: $("#txtMobile").val() };
+                $.post('/Report/_WebNotification', req)
+                    .done(result => {
+                        $('#__p tbody').html(result);
+                    }).always(() => preloader.remove());
+            });
+            $("#btnSearch").click();
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        $('#chkSelectAll').click(e => {
+            $('.chkSelect').prop('checked', $(e.currentTarget).is(':checked'));
+            if ($(e.currentTarget).is(':checked')) {
+                $('#btnGroupAction').removeClass('d-none');
+            }
+            else {
+                $('#btnGroupAction').addClass('d-none');
+            }
+        });
+
+        $('#btnDeleteNotification,#btnDeActivateNotification').click(e => {
+            let Ids = [], Action = 2;
+            $('.chkSelect:checked').each(function (i) {
+                Ids.push($(this).closest('tr').data().notificationId);
+            });
+            Action = $(e.currentTarget).data().actionId;
+            $.post('/DeleteWebNotification', { Ids: Ids.join(','), Action: Action }).done(result => {
+                an.id = "alertDelete";
+                an.title = result.statuscode === an.type.success ? 'Well done ' : 'Oops ';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === an.type.success) {
+                    $('#chkSelectAll').prop('checked', false);
+                    $('#btnGroupAction').addClass('d-none');
+                    $("#btnSearch").click();
+                }
+            });
+        });
+    </script>
+}

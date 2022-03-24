@@ -1,0 +1,228 @@
+﻿@using Fintech.AppCode.StaticModel;
+@{
+    ViewData["Title"] = "User KYC Approval";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> KYC User Request</li>
+        </ol>
+    </div>
+</div>
+
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> User KYC Approval
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblKYCUsers">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Docs</th>
+                                        <th>OutletID</th>
+                                        <th>Partner Name</th>
+                                        <th>Name</th>
+                                        <th>OutletName</th>
+                                        <th>DOB</th>
+                                        @*<th>KYCStatus</th>*@
+                                        <th>PAN</th>
+                                        <th>AADHAR</th>
+                                        @*<th>AADHAR</th>*@
+                                        <th>IsRegisterWithGST</th>
+                                        <th>GSTIN</th>
+                                        <th>Address</th>
+                                        <th>City</th>
+                                        <th>State</th>
+                                        <th>Pincode</th>
+                                        <th>Landmark</th>
+                                        <th>LocationType</th>
+                                        <th>ShopType</th>
+                                        <th>Qualification</th>
+                                        <th>BankName</th>
+                                        <th>IFSC</th>
+                                        <th>AccountNumber</th>
+                                        <th>AccountHolder</th>
+                                        <th>Role</th>
+                                        <th>KYCStatus</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            pends();
+            $('#btnSearch').click(function () {
+                pends();
+            });
+        });
+
+        var pends = function () {
+            preloader.load();
+            $.post('/KYC-Users', { Top: $('#ddlTop').val(), RoleID: 0, Status: $('#ddlStatus').val() })
+                .done(function (result) {
+                    resultReload(result);
+                    $('#tblKYCUsers tbody').html(result);
+                    $('[id^=btn_ShowDoc]').unbind().click(function () {
+                        showDoc(this);
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var DownLoadFile = function (itm) {
+            let iddd = $(itm).closest("tr").attr("data-subitem-id");
+            $.post("/DownloadKYC", { id: iddd })
+                .done(result => reload())
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var _rowCount = 0;
+        var showDoc = function (sender) {
+            preloader.load();
+            let userID = $(sender).closest('tr').data().itemId,
+                outletid = $(sender).closest('tr').data().outletId;
+            $.post('/ApproveDocument', { UserID: userID, outletid: outletid })
+                .done(function (result) {
+                    $('#' + an.id).remove();
+                    mdlA.id = 'mymodal';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.options.keyboard = false;
+                    mdlA.alert(mdlA.size.xxlarge);
+                    $('button.close span,#mdlCancel').click(function () {
+                        preloader.remove();
+                        _rowCount = $('#' + mdlA.id).find('table tbody tr').length;
+                        if (IsDocReject == true) {
+                            getKYCStatus(userID);
+                            IsDocReject = false;
+                        }
+                        else {
+                            if (_rowCount == 0) {
+                                getKYCStatus(userID);
+                            }
+                        }
+                        mdlA.dispose(() => pends());
+                    });
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $(".dropdown-toggle").dropdown();
+                    $('[id^=accept_],[id^=reject_]').click(e => KycApproved($(e.currentTarget)));
+
+                    let _selection = $(sender).closest('tr');
+                    $('#tblUserDetail').empty().append(`<tr><td>Partner Name</td><td>${_selection.find('td:eq(2)').text()}</td><tr/>
+                                                                        <tr><td>Name</td><td>${_selection.find('td:eq(3)').text()}</td><tr/>
+                                                                        <tr><td>OutletName</td><td>${_selection.find('td:eq(4)').text()}</td><tr/>
+                                                                        <tr><td>DOB</td><td>${_selection.find('td:eq(5)').text()}</td><tr/>
+                                                                        <tr><td>PAN</td><td>${_selection.find('td:eq(6)').text()}</td><tr/>
+                                                                        <tr><td>AADHAR</td><td>${_selection.find('td:eq(7)').text()}</td><tr/>
+                                                                        <tr><td>IsRegisterWithGST</td><td>${_selection.find('td:eq(8)').text()}</td><tr/>
+                                                                        <tr><td>GSTIN</td><td>${_selection.find('td:eq(9)').text()}</td><tr/>
+                                                                        <tr><td>Address</td><td>${_selection.find('td:eq(10)').text()}</td><tr/>
+                                                                        <tr><td>City</td><td>${_selection.find('td:eq(11)').text()}</td><tr/>
+                                                                        <tr><td>State</td><td>${_selection.find('td:eq(12)').text()}</td><tr/>
+                                                                        <tr><td>Pincode</td><td>${_selection.find('td:eq(13)').text()}</td><tr/>
+                                                                        <tr><td>Landmark</td><td>${_selection.find('td:eq(14)').text()}</td><tr/>
+                                                                        <tr><td>LocationType</td><td>${_selection.find('td:eq(15)').text()}</td><tr/>
+                                                                        <tr><td>ShopType</td><td>${_selection.find('td:eq(16)').text()}</td><tr/>
+                                                                        <tr><td>Qualification</td><td>${_selection.find('td:eq(17)').text()}</td><tr/>
+                                                                        <tr><td>BankName</td><td>${_selection.find('td:eq(18)').text()}</td><tr/>
+                                                                        <tr><td>IFSC</td><td>${_selection.find('td:eq(19)').text()}</td><tr/>
+                                                                        <tr><td>AccountNumber</td><td>${_selection.find('td:eq(20)').text()}</td><tr/>
+                                                                        <tr><td>AccountHolder</td><td>${_selection.find('td:eq(21)').text()}</td><tr/>
+                                                                        <tr><td>Role</td><td>${_selection.find('td:eq(22)').text()}</td><tr/>`)
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+
+                })
+                .always(() => preloader.remove());
+        };
+
+        var IsDocReject;
+        var KycApproved = function (sender) {
+            let d = $(sender).closest('tr').data().subitemId,
+                s = $(sender).attr('id').indexOf('accept_') > -1 ? 2 : 3,
+                r = $(sender).closest('tr').find('[id^=txtRemark_]').val();
+            if (r == undefined)
+                return false;
+            preloader.load();
+            $.post('/ApproveKYC', { d: d, s: s, r: r })
+                .done(function (result) {
+                    if (result.statuscode !== undefined) {
+                        an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        if (result.statuscode == an.type.success) {
+                            $(sender).closest('tr').next('tr').find('.showImg').click();
+                            $(sender).closest('tr').remove();
+                            
+                            if (result.msg.indexOf('Rejected') != -1) {
+                                IsDocReject = true;
+                            }
+                            _rowCount = $('#mymodal').find('tbody tr').length;
+                            if (_rowCount == 0) {
+                                $('#mymodal').find('button.close span,#mdlCancel').click();
+                            }
+                        }
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var getKYCStatus = function (uid) {
+            $.post('/getKYCStatus', { uid: uid })
+                .done(function (result) {
+                });
+        }
+    </script>
+}

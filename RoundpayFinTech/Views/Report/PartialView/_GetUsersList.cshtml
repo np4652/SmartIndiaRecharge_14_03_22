@@ -1,0 +1,26 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Users>
+@{ 
+
+}
+@if (Model.Any())
+{
+    int i = 1;
+    foreach(var item in Model)
+    {
+        <tr data-User-Id="@item.ID">
+            <td>@i</td>
+            <td>@Html.Raw(!item.IsViewed?"<input type='checkbox' id='chkAsViewed_"+@i+"' class='chkAsViewed d-none'/><label for='chkAsViewed_"+@i+"'><i class='fa fa-eye'></i></label>":"Viewed")</td>
+            <td>@item.UserName</td>
+            <td>@item.RoleName</td>
+            <td>@item.OutletName</td>
+            <td>@item.MobileNo</td>
+            <td>@item.Email</td>
+            <td>@item.Balance</td>
+            <td>@item.PinCode</td>
+            <td>@item.IntroducerName</td>
+            <td>@item.EntryDate</td>
+            <td>@item.ModifyDate</td>
+        </tr>
+        i = i + 1;
+    }
+}

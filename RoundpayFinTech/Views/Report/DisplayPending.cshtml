@@ -1,0 +1,60 @@
+﻿@{
+    Layout = "_FullPage";
+    ViewData["Title"] = "Heavy Pending Refresh";
+    }
+<div class="p table-responsive" id="DivPending">
+    <table class="table table-bordered table-responsive-sm" id="tblRechReport">
+        <thead class="bg-tableth">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">TID</th>
+                <th scope="col">Outlet</th>
+                <th scope="col">AccountNo</th>
+                <th scope="col">Operator</th>
+                <th scope="col">DateTime</th>
+                <th scope="col">Time Span</th>
+                <th scope="col" class="text-right">Amount</th>
+                <th scope="col">API</th>
+                <th scope="col">VendorID</th>
+                <th scope="col">Live ID</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+@section scripts{
+    <script>
+        var l = location.href.split('/');
+        var s = l[l.length - 1];
+        $(document).ready(function () {
+            if (s == 3) {
+                document.title = "Heavy Failed Refresh";
+            }
+            Report();
+            setInterval(function () {
+                Report();
+            }, 10000);            
+        });
+        function Report() {
+            
+           
+            $.post("/DisplayPending", { id: s }, function (result) {
+                $('.p tbody').html(result);
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+
+        }
+    </script>
+}

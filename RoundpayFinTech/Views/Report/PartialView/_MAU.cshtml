@@ -1,0 +1,128 @@
+﻿@model Fintech.AppCode.Model.CommonReq
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+        <input type="hidden" id="hdnUserID" value="@Model.UserID"/>
+        <input type="hidden" id="hdnMAP" value="@Model.CommonStr"/>
+
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> User Area Mapping</h3>
+        <hr />
+
+        <div class="scroll-content">
+            <div class="container">
+                
+                <div class="form-row" >
+                    <div class="col-md form-group">
+                        @Html.Label("ddlArea", "Select Area", new { @class = "lbl" })
+                        <select id="ddlArea" aria-describedby="areaHelp" tabindex="4" class="custom-select custom-select-md mb3" >
+                            <option value="-1"> :: Select Area :: </option>
+                        </select>
+                        <small id="areaHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                
+                <button type="button" class="btn btn-dark" id="btnAreaMap" tabindex="7">Map</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    $(document).ready(function () {
+        LoadArea();
+    });
+
+
+    var LoadArea = () => {
+        preloader.load();
+        $.post('/gm', { uid: $('#hdnUserID').val() })
+            .done(function (result) {
+                resultReload(result);
+                if (result != null) {
+                    $.each(result, function (index, value) {
+                        $('#ddlArea').append('<option value="' + value.areaID + '">' + value.area + '</option>');
+                    });
+                    setArea($('#hdnMAP').val());
+                }
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    };
+
+    $('#btnAreaMap').on('click', function () {
+        var ct = {
+            userId: $('#hdnUserID'),
+            ddlAId: $('#ddlArea')
+        };
+        var IsE = { ddlaid: ct.ddlAId.val() == -1}
+        IsE.err = IsE.ddlaid;
+        $v.showErrorFor(ct.ddlAId, 'Please Select Area', IsE.ddlaid);
+        if (IsE.err)
+            return false;
+        preloader.load();
+        $.post('/uma', { UserID: ct.userId.val(), CommonInt: ct.ddlAId.val()})
+            .done(function (result) {
+                resultReload(result);
+                if (result.statuscode === -1) {
+                    an.title = 'Oops';
+                    an.content = message;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }
+                else {
+                    an.title = 'Welldone!';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                }
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    });
+
+    var setArea = (a) => {
+        $("#ddlArea option").filter(function () {
+            return $(this).text() == a;
+        }).prop('selected', true);
+    }
+</script>

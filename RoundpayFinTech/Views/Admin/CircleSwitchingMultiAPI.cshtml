@@ -1,0 +1,175 @@
+﻿@{
+    ViewData["Title"] = "CircleSwitching";
+    @model IEnumerable<RoundpayFinTech.AppCode.Model.Report.CirlceMaster>;
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">Circle Switching</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Circle Switching
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row form-group mb-1">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                @{
+                                    var Circles = new SelectList(Model, "ID", "Circle");
+                                }
+                                <select class="form-control" asp-items="Circles" id="ddlCircle" aria-describedby="helpCircle">
+                                    <option value="0"> : : SELECT Circle : : </option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <small id="helpCircle" class="form-text text-danger d-none"></small>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <div class="float-right ">
+                                    <input class="form-control d-none" id="txtSearch" type="text" placeholder="Search" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%;">#</th>
+                                        <th scope="col" style="width:15%;">Operator</th>
+                                        <th scope="col" style="width:80%">API List</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                       
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('#ddlCircle').on('change', function () {
+                var id = 0;
+                if (parseInt($(this).val()) < 1) {
+                    $v.showErrorFor($(this), 'Select Circle', 1);
+                    return;
+                }
+                id = $(this).val();
+                an.title = 'Info';
+                an.content = 'Loading circle switcing detail for ' + $('#' + this.id + ' :selected').text();
+                an.alert(an.type.info);
+                preloader.load();
+                $.post('/circle-switched-multi', { ID: id })
+                    .done(function (result) {
+                        an.remove();
+                        $('#__p tbody').html(result);
+                        if (result.trim() === '') {
+                            an.title = 'Oops';
+                            an.content = 'API may be <b>deactivated</b>! No record found for selected api';
+                            an.alert(an.type.failed);
+                            $('#txtSearch').addClass('d-none');
+                        } else {
+                            $('#txtSearch').removeClass('d-none');
+                            setTimeout(function () {
+                                $('#txtSearch').focus();
+                                $("#txtSearch").unbind().on("keyup", function () {
+                                    var value = $(this).val().toLowerCase();
+                                    $('#__p tbody tr').filter(function () {
+                                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                    });
+                                });
+                            }, 500);
+                            $('[id^=txtPriority],[id^=chbCircle]').change(function () {
+                                var oid = 0, apiid = 0, circleid = 0, isactive = false, MaxCount=1;
+                                var lbl = $('label[for="' + this.id + '"]')
+                                oid = $(this).closest('tr').data().itemId;
+                                circleid = id;
+
+                                apiid = this.id.split('_')[2];
+                                isactive = $(this).is(':checked');
+                                MaxCount = $('#' + (this.id).replace('chbCircle_', 'txtPriority_')).val();
+                                var Circle = { ID: circleid, OID: oid, APIID: apiid, IsActive: isactive, MaxCount }
+                                preloader.load();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/csw',
+                                    dataType: 'json',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(Circle),
+                                    success: function (result) {
+                                        if (result.statuscode == an.type.failed) {
+                                            an.title = "Oops";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            lbl.addClass('is-invalid');
+                                        }
+                                        else if (result.statuscode == an.type.success) {
+                                            an.title = "Well done";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            lbl.addClass('is-valid');
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        checkError(result);
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+                        }
+                    }).catch(function (xhr, e, m) {
+
+                    }).fail(function (xhr) {
+                        $(this).attr('checked', Is == false);
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+        });
+    </script>
+}
+
+

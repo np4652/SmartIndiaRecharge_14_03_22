@@ -1,0 +1,320 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.CompanyProfileDetail
+@{
+    ViewData["Title"] = "Support";
+}
+
+
+<link href="~/css/cont-dt.css" rel="stylesheet" />
+<style>
+    .font-bold {
+        font-weight: 100;
+    }
+
+    .box {
+        border: 0;
+    }
+
+        .box > .icon > .info {
+            height: 214px;
+        }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin</li>
+            <li class="breadcrumb-item active">Support</li>
+        </ol>
+    </div>
+</div>
+<div class="container animated fadeIn">
+    <div class="container second-portion">
+        <div class="row">
+            <!-- Boxes de Acoes -->
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="box w-100">
+                    <div class="icon  w-100">
+                        <div class="image"><i class="fa fa-envelope" aria-hidden="true"></i></div>
+                        <div class="info">
+                            <h3 class="title">Customer Care</h3>
+                            <p>
+                                @if (Model.CustomerCareMobileNos != "")
+                                {
+                                    <span><i class="fa fa-mobile" aria-hidden="true" style="font-size: 20px;"></i>&nbsp(+91)-</span>
+                                }
+                                @if (Model.CustomerCareMobileNos != "")
+                                {
+                                    @Html.Label("", Model.CustomerCareMobileNos, new { @class = "lbl" })
+
+                                }
+                                <br />
+                                @if (Model.CustomerPhoneNos != "")
+                                {
+                                    <span><i class="fa fa-phone" aria-hidden="true"></i>&nbsp(+91)-</span>
+                                }
+                                @if (Model.CustomerPhoneNos != "")
+                                {
+                                    @Html.Label("", Model.CustomerPhoneNos, new { @class = "lbl" })
+                                }
+
+                                <br>
+                                @if (Model.CustomerWhatsAppNos != "")
+                                {
+
+                                    <span> <i class="fab fa-whatsapp" aria-hidden="true"></i>&nbsp(+91)-</span>
+                                }
+
+                                @if (Model.CustomerWhatsAppNos != "")
+                                {
+
+                                    @Html.Label("", Model.CustomerWhatsAppNos, new { @class = "lbl" })
+                                }
+                                <br />
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                @if (Model.CustomerCareEmailIds != "")
+                                {
+                                    @Html.Label("", Model.CustomerCareEmailIds, new { @class = "lbl" })
+                                }
+                            </p>
+
+                        </div>
+                    </div>
+                    <div class="space"></div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="box w-100">
+                    <div class="icon  w-100">
+                        <div class="image"><i class="fa fa-mobile" aria-hidden="true"></i></div>
+                        <div class="info">
+                            <h3 class="title">Account & Finance</h3>
+                            <p>
+
+                                @if (Model.AccountMobileNo != "")
+                                {
+                                    <span><i class="fa fa-phone" aria-hidden="true"></i>&nbsp(+91)-</span>
+                                }
+
+                                @if (Model.AccountMobileNo != "")
+                                {
+                                    @Html.Label("", Model.AccountMobileNo, new { @class = "lbl" })
+                                }
+                                <br />
+                                @if (Model.AccountPhoneNos != "")
+                                {
+                                    <span><i class="fa fa-phone" aria-hidden="true"></i>&nbsp(+91)-</span>
+                                }
+
+                                @if (Model.AccountPhoneNos != "")
+                                {
+                                    @Html.Label("", Model.AccountPhoneNos, new { @class = "lbl" })
+                                }
+                                <br>
+                                @if (Model.AccountWhatsAppNos != "")
+                                {
+                                    <span> <i class="fab fa-whatsapp" aria-hidden="true"></i>&nbsp(+91)-</span>
+                                }
+
+                                @if (Model.AccountWhatsAppNos != "")
+                                {
+                                    @Html.Label("", Model.AccountWhatsAppNos, new { @class = "lbl" })
+                                }
+                                <br />
+                                <i class="fa fa-envelope" aria-hidden="true"></i>
+                                @if (Model.AccountEmailId != "")
+                                {
+                                    @Html.Label("", Model.AccountEmailId, new { @class = "lbl" })
+                                }
+                            </p>
+                        </div>
+                    </div>
+                    <div class="space"></div>
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-sm-6 col-lg-4">
+                <div class="box w-100">
+                    <div class="icon  w-100">
+                        <div class="image"><i class="fa fa-map-marker" aria-hidden="true"></i></div>
+                        <div class="info">
+                            <h3 class="title">ADDRESS</h3>
+                            <p>
+                                <i class="fa fa-map-marker" aria-hidden="true"></i>
+
+                                @if (Model.Address != "")
+                                {
+                                    @Html.Label("", Model.Address, new { @class = "lbl" })
+                                }
+
+                            </p>
+                        </div>
+                    </div>
+                    <div class="space"></div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container third-portion">
+        <div class="row">
+            <div class="col-md-6" id="_BK">
+                <div class="section">
+                    <div class="top-border left"></div>
+                    <div class="top-border right"></div>
+                    <h1>Bank Detail</h1>
+                    <div style="overflow:auto;">
+                        <div class="scrollbar-1 style-3" id="Div2">
+                            <div class="force-overflow">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="TblbankList">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col" style="width:5%;">S.No</th>
+                                            <th scope="col" style="width:15%;">Bank Name</th>
+                                            <th scope="col" style="width:15%;">Holder Name</th>
+                                            <th scope="col" style="width:15%;">Account No</th>
+                                            <th scope="col" style="width:15%;">IFSC Code</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="section">
+                    <div class="top-border left"></div>
+                    <div class="top-border right"></div>
+                    <h1>Mobile Tollfree</h1>
+                    <div class="scrollbar style-3" id="Div1">
+                        <div class="force-overflow">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="TblMobileTollFree">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:5%;">S.No</th>
+                                        <th scope="col" style="width:15%;">Operator Name</th>
+                                        <th scope="col" style="width:15%;">Number</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <a href="#">CONTACT US</a>
+                </div>
+
+                <div class="section">
+                    <div class="top-border left"></div>
+                    <div class="top-border right"></div>
+                    <h1>DTH Tollfree</h1>
+                    <div class="" id="">
+                        <div class="">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="TblDTHTollFree">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:5%;">S.No</th>
+                                        <th scope="col" style="width:15%;">Operator Name</th>
+                                        <th scope="col" style="width:15%;">Number</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <a href="#">CONTACT US</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/validator.js" asp-append-version="true"></script>
+    <script src="~/js/login.js" asp-append-version="true"></script>
+    <script>
+        $(document).ready(function () {
+            BankDetails();
+            MobileTollFree();
+            DTHTollFree();
+        });
+        function BankDetails() {
+            preloader.load();
+            $.post('/bank-List')
+                .done(function (result) {
+                    $('#TblbankList tbody').html(result);
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+
+
+        function MobileTollFree() {
+            preloader.load();
+            $.post('/Mobile-Tollfree')
+                .done(function (result) {
+                    $('#TblMobileTollFree tbody').html(result);
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+
+
+        function DTHTollFree() {
+            preloader.load();
+            $.post('/DTH-Tollfree')
+                .done(function (result) {
+                    $('#TblDTHTollFree tbody').html(result);
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+}

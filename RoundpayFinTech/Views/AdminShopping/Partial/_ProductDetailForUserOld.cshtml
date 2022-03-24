@@ -1,0 +1,228 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.Shopping.ProductDetailForUser
+@{
+    var Files = Model.Files;
+    var FilterDetail = Model.FilterDetail;
+}
+<style>
+    .modal.show .modal-dialog {
+        max-width: 100% !important;
+        margin-left: 10px;
+    }
+</style>
+<div class="row" id="showPanel">
+    @if (Files.Any())
+    {
+        <input type="hidden" id="hfProductID" value="@Model.ProductID" />
+        <input type="hidden" id="hfdPDID" value="@Model.ProductDetailID" />
+        <div class="col-sm-12 text-center" style="height: 380px">
+            <div class="row">
+                <div class="col-sm-4">
+                    <div class="outter-quick-view">
+                        <div class="quick-img">
+                            <img src="/Image/Products/@Files.First().Replace("-1x","")" class="img-fluid" id="imgLarge" />
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-4 product-details-desc">
+                    <h2>@Model.ProductName</h2>
+                    <div class="product-price-rating product-detail-sec">
+                        <span class="pro-discount" id="proMRPPrice">MRP : <del><i class="fa fa-rupee-sign"></i> @Model.MRP</del></span>
+                        <span class="pro-price" id="proSellingPrice">@Model.SellingPrice</span>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Discription))
+                    {
+                        <div>
+                            <h3>Product Highlights</h3>
+                            <div class="pro-desc-highlight">
+                                @Html.Raw(Model.Discription)
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="col-sm-4 text-left">
+                    <div class="form-group">
+                        @if (FilterDetail.Any())
+                        {
+                            <h5 class="fliter-sec-title">Filters</h5>
+                            <table class="table text-left table-borderless" id="tblFilters">
+                                @foreach (var filter in FilterDetail)
+                                {
+                                    <tr class="fliter-row">
+                                        <td style="width: 30%" class="filter-data" data-Filter-Id="@filter.FilterID">
+                                            @filter.FilterName
+                                        </td>
+                                        <td class="filter-data">
+                                            @{
+                                                foreach (var option in filter.FilterOption)
+                                                {
+                                                    var _SelectedOption = Model.selectedOption.Where(x => x.FilterID == filter.FilterID).FirstOrDefault();
+                                                    string active = _SelectedOption != null && _SelectedOption.FilterOptionID == @option.FilterOptionID ? "btn-dark active" : "";
+                                                    <span data-Option-Id="@option.FilterOptionID" @Html.Raw(option.FilterID == ShoppingFilters.Color ? "class='btn cus-btn-filter " + active + "' style='color:#fff; background-color:" + option.OptionalID + "'" : "class='btn cus-btn-filter " + active + "  available-sec'")>@Html.Raw(option.FilterID == ShoppingFilters.Color ? "&nbsp;" : option.Option)</span>
+
+                                                }
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                        }
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <input type="text" id="txtQuantity" class="form-control quantity-sec" placeholder="Quantity" value="1" />
+                            <div class="input-group-append">
+                                <span class="btn btn-sm btn-info">Available : @Model.Quantity</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group">
+                            <div class="input-group-append">
+                                <span class="btn btn-sm btn-info">ShippingCharges : @Model.ShippingCharges</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-5">
+                        <div class="col-sm-6 btn-group-vertical">
+                            <span class="btn cus-add-cart-btn" id="btnAddToCart" data-productdeatil-id="@Model.ProductDetailID">Add To Cart</span>
+                        </div>
+                        <div class="col-sm-6">
+                            <span class="btn cus-wishlist-btn" id="btnAddToWishlist">Add To Wishlist</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        foreach (string result in Files)
+        {
+            <div class="col-sm-2 pr-0 text-center divImgPreview">
+                <div class="thumb-img-cus">
+                    <img src="/Image/Products/@result" class="img-fluid img-thumbnail btnImage" />
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(Model.Specification))
+        {
+            <div class="col-sm-12 mt-2">
+                <h3 class="text-monospace">Specifications</h3>
+                <div class="pro-specification">
+                    @Html.Raw(Model.Specification)
+                </div>
+            </div>
+        }
+    }
+</div>
+<script>
+    (() => {
+        $('#txtQuantity').numeric({
+            numericType: 'number',
+            maxLength: 5
+        });
+
+        $('.btnImage').unbind().click(() => $('#imgLarge').attr('src', $(event.target).attr('src').replace("-1x", "")));
+
+        $('#btnAddToCart').click(e => {
+            if ($('#txtQuantity').val() === undefined || $('#txtQuantity').val() === '' || $('#txtQuantity').val() <= 0) {
+                $('#txtQuantity').focus().before('<label class="lbl text-danger">Please Enter Quantity</label><br/>');
+                return false;
+            }
+            let param = {
+                ProductID: $('#hfProductID').val(),
+                ProductDetailID: $(e.currentTarget).data().productdeatilId,
+                Quantity: $('#txtQuantity').val()
+            };
+            $.post('/AddToCart', param).done(result => {
+                an.autoClose = 10;
+                an.id = "response";
+                an.title = result.statuscode == an.type.success ? "Well done : " : "Oops : ";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('#CartCount').text(result.commonInt);
+                    mdlA.dispose();
+                }
+            });
+        });
+
+        $('#btnAddToWishlist').click(() => {
+            $.post('/AddToWishList', { ProductDetailID: $('#hfdPDID').val() })
+                .done(result => {
+                    an.autoClose = 10;
+                    an.id = "addtowishlist";
+                    an.title = result.statuscode == an.type.success ? "Well done : " : "Oops : ";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                })
+        })
+
+    })();
+
+    $('td span').unbind().click(e => getRelatedImage());
+
+    var getRelatedImage = function () {
+        $(event.target).closest('td').find('span').removeClass('btn-dark active').addClass('btn-outline-dark');
+        $(event.target).addClass('btn-dark active').removeClass('btn-outline-dark');
+        let filter = [], filterCount = 0;
+
+        if ($('#tblFilters').length > 0) {
+            let f;
+            $('#tblFilters tr').each(function (i) {
+                let Option = $(this).find('td:eq(1)').find('span.active').data();
+                console.log(Option)
+                if (Option != undefined) {
+                    if (Option.optionId != undefined && Option.optionId !== 0 && Option.optionId !== '') {
+                        filterCount = i + 1;
+                        f = $(this).find('td:eq(0)').data().filterId + '_' + Option.optionId;
+                        filter.push(f);
+                    }
+                    else {
+                        an.id = "Invalid";
+                        an.content = `Please select ${$(this).find('td:eq(0)').text()}`;
+                        an.alert(an.type.failed);
+                        return false
+                    }
+                }
+                else {
+                    an.id = "Invalid";
+                    an.content = `Please select ${$(this).find('td:eq(0)').text()}`;
+                    an.alert(an.type.failed);
+                    return false
+                }
+            })
+            if ($('#tblFilters tr').length === filterCount) {
+                let param = {
+                    ProductID: $('#hfProductID').val(),
+                    ProductDetailID: $('#hfdPDID').val(),
+                    Filters: filter
+                };
+                $.post('/OnChangeFilter', param)
+                    .done(result => {
+                        console.log(result);
+                        $('#hfdPDID').remove();
+                        $('body').append(`<input type="hidden" value="${result.commonInt}" id="hfdPDID"/>`)
+                        $('#txtQuantity').closest('.input-group').find('.input-group-append').remove();
+                        $('#proMRPPrice').html(`MRP : <del><i class="fa fa-rupee-sign"></i> ${result.mrp}</del>`);
+                        $('#proSellingPrice').text(result.sellingPrice);
+                        $('#txtQuantity').closest('.input-group').append(`<div class="input-group-append"><span class="btn btn-sm btn-info">Available : ${result.quantity}<span></div>`);
+                        $('#btnAddToCart').attr('data-ProductDeatil-Id', result.productDetailID);
+                    }).then(() => {
+                        $.post('/getImageOptionWise', { ProductID: $('#hfProductID').val(), ProductDetailID: $('#hfdPDID').val() }).done((result) => {
+                            for (var i = 0; i < result.length; i++) {
+                                var ImgPreviewId = document.getElementById('imgLarge');
+                                ImgPreviewId.src = `/Image/Products/${result[0].replace("-1x", "")}`;
+                                break;
+                            }
+                            $('div.divImgPreview').remove();
+                            for (var i = 0; i < result.length; i++) {
+                                $('div#showPanel').append(`<div class="col-sm-2 pr-0 pl-0 text-center divImgPreview"><img src="/Image/Products/${result[i]}" class="img-fluid img-thumbnail btnImage" style="height:100px" /></div>`);
+                            }
+                            $('.btnImage').unbind().click(() => $('#imgLarge').attr('src', $(event.target).attr('src').replace("-1x", "")));
+                        });
+                    });
+            }
+        }
+    }
+</script>

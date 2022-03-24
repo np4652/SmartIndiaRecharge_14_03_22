@@ -1,0 +1,25 @@
+﻿<div class="card-body" style="">
+    <div class="row">
+        <div class="col-12">
+            <h2 class="text-center mb-4">Register as Partner</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-header" style="background: #be4778; color: #fff;"><label class="lbl" for="txtPsa">PSA Id Prefix</label></div>
+                <div class="card-body">
+                    <input type="text" class="form-control text-uppercase" id="txtPsa" placeholder="Enter 5 capital alphabets unique sequence" aria_describedby="nameHelp" required onchange="GetPsaStatus()" maxlength="5" />
+                    <span id="lblAvailable" class="lbl text-success hide" style="float: right; margin-top: -30px; margin-right: 10px; font-size: 15px;">Test</span>
+                    <small id="nameHelp" class="form-text text-muted d-none">Enter 5 unique capital alphabets</small>
+                    <hr />
+                    <input type="text" class="form-control text-capitalize hide" id="txtUser" placeholder="Enter Name" aria_describedby="nameHelp" />
+                    <small id="nameHelp" class="form-text text-muted d-none">Enter Name</small>
+                    <input type="text" class="form-control text-capitalize hide mt-3" id="txtFather" placeholder="Enter Father Name" aria_describedby="nameHelp" />
+                    <small id="nameHelp" class="form-text text-muted d-none">Enter Father Name</small>
+                    <button class="btn btn-primary" style="margin-top: 20px; font-size: 11px; font-weight: 600; border-radius: 2px; background: transparent; color: #007bff;" onclick="UpdatePsaKey()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

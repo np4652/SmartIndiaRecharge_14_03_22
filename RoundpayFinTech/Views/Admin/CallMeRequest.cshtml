@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Call Me Request";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active">Call Me Request</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34 text-monospace">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> Call Me Request
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="input-group">
+                                    <select id="ddlTOP" class="form-control">
+                                        <option value="10">10</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button type="button" id="btnSearch" class="btn btn-dark"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive vh-55-5">
+                            <table class="table table-bordered table-striped" id="tblCMR">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th>Actions</th>
+                                        <th>Name</th>
+                                        <th scope="col">Mobile</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Remark</th>
+                                        <th scope="col">History</th>
+                                        <th scope="col">Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(() => callMeReqList($('#ddlTOP').val()));
+        $('#btnSearch').click(() => callMeReqList($('#ddlTOP').val()));
+        var callMeReqList = function (top) {
+            preloader.load();
+            $.post('/c-m-r', { t: top })
+                .done(function (result) {
+                    $('#tblCMR tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('tr div.dropdown-menu a.dropdown-item').click(e => {
+                        let data = {
+                            ID: $(e.currentTarget).closest('tr').data().itemId,
+                            StatusID: $(e.currentTarget).data().itemStid
+                        };
+                        updateCallMeReq(data);
+                    });
+
+                    $('[id^=txtRemark_]').on('change', e => {
+                        let data = {
+                            CallHistory: $(e.currentTarget).val(),
+                            ID: $(e.currentTarget).closest('tr').data().itemId
+                        }
+                        if ($(e.currentTarget).val().length > 0)
+                            updateCallMeReq(data);
+                        else
+                            return false;
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        var updateCallMeReq = data => {
+            $.post('update-cmr', data)
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    if (result.statuscode == an.type.success) {
+                        callMeReqList($('#ddlTOP').val());
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+
+                })
+                .always(() => preloader.remove());
+        }
+    </script>
+}

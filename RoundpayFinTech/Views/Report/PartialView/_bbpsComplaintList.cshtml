@@ -1,0 +1,51 @@
+﻿@using RoundpayFinTech.AppCode.Model.Recharge
+@model IEnumerable<BBPSComplainReport>
+
+@if (Model != null && Model.Any())
+{
+    var i = 0;
+    foreach (var item in Model)
+    {
+        <tr data-item-id="@item.ID">
+            <td>@(++i)</td>
+            <td>
+                @(item.ComplainType == 1 ? "Service" : "Transaction Based")
+            </td>
+
+            <td>
+                @(item.ComplainType == 1 ? item.ParticipationType : item.TransactionID)
+            </td>
+
+            <td>
+                @item.ComplainTypeID
+            </td>
+
+            <td>
+                @item.ComplainID
+            </td>
+
+            <td>
+                @item.ComplainDate
+            </td>
+
+            <td>
+                @if (item.ComplainStatus == 1)
+                {
+                    <span>PENDING</span>
+                }
+                else if (item.ComplainStatus == 2)
+                {
+                    <span>RESOLVED</span>
+                }
+                else
+                {
+                    <span></span>
+                }
+            </td>
+            <td>@item.Remark</td>
+            <td>
+                <i class="fa fa-eye btnTrackComplaint"></i>
+            </td>
+        </tr>
+    }
+}

@@ -1,0 +1,59 @@
+﻿@using Fintech.AppCode.StaticModel
+@model Fintech.AppCode.Model.GetChangeSlab
+
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+
+        @if (Model.Statuscode == ErrorCodes.One)
+        {
+            <h3>Change Slab</h3>
+            <div class="form-group">
+                @if (Model != null)
+                {
+                    <h3><span id="spnNam" class="text-uppercase">@Model.CommonStr</span></h3>
+                    <h3><span id="spnMob" class="text-monospace">@Model.CommonStr2</span></h3>
+                    <span id="spnUserId" style="display:none">@Model.CommonInt</span>
+                }
+                else
+                {
+                    <h3><span id="spnNam" class="text-uppercase"></span></h3>
+                    <h3><span id="spnMob" class="text-monospace"></span></h3>
+                    <span id="spnUserId" style="display:none"></span>
+                }
+            </div>
+
+            <div class="form-group">
+                <label class="lbl" for="ddlSlab"></label>
+
+                <select id="ddlSlab" aria-describedby="ddlSlabHelp" tabindex="2" class="custom-select custom-select-md mb3">
+                    @if (Model.Slabs != null)
+                    {
+                        @foreach (var _slab in Model.Slabs)
+                        {
+                            <option value="@_slab.ID">@_slab.Slab</option>
+                        }
+                    }
+                </select>
+                <small id="ddlSlabHelp" class="form-text text-muted d-none">Choose Any Slab</small>
+            </div>
+            @if (Model.IsDoubleFactor)
+            {
+                <div class="mb-2">
+                    <label class="lbl" for="txtSecKey">Secure Key</label>
+                    <input type="password" class="form-control" id="txtSecKey" placeholder="Enter Security Key" aria-describedby="secureHelp" autocomplete="new-password">
+                    <small id="secureHelp" class="form-text text-danger  d-none">Invalid Secure Key</small>
+                </div>
+            }
+
+
+            <button class="btn btn-outline-dark" id="btnChange">Change</button>
+            <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+        }
+        else
+        {
+            <h3>@Model.Msg</h3>
+        }
+    </div>
+  

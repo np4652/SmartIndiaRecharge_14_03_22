@@ -1,0 +1,48 @@
+﻿@{
+    ViewData["Title"] ="PST Comparision";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-10 line-height-34  text-monospace">
+                                <i class="fas fa-link"></i> @ViewData["Title"] <small class="text-monospace">[Last 10 Days]</small>
+                            </div>
+                            <div class="col-sm-2">
+                                <a href="/GetPSTComparisionTableExcel" target="_blank" class="btn btn-sm btn-success fa fa-file-excel pt-2 pull-right" style="float: right;"></a>
+                                @*<button class="btn btn-sm btn-outline-success far fa-file-excel pt-2" id="btnExport"></button>*@
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-1">
+                        <div class="table-responsive">
+                            <PSTDateWiseComparision></PSTDateWiseComparision>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $.post('/GetPSTComparisionTable').done(result => $('PSTDateWiseComparision').html(result));
+        $('#btnExport').click(function () {
+            $.post('/GetPSTComparisionTableExcel').done(result => $('PSTDateWiseComparision').html(result));
+        });
+    </script>
+}

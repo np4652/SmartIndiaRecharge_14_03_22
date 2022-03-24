@@ -1,0 +1,273 @@
+﻿@import url("//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css");
+@import url("http://fonts.googleapis.com/css?family=Roboto:400,500");
+        /* Conatct start */
+
+        .header-title {
+            text-align: center;
+            color: #00bfff;
+        }
+
+        #tip {
+            display: none;
+        }
+
+        .fadeIn {
+            animation-duration: 3s;
+        }
+
+        .form-control {
+            border-radius: 0px;
+            border: 1px solid #EDEDED;
+        }
+
+            .form-control:focus {
+                border: 1px solid #00bfff;
+            }
+
+        .textarea-contact {
+            resize: none;
+        }
+
+        .btn-send {
+            border-radius: 0px;
+            border: 1px solid #00bfff;
+            background: #00bfff;
+            color: #fff;
+        }
+
+            .btn-send:hover {
+                border: 1px solid #00bfff;
+                background: #fff;
+                color: #00bfff;
+                transition: background 0.5s;
+            }
+
+        .second-portion {
+            margin-top: 50px;
+        }
+
+
+        .box > .icon {
+            text-align: center;
+            position: relative;
+        }
+
+            .box > .icon > .image {
+                position: relative;
+                z-index: 2;
+                margin: auto;
+                width: 88px;
+                height: 88px;
+                border: 8px solid white;
+                line-height: 88px;
+                border-radius: 50%;
+                background: #b5426d;
+                vertical-align: middle;
+            }
+
+            .box > .icon:hover > .image {
+                background: #333;
+            }
+
+            .box > .icon > .image > i {
+                font-size: 36px !important;
+                color: #fff !important;
+            }
+
+            .box > .icon:hover > .image > i {
+                color: white !important;
+            }
+
+            .box > .icon > .info {
+                margin-top: -24px;
+                background: rgba(0, 0, 0, 0.04);
+                border: 1px solid #e0e0e0;
+                padding: 38px 0 10px 0;
+                min-height: 163px;
+            }
+
+            .box > .icon:hover > .info {
+                background: rgba(0, 0, 0, 0.04);
+                border-color: #e0e0e0;
+                color: white;
+            }
+
+            .box > .icon > .info > h3.title {
+                font-family: "Robot",sans-serif !important;
+                font-size: 16px;
+                color: #222;
+                font-weight: 700;
+            }
+
+            .box > .icon > .info > p {
+                font-family: "Robot",sans-serif !important;
+                font-size: 13px;
+                color: #666;
+                line-height: 2.2em;
+                margin: 20px;
+                font-weight: 600;
+            }
+
+            .box > .icon:hover > .info > h3.title, .box > .icon:hover > .info > p, .box > .icon:hover > .info > .more > a {
+                color: #222;
+            }
+
+            .box > .icon > .info > .more a {
+                font-family: "Robot",sans-serif !important;
+                font-size: 12px;
+                color: #222;
+                line-height: 12px;
+                text-transform: uppercase;
+                text-decoration: none;
+            }
+
+            .box > .icon:hover > .info > .more > a {
+                color: #fff;
+                padding: 6px 8px;
+                background-color: #63B76C;
+            }
+
+        .box .space {
+            height: 30px;
+        }
+
+        @media only screen and (max-width: 768px) {
+            .contact-form {
+                margin-top: 25px;
+            }
+
+            .btn-send {
+                width: 100%;
+                padding: 10px;
+            }
+
+            .second-portion {
+                margin-top: 25px;
+            }
+        }
+        /* Conatct end */
+   
+
+        .section {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+            border: 2px solid #333;
+            border-top: none;
+            text-align: center;
+            margin: 50px auto;
+        }
+
+            .section h1 {
+                position: relative;
+                margin-top: -24px;
+                display: inline-block;
+                letter-spacing: 4px;
+            }
+
+        .top-border {
+            position: absolute;
+            height: 2px;
+            width: 17%;
+            background-color: #333;
+        }
+
+        .right {
+            right: 0;
+        }
+
+        .left {
+            left: 0;
+        }
+
+        @media (max-width: 685px) {
+            .top-border {
+                width: 18%;
+            }
+        }
+
+        .section p {
+            width: 61%;
+            margin: 20px auto 40px auto;
+            line-height: 30px;
+        }
+
+        .section a {
+               outline: 0;
+    display: inline-block;
+    padding: 10px 20px;
+    margin-bottom: 0;
+    width: 100%;
+    max-width: 100%;
+            background-color: #333;
+            color: #fff;
+            font-size: 22px;
+            letter-spacing: 3px;
+            transition: all 0.3s ease 0s;
+            -moz-transition: all 0.3s ease 0s;
+            -webkit-transition: all 0.3s ease 0s;
+        }
+
+            .section a:hover {
+                background-color: #1D222D;
+            }
+
+            .section a:link, .section a:visited, .section a:link:hover, .section a:visited:hover {
+                text-decoration: none;
+                color: #fff;
+            }
+
+        @media (max-width: 500px) {
+            .top-border {
+                display: none;
+            }
+
+            .section {
+                border-top: 2px solid #333;
+            }
+
+                .section h1 {
+                    margin: 20px 6px;
+                }
+        }
+
+        .scrollbar {
+              margin-left: 12px;
+    float: left;
+    height: 189px;
+    width: 96%;
+    background: #F5F5F5;
+    overflow-y: scroll;
+    margin-bottom: 25px;
+        }
+        .scrollbar-1 {
+              margin-left: 12px;
+    float: left;
+    height: 600px;
+    width: 96%;
+    background: #F5F5F5;
+    overflow-y: scroll;
+    margin-bottom: 25px;
+        }
+
+        .force-overflow {
+            min-height: 450px;
+        }
+        /*
+ *  STYLE 3
+ */
+
+        .style-3::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+            background-color: #F5F5F5;
+        }
+
+        .style-3::-webkit-scrollbar {
+            width: 6px;
+            background-color: #F5F5F5;
+        }
+
+        .style-3::-webkit-scrollbar-thumb {
+            background-color: #000000;
+        }
+     }

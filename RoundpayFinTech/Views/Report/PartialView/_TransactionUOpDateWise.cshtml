@@ -1,0 +1,74 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@model IEnumerable<SalesSummaryUserDateWise>
+@{
+    var couter = 1;
+}
+
+@if (Model.Any())
+{
+    var TotalAmount = 0M;
+    var TotalRequested = 0M;
+    var TotalFailedAmount = 0M;
+    var TotalFailedRequested = 0M;
+
+    foreach (var item in Model)
+    {
+        TotalAmount += item.TAmount;
+        TotalRequested += item.TAmountR;
+        TotalFailedAmount += item.TFAmount;
+        TotalFailedRequested += item.TFAmountR;
+        var Subcouter = 1;
+        <tr class="clickable cursor-pointer" data-toggle="collapse" data-target="#grpRows_@couter" aria-expanded="false" aria-controls="grpRows_@couter">
+            <td><i class="fa fa-plus-square" aria-hidden="true"></i></td>
+            <th class="text-right">@couter</th>
+            <td class="text-nowrap">@item._EntryDate</td>
+            <td class="text-right">@item._OutletName</td>
+            <td class="text-right">@item.TAmount</td>
+            <td class="text-right">@item.TAmountR</td>
+            <td class="text-right">@item.TFAmount</td>
+            <td class="text-right">@item.TFAmountR</td>
+        </tr>
+        <tr>
+            <td id="grpRows_@couter" class="collapse" colspan="19">
+                <table class="table table-hover table-striped table-secondary table-responsive-sm">
+                    <thead>
+                        <tr>
+                            <th class="border-0 text-right">#</th>
+                            <th class="border-0">Operator</th>
+                            <th class="text-right text-nowrap">SuccessAmount(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right text-nowrap">SuccessRequested(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right text-nowrap">FailedAmount(<i class="fas fa-rupee-sign"></i>)</th>
+                            <th class="text-right text-nowrap">FailedRequested(<i class="fas fa-rupee-sign"></i>)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var subItem in item.OpSalesSummary)
+        {
+                            <tr>
+                                <th class="text-right">@Subcouter</th>
+                                <td class="text-nowrap">@subItem.Operator</td>
+                                <td class="text-right">@subItem.Amount</td>
+                                <td class="text-right">@subItem.AmountR</td>
+                                <td class="text-right">@subItem.FailedAmount</td>
+                                <td class="text-right">@subItem.FailedAmountR</td>
+                            </tr>
+                            Subcouter = Subcouter + 1;
+                        }
+                    </tbody>
+                </table>
+            </td>
+        </tr>
+        couter = couter + 1;
+    }
+    <tr><th colspan="4" class="text-right">Total</th><th class="text-right">@TotalAmount</th><th class="text-right">@TotalRequested</th><th class="text-right">@TotalFailedAmount</th><th class="text-right">@TotalFailedRequested</th></tr>
+}
+else
+{
+    <tr>
+        <td colspan="10" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+
+

@@ -1,0 +1,32 @@
+﻿@using RoundpayFinTech.AppCode.Model.DepartmentModel;
+@model IEnumerable<MasterMenu>
+@{int i = 1; }
+
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.ID">
+        <th class="align-middle">@i</th>
+        <td class="align-middle">@item.Menu</td>
+        <td class="align-middle">
+            <div class="row mr-0">                
+                @{
+                    IEnumerable<MasterOperation> masterOperations = (IEnumerable<MasterOperation>)item.MasterOperation;
+                    foreach (var mop in masterOperations)
+                    {
+                        bool IsAssigned = item.MenuOperation.Any(x => x.OperationID == mop.ID && x.MenuID == item.ID && x.IsActive==true);
+                        <div class="col-md-2">
+                            <div class="custom-radio">
+                                <input class="form-check-input" type="checkbox" name="chbGroupAPI_@item.ID" id="chbAPI_@Html.Raw(i+"_"+mop.ID)"  @Html.Raw(IsAssigned ? "checked=checked" : "")>
+                                <label class="form-check-label" for="chbAPI_@Html.Raw(i+"_"+mop.ID)">
+                                    @mop.OperationName
+                                </label>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </td>
+    </tr>
+    i++;
+}
+

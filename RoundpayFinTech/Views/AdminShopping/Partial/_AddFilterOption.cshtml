@@ -1,0 +1,95 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.FilterOption
+@using RoundpayFinTech.AppCode.StaticModel;
+@{
+
+}
+<style>
+    .spnColor {
+        display: inline-block;
+        width: 15px;
+        height: 15px;
+        margin: 3px;
+    }
+
+        .spnColor.active {
+            border: 2px solid #ffc107;
+            margin: 1px;
+        }
+</style>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            Option
+            <input type="text" placeholder="Option Name" class="form-control" id="textFilter" data-Option-Id="@Model.ID" value="@Model.Option" data-Filter-Id="@Model.FilterID" />
+        </div>
+
+        <div class="form-group">
+            @{
+                if (Model.FilterID == ShoppingFilters.Size)
+                {
+                    var UOMs = new SelectList(Model.Uoms, "Uom", "Uom");
+                    <select class="form-control" asp-items="@UOMs" id="ddlUnit" asp-for="@Model.OptionalID">
+                        <option id=""></option>
+                    </select>
+                }
+
+                if (Model.FilterID == ShoppingFilters.Color)
+                {
+                    foreach (var color in Model.Colors)
+                    {
+                        <span class="spnColor @Html.Raw(Model.OptionalID==color.Code?"active":"")" data-Color-Code="@color.Code" data-Color-Name="@color.Name" style="background-color:@color.Code">&nbsp;</span>
+                    }
+                }
+            }
+
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "") />
+                <label for="chkActive" class="font-weight-bold lbl">IsActive</label>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button class="btn btn-outline-success" id="btnSave">@Html.Raw(Model.ID == 0 ? "Save" : "Update")</button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#btnSave').unbind().click(() => {
+        btnLdr.Start($('#btnSave'), 'Add Filter');
+        let param = {
+            CommonInt: $('#textFilter').data().optionId,
+            CommonInt2: $('#textFilter').data().filterId,
+            CommonStr: $('#textFilter').val(),
+            CommonStr2: @Model.FilterID== @ShoppingFilters.Color? $('.spnColor.active').data().colorCode:$('#ddlUnit').val(),
+            CommonBool: $('#chkActive').is(':checked')
+        };
+        $.post('/UpdateFilterOption', param)
+            .done(result => {
+                an.id = "ssalert"
+                an.title = result.statuscode == 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == 1) {
+                    $('button.close:last').click();
+                    $('#FilterOption').find('button.close:last').click();
+                    //$('tr[data-filter-id="' + $('#textFilter').data().filterId + '"]').find('td:eq(1) a').click();
+                }
+            })
+            .fail(xhr => {
+                an.id = "ssalert"
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => btnLdr.Stop($('#btnSave')));
+    });
+
+    $('span.spnColor').click(e => {
+        $('span').removeClass('active'); $(e.currentTarget).addClass('active');
+        $('#textFilter').val($(e.currentTarget).data().colorName);
+    });
+</script> 

@@ -1,0 +1,126 @@
+﻿@model RoundpayFinTech.AppCode.Model.CoupanMaster
+
+
+<div class="row">
+    <div class="col-sm-12 mb-1">
+        <label class="lbl">Add Voucher Image</label>
+    </div>
+</div>
+<div id="previewThumbnail" class="form-group row">
+    @{
+
+        int sF = 0;
+        int sCount = 1;
+        var maxID = 1;
+        bool flag = true;
+
+        @if (Model.VocImage != null && Model.VocImage.Count() > 0)
+        {
+            
+
+            foreach (var item in Model.VocImage)
+            {
+               
+                sF = Convert.ToInt32(item.SiteFileName.Substring(0, item.SiteFileName.IndexOf('.')).Split('_')[1]);
+                if (sCount != sF && flag)
+                {
+                    flag = false;
+                    maxID = sCount;
+                }
+                <div class="col-md-2 pb-10">
+                    <div class="text-center"><img class="img-thumbnail preview mb-2" src="@item.SiteResourceUrl?@DateTime.Now.Ticks" style="width: 100px; min-height: 75px" /></div>
+                    <center>
+                        <input type='file' id="btnSer_@sF" class="d-none" />
+                        <label for="btnSer_@sF" class="btn btn-secondary btn-sm"><i class="fa fa-edit"></i></label>
+                        <button id="btnSerRem_@sF" class="btn btn-danger btn-sm"><i class="fa fa-times"></i></button>
+                    </center>
+                </div>
+                sCount = sCount + 1;
+            }
+
+        }
+
+            var del = flag ? sF + 1 : maxID;
+               <div class="col-md-2 pb-10">
+                <div class="text-center"><img class="img-thumbnail preview mb-2" src="/Image/Website/0/Noimage.png" style="width:100px;height:75px" /></div>
+                <center>
+                    <input type='file' id="btnSer_@del" class="d-none" />
+                    <label for="btnSer_@del" class="btn btn-secondary btn-sm"><i class="fa fa-upload"></i></label>
+                </center>
+            </div>
+       
+
+        }
+    </div>
+
+<script> 
+    $('[id^=btnSer_]').change(function () {
+       
+        var formData = new FormData();
+        formData.append('file', $(this)[0].files[0]);
+        formData.append('filename', $(this).attr("id").split('_')[1]);
+        formData.append('OID', $("#ddlOperator").val());
+        $.ajax({
+            type: 'POST',
+            url: '/upload-CouponVocher',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (result) {
+                an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    ThumbGrid($("#hidd").val());
+                }
+                //window.location.href = window.location.href;
+            },
+            error: function (xhr, result) {
+                checkError(result);
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                preloader.remove()
+            },
+            complete: () => preloader.remove()
+        });
+    });
+
+
+    $('[id^=btnSerRem_]').click(function () {
+       
+        var formData = new FormData();
+        formData.append('filename', $(this).attr("id").split('_')[1]);
+        formData.append('OID', $("#ddlOperator").val());
+        $.ajax({
+            type: 'POST',
+            url: '/removeVocherImage',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: function (result) {
+                an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    ThumbGrid($("#hidd").val());
+                }
+                //window.location.href = window.location.href;
+            },
+            error: function (xhr, result) {
+                checkError(result);
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                preloader.remove()
+            },
+            complete: () => preloader.remove()
+        });
+    });
+
+
+
+
+
+
+</script>

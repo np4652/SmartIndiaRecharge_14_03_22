@@ -1,0 +1,39 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DenominationModal>
+@{
+    var i = 1;
+    int AdminOrAPIUser = ViewBag.AdminOrAPIUser;
+}
+@foreach (var item in Model)
+{
+<tr data-item-id="@item.ID">
+    <th style="width:1em;" scope="row">@i</th>
+    @if (AdminOrAPIUser == 1)
+    {
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act_@(i++)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#" class="dropdown-item">Edit</a>
+                    <a href="#" class="dropdown-item">Delete</a>
+                </div>
+            </div>
+        </td>
+    }
+
+    <td>
+        @item.Amount
+    </td>
+    <td>
+        @item.ModifyDate
+    </td>
+    <td>
+        @item.Remark
+    </td>
+
+</tr>
+
+}
+
+

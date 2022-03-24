@@ -1,0 +1,117 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel
+@model Fintech.AppCode.Model.UserInfo
+@{
+    ViewData["Title"] = "DTH Package Slab Detail";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white" style="line-height:33px">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                        <div class="col-md-4 float-right">
+                            <input type="text" id="txtSearch" class="form-control" placeholder="Search" />
+                        </div>
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="table-responsive table-sm tblrecord">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAdminLedgers">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:17%">Package</th>
+                                        <th class="text-right">PackageMRP</th>
+                                        <th class="text-right">Booking Amount</th>
+                                        <th>SP Key</th>                                       
+                                        <th>BusinessModel</th>
+                                        @if (ApplicationSetting.IsRoleCommissionDisplay)
+                                        {
+                                            <th>Commission</th>
+                                        }
+                                        else
+                                        {
+                                            <th>Rate</th>
+                                            <th>Commission Type</th>
+                                            <th>Amount Type</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+         $(document).ready(function () {
+             an.autoClose = 5;
+             search();
+             $("#txtSearch").on("keyup", function () {
+                 var value = $(this).val().toLowerCase();
+                 $('#tblAdminLedgers tbody tr').filter(function () {
+                     $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                 });
+             });
+         });
+         var search = function () {
+             var ct = {
+                 statuscode: [{
+                     ERROR: -1,
+                     SUCCESS: 1,
+                     PENDING: 0
+                 }]
+             };
+             $.ajax({
+                 type: 'POST',
+                 url: '/R-DTH-slab-detail',
+                 data: {},
+                 contentType: 'application/json',
+                 success: function (result) {
+                     resultReload(result);
+                     $('.__p .tblrecord tbody').html(result);
+                 },
+                 statusCode: {
+                     500: function () {
+                         an.title = 'Oops';
+                         an.content = 'Server error';
+                         an.alert(an.type.failed);
+                     },
+                     0: function () {
+                         an.title = 'Oops';
+                         an.content = 'Internet Connection was broken';
+                         an.alert(an.type.failed);
+                     }
+                 },
+                 error: function (xhr, result) {
+                     an.title = "Oops";
+                     an.content = result;
+                     an.alert(ct.statuscode.ERROR);
+                     if (result === 'parsererror') {
+                         reload();
+                     }
+                 },
+                 complete: function () {
+                     btnLdr.Stop($("#btnSearch"));
+                 }
+             });
+        };
+    </script>
+}
+

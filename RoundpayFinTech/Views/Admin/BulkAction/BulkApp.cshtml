@@ -1,0 +1,264 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.MasterRole>
+@{
+    ViewData["Title"] = "Bulk App Notification";
+}
+<style>
+    .form-group {
+        margin-bottom: 10px !important;
+    }
+
+    .bootstrap-select div.dropdown-menu {
+        width: 100%;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Send Notification
+                    </div>
+                    <div class="card-body">
+                        @if (ApplicationSetting.IsWebNotification)
+                        {
+                            <div class="form-group col-sm-5">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="chkIsWebNotify">
+                                        </div>
+                                    </div>
+                                    <label class="form-control" for="chkIsWebNotify">Web Notification</label>
+                                </div>
+                            </div>
+                            @if (Model.Any())
+                            {
+                                <div class="col-sm-12 d-none" id="divRoles">
+                                    <div class="row">
+                                        @foreach (var role in Model)
+                                        {
+                                            <div class="form-group col-sm-4">
+                                                <div class="input-group mb-2">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                            <input type="checkbox" id="chk_@role.RoleName" data-Role-Id="@role.Id" class="role">
+                                                        </div>
+                                                    </div>
+                                                    <label class="form-control text-nowrap" for="chk_@role.RoleName">@role.RoleName</label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+                        <div class="form-group col-md-12">
+                            <input type="text" id="txtTitle" class="form-control" placeholder="Enter Title" />
+                            <small id="nameTitle" class="form-text text-muted d-none">Mobile is mandatory</small>
+                        </div>
+                        <div class="form-group  col-md-12">
+                            <div class="input-group">
+                                <input type="text" id="txtUrl" class="form-control" placeholder="Enter Redirect URL" />
+                                <div class="input-group-append">
+                                    <input type='file' id="dimageUpload" class="d-none" />
+                                    <label for="dimageUpload" class="btn btn-info input-group-text">Image</label>
+                                </div>
+                                <small id="nameUrl" class="form-text text-muted d-none">Mobile is mandatory</small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-12">
+                            <textarea id="txtMessage" class="form-control" rows="4" cols="20" db aria-describedby="nameMessage" placeholder="Enter Message"></textarea>
+                            <small id="nameMessage" class="form-text text-muted d-none">Message is mandatory</small>
+                        </div>
+                        <div class="col-md-12">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="SendBulkMail()" id="btnCreate" tabindex="16"> Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Message
+                    </div>
+                    <div class="card-body" id="div_opMsg">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="dv_NotiReport">
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>*@
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            BindOpertorMessage();
+            NotiReport();
+        });
+
+        function BindOpertorMessage() {
+            preloader.load();
+            $.post('/BulkOpertorMessage')
+                .done(function (result) {
+                    $('#div_opMsg').html(result);
+                    $('.selectpicker').selectpicker('refresh');
+                    $('[data-id="ddlOperator"]').on('change', function (event) {
+                        ReplaceValue();
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+
+        function GetMessage(ctr) {
+            preloader.load();
+            $.post('/GetMessageFormat', { FormatID: $(ctr).val() })
+                .done(function (result) {
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        $('#txtTempMessage').val(result.alertTemplate);
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+        function ReplaceValue() {
+            let op = "";
+            $("#ddlOperator > option:selected").each(function () {
+                op += op == '' ? this.text : "," + this.text;
+            });
+            $('#txtMessage').val($('#txtTempMessage').val().replace('{Operator}', op).replace('{OperatorName}', op));
+        }
+
+        function SendBulkMail() {
+            let title = $('#txtTitle').val();
+            let url = $('#txtUrl').val();
+            let msg = $('#txtMessage').val();
+            if (title === undefined || title === '') {
+                an.title = "Oops";
+                an.content = "Please fill title";
+                an.alert(an.type.failed);
+                $('#txtTitle').focus();
+                return false;
+            }
+            if (msg === undefined || msg === '') {
+                an.title = "Oops";
+                an.content = "Please fill message";
+                an.alert(an.type.failed);
+                $('#txtMessage').focus();
+                return false;
+            }
+            preloader.load();
+            var formData = new FormData();
+            if ($('#dimageUpload')[0].files[0] === undefined) {
+                formData.append("file", null);
+            }
+            else {
+                formData.append("file", $('#dimageUpload')[0].files[0]);
+            }
+            let op = ''
+            $("#ddlOperator > option:selected").each(function () {
+                op += op == '' ? this.text : "," + this.text;
+            });
+
+            let Roles = '';
+            $('.role:checked').each(function () {
+                Roles = Roles === '' ? $(this).data().roleId : Roles + "," + $(this).data().roleId;
+            });
+            formData.append("Title", title);
+            formData.append("Url", url);
+            formData.append("Message", msg);
+            formData.append("IsWebNotify", $('#chkIsWebNotify').is(':checked'));
+            formData.append("Operators", op);
+            formData.append("Roles", Roles);
+            $.ajax({
+                type: 'POST',
+                url: '/BulkNotification',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    preloader.remove();
+                    $.loadNotification();
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                    preloader.remove();
+                }
+            });
+        }
+
+        var NotiReport = function () {
+            $.post('/NotiReport')
+                .done(function (result) {
+                    resultReload(result);
+                    $('#dv_NotiReport').html(result);
+                    $('#dv_NotiReport td button').click(function () {
+                        var id = this.id.split('_')[1];
+                        $.post('/Del_Notification', { id })
+                            .done(result => {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? "Well done" : "Oops! Error";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    NotiReport();
+                                }
+                            }).fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+                    });
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+
+        $('#chkIsWebNotify').click(() => {
+            if ($('#chkIsWebNotify').is(':checked')) {
+                $('#divRoles').removeClass('d-none');
+            }
+            else {
+                $('#divRoles').addClass('d-none');
+            }
+        });
+    </script>
+}

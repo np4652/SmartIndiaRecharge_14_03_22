@@ -1,0 +1,13 @@
+﻿@model Fintech.AppCode.Interfaces.IResponseStatus
+<div class="col-md-12" id="dvDoubleFactor">
+    <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+    <h5>Enter OTP</h5>
+    <div class="form-group">
+        @Html.Label("txtOTP", "Enter OTP", new { @class = "lbl" })
+        @Html.TextBox("txtOTP", null, new { @class = "form-control", @placeholder = "Enter OTP", @aria_describedby = "otpHelp", @tabindex = 4 })
+        <small id="otpHelp" class="form-text text-info"></small>
+    </div>
+    <button class="btn btn-outline-success mr-1" id="btnSubmitOTP">Submit</button>
+    <button class="btn btn-outline-info mr-1" id="btnSendTransaction">Resend</button>
+    <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+</div>

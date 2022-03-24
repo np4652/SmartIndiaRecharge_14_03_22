@@ -1,0 +1,1250 @@
+﻿@model Fintech.AppCode.Model.SlabModel
+@{
+    ViewData["Title"] = "SlabMaster";
+}
+@{
+    <style type="text/css">
+        .cus_dropdown a {
+            font-size: 13px;
+        }
+
+        .custable_responsive {
+            min-height: 350px !important;
+        }
+    </style>
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">Slab Master</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="card mt-2">
+                <div class="card-header bg-gradientorange text-white pb-1 pt-1">
+                    <div class="row">
+                        <div class="col-sm-8 text-monospace">
+                            <i class="fas fa-link"></i> Slab Master
+                        </div>
+                        <div class="col-sm-4">
+                            <div class="input-group">
+                                <input id="txtSearchSlab" class="form-control text-left " placeholder="Search On List" />
+                                <div class="input-group-append">
+                                    <button id="btnNew" class="btn btn-outline-light btn-sm font-bold text-monospace pl-3 pr-3">New</button>
+                                    <a class="btn btn-light btn-sm" href="~/DMRModel.pdf" download="DMRCalculationMechanism" data-toggle="tooltip" data-placement="top" title="Download DMR Calculation Mechanism">
+                                        <span>
+                                            <i class="fa fa-download"></i> <i class="text-danger fa fa-file-pdf"></i>
+                                        </span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-1">
+                    <div class="row">
+                        @if (Model.IsAdmin)
+                        {
+                            <div class="col-md-12 text-right">
+                                <div class="btn-group btn-group-toggle text-right" data-toggle="buttons">
+                                    <label class="btn btn-outline-dark btn-sm active" style="border-bottom:none">
+                                        <input type="radio" name="rdoSType" id="rdoBoth" autocomplete="off" checked> Both
+                                    </label>
+                                    <label class="btn btn-outline-dark btn-sm" style="border-bottom:none">
+                                        <input type="radio" name="rdoSType" id="rdoLevel" autocomplete="off"> Level
+                                    </label>
+                                    <label class="btn btn-outline-dark btn-sm" style="border-bottom:none">
+                                        <input type="radio" name="rdoSType" id="rdoChannel" autocomplete="off"> Channel
+                                    </label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="table-responsive custable_responsive">
+                        <table class="table table-bordered table-striped table-condensed">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>#</th>
+                                    <th>Actions</th>
+                                    <th>Slab Name</th>
+                                    <th>Details</th>
+                                    <th>Entry Date</th>
+                                    <th>Modify Date</th>
+                                    <th>IsActive</th>
+                                    @if (Model.IsAdmin && ApplicationSetting.IsB2CEnabled)
+                                    {
+                                        <th scope="col">IsSignupB2C</th>
+                                    }
+                                    <th>IsSignupB2B</th>
+                                    @*@if (Model.IsWebsite || Model.IsAdmin)
+                                        {
+
+                                        }*@
+
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script>
+    $(document).ready(function () {
+        $('.body-content').removeClass('container').addClass('container-fluid');
+        darkAnimBtn($('#btnNew'));
+        load();
+        $('table').fixTableHeader();
+    });
+
+    var load = function () {
+        preloader.load();
+        $.post('/Slab-Master')
+            .done(function (result) {
+                resultReload(result);
+                $('#__p tbody').html(result);
+                $(".dropdown-toggle").dropdown();
+                an.autoClose = 5;
+                $("#txtSearchSlab").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $('#__p table tbody tr').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+                $('input[name=rdoSType]').change(function () {
+                    var value = '';
+                    if (this.id == "rdoLevel")
+                        value = 'level';
+                    if (this.id == "rdoChannel")
+                        value = 'channel';
+                    $('#__p table tbody tr').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+                $('tr :checkbox').change(function () {
+                    var Is = $(this).is(':checked');
+                    var _this = this;
+                    if ($(_this).attr('id').indexOf('sts_') > -1) {
+                        preloader.load();
+                        $.post('/Toggle-Slab-Status', { ID: $(this).closest('tr').data().itemId }, function (result) {
+                            resultReload(result);
+                            an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                            if (result.statuscode == an.type.success)
+                                result.statuscode = Is ? an.type.success : an.type.info;
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+                    }
+                    if ($(_this).attr('id').indexOf('signup_') > -1) {
+                        preloader.load();
+                        $.post('/@(ApplicationSetting.IsB2CEnabled?"signup-slab":"")', { SlabID: $(this).closest('tr').data().itemId }, function (result) {
+                            resultReload(result);
+                            an.title = result.statuscode == -1 ? 'Oops' : 'Wow';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            if (result.statuscode == an.type.success) {
+                                reload();
+                            }
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+                    }
+                });
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(function () {
+                preloader.remove();
+                $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                    UpdateSlab(this);
+                });
+                $('tr div.dropdown-menu a.Recharge').click(function () {
+                    if ($(this).attr('id') == undefined) {
+                        return true;
+                    }
+                    preloader.load();
+                    var slabid = 0;
+                    slabid = $(this).closest('tr').data().itemId;
+                    loadPartial(slabid)
+                })
+                $('tr div.dropdown-menu a.Range').click(function () {
+                    if ($(this).attr('id') == undefined) {
+                        return true;
+                    }
+                    preloader.load();
+                    var slabid = 0;
+                    slabid = $(this).closest('tr').data().itemId;
+                    loadRangeComm(slabid);
+                })
+                $('tr div.dropdown-menu a#GiComm').click(function () {
+                    if ($(this).attr('id') == undefined) {
+                        return true;
+                    }
+                    var slabid = 0;
+                    slabid = $(this).closest('tr').data().itemId;
+                    GiComm(slabid);
+                })
+                $('tr div.dropdown-menu a.Denom').click(function () {
+                    callDenomSlab(this,1);
+                })
+                $('tr div.dropdown-menu a.Target').click(function () {
+                    preloader.load();
+                    var param = {
+                        slabid: $(this).closest('tr').data().itemId,
+                        IsAdminDefined: $(this).closest('tr').data().itemSlabtype,
+                    }
+                    var _url = param.IsAdminDefined == "False" ? "/Target" : "/Target-ByRole";
+                    $.post(_url, { param: param })
+                        .done(function (result) {
+                            resultReload(result);
+                            mdlA.content = result;
+                            mdlA.id = 'mymodalTarget';
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.xxlarge);
+                            $('[data-toggle="tooltip"]').tooltip();
+                            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                            setTimeout(function () {
+                                $('#txtSearchRSD').focus();
+                                $("#txtSearchRSD").on("keyup", function () {
+                                    var value = $(this).val().toLowerCase();
+                                    $('#tblRNG tbody tr').filter(function () {
+                                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                    });
+                                });
+                            }, 500);
+                            $('.btn-toggle').click(function () {
+                                $(this).find('.btn').toggleClass('active');
+                                if ($(this).find('.btn-dark').length > 0) {
+                                    $(this).find('.btn').toggleClass('btn-dark');
+                                }
+                                if ($(this).find('.btn-outline-dark').length > 0) {
+                                    $(this).find('.btn').toggleClass('btn-outline-dark');
+                                }
+                            });
+                            $('input[id^="txtRMComAmt"],input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"],input[id^="txtRRMComAmt"],input[id^="txtRRComAmt"], div[id^="btnRRGroupComType_"], div[id^="btnRRGroupAmtType_"]').on('blur click', function () {
+                                UpdateRComm(this, event);
+                            });
+                        })
+                        .catch(function (xhr, e, msg) {
+                            an.title = 'Oops';
+                            an.content = 'An error has been occured during request.Reload again!'
+                            an.alert(an.type.failed);
+                        })
+                        .fail(function (xhr) {
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        })
+                        .always(() => preloader.remove());
+                });
+                $('tr div.dropdown-menu a.DTHCommission').click(function () {
+                    if ($(this).attr('id') == undefined) {
+                        return true;
+                    }
+                    preloader.load();
+                    var slabid = 0;
+                    slabid = $(this).closest('tr').data().itemId;
+                    loadDTHCommission(slabid)
+                });
+
+                $('tr div.dropdown-menu a.btnSpecialComm').click(function () {
+                    callSpecialCommSlab(this, 1);
+                })
+
+
+                $('a.copySlab').click((e) => {
+                    let slabid = 0;
+                    slabid = $(e.currentTarget).closest('tr').data().itemId;
+                    copySlabWin(slabid);
+                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                    $('#btncopySlab').click(() => _CopySlab(slabid));
+                });
+
+                $('tr div.dropdown-menu a.btnMultiLevel').click(function () {
+                    if ($(this).attr('id') == undefined) {
+                        return true;
+                    }
+                    preloader.load();
+                    var slabid = 0;
+                    slabid = $(this).closest('tr').data().itemId;
+                    btnMultiLevel(slabid)
+                });
+            });
+    };
+    var callDenomSlab = function (sender,op) {
+        preloader.load();
+        var slabid = 0;
+        var IsAdminDefined = $(sender).closest('tr').data().itemSlabtype;
+        slabid = $(sender).closest('tr').data().itemId;
+        var slabName = $($($(sender).closest('tr').find('td')[1]).find(':first')).text().trim();
+        $.post('/Denomination-Slab-Detail', { SlabID: slabid, IsAdminDefined: IsAdminDefined, OpTypeID:op })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result.replace('{SLAB}', slabName);
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('#ddlOType').on('change', function () {
+                    callDenomSlab(sender, $(this).val());
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRNG tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                  $('input[id^="txtRMComAmt"],input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"],input[id^="txtRRMComAmt"],input[id^="txtRRComAmt"], div[id^="btnRRGroupComType_"], div[id^="btnRRGroupAmtType_"]').on('blur click', function () {
+                    UpdateRComm(this, event);
+                });
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+
+    var callSpecialCommSlab = function (sender, op) {
+        preloader.load();
+        var slabid = 0;
+        var IsAdminDefined = $(sender).closest('tr').data().itemSlabtype;
+        slabid = $(sender).closest('tr').data().itemId;
+        var slabName = $($($(sender).closest('tr').find('td')[2]).find(':first')).text().trim();
+        $.post('/Special-Slab-Detail', { SlabID: slabid, IsAdminDefined: IsAdminDefined, OpTypeID: 1 })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result.replace('{SLAB}', slabName);
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('#ddlOType').on('change', function () {
+                    callSpecialCommSlab(sender, $(this).val());
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRNG tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }7
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                 $('input[id^="txtRMComAmt"],input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"],input[id^="txtRRMComAmt"],input[id^="txtRRComAmt"], div[id^="btnRRGroupComType_"], div[id^="btnRRGroupAmtType_"]').on('blur click', function () {
+                    UpdateRComm(this, event);
+                });
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+
+    var updateDMRModelFOrRange = function (sender) {
+        var s = $(sender).data().slabid;
+        var o = $(sender).data().oid;
+        var d = $(sender).val();
+        if (d == undefined || d == "0")
+            return false;
+        preloader.load();
+        $.post('/update-dmodid-range', { s, o,d })
+            .done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode==1?'Wow':'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+    var loadPartial = function (slabid, _this) {
+        preloader.load();
+        $.post('/R-Slab-Detail', { SlabID: slabid, OpTypeID: $('#ddlOType option:selected').val() })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodalLoadPartial';
+                mdlA.options.backdrop = 'static';
+                if (result.indexOf('RoleWise') > -1) {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                else {
+                    mdlA.alert(mdlA.size.xlarge);
+                }
+                $('.modal:eq(1)').remove();
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRSD tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                $('div[id^="btnGroupComType"], div[id^="btnGroupAmtType"]').on('blur click', function () {
+                    UpdateComm(this, event);
+                });
+
+                $('div[id^="btnGroupRComType"], div[id^="btnGroupRAmtType"]').on('blur click', function () {
+                    UpdateComm(this, event);
+                });
+
+                $('input[id^="txtComAmt"], input[id^="txtRComAmt"]').on('change', function () {
+                    UpdateComm(this, event);
+                })
+
+
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+    var GiComm = function(slabid, _this){
+   
+        preloader.load();
+        let opTypeId=$('#ddlOType').val();
+        opTypeId=opTypeId==undefined || opTypeId =='' || opTypeId == 0 ? '28' : opTypeId;
+        $.post("GIComm", { SlabID: slabid, OpTypeID:opTypeId  }).done(function(result){
+            console.log(slabid, opTypeId);
+            mdlA.title = "GI Commission";
+            mdlA.content = result;
+            mdlA.id = 'GiCommission';
+            mdlA.options.backdrop = 'static';
+            if (result.indexOf('RoleWise') > -1) {
+                mdlA.alert(mdlA.size.xxlarge);
+            }
+            else {
+                mdlA.alert(mdlA.size.xlarge);            
+            }
+            $('.modal:eq(1)').remove();            
+            
+            mdlA.modal(mdlA.size.xxlarge);
+            $('[data-toggle="tooltip"]').tooltip();
+            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            setTimeout(function () {
+                $('#txtSearchRSD').focus();
+                $("#txtSearchRSD").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $('#tblRSD tbody tr').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            }, 500);
+            $('.btn-toggle').click(function () {
+                $(this).find('.btn').toggleClass('active');
+                if ($(this).find('.btn-dark').length > 0) {
+                    $(this).find('.btn').toggleClass('btn-dark');
+                }
+                if ($(this).find('.btn-outline-dark').length > 0) {
+                    $(this).find('.btn').toggleClass('btn-outline-dark');
+                }
+            });
+            $('div[id^="btnGroupComType"], div[id^="btnGroupAmtType"], div[id^="btnGroupComOnAmtType"]').on('blur click', function () {
+                UpdateGIComm(this, event);
+            });
+            $('div[id^="btnGroupTPComType"], div[id^="btnGroupTPAmtType"], div[id^="btnGroupTPComOnAmtType"]').on('blur click', function () {
+                UpdateGIComm(this, event);
+            });
+            $('input[id^="txtComAmt"], input[id^="txtTPComAmt"]').on('change', function () {
+                UpdateGIComm(this, event);
+            })
+        }).fail(function(xhr){
+            alert("Failed");
+            preloader.remove();
+        }).always(() => preloader.remove());
+    }
+    var btnMultiLevel = function (slabid, _this) {
+        preloader.load();
+        debugger
+        $.post('/MLM-Slab-Detail', { SlabID: slabid, OpTypeID: $('#MLM-ddlOType option:selected').val() })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodalLoadPartial';
+                mdlA.options.backdrop = 'static';
+                if (result.indexOf('RoleWise') > -1) {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                else {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                $('.modal:eq(1)').remove();
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                setTimeout(function () {
+                    $('#MLM-txtSearchRSD').focus();
+                    $("#MLM-txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#MLM-tblRSD tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                $('div[id^="btnGroupComType"], div[id^="btnGroupAmtType"]').on('blur click', function () {
+                    UpdateComm(this, event);
+                });
+
+                $('div[id^="btnGroupRComType"], div[id^="btnGroupRAmtType"]').on('blur click', function () {
+                    UpdateComm(this, event);
+                });
+
+                $('input[id^="txtComAmt"], input[id^="txtRComAmt"]').on('change', function () {
+                    UpdateComm(this, event);
+                })
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+    var loadDTHCommission = function (slabid, OID) {
+        $.post('/DTH-Commission-Detail', { SlabID: slabid, OID: OID })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                if (result.indexOf('RoleWise') > -1) {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                else {
+                    mdlA.alert(mdlA.size.large);
+                }
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRSD tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                $('div[id^="btnGroupComType"], div[id^="btnGroupAmtType"]').on('blur click', e => UpdateDTHComm($(e.currentTarget), event));
+                $('input[id^="txtComAmt"]').on('change', (e) => UpdateDTHComm($(e.currentTarget), event));
+                $('#ddlOperator').change(e => loadDTHCommission(slabid, $(e.currentTarget).val()));
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    };
+
+    var UpdateDTHComm = function (_t, _e) {
+        if (_e.type == "click" && ($(_t).is(':input[id^="txtComAmt"]'))) {
+            return true;
+        }
+        var IstxtComAmt = false;
+        if ($(_t).is(':input[id^="txtComAmt"]')) {
+            IstxtComAmt = true;
+        }
+        var PId = $(_t).closest('tr').data().itemId;
+        var slabId = $('#hid').val();
+        var _tid = $(_t).attr('id');
+        var _sfx = '';
+        if (_tid) {
+            _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+        }
+        var roleID = '0';
+        if ($('#IsRole').text().trim() == "RoleWise") {
+            roleID = _tid.split('_').length == 3 ? _tid.split('_')[2] : roleID;
+        }
+
+        var comm = $('[data-item-id="' + PId + '"] #txtComAmt' + _sfx).val();
+        var commType = $('[data-item-id="' + PId + '"] #btnGroupComType' + _sfx + ' button.active').text()[0];
+        var amtType = $('[data-item-id="' + PId + '"] #btnGroupAmtType' + _sfx + ' button.active').text()[0];
+        var dotLen = comm.split('.').length - 1;
+        var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+        $v.showErrorFor($('[data-item-id="' + PId + '"] #txtComAmt' + _sfx), 'Invalid amount.', IsE.comm);
+        IsE.err = IsE.comm;
+        if (IsE.err) {
+            return false;
+        }
+
+        var Slab = { PackageID: parseInt(PId), SlabID: parseInt(slabId), Comm: parseFloat(comm), CommType: commType === 'S' ? 1 : 0, AmtType: amtType === 'F' ? 1 : 0, RoleID: parseInt(roleID) }
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/Update-DTHCommission',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + PId + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + PId + '"] input[id^="hidComAmt"]').val(comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    };
+
+    var UpdateSlab = function (sender) {
+
+        if ($.inArray($(sender).text(), ['Edit', 'New']) < 0) {
+            return true;
+        }
+        preloader.load();
+        var id = 0;
+        if ($(sender).text() === 'Edit') {
+            id = $(sender).closest('tr').data().itemId;
+        }
+        $.post('/Slab-Edit/' + id).done(function (result) {
+            resultReload(result);
+            mdlA.content = result;
+            mdlA.id = 'mymodal';
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.default);
+            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            //var IsMulti = $('#ddlSlabType option:selected').text();
+            //if (IsMulti == "MultiLevel") { //dont change the text
+            //    IsMulti = 1;
+            //}
+            //else {
+            //    IsMulti = 0;
+            //}
+            var ctSlab = {
+                snam: $('#txtSlabName'),
+                styp: $('#ddlSlabType'),
+                srem: $('#txtRemark'),
+                btn: $('#btnSlbSave'),
+                hid: $('#hid'),
+                chbBackup: 0,
+                chbIsB2B: $('#chbIsB2B')
+            };
+            ctSlab.btnTxt = ctSlab.btn.html();
+            setTimeout(function () {
+                ctSlab.snam.focus();
+            }, 500);
+            ctSlab.btn.click(function () {
+                if (ctSlab.btnTxt !== ctSlab.btn.html()) {
+                    return false;
+                }
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start(ctSlab.btn, 'Requesting');
+                var IsE = { snam: ctSlab.snam.val().trim() == '' }
+                $v.showErrorFor(ctSlab.snam, 'Field can not be empty!', IsE.snam);
+                IsE.err = (IsE.snam);
+                if (IsE.err) {
+                    btnLdr.Stop(ctSlab.btn);
+                    return false;
+                }
+                var IsMulti = $('#ddlSlabType option:selected').text();
+                if (IsMulti == "MultiLevel") { //dont change the text
+                    IsMulti = 1;
+                }
+                else {
+                    IsMulti = 0;
+                }
+                var SlabMaster = {
+                    ID: ctSlab.hid.val(),
+                    Slab: ctSlab.snam.val(),
+                    IsAdminDefined: ctSlab.styp.val(),
+                    Remark: ctSlab.srem.val(),
+                    IsRealSlab: 0,
+                    IsB2B: ctSlab.chbIsB2B.is(':checked'),
+                    DMRModelID: 0,
+                    IsMultiLevel: IsMulti
+                }
+
+                an.id = 'myalert';
+                an.parent = $('#alertmsg');
+                $.ajax({
+                    type: 'POST',
+                    url: '/Slab-Edit',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(SlabMaster),
+                    success: function (result) {
+                        resultReload(result);
+                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        btnLdr.Stop(ctSlab.btn);
+                        if (result.statuscode == an.type.success) {
+                            mdlA.dispose();
+                            load();
+                        }
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops! Error";
+                        an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                        an.alert(an.type.failed);
+                        if (result === 'parsererror') {
+                            reload();
+                        }
+                        btnLdr.Stop(ctSlab.btn);
+                    }
+                });
+            });
+        }).fail(function (xhr) {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    };
+
+    var UpdateComm = function (_t, _e) {
+        if (_e.type == "click" && ($(_t).is(':input[id^="txtComAmt"]'))) {
+            return true;
+        }
+        var IstxtComAmt = false;
+        if ($(_t).is(':input[id^="txtComAmt"]')) {
+            IstxtComAmt = true;
+        }
+        var oId = $(_t).closest('tr').data().itemId;
+        var slabId = $('#hid').val();
+
+        var _tid = $(_t).attr('id');
+        var _sfx = '';
+        if (_tid) {
+            _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+        }
+
+
+        var roleID = '0';
+        if ($('#IsRole').text().trim() == "RoleWise") {
+            roleID = _tid.split('_').length == 3 ? _tid.split('_')[2] : roleID;
+        }
+        var hidcomm = $('[data-item-id="' + oId + '"] #hidComAmt' + _sfx).val();
+        var comm = $('[data-item-id="' + oId + '"] #txtComAmt' + _sfx).val();
+        var commType = $('[data-item-id="' + oId + '"] #btnGroupComType' + _sfx + ' button.active').text()[0];
+        var amtType = $('[data-item-id="' + oId + '"] #btnGroupAmtType' + _sfx + ' button.active').text()[0];
+
+        //Real Slab
+        var Rcomm = $('[data-item-id="' + oId + '"] #txtRComAmt' + _sfx).val();
+        var RcommType = $('[data-item-id="' + oId + '"] #btnGroupRComType' + _sfx + ' button.active').text()[0];
+        var RamtType = $('[data-item-id="' + oId + '"] #btnGroupRAmtType' + _sfx + ' button.active').text()[0];
+
+        var dotLen = comm.split('.').length - 1;
+        var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtComAmt' + _sfx), 'Invalid amount.', IsE.comm);
+        IsE.err = IsE.comm;
+        if (IsE.err) {
+            return false;
+        }
+        //if (parseFloat(comm) === parseFloat(hidcomm) && IstxtComAmt) {
+        //    return true;
+        //}
+        var Slab = { OID: parseInt(oId), SlabID: parseInt(slabId), Comm: parseFloat(comm), CommType: commType === 'S' ? 1 : 0, AmtType: amtType === 'F' ? 1 : 0, RComm: parseFloat(Rcomm), RCommType: RcommType === 'S' ? 1 : 0, RAmtType: RamtType === 'F' ? 1 : 0, RoleID: parseInt(roleID) }
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/RSlabDetail',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + oId + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + oId + '"] input[id^="hidComAmt"]').val(comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    };
+    var UpdateGIComm = function (_t, _e) {
+        debugger;
+        if (_e.type == "click" && ($(_t).is(':input[id^="txtComAmt"]'))) {
+            return true;
+        }
+        var IstxtComAmt = false;
+        if ($(_t).is(':input[id^="txtComAmt"]')) {
+            IstxtComAmt = true;
+        }
+        var oId = $(_t).closest('tr').data().itemId;
+        var slabId = $('#hid').val();
+
+        var _tid = $(_t).attr('id');
+        var _sfx = '';
+        if (_tid) {
+            _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+        }
+
+
+        var roleID = '0';
+        if ($('#IsRole').text().trim() == "RoleWise") {
+            roleID = _tid.split('_').length == 3 ? _tid.split('_')[2] : roleID;
+        }
+        var hidcomm = $('[data-item-id="' + oId + '"] #hidComAmt' + _sfx).val();
+        var comm = $('[data-item-id="' + oId + '"] #txtComAmt' + _sfx).val();
+        var commType = $('[data-item-id="' + oId + '"] #btnGroupComType' + _sfx + ' button.active').text()[0];
+        var amtType = $('[data-item-id="' + oId + '"] #btnGroupAmtType' + _sfx + ' button.active').text()[0];
+        var comonamtType = $('[data-item-id="' + oId + '"] #btnGroupComOnAmtType' + _sfx + ' button.active').text()[0];
+
+        //Real Slab
+        var TPcomm = $('[data-item-id="' + oId + '"] #txtTPComAmt' + _sfx).val();
+        var TPcommType = $('[data-item-id="' + oId + '"] #btnGroupTPComType' + _sfx + ' button.active').text()[0];
+        var TPamtType = $('[data-item-id="' + oId + '"] #btnGroupTPAmtType' + _sfx + ' button.active').text()[0];
+        var TPcomonamtType = $('[data-item-id="' + oId + '"] #btnGroupTPComOnAmtType' + _sfx + ' button.active').text()[0];
+
+        var dotLen = comm.split('.').length - 1;
+        var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtComAmt' + _sfx), 'Invalid amount.', IsE.comm);
+        IsE.err = IsE.comm;
+        if (IsE.err) {
+            return false;
+        }
+        //if (parseFloat(comm) === parseFloat(hidcomm) && IstxtComAmt) {
+        //    return true;
+        //}
+        var Slab = { OID: parseInt(oId), SlabID: parseInt(slabId), Comm: parseFloat(comm), CommType: commType === 'S' ? 1 : 0, AmtType: amtType === 'F' ? 1 : 0, ComOnAmtType: comonamtType==='N' ? 1 : 0, TPComm: parseFloat(TPcomm), TPCommType: TPcommType === 'S' ? 1 : 0, TPAmtType: TPamtType === 'F' ? 1 : 0, TPComOnAmtType: TPcomonamtType=='N'?1:0, RoleID: parseInt(roleID) }
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: 'I/UTPslabDetail',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + oId + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + oId + '"] input[id^="hidComAmt"]').val(comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    };
+
+    var UpdateRComm = function (_t, _e) {
+            if (_e.type == "click" && ($(_t).is(':input[id^="txtRComAmt"]') || $(_t).is(':input[id^="txtRMComAmt"]'))) {
+                return true;
+            }
+            var IstxtComAmt = false;
+        if ($(_t).is(':input[id^="txtRComAmt"]') || $(_t).is(':input[id^="txtRMComAmt"]')) {
+
+                IstxtComAmt = true;
+            }
+            var oId = $(_t).closest('tr').data().itemId;
+            var slabId = $('#hid').val();
+
+            var _tid = $(_t).attr('id');
+            var _sfx = '';
+            if (_tid) {
+                _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+            }
+            var roleID = '0';
+            if ($($('#tblRNG th')[2]).text() == "RoleWise") {
+                roleID = _tid.split('_').length == 3 ? _tid.split('_')[2] : roleID;
+            }
+            var hidcomm = $('[data-item-id="' + oId + '"] #hidRComAmt' + _sfx).val();
+            var hidmaxcomm = $('[data-item-id="' + oId + '"] #hidRMComAmt' + _sfx).val();
+            var hidrng = $('[data-item-id="' + oId + '"] #hidrng' + _sfx).val();
+            var comm = $('[data-item-id="' + oId + '"] #txtRComAmt' + _sfx).val();
+            var maxcomm = $('[data-item-id="' + oId + '"] #txtRMComAmt' + _sfx).val();
+            //var FixedCharge = $('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx).val();
+        var selectedTr = $('[data-item-id="' + oId + '"]:eq(0)');
+        var FixedCharge = $('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx).val() != undefined ? $('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx).val() : selectedTr.find('td:eq(5)').text();
+        FixedCharge = FixedCharge.trim();
+            var hidFixedCharge = $('[data-item-id="' + oId + '"] #txtFixedChargeH' + _sfx).val();
+            var commType = $('[data-item-id="' + oId + '"] #btnRGroupComType' + _sfx + ' button.active').text();
+        var amtType = $('[data-item-id="' + oId + '"] #btnRGroupAmtType' + _sfx + ' button.active').text();
+        debugger;
+        var hidrcomm = $('[data-item-id="' + oId + '"] #hidRRComAmt' + _sfx).val();
+        var hidrmaxcomm = $('[data-item-id="' + oId + '"] #hidRRMComAmt' + _sfx).val();
+        var rcomm = $('[data-item-id="' + oId + '"] #txtRRComAmt' + _sfx).val();
+        var rmaxcomm = $('[data-item-id="' + oId + '"] #txtRRMComAmt' + _sfx).val();
+         var RFixedCharge = $('[data-item-id="' + oId + '"] #txtRFixedCharge' + _sfx).val() != undefined ? $('[data-item-id="' + oId + '"] #txtRFixedCharge' + _sfx).val() : selectedTr.find('td:eq(5)').text();
+        RFixedCharge = RFixedCharge.trim();
+        var rcommType = $('[data-item-id="' + oId + '"] #btnRRGroupComType' + _sfx + ' button.active').text();
+        var ramtType = $('[data-item-id="' + oId + '"] #btnRRGroupAmtType' + _sfx + ' button.active').text();
+
+            var dotLen = comm.split('.').length - 1;
+        var maxdotLen = maxcomm.split('.').length - 1;
+
+        var IsE = {
+            comm: ((comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1])))), maxcomm: ((maxcomm.trim() == '' || isNaN(maxcomm) || maxcomm.indexOf(' ') > -1 || maxdotLen > 1 || maxdotLen === 0 && !$v.$IsNum(maxcomm)) || (maxdotLen === 1 && (!$v.$IsNum(maxcomm.split('.')[0]) || !$v.$IsNum(maxcomm.split('.')[1])))), FixedCharge: ((FixedCharge.trim() == '' || isNaN(FixedCharge) || FixedCharge.indexOf(' ') > -1 || maxdotLen > 1 || maxdotLen === 0 && !$v.$IsNum(FixedCharge)) || (maxdotLen === 1 && (!$v.$IsNum(FixedCharge.split('.')[0]) || !$v.$IsNum(FixedCharge.split('.')[1])))),
+             rcomm: ((rcomm.trim() == ''  && !$v.$IsNum(rcomm))),
+            rmaxcomm: ((rmaxcomm.trim() == '' || isNaN(rmaxcomm) || rmaxcomm.indexOf(' ') > -1 || maxdotLen > 1 || maxdotLen === 0 && !$v.$IsNum(rmaxcomm)) || (maxdotLen === 1 && (!$v.$IsNum(rmaxcomm.split('.')[0]) || !$v.$IsNum(rmaxcomm.split('.')[1])))),
+            RFixedCharge: ((RFixedCharge.trim() == '' || isNaN(RFixedCharge) || RFixedCharge.indexOf(' ') > -1 || maxdotLen > 1 || maxdotLen === 0 && !$v.$IsNum(RFixedCharge)) || (maxdotLen === 1 && (!$v.$IsNum(RFixedCharge.split('.')[0]) || !$v.$IsNum(RFixedCharge.split('.')[1]))))
+        }
+
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtRComAmt' + _sfx), 'Invalid amount.', IsE.comm);
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtRMComAmt' + _sfx), 'Invalid Max Commission.', IsE.maxcomm);
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtFixedCharge' + _sfx), 'Invalid Fixed Charge.', IsE.FixedCharge);
+         $v.showErrorFor($('[data-item-id="' + oId + '"] #txtRRComAmt' + _sfx), 'Invalid amount.', IsE.rcomm);
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtRRMComAmt' + _sfx), 'Invalid Max Commission.', IsE.rmaxcomm);
+        $v.showErrorFor($('[data-item-id="' + oId + '"] #txtRFixedCharge' + _sfx), 'Invalid Fixed Charge.', IsE.RFixedCharge);
+        IsE.err = IsE.comm || IsE.maxcomm || IsE.FixedCharge || IsE.rcomm || IsE.rmaxcomm || IsE.RFixedCharge ;
+        if (IsE.err) {
+            return false;
+        }
+        if (parseFloat(comm) === parseFloat(hidcomm) && parseFloat(maxcomm) === parseFloat(hidmaxcomm) && IstxtComAmt &&
+            parseFloat(rcomm) === parseFloat(hidrcomm) && parseFloat(rmaxcomm) === parseFloat(hidrmaxcomm) && IstxtComAmt) {
+            return true;
+        }
+        let Slab = { OID: parseInt(oId), SlabID: parseInt(slabId), Comm: parseFloat(comm), CommType: commType === 'SUR' ? 1 : 0, AmtType: amtType === 'FIX' ? 1 : 0, RoleID: parseInt(roleID), RangeID: parseInt(hidrng), MaxComm: parseFloat(maxcomm), FixedCharge: parseFloat(FixedCharge), Rcomm: parseFloat(rcomm), RCommType: rcommType === 'SUR' ? 1 : 0, RAmtType: ramtType === 'FIX' ? 1 : 0 , RMaxComm: parseFloat(rmaxcomm), RFixedCharge: parseFloat(RFixedCharge) }
+            preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/RangSlabDetail',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + oId + '"] #ITAG'+_sfx).attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + oId + '"] #hidRComAmt' + _sfx).val(comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+
+            },
+            complete: () => preloader.remove()
+        });
+    }
+
+    var _CopySlab = (SlabID, type) => {
+        preloader.load();
+        let param = {
+            SlabID: SlabID,
+            SlabName: $('#txtNewSlabName').val(),
+            Type: type
+        };
+        $.post('/Copy-Slab', param)
+            .done(result => {
+                an.autoClose = 5;
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    };
+
+    var copySlabWin = (slabid) => {
+        let _html = `<div class="row">
+                            <div class="col-md-12">
+                                <button type="button" class="close" aria-label="Close">
+                                <span aria-hidden="true">×</span></button>
+                                <h5>Copy Slab <span><small>SLABID:${slabid}</small><span></h5><hr/>
+                            </div>
+                            <div class="col-md-12 form-group">
+                                <input tupe="text" id="txtNewSlabName" class="form-control" placeholder="Enter Slab Name" />
+                            </div>
+                            <div class="col-md-12 form-group">
+                                  <button class="btn btn-info" id="btncopySlab">Copy</button>
+                             </div>
+                    </div>`
+        mdlA.content = _html;
+        mdlA.id = 'copySlabWin';
+        mdlA.options.backdrop = 'static';
+        mdlA.alert(mdlA.size.default);
+    };
+
+    var _updateBulkCommision = (Slab) => {
+        $.ajax({
+            type: 'POST',
+            url: '/RSlabDetail',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + Slab.OID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + Slab.OID + '"] input[id^="hidComAmt"]').val(Slab.Comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    }
+    var _updateBulkCommisionGI = (Slab) => {
+        $.ajax({
+            type: 'POST',
+            url: 'I/UTPslabDetail',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    $('[data-item-id="' + Slab.OID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                    $('[data-item-id="' + Slab.OID + '"] input[id^="hidComAmt"]').val(Slab.Comm);
+                }
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    }
+    var loadRangeComm = function (slabid) {
+        $.post('/Range-Slab-Detail', { SlabID: slabid, OTypeID: $('#ddlOType option:selected').val() })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'mymodalSlab';
+                mdlA.options.backdrop = 'static';
+                if (result.indexOf('RoleWise') > -1) {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                else {
+                    mdlA.alert(mdlA.size.xxlarge);
+                }
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+                setTimeout(function () {
+                    $('#txtSearchRSD').focus();
+                    $("#txtSearchRSD").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#tblRNG tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                }, 500);
+                $('.btn-toggle').click(function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                });
+                  $('input[id^="txtRMComAmt"],input[id^="txtRComAmt"], div[id^="btnRGroupComType"], div[id^="btnRGroupAmtType"], input[id^="txtFixedCharge"],input[id^="txtRRMComAmt"],input[id^="txtRRComAmt"], div[id^="btnRRGroupComType_"], div[id^="btnRRGroupAmtType_"],input[id^="txtRFixedCharge"]').on('blur click', function () {
+                    UpdateRComm(this, event);
+                });
+                $('[id^="ddlDMRModel_"]').change(function () {
+                    updateDMRModelFOrRange(this);
+                });
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    }
+</script>
+}

@@ -1,0 +1,81 @@
+﻿@using RoundpayFinTech.AppCode.Model
+@using RoundpayFinTech.AppCode.Configuration;
+@model IEnumerable<DTHSlabDetailDisplay>
+
+@{
+    var couter = 1;
+}
+@*<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h5 class="text-info">DTH Subscription Slab Detail</h5><hr />
+    </div>
+</div>*@
+<div class="row">
+    <div class="col-sm-12">
+        @if (Model.Any())
+        {
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblAdminLedgers">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>#</th>
+                        <th style="width:17%">Package</th>
+                        <th class="text-right">PackageMRP</th>
+                        <th class="text-right">Booking Amount</th>
+                        <th>SP Key</th>
+                        <th>BusinessModel</th>
+                        @if (ApplicationSetting.IsRoleCommissionDisplay)
+                        {
+                            <th>Commission</th>
+                        }
+                        else
+                        {
+                            <th>Rate</th>
+                            <th>Commission Type</th>
+                            <th>Amount Type</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@couter</td>
+                            <td>@item.PackageName<small class="form-text text-muted mt-0">@item.Operator [@item.OpType]</small></td>
+                            <td class="text-right">@item.PackageMRP</td>
+                            <td class="text-right">@item.BookingAmount</td>
+                            <td>@item.SPKey</td>
+                            <td>@item.BusinessModel</td>
+                            <td class="text-center">
+                                <div class="row">
+                                    @foreach (var roleComm in item.RoleCommission)
+                                    {
+                                        <div class="col-md text-left">
+                                            <span class="text-monospace text-nowrap"> @(roleComm.Prefix + "[" + (roleComm.CommType == 1 ? "SUR " : "COM ") + roleComm.Comm + (roleComm.AmtType == 0 ? "%" : "") + "]")</span>
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        couter = couter + 1;
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table class="table table-bordered text-center">
+                <tr>
+                    <td>
+                        <center>No Record Found</center>
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,113 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@model IEnumerable<WebsiteModel>
+
+@{int i = 1; }
+
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.WID">
+        <th>@i</th>
+        <th style="width: 22em;">
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.DomainName, new { @id = "txtDomainName" + i, @class = "form-control", @placeholder = "0.0", @style = "width:20em", @aria_describedby = "helpOPID_" + i })
+                @Html.HiddenFor(modelItem => item.WID, new { @id = "hidWID_" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </div>
+        </th>
+        <td>
+            @item.Name<br>
+            <small class="font-weight-bold text-monospace">
+                [@(item.Prefix + item.UserID)]
+            </small>
+        </td>
+
+
+        <th>@item.MobileNo</th>
+
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch IsActive" id="isact_@i" @Html.Raw(item.IsActive ? "checked='checked'" : "")>
+                <label for="isact_@i"></label>
+            </span>
+        </td>
+        <td>
+            @if (item.AppName != "")
+            {
+                <div class="input-group">
+                    <input type="file" id="uploadWLApk" data-is-test="false" data-apk-name="@item.AppName" class="d-none uploadapk" />
+                    <label for="uploadWLApk">
+                        <img src="~/images/avatar/android-s.jpg" class="img-fluid rounded-circle img-thumbnail" style="width:50px" />
+                    </label>
+                    <input type="file" id="uploadWLTestApk" data-is-test="true" data-apk-name="@item.AppName" class="d-none uploadapk" />
+                    <label for="uploadWLTestApk">
+                        <img src="~/images/avatar/androidTest-s.jpg" class="img-fluid rounded-circle img-thumbnail" style="width:50px" />
+                    </label>
+
+                </div>
+            }
+
+        </td>
+        <td>
+            @if (item.AppName != "")
+            {
+                <a class="text-success ml-2" href="~/apk/@item.AppName" download="@item.AppName">
+                    <img src="~/images/avatar/android-s.jpg" class="img-fluid rounded-circle img-thumbnail" style="width:50px" />
+                </a>
+                <a class="text-success ml-2" href="~/apk/Test/@item.AppName" download="@item.AppName">
+                    <img src="~/images/avatar/androidTest-s.jpg" class="img-fluid rounded-circle img-thumbnail" style="width:50px" />
+                </a>
+            }
+        </td>
+        <td>
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.AppPackageID, new { @id = "txtAppPackageID" + i, @class = "form-control text-capitalize", @placeholder = "Enter Package ID", @style = "width:20em", @aria_describedby = "helpAppID_" + i })
+                @Html.HiddenFor(modelItem => item.WID, new { @id = "hidWIDAP_" + i, @class = "form-control text-center", @placeholder = "0", @style = "width:4em" })
+            </div>
+        </td>
+        <td>
+            @Html.HiddenFor(modelItem => item.WID, new { @id = "hidWIDAP_" + i, @class = "form-control text-center", @placeholder = "0", @style = "width:4em" })
+
+           @Html.TextAreaFor(modelItem => item.RefferalContent, new {@title = item.RefferalContent,  @class = "form-control text-capitalize rcvalue", @placeholder = "Enter Refferal Content", @style = "height:3em", @aria_describedby = "helpAppID_" + i })
+
+        </td>
+        @if (ApplicationSetting.IsWLAPIAllowed == true)
+        {
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch chkIsWLAPI" id="isWLAPIAllowed_@i" @Html.Raw(item.IsWLAPIAllowed ? "checked='checked'" : "")>
+                    <label for="isWLAPIAllowed_@i"></label>
+                </span>
+            </td>
+        }
+    </tr>
+    i++;
+}
+<script>
+
+
+    $('.uploadapk').change(e => {
+        let _id = $(e.currentTarget).attr('id');
+        var formData = new FormData();
+        formData.append('file', $('#' + _id)[0].files[0]);
+        formData.append('FileName', $(e.currentTarget).data().apkName);
+        formData.append('IsTest', $(e.currentTarget).data().isTest);
+        $.ajax({
+            type: 'POST',
+            url: '/upload-Apk',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: result => {
+                an.title = result.statuscode == an.type.success ? "Welldone" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            },
+            error: xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                an.alert(-1);
+                btnLdr.Stop(element.btn);
+            },
+            complete: () => $(e.currentTarget).val('')
+        })
+    });
+</script>

@@ -1,0 +1,1106 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Configuration;
+@model RoundpayFinTech.AppCode.Model.ProcModel.GetEditUser
+@{
+    ViewData["Title"] = "Update Profile";
+    SelectList items = null;
+    if (Model.Roles != null)
+    {
+        items = new SelectList(Model.Roles, "ID", "Role");
+    }
+
+    SelectList itemsSlab = null;
+    if (Model.Slabs != null)
+    {
+        itemsSlab = new SelectList(Model.Slabs, "ID", "Role");
+    }
+}
+
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+
+
+
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border-radius: 0px;
+        border: 1px solid #ced4da;
+    }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            font-weight: 300;
+            line-height: 34px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 37px;
+        }
+</style>
+
+<style>
+    #profileView {
+        height: 130px;
+        width: 130px;
+    }
+
+    .my-cc {
+        margin: 4px 0px;
+    }
+
+        .my-cc .item {
+            width: 355px;
+            margin: 5px auto;
+            border: 1px solid #ddd;
+            padding: 0px 20px;
+            background: #f8f8f8;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .my-cc .item-black {
+            background: #000;
+            color: #fff;
+        }
+
+        .my-cc .item-image {
+            background-position: center center;
+            background-size: cover;
+        }
+
+        .my-cc .item .item-heading {
+            margin: 11px 0px;
+        }
+
+            .my-cc .item .item-heading h3 {
+                float: left;
+                font-size: 17px;
+                line-height: 28px;
+                font-weight: 500;
+                color: #fff;
+            }
+
+            .my-cc .item .item-heading h4 {
+                float: right;
+                font-size: 16px;
+                line-height: 28px;
+                color: #ffb8d2;
+                font-weight: 400;
+            }
+
+
+        .my-cc .item .item-account {
+            margin: 5px 0px;
+        }
+
+        .my-cc .item .item-account {
+            margin: 5px 0px;
+        }
+
+            .my-cc .item .item-account span {
+                font-size: 20px;
+                line-height: 28px;
+                margin: 0px 5px;
+                letter-spacing: 3px;
+                font-family: sans-serif;
+                font-weight: 500;
+            }
+
+        .my-cc .item .item-validity .item-valid {
+            margin: 5px 0px;
+        }
+
+            .my-cc .item .item-validity .item-valid h5 {
+                width: 36px;
+                font-size: 12px;
+                line-height: 18px;
+                float: left;
+                text-align: center;
+                text-transform: uppercase;
+                font-weight: 400;
+                color: #aaa;
+            }
+
+            .my-cc .item .item-validity .item-valid span {
+                float: right;
+                font-size: 15px;
+                line-height: 28px;
+                margin-right: 10px;
+                margin-top: 4px;
+                letter-spacing: 3px;
+                font-family: 'OCRAStd';
+            }
+
+        .my-cc .item .item-cc-type {
+            margin: 5px 0px 11px;
+        }
+
+            .my-cc .item .item-cc-type h6 {
+                float: left;
+                font-size: 13px;
+                line-height: 26px;
+                text-transform: uppercase;
+                font-weight: 400;
+                margin: 5px 0px;
+                letter-spacing: 2px;
+                font-family: 'OCRAStd';
+                color: #fff;
+            }
+
+    .modal-auto {
+        max-width: none;
+        width: min-content;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> Upadte Profile</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Upadte Profile</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-6 text-right">
+                                <button class="btn btn-sm btn-outline-light" id="btnlowBalanceSetting"><i class="fa fa-wrench mr-1"></i> ALERT SETTING</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4 ">
+                                <div class="form-group">
+                                    <input type="hidden" id="hidOutletID" value="@Model.OutletID" />
+                                    @if (Model.RoleID == 2)
+                                    {
+                                        @Html.Label("txtName", "Proprietor/Director Name", new { @class = "lbl" })
+                                    }
+                                    else
+                                    {
+                                        @Html.Label("txtName", "Name", new { @class = "lbl" })
+                                    }
+                                    <input type="text" id="txtName" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.Name) ? "readonly='readonly'" : "") class="form-control" aria-describedby="nameHelp" tabindex="1" placeholder="Enter Name" value="@Model.Name" />
+
+                                    <input id="hidId" value="@Model.UserID" type="hidden" />
+                                    <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 form-group">
+                                        @Html.Label("txtMobile", "Mobile Number", new { @class = "lbl" })
+                                        <label id="txtMobile" class="form-control">@Model.MobileNo</label>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        @Html.Label("txtAlternateMobile", "Mobile(Alternate)", new { @class = "lbl" })
+                                        @Html.TextBox("txtAlternateMobile", Model.AlternateMobile, new { @class = "form-control", @placeholder = "Enter AlternateMobileNo", @aria_describedby = "AlternateMobileHelp", @tabindex = 3 })
+                                        <small id="AlternateMobileHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-4 form-group">
+                                        @Html.Label("txtWhatsappNo", "Whatsapp No", new { @class = "lbl" })
+                                        @Html.TextBox("txtWhatsappNo", Model.WhatsAppNumber, new { @class = "form-control", @placeholder = "Enter Whatsapp Number", @aria_describedby = "txtWhatsappNoHelp", @tabindex = 4 })
+                                        <small id="txtWhatsappNoHelp" class="form-text text-muted d-none">Whatsapp Number is mandatory</small>
+                                    </div>
+                                </div>
+                                @if (Model.RoleID == 2)
+                                {
+                                    <div class="form-group">
+                                        @Html.Label("ddlcompanytype", "Company Type", new { @class = "lbl" })
+                                        <select class="form-control" id="ddlcompanytype" aria-describedby="CompanyTypeHelp" tabindex="15" asp-for=@(Model.CompanyTypeID) asp-items="@Model.CompanyTypeSelect">
+                                            <option value="">:: Choose Company Type ::</option>
+                                        </select>
+                                        <small id="CompanyTypeHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                }
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    @Html.Label("txtDOB", "Date Of Birth", new { @class = "lbl" })
+                                    <input type="text" id="txtDOB" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.DOB) ? "readonly='readonly'" : "") class="form-control" aria-describedby="dobHelp" tabindex="7" placeholder="Enter Date Of Birth" value="@Model.DOB" />
+                                    <small id="dobHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="col-md-6 form-group">
+                                    <label id="lblpan" class="lbl">Pan No.</label>
+                                    <input type="text" id="txtPAN" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.PAN) ? "readonly='readonly'" : "") class="form-control" aria-describedby="panHelp" tabindex="8" placeholder="Enter PAN" value="@Model.PAN" />
+                                    <small id="panHelp" class="form-text text-muted d-none"></small>
+                                </div>
+
+                            </div>
+                                
+                                <div class="form-group">
+                                    @Html.Label("txtAddress", "Address", new { @class = "lbl" })
+                                    <input type="text" id="txtAddress" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.Address) ? "readonly='readonly'" : "") class="form-control" aria-describedby="addressHelp" tabindex="11" placeholder="Enter Address" value="@Model.Address" />
+                                    <small id="addressHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtPinCode", "PinCode", new { @class = "lbl" })
+                                    <input type="text" id="txtPinCode" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.Pincode) ? "readonly='readonly'" : "") class="form-control" aria-describedby="pinHelp" tabindex="13" placeholder="Enter Pincode" value="@Model.Pincode" />
+                                    <small id="pinHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtCity", "City", new { @class = "lbl" })
+                                    <label class="form-control" id="txtCity" aria_describedby="cityHelp">@Model.City</label>
+                                    <small id="cityHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("ddlBank", "Bank", new { @class = "lbl" })
+                                        <select class="form-control" id="ddlBank" aria-describedby="BankHelp" tabindex="15" asp-for=@(Model.BankName) asp-items="@Model.Bankselect">
+                                            <option value="">:: Choose Bank ::</option>
+                                        </select>
+                                        <small id="BankHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtBranch", "Branch", new { @class = "lbl" })
+                                        @Html.TextBox("txtBranch", Model.BranchName, new { @class = "form-control text-capitalize", @placeholder = "Enter Branch Name", @aria_describedby = "branchHelp", @tabindex = 10 })
+                                        <small id="branchHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                                @if (Model.RoleID != 2)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("ddlShopType", "Shop Type", new { @class = "lbl" })
+                                            <select class="form-control" id="ddlShopType" aria-describedby="ShopTypeHelp" tabindex="14" asp-for="@(Model.ShopType)">
+                                                <option value="">:: Choose Shop Type ::</option>
+                                                <option value="Kirana Shop">Kirana Shop</option>
+                                                <option value="Mobile Shop">Mobile Shop</option>
+                                                <option value="Copier Shop">Copier Shop</option>
+                                                <option value="Internet cafe">Internet cafe</option>
+                                            </select>
+                                            <small id="ShopTypeHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("ddlLocationType", "LocationType", new { @class = "lbl" })
+                                            <select class="form-control" id="ddlLocationType" aria-describedby="LocationTypeHelp" tabindex="17" asp-for="@(Model.LocationType)">
+                                                <option value="">:: Choose LocationType ::</option>
+                                                <option value="Rural">Rural</option>
+                                                <option value="Urban">Urban</option>
+                                                <option value="Metro">Metro</option>
+                                                <option value="Semi Urban">Semi Urban</option>
+                                            </select>
+                                            <small id="LocationTypeHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.RoleID == 2)
+                                {
+                                    <input id="ddlLocationTypehidd" value="Metro" type="hidden" />
+                                    <input id="ddlShopTypehidd" value="Mobile Shop" type="hidden" />
+                                }
+
+                                @if (!Model.RoleID.In(Role.Admin, Role.FOS) && ApplicationSetting.IsGSTDOCTypeEnabled && Model.EKYCID==0)
+                                {
+                                    <div class="row">
+                                        <div class="col-sm-7 form-group">
+                                            <div class="input-group">
+                                                <label class="form-control">Is registered with GST?</label>
+                                                <div class="input-group-addon btn-group btn-group-sm btn-toggle" id="btnGroupGSTReg">
+                                                    <button class="btn @Html.Raw(Model.IsRegisteredWithGST?"btn-dark active":"btn-outline-dark")" style="border-radius:0">YES</button>
+                                                    <button class="btn @Html.Raw(!Model.IsRegisteredWithGST?"btn-dark active":"btn-outline-dark")" style="border-radius:0">NO</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                </br>
+                                @if (Model.KYCStatus == KYCStatusType.INCOMPLETE || Model.KYCStatus == KYCStatusType.REJECTED || Model.KYCStatus == KYCStatusType.REKYC)
+                                {
+                                    <div class="form-group">
+                                        @if (Model.EKYCID == 0)
+                                        {
+                                            <button type="button" class="btn btn-outline-dark" id="btnCreate" onclick="updateprofile(0)" tabindex="19"> Update</button>
+                                        }
+                                        <button type="button" class="btn btn-outline-dark" id="btnUpdateKYC" onclick="UpdateKYC()" tabindex="20">@(Model.EKYCID>0? "Upload Docs" : "Update KYC") </button>
+                                    </div>
+                                }
+                                @if (Model.KYCStatus == KYCStatusType.COMPLETED && (Model.IsBankUpdateAvailable != true))
+                                {
+                                    <div class="form-group">
+                                        <button type="button" onclick="settlement()" class="btn btn-outline-dark" @*id="btnUpdatebankDetails"*@ tabindex="19"> Update Bank Details</button>
+                                    </div>
+                                }
+                            </div>
+                            <div class="col-md-4 ">
+                                <div class="form-group">
+                                    @if (Model.RoleID == 2)
+                                    {
+                                        @Html.Label("txtOutletName", "Company/Firm Name", new { @class = "lbl" })
+                                    }
+                                    else
+                                    {
+                                        @Html.Label("txtOutletName", "Outlet Name", new { @class = "lbl" })
+                                    }
+                                    <input type="text" id="txtOutletName" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.OutletName) ? "readonly='readonly'" : "") class="form-control" aria-describedby="outletnameHelp" tabindex="2" placeholder="Enter Outlet Name" value="@Model.OutletName" />
+                                    <small id="outletnameHelp" class="form-text text-muted d-none">Outlet Name is mandatory</small>
+                                </div>
+                                <input type="hidden" id='hiddrid' value="@Model.RoleID">
+                                <div class="form-group">
+                                    @Html.Label("txtEmail", "Email ID", new { @class = "lbl" })
+                                    @Html.TextBox("txtEmail", Model.EmailID, new { @class = "form-control", @placeholder = "Enter Email ID", @aria_describedby = "emailHelp", @tabindex = 4 })
+                                    <small id="emailHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtGSTIN", "GSTIN", new { @class = "lbl" })
+                                        <input type="text" id="txtGSTIN" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.GSTIN) ? "readonly='readonly'" : "") class="form-control" aria-describedby="gstinHelp" tabindex="9" placeholder="Enter GSTIN" value="@Model.GSTIN" />
+                                        <small id="gstinHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @if (Model.RoleID == 2)
+                                        {
+                                            @Html.Label("txtAADHAR", "Proprietor/Director AAdhar", new { @class = "lbl" })
+                                        }
+                                        else
+                                        {
+                                            @Html.Label("txtAADHAR", "AADHAR", new { @class = "lbl" })
+                                        }
+                                        <input type="text" id="txtAADHAR" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.AADHAR) ? "readonly='readonly'" : "") class="form-control" aria-describedby="aadharHelp" tabindex="10" placeholder="Enter AADHAR" value="@Model.AADHAR" />
+                                        <small id="aadharHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtLandmark", "Landmark", new { @class = "lbl" })
+                                    @Html.TextBox("txtLandmark", Model.Landmark, new { @class = "form-control text-capitalize", @aria_describedby = "LandmarkHelp", @tabindex = 18 })
+                                    <small id="LandmarkHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtState", "State", new { @class = "lbl" })
+                                    <label class="form-control" id="txtState" aria-describedby="StateHelp"></label>
+                                    <input id="hddStateID" value="@Model.StateID" type="hidden" />
+                                    <small id="StateHelp" class="form-text text-muted d-none"></small>
+                                </div>
+
+                                @if (Model.RoleID != 2)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("ddlQualification", "Qualification", new { @class = "lbl" })
+                                            <select class="form-control" id="ddlQualification" aria-describedby="QualificationHelp" tabindex="15" asp-for="@(Model.Qualification)">
+                                                <option value="">:: Choose Qualification ::</option>
+                                                <option value="SSC">SSC</option>
+                                                <option value="HSC">HSC</option>
+                                                <option value="Graduate">Graduate</option>
+                                                <option value="Post Graduate">Post Graduate</option>
+                                                <option value="Diploma">Diploma</option>
+                                            </select>
+                                            <small id="QualificationHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("ddlPopulation", "Poupulation", new { @class = "lbl" })
+                                            <select class="form-control" id="ddlPoupulation" aria-describedby="PoupulationHelp" tabindex="16" asp-for="@(Model.Poupulation)">
+                                                <option value="">:: Choose Poupulation ::</option>
+                                                <option value="0 to 2000">0 to 2000</option>
+                                                <option value="2000 to 5000">2000 to 5000</option>
+                                                <option value="5000 to 10000">5000 to 10000</option>
+                                                <option value="10000 to 50000">10000 to 50000</option>
+                                                <option value="50000 to 100000">50000 to 100000</option>
+                                                <option value="100000+">100000+</option>
+                                            </select>
+                                            <small id="PoupulationHelp" class="form-text text-muted d-none"></small>
+
+                                        </div>
+                                    </div>
+                                }
+                                @if (Model.RoleID == 2)
+                                {
+                                    <input id="ddlQualificationhidd" value="Graduate" type="hidden" />
+                                    <input id="ddlPoupulationhidd" value="10000 to 50000" type="hidden" />
+                                }
+
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtifsc", "IFSC", new { @class = "lbl" })
+                                        <input type="text" id="txtifsc" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.IFSC) ? "readonly='readonly'" : "") class="form-control" aria-describedby="ifscHelp" tabindex="10" placeholder="Enter IFSC" value="@Model.IFSC" />
+                                        <small id="ifscHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtAccountNumber", "Account Number", new { @class = "lbl" })
+                                        <input type="text" id="txtAccountNumber" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.AccountNumber) ? "readonly='readonly'" : "") class="form-control" aria-describedby="AccountNumberHelp" tabindex="10" placeholder="Account Number" value="@Model.AccountNumber" />
+                                        <small id="AccountNumberHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtAccountName", "Account Name", new { @class = "lbl" })
+
+                                    <input type="text" id="txtAccountName" @(Model.EKYCID > 0 && !string.IsNullOrEmpty(Model.AccountName) ? "readonly='readonly'" : "") class="form-control" aria-describedby="AccountNameHelp" tabindex="10" placeholder="Account Name" value="@Model.AccountName" />
+                                    <small id="AccountNameHelp" class="form-text text-muted d-none"></small>
+                                </div>
+
+                            </div>
+
+                            <div class="col-md-4 text-center">
+                                <div class="col-md-12">
+                                    <span>
+                                        <label class="text-info fa fa-upload" for="imgProfile" style="position: relative; bottom: -64px;right: -141px;z-index:10"></label>
+                                        <input type="file" id="imgProfile" class="d-none" accept="image/png,image/jpg,image/jpeg" />
+                                    </span>
+                                    <img class="rounded-circle mt-4" id="profileView" src="@Html.Raw(Model.ProfilePic==null ? "/images/avatar/defualt.png" : Model.ProfilePic)" />
+                                    <div class="pt-1">
+                                        <div class="btn-group-vertical">
+                                            <label class="btn btn-outline-dark">
+                                                <span class="switch switch-sm">
+                                                    <input type="checkbox" class="switch" id="btnDoubleFactor" @Html.Raw(Model.IsDoubleFactor ? "checked='checked'" : "") />
+                                                    <label for="btnDoubleFactor">DOUBLE FACTOR</label>
+                                                </span>
+                                            </label>
+                                            @{
+                                                var btnCls = "btn btn-info";
+                                                btnCls = Model.KYCStatus == KYCStatusType.REKYC ? "btn btn-outline-secondary" : (Model.KYCStatus == KYCStatusType.APPLIED ? "btn btn-info" : (Model.KYCStatus == KYCStatusType.COMPLETED ? "btn btn-outline-success" : btnCls));
+
+                                            }
+                                            <span class="@btnCls" id="profile_KYCStatus">@("KYC " + KYCStatusType.GetKYCStatus(Model.KYCStatus))</span>
+                                            <label class="text-left btn btn-outline-dark">
+                                                <span class="switch switch-sm">
+                                                    <input type="checkbox" class="switch" id="btnIsRealAPI" @Html.Raw(Model.IsRealAPI ? "checked='checked'" : "") />
+                                                    <label for="btnIsRealAPI">REAL API</label>
+                                                </span>
+                                            </label>
+                                            <span class="btn btn-outline-success" onclick="settlement()" id="">Settlement Account</span>
+                                            @if (Model.RoleID.In(Role.Retailor_Seller, Role.APIUser) && ApplicationSetting.IsRPOnly)
+                                            {
+                                                <label class="text-left btn btn-outline-dark">
+                                                    <span class="switch switch-sm">
+                                                        <input type="checkbox" class="switch" id="btnIsSwitchNEFT" @Html.Raw(Model.IsSwitchIMPStoNEFT ? "checked='checked'" : "") />
+                                                        <label for="btnIsSwitchNEFT">Switch IMPS to NEFT</label>
+                                                    </span>
+                                                </label>
+                                            }
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    @if (Model.Cards != null)
+                                    {
+                                        @for (int i = 0; i < Model.Cards.Count; i++)
+                                        {
+                                            <div class="my-cc">
+                                                <div class="container">
+                                                    <div class="row">
+                                                        <div class="col-md-12 col-sm-12 col-xs-12">
+                                                            <!-- Card -->
+                                                            <div class="item item-black item-image" style="background-image: url('Image/Profile/Debitcard.jpg');">
+
+                                                                <div class="item-heading clearfix">
+
+                                                                    <h3>CDM Card</h3>
+                                                                    <h4> <img src="Image/Profile/AxisLogo.png" style="width:120px" /></h4>
+
+
+                                                                </div>
+                                                                <!-- Account -->
+                                                                <div class="item-account">
+                                                                    <!-- Value -->
+                                                                    <span>  @Model.Cards[i].CardNumber</span>
+                                                                </div>
+                                                                <!-- Validity Starts -->
+                                                                <div class="item-validity">
+                                                                    <div class="row">
+                                                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                                                            <!-- Item -->
+                                                                            <div class="item-valid clearfix">
+                                                                                <!-- Valid From -->
+                                                                                <h5>Valid From</h5>
+                                                                                <!-- Date -->
+                                                                                <span>@Model.Cards[i].ValidFrom</span>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-6 col-sm-6 col-xs-6">
+                                                                            <!-- Item -->
+                                                                            <div class="item-valid clearfix">
+                                                                                <!-- Valid Thru -->
+                                                                                <h5>Valid Thru</h5>
+                                                                                <!-- Date -->
+                                                                                <span>@Model.Cards[i].ValidThru</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- Validity Ends -->
+                                                                <div class="item-cc-type clearfix">
+                                                                    <!-- Type -->
+                                                                    <h6>Roundpay</h6>
+                                                                    <!-- Icon -->
+                                                                    <i class="fa fa-cc-mastercard"></i>
+                                                                </div>
+                                                                <!-- Card Type Ends -->
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        }
+
+                                    }
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="alertmsg"></div>
+
+@section scripts{
+
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/js/datepickerHelper.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    @if (ApplicationSetting.IsEKYCForced)
+    {
+        <script>
+            $(document).ready(function () {
+                setTimeout(function () {
+                    GetEKYCDetail();
+                }, 500)
+
+            });
+        </script>
+    }
+
+    <script>
+        $(document).ready(function () {
+            var d = new Date();
+            d.setFullYear(d.getFullYear() - 5);
+            $('#txtDOB').datetimepicker(
+                {
+                    format: 'DD MMM YYYY'
+                });
+            var pincode = $('#txtPinCode').val();
+            if (pincode.length == 6) {
+                pincoded(pincode);
+            } 7
+            $("#txtPinCode").change(function () {
+                var pincode = $(this).val();
+                if (pincode.length == 6) {
+                    pincoded(pincode);
+                }
+            });
+
+            $('#btnDoubleFactor').click(() => {
+                let Is = $(event.target).is(':checked'),
+                    nCls = Is ? 'btn btn-success' : 'btn btn-danger',
+                    txt = Is ? 'Enable DoubleFactor' : '';
+                UpdateDoubleFactor(Is, '', nCls, txt);
+            });
+            $('#btnIsRealAPI').click(() => {
+                $.post('/RealAPI-Status', { Status: $('#btnIsRealAPI').is(':checked') })
+                    .done(result => {
+                        an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    })
+            });
+            $('#btnIsSwitchNEFT').click(() => {
+                $.post('/Switch-IMPStoNEFT', { Status: $('#btnIsSwitchNEFT').is(':checked') })
+                    .done(result => {
+                        an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    })
+            });
+            $('#btnlowBalanceSetting').click(() => _lowBalanceWindow());
+            $('#ddlcompanytype').change(function () {
+
+                if ($('#ddlcompanytype').val() != "1") {
+
+                    $('#lblpan').text('Company Pan No.');
+
+                }
+                else {
+                    $('#lblpan').text('Pan No.');
+                }
+            });
+        });
+        var GetEKYCDetail = function () {
+            preloader.load();
+            $.post('/get-ekyc-detail', {}, function (result) {
+                resultReload(result);
+                mdlA.id = 'mdl';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose(function () {
+                }));
+                $('button.close span').addClass('d-none');
+                if (ISEKYCDONE == 'True') {
+                    setTimeout(function () {
+                        $('button.close span,#mdlCancel').click();
+                    }, 350);
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        }
+        var UpdateDoubleFactor = function (Is, OTP, nCls, txt, onSuccess, onFailure) {
+            preloader.load();
+            $.post('/DoubleFactor', { Is, OTP }, function (result) {
+                resultReload(result);
+                if (typeof (result) === 'string') {
+                    mdlA.id = 'mdlDoubleFactor';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose(function () {
+                        let _ele = $('#btnDoubleFactor');
+                        _ele.is(':checked') ? _ele.prop('checked', false) : _ele.prop('checked', true);
+                    }));
+                    $('#btnSubmitOTP').click(function () {
+                        $('#otpHelp').html('');
+                        OTP = $('#txtOTP').val();
+                        if (OTP === '') {
+                            $('#otpHelp').html('Enter OTP');
+                            return false;
+                        }
+                        UpdateDoubleFactor(Is, OTP, nCls, txt,
+                            function (result) {
+                                $('#btnDoubleFactor').attr('class', nCls);
+                                $('#btnDoubleFactor').text(txt);
+                                $('#btnDoubleFactorHelp').html(result.msg);
+                                mdlA.dispose();
+                            },
+                            function (result) {
+                                $('#otpHelp').html(result.msg);
+                                $('#btnDoubleFactorHelp').html(result.msg);
+                            });
+                    });
+                    $('#btnSendTransaction').click(() => {
+                        UpdateDoubleFactor(Is, 'otp', nCls, txt, null, function (result) {
+                            $('#otpHelp').html('').html(result.msg);
+                        });
+                    });
+                } else {
+                    if (result.statuscode == an.type.success) {
+                        if (onSuccess != undefined) {
+                            $('#btnDoubleFactorHelp').html(result.msg);
+                            onSuccess(result);
+                        } else {
+                            $('#btnDoubleFactor').attr('class', nCls);
+                            $('#btnDoubleFactor').text(txt);
+                            $('#btnDoubleFactorHelp').html(result.msg);
+                        }
+                    }
+                    if (result.statuscode == an.type.failed) {
+                        if (onFailure != undefined) {
+                            $('#btnDoubleFactorHelp').html(result.msg);
+                            onFailure(result);
+                        } else {
+                            $('#btnDoubleFactorHelp').html(result.msg);
+                        }
+                    }
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+        var pincoded = m => {
+            preloader.load();
+            $.post('/PinCodeDetail', { Pincode: m })
+                .done(result => {
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        $('#txtState').html(result.statename);
+                        $('#hddStateID').val(result.stateID);
+                        $('#txtCity').html(result.districtname);
+                    }
+
+                }).fail(xhr => {
+                    $(_this).attr('checked', Is == false);
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        function updateprofile(flg) {
+
+            let an = alertNormal;
+            let ct = {
+                nam: $('#txtName'), namo: $('#txtOutletName'), eml: $('#txtEmail'), adrs: $('#txtAddress'), pcd: $('#txtPinCode'), gstn: $('#txtGSTIN'),
+                pan: $('#txtPAN'), adhr: $('#txtAADHAR'), btn: $('#btnCreate'), txtAlternateMobile: $('#txtAlternateMobile'), txtDOB: $('#txtDOB'),
+                ddlShopType: $('#ddlShopType').val() == undefined ? $('#ddlShopTypehidd') : $('#ddlShopType'),
+                ddlQualification: $('#ddlQualification').val() == undefined ? $('#ddlQualificationhidd') : $('#ddlQualification'),
+                ddlPoupulation: $('#ddlPoupulation').val() == undefined ? $('#ddlPoupulationhidd') : $('#ddlPoupulation')
+                , ddlLocationType: $('#ddlLocationType').val() == undefined ? $('#ddlLocationTypehidd') : $('#ddlLocationType'),
+                txtLandmark: $('#txtLandmark'), ddlBank: $('#ddlBank'), txtifsc: $("#txtifsc"), txtAccountNumber: $("#txtAccountNumber"),
+                txtAccountName: $("#txtAccountName"), IsRegisteredWithGST: $('#btnGroupGSTReg button.active'), txtBranch: $('#txtBranch'), ddlcompanytype: $("#ddlcompanytype option:selected"), roleid: $('#hiddrid')
+            };
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start(ct.btn, 'Requesting');
+
+
+
+            var IsE = {
+                nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100),
+                namo: ($v.$IsNum(ct.namo.val()) || ct.namo.val().trim() == '' || ct.namo.val().length > 150),
+                eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256), adrs: ct.adrs.val() == '', pan: ct.pan.val().length !== 10,
+                adhr: ct.adhr.val().length !== 12, txtAlternateMobile: (ct.txtAlternateMobile.val() === '' || ct.txtAlternateMobile.val().length !== 10),
+                txtDOB: (ct.txtDOB.val() === '' || ct.txtDOB.val().length !== 11), ddlShopType: (ct.ddlShopType.val() === ''),
+                ddlQualification: (ct.ddlQualification.val() === ''), ddlPoupulation: ct.ddlPoupulation.val() === '', ddlLocationType: ct.ddlLocationType.val() == '',
+                txtLandmark: ct.txtLandmark.val() === '', ddlBank: ct.ddlBank.val() == '', ifsc: (ct.txtifsc.val() == '' || ct.txtifsc.val().length !== 11),
+                AccountNumber: ct.txtAccountNumber.val() == '', AccountName: (ct.txtAccountName.val() == '' || $v.$IsNum(ct.txtAccountName.val())),
+                GSTIN: (ct.gstn.val() == '' || ct.gstn.val().length != 15) && $('#btnGroupGSTReg button.active').text() === 'YES',
+                txtBranch: ct.txtBranch.val() === ''
+            }
+
+            $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(ct.namo, 'Outletname is non-numeric mandatory field and length is not more than 150', IsE.namo);
+
+            $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(ct.slb, 'Slab is required, select slab from list! (<i>In case of list is empty add slab first</i>)', IsE.slb);
+            $v.showErrorFor(ct.state, 'State is required, select State from list! (<i>In case of list is empty add State first</i>)', IsE.state);
+            $v.showErrorFor(ct.adrs, 'Address is required to complete profile', IsE.adrs);
+            $v.showErrorFor(ct.pan, 'PAN is required to complete profile and should be valid', IsE.pan);
+            $v.showErrorFor(ct.adhr, 'AADHAR No is required to complete profile and should be valid', IsE.adhr);
+            $v.showErrorFor(ct.ddlBank, 'Please select Bank', IsE.ddlBank);
+            $v.showErrorFor(ct.txtBranch, 'Please Enter Branch Name', IsE.txtBranch);
+            $v.showErrorFor(ct.txtifsc, 'Please Enter Ifsc', IsE.ifsc);
+            $v.showErrorFor(ct.txtAccountNumber, 'Please Enter Account Number', IsE.AccountNumber);
+            $v.showErrorFor(ct.txtAccountName, 'Please Enter Account Name', IsE.AccountName);
+            $v.showErrorFor(ct.gstn, 'Invalid GSTIN', IsE.GSTIN);
+
+            IsE.err = (IsE.nam || IsE.namo || IsE.eml || IsE.adrs || IsE.pan || IsE.adhr || IsE.GSTIN);
+            if (IsE.err) {
+                btnLdr.Stop(ct.btn);
+                return false;
+            }
+
+            var UserData = {
+                Name: ct.nam.val(), OutletName: ct.namo.val(), EmailID: ct.eml.val(), PAN: ct.pan.val(), AADHAR: ct.adhr.val(), Address: ct.adrs.val(),
+                Pincode: ct.pcd.val(), MobileNo: $('#txtOTP').val(), DOB: ct.txtDOB.val(), ShopType: ct.ddlShopType.val(), AlternateMobile: ct.txtAlternateMobile.val(),
+                Landmark: ct.txtLandmark.val(), LocationType: ct.ddlLocationType.val(), Poupulation: ct.ddlPoupulation.val(), Qualification: ct.ddlQualification.val(),
+                GSTIN: ct.gstn.val(), BankName: ct.ddlBank.val(), IFSC: ct.txtifsc.val(), AccountNumber: ct.txtAccountNumber.val(), AccountName: ct.txtAccountName.val(),
+                IsRegisteredWithGST: ct.IsRegisteredWithGST.text() == 'YES' ? 1 : 0, BranchName: ct.txtBranch.val(), CompanyTypeID: ct.ddlcompanytype.val()
+            }
+            an.autoClose = 5;
+            $.ajax({
+                type: 'POST',
+                url: '/UpdateProfile',
+                contentType: 'application/json',
+                data: JSON.stringify(UserData),
+                success: function (result) {
+                    if (result.statuscode == undefined || result.statuscode == "undefined") {
+                        $('#' + an.id).remove();
+                        mdlA.id = 'mymodal';
+                        mdlA.content = result;
+                        mdlA.options.backdrop = 'static';
+                        mdlA.options.keyboard = false;
+                        mdlA.alert(mdlA.size.small);
+                        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                        $("#btnOTPChange").click(() => updateprofile(0));
+                    }
+                    else {
+                        an.title = result.statuscode == an.type.success ? "Well done" : "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        btnLdr.Stop(ct.btn);
+                        if (result.statuscode == an.type.success) {
+                            an.content = result.msg + ((result.link != undefined) ? `<br/>To complete user profile <a href="${result.link}" class="${an.linkClass}">Click here</a>` : '');
+                            an.alert(result.statuscode);
+                            mdlA.dispose();
+                            btnLdr.Stop(ct.btn);
+                            if (flg == 1) {
+                                GetDocsStatus();
+                            }
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                    an.title = "Oops";
+                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.statuscode.error);
+                    btnLdr.Stop(ct.btn);
+                }
+            });
+        }
+        var UpdateKYC = function () {
+            var ct =
+            {
+                nam: $('#txtName'), namo: $('#txtOutletName'), eml: $('#txtEmail'), adrs: $('#txtAddress'), txtPinCode: $('#txtPinCode'), gstn: $('#txtGSTIN'),
+                pan: $('#txtPAN'), adhr: $('#txtAADHAR'), btn: $('#btnUpdateKYC'), txtAlternateMobile: $('#txtAlternateMobile'), txtDOB: $('#txtDOB'),
+                ddlShopType: $('#ddlShopType').val() == undefined ? $('#ddlShopTypehidd') : $('#ddlShopType'),
+                ddlQualification: $('#ddlQualification').val() == undefined ? $('#ddlQualificationhidd') : $('#ddlQualification'),
+                ddlPoupulation: $('#ddlPoupulation').val() == undefined ? $('#ddlPoupulationhidd') : $('#ddlPoupulation')
+                , ddlLocationType: $('#ddlLocationType').val() == undefined ? $('#ddlLocationTypehidd') : $('#ddlLocationType'),
+                txtLandmark: $('#txtLandmark'), ddlBank: $('#ddlBank'), txtifsc: $("#txtifsc"), txtAccountNumber: $("#txtAccountNumber"),
+                txtAccountName: $("#txtAccountName"), txtBranch: $('#txtBranch'), ddlcompanytype: $("#ddlcompanytype option:selected"), roleid: $('#hiddrid')
+            };
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start(ct.btn, 'Requesting');
+            var IsE = {
+                nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100),
+                namo: ($v.$IsNum(ct.namo.val()) || ct.namo.val().trim() == '' || ct.namo.val().length > 150),
+                eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256),
+                adrs: ct.adrs.val() == '', txtPinCode: (ct.txtPinCode.val().length !== 6), pan: ct.pan.val().length !== 10,
+                adhr: ct.adhr.val().length !== 12, txtDOB: (ct.txtDOB.val() === '' || ct.txtDOB.val().length !== 11), ddlShopType: (ct.ddlShopType.val() === ''),
+                ddlQualification: (ct.ddlQualification.val() === ''), ddlPoupulation: ct.ddlPoupulation.val() === '',
+                ddlLocationType: ct.ddlLocationType.val() == '', txtLandmark: ct.txtLandmark.val() === '',
+                txtAlternateMobile: (ct.txtAlternateMobile.val() === '' || ct.txtAlternateMobile.val().length !== 10), ddlBank: ct.ddlBank.val() == '',
+                ifsc: (ct.txtifsc.val() == '' || ct.txtifsc.val().length !== 11), AccountNumber: ct.txtAccountNumber.val() == '',
+                txtBranch: ct.txtBranch.val() === '',
+                AccountName: (ct.txtAccountName.val() == '' || $v.$IsNum(ct.txtAccountName.val())),
+                GSTIN: (ct.gstn.val() == '' || ct.gstn.val().length != 15) && $('#btnGroupGSTReg button.active').text() === 'YES'
+            }
+
+            $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(ct.namo, 'Outletname is non-numeric mandatory field and length is not more than 150', IsE.namo);
+            $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(ct.slb, 'Slab is required, select slab from list! (<i>In case of list is empty add slab first</i>)', IsE.slb);
+            $v.showErrorFor(ct.adrs, 'Address is required to complete profile', IsE.adrs);
+            $v.showErrorFor(ct.txtPinCode, 'Pincode is required to complete profile', IsE.txtPinCode);
+            $v.showErrorFor(ct.pan, 'PAN is required to complete profile and should be valid', IsE.pan);
+            $v.showErrorFor(ct.adhr, 'AADHAR No is required to complete profile and should be valid !', IsE.adhr);
+            $v.showErrorFor(ct.txtAlternateMobile, 'Alternate mobile no is required !', IsE.txtAlternateMobile);
+            $v.showErrorFor(ct.txtDOB, 'Invalid DOB.', IsE.txtDOB);
+            $v.showErrorFor(ct.ddlShopType, 'Select ShopType !', IsE.ddlShopType);
+            $v.showErrorFor(ct.ddlQualification, 'Select Qualification !', IsE.ddlQualification);
+            $v.showErrorFor(ct.ddlPoupulation, 'Select Poupulation !', IsE.ddlPoupulation);
+            $v.showErrorFor(ct.ddlLocationType, 'Select LocationType !', IsE.ddlLocationType);
+            $v.showErrorFor(ct.txtLandmark, 'Select Landmark !', IsE.txtLandmark);
+            $v.showErrorFor(ct.ddlBank, 'Please select Bank', IsE.ddlBank);
+            $v.showErrorFor(ct.txtBranch, 'Please Enter Branch Name', IsE.txtBranch);
+            $v.showErrorFor(ct.txtifsc, 'Please Enter Ifsc', IsE.ifsc);
+            $v.showErrorFor(ct.txtAccountNumber, 'Please Enter Account Number', IsE.AccountNumber);
+            $v.showErrorFor(ct.txtAccountName, 'Please Enter Account Name', IsE.AccountName);
+            $v.showErrorFor(ct.gstn, 'Invalid GSTIN', IsE.GSTIN);
+
+            IsE.err = (IsE.nam || IsE.namo || IsE.eml || IsE.state || IsE.adrs || IsE.pan || IsE.adhr || IsE.txtAlternateMobile || IsE.txtDOB || IsE.ddlShopType || IsE.ddlQualification || IsE.txtPinCode || IsE.ddlBank || IsE.ifsc || IsE.AccountName || IsE.AccountNumber || IsE.GSTIN || IsE.txtBranch);
+
+            btnLdr.Stop(ct.btn);
+            if (IsE.err) {
+                return false;
+            }
+            an.autoClose = 5;
+            updateprofile(1);
+        };
+        var GetDocsStatus = function (val) {
+            preloader.load();
+            $.post('/KYC/DocumentDetails', { uid: 0 }, function (result) {
+                preloader.remove();
+                resultReload(result);
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                $('[data-toggle="tooltip"]').tooltip();
+                $("[id^=dimageUpload_]").change(function () {
+                    let _id = $(this).attr("id");
+                    let id = $(this).attr("id").split('_')[1];
+                    let _src = URL.createObjectURL($('#dimageUpload_' + id)[0].files[0]);
+                    //var file = ShowImagePreview(this, id);
+                    let selectedRow = $(this).closest("tr"),
+                        did = $(this).closest("tr").data().docId,
+                        formData = new FormData();
+                    formData.append('dtype', did);
+                    formData.append('file', $('#dimageUpload_' + id)[0].files[0]);
+                    formData.append('uid', 0);
+                    $.ajax({
+                        type: 'POST',
+                        url: '/KYC/Upload-File',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (result) {
+                            an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            preloader.remove();
+                            if (result.statuscode === 1) {
+                                if ($('label[for="' + _id + '"]').closest('tr').find('a.btnView').length > 0) {
+                                    $('label[for="' + _id + '"]').closest('tr').find('a.btnView').remove();
+                                }
+                                let _html = `<a class="btn btn-sm btn-outline-info" href=${_src} target="_blank">View</a>`;
+                                $('label[for="' + _id + '"]').text('change').addClass('d-none').after(_html);
+                                selectedRow.find('td:eq(2)').html('<span class="text-info">DOCUMENT UPLOADED</span>');
+                            }
+                        },
+                        error: function (xhr, result) {
+                            an.title = 'Oops';
+                            an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                            an.alert(an.type.failed);
+                            preloader.remove();
+                        }
+                    });
+                });
+
+                if (val == 1) {
+                    an.title = 'Success';
+                    an.content = "Upload Successfull!";
+                    an.alert(an.type.success);
+                }
+                $('.ddddd').click(e => {
+                    $.post("/DownloadKYC", { path: $(e.currentTarget).attr("name") })
+                        .done(result => {
+                            reload();
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+                });
+                $('#btnApplyKYC').click(() => KYCStatus());
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+        var KYCStatus = () => {
+            let outletid = $('#hidOutletID').val();
+            preloader.load();
+            $.post('/KYC/updatekycsts', { outletid: outletid, sts: 2 })
+                .done(result => {
+                    resultReload(result);
+                    an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == 1) {
+                        UpdateKYC();
+                        $('#profile_KYCStatus').text(result.commonStr);
+                    }
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var _lowBalanceWindow = () => {
+            $.post('/_LowBalance-Setting')
+                .done(result => {
+                    mdlA.id = 'settingModal';
+                    mdlA.title = 'Low Balance Setting';
+                    mdlA.headerClass = 'h4 text-info text-monospace';
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.default);
+                })
+        };
+
+        var _UpdateBankDetail = () => {
+            $.post('/_UpdateBankRequest')
+                .done(result => {
+                    mdlA.id = 'updateBank';
+                    mdlA.content = result;
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                    $('#btnSave').click(() => UserBankUpdateRequest());
+                })
+        };
+        var UserBankUpdateRequest = () => {
+            var ctt =
+            {
+                ddlBank: $('#ddlRequestBank'),
+                txtifsc: $("#txtIFSCCode"),
+                txtAccountNumber: $("#txtbankaccount"),
+                txtAccountName: $("#txtbankName")
+            };
+            var IsEE = {
+                ddlBank: ctt.ddlBank.val() == '',
+                ifsc: (ctt.txtifsc.val() == '' || ctt.txtifsc.val().length !== 11),
+                AccountNumber: ctt.txtAccountNumber.val() == '',
+                AccountName: (ctt.txtAccountName.val() == '' || $v.$IsNum(ctt.txtAccountName.val()))
+            }
+            $v.showErrorFor(ctt.ddlBank, 'Please select Bank', IsEE.ddlBank);
+            $v.showErrorFor(ctt.txtifsc, 'Please Enter Valid Ifsc', IsEE.ifsc);
+            $v.showErrorFor(ctt.txtAccountNumber, 'Please Enter Account Number', IsEE.AccountNumber);
+            $v.showErrorFor(ctt.txtAccountName, 'Please Enter Account Name', IsEE.AccountName);
+            IsEE.err = (IsEE.ddlBank || IsEE.ifsc || IsEE.AccountName || IsEE.AccountNumber);
+
+            if (IsEE.err) {
+                return false;
+            }
+            let param = {
+                BankName: $('#ddlRequestBank').val(),
+                AccountNumber: $('#txtbankaccount').val(),
+                IFSC: $('#txtIFSCCode').val(),
+                AccountName: $('#txtbankName').val(),
+            };
+            $.post('/_SubmitUpdatebankRequest', param)
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == an.type.success) {
+                        reload();
+                        mdlA.dispose();
+                    }
+                })
+        };
+
+        $('#btnGroupGSTReg button').click(e => {
+            $('#btnGroupGSTReg button').removeClass('btn-dark active').addClass('btn-outline-dark');
+            $(e.currentTarget).removeClass('btn-outline-dark').addClass('btn-dark active');
+        })
+
+        $('#imgProfile').change(() => {
+            let _src = URL.createObjectURL(event.target.files[0]),
+                formData = new FormData();
+            formData.append('file', $("#imgProfile")[0].files[0]);
+            $.ajax({
+                type: 'POST',
+                url: '/upload-Profile',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: result => {
+                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode === 1) {
+                        $('#profileView').attr('src', _src).val('');
+                    }
+                },
+                error: result => {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                }
+            });
+        });
+        function settlement() {
+            $.post('/Settlementaccount/').done(function (result) {
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.title = "Sattlement Account";
+                mdlA.options.backdrop = 'static';
+                mdlA.modal(mdlA.size.auto);
+                //  $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+
+            }).fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        };
+    </script>
+}

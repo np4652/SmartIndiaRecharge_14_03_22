@@ -1,0 +1,341 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.TransactionPGReportModel
+@{
+    ViewData["Title"] = "Payment Gateway Transaction";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> Recharge & Bill Payment Report</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-1">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlStatus">Choose Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="@RechargeRespType.SUCCESS">@RechargeRespType._SUCCESS </option>
+                                        <option value="@RechargeRespType.FAILED">@RechargeRespType._FAILED </option>
+                                        <option value="@RechargeRespType.REFUND">@RechargeRespType._REFUND </option>
+                                        <option value="@RechargeRespType.PENDING">@RechargeRespType._PENDING </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlPgateway">Choose PGateway</label>
+                                    <select id="ddlPgateway" aria-describedby="roleHelp" tabindex="2" class="form-control">
+                                        @if (Model.PGActive != null)
+                                        {
+                                            if (Model.PGActive.Count() != 1)
+                                            {
+                                                <option selected value="0">:: Choose Payment Gateway ::</option>
+                                                @foreach (var _roles in Model.PGActive)
+                                                {
+                                                    <option value="@_roles.ID">@_roles.PGName</option>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                @foreach (var _roles in Model.PGActive)
+                                                {
+                                                    <option value="@_roles.ID">@_roles.PGName</option>
+                                                }
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        <option value="@Criteria.UserID">UserID</option>
+                                        <option value="@Criteria.OutletMobile">Mobile No</option>
+                                        <option value="@Criteria.TID">TID</option>
+                                        <option value="@Criteria.VendorID">Vendor ID</option>
+                                        <option value="@Criteria.TransactionID">Transaction ID</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" type="text" />
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                            <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                        </div>
+                                    </div>
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row" id="t-summary">
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-success" title="<b>Number of SUCCESS Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-tachometer-alt"></i> <span id="sc">0</span></span></div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-success" title="<b>Amount of SUCCESS Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-rupee-sign"></i> <span id="sa">0</span></span></div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-danger" title="<b>Number of FAILED Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-tachometer-alt"></i> <span id="fc">0</span></span></div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-danger" title="<b>Amount of FAILED Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-rupee-sign"></i> <span id="fa">0</span></span></div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-secondary" title="<b>Number of PENDING Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-tachometer-alt"></i> <span id="pc">0</span></span></div>
+                                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2"><span class="badge badge-secondary" title="<b>Amount of PENDING Transaction</b>" data-toggle="tooltip" data-html="true"><i class="fas fa-rupee-sign"></i> <span id="pa">0</span></span></div>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="table-responsive table-sm table-mh">
+                                    <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Action</th>
+                                                <th>UserName</th>
+                                                <th>RequestedAmount</th>
+                                                <th>Amount</th>
+                                                <th>Type</th>
+                                                <th>PgCharge</th>
+                                                <th>PGName</th>
+                                                <th>OrderDate</th>
+                                                <th>TransMode</th>
+                                                <th>TransMode(Ret.)</th>
+                                                <th>TransactionID</th>
+                                                <th>VendorID</th>
+                                                <th>Live ID</th>
+                                                <th>RequestMode</th>
+                                                <th>SurCharge</th>
+                                                <th>Wallet</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(() => {
+            $('#ddlCriteria').change(() => {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(e.currentTarget)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                    $('#txtSearch').val('').attr('Placeholder', $('#ddlCriteria :selected').text());
+                }
+            });
+            $("#btnSearch,#btnExport").click((e) => search(e.currentTarget));
+            $("#btnSearch").click();
+        });
+
+        var search = (sender) => {
+            var RRFilter = {
+                TopRows: $('#ddlTop').val(),
+                Type: $('#ddlStatus').val(),
+                PGID: $('#ddlPgateway').val(),
+                FromDate: $('#dtFromDate').val(),
+                ToDate: $('#dtToDate').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtSearch').val(),
+                IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false,
+            };
+            if (RRFilter.TopRows > 4000 && sender.id.indexOf('Export') < 0) {
+                an.title = 'Exporting to excel';
+                an.content = 'Because you have selected all record!';
+                an.alert(an.type.info);
+                an.autoClose = 10;
+            }
+            if (RRFilter.IsExport) {
+                window.location = "/PGTransaction-Report?" + $.param(RRFilter);
+            } else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/PGTransaction-Report',
+                    contentType: 'application/json',
+                    data: JSON.stringify(RRFilter),
+                    success: function (result) {
+                        resultReload(result);
+                        $('.__p tbody').html(result);
+                        $(".dropdown-toggle").dropdown();
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('.a_modal').click(e => moreDetail(e.currentTarget));
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        resultReload(result);
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });
+            }
+            $.post('/t-summary', { s: 31 })
+                .done(result => {
+                    if (result.totalSuccessNo != undefined) {
+                        $('[data-toggle="tooltip"]').tooltip('dispose');
+                        $('#sc').html(result.totalSuccessNo);
+                        $($('#sc').parent()).attr('title', '<b>Number of SUCCESS Transaction is ' + result.totalSuccessNo + '</b>')
+                        $('#sa').html(result.totalSuccessAmount);
+                        $($('#sa').parent()).attr('title', '<b>Amount of SUCCESS Transaction is ' + result.totalSuccessAmount + ' INR</b>')
+                        $('#fc').html(result.totalFailedNo);
+                        $($('#fc').parent()).attr('title', '<b>Number of FAILED Transaction is ' + result.totalFailedNo + '</b>')
+                        $('#fa').html(result.totalFailedAmount);
+                        $($('#fa').parent()).attr('title', '<b>Amount of FAILED Transaction is ' + result.totalFailedAmount + ' INR</b>')
+                        $('#pc').html(result.totalPendingNo);
+                        $($('#pc').parent()).attr('title', '<b>Number of PENDING Transaction is ' + result.totalPendingNo + '</b>')
+                        $('#pa').html(result.totalPendingAmount);
+                        $($('#pa').parent()).attr('title', '<b>Amount of PENDING Transaction is ' + result.totalPendingAmount + ' INR</b>')
+                        $('[data-toggle="tooltip"]').tooltip();
+                    }
+                })
+        };
+
+        var moreDetail = (sender) => {
+            var param = {
+                TID: $(sender).closest('tr').data().itemTid,
+                TransactionID: $(sender).closest('span').text(),
+                VendorID: $(sender).closest('tr').find('td:eq(11)').text(),
+                LastModified: $(sender).data().itemLastmodify
+            };
+            $.post('/PGTransaction-log', param)
+                .done((result) => {
+                    $('#' + an.id).remove();
+                    mdlA.id = 'mymodel';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.xlarge);
+                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                });
+        }
+
+        var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+            $('dp').addClass('d-none');
+            var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+            var lastDay_f = new Date(fy, fm + 1, 0);
+
+            var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+            if (fdate > tdate) {
+                $('#dtToDate').val($('#dtFromDate').val());
+            } else {
+                if (fy == ty) {
+                    var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                    if (cm == fm) {
+                        if (curDate == fdate && fdate != tdate) {
+                            $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                        } else if (fdate < curDate) {
+                            curDate = curDate.setDate(curDate.getDate() - 1)
+                            $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                        }
+                    }
+                    else if (tm > fm) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                } else if (fy < ty) {
+                    $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                }
+            }
+        });
+
+        var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+            $('dp').addClass('d-none');
+            var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+            var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+            var firstDay_t = new Date(ty, tm, 1);
+
+            var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+            if (curDate.toString() == tdate.toString()) {
+                $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+            }
+            else if (fdate > tdate) {
+                $('#dtFromDate').val($('#dtToDate').val());
+            } else {
+                if (fy == ty) {
+                    if (tm > fm) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                } else if (fy < ty) {
+                    $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                }
+            }
+        });
+    </script>
+}
+

@@ -1,0 +1,215 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model SwitchingViewModel
+@{
+    ViewData["Title"] = "User Amount Denomination Switching";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-7 line-height-34 text-monospace">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-5">
+                                <input id="txtSearchOp" class="form-control text-left" placeholder="Search Operator" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row form-group mb-1">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <input id="txtSearchUser" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="Enter User @Html.Raw(Model.IsMultipleMobileAllowed?"ID":"MobileNo")" type="number" />
+                                <small id="helpSearch" class="form-text text-danger d-none" data-isid="@Model.IsMultipleMobileAllowed"></small>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <h5 id="uName" class="text-uppercase text-info"></h5>
+                                <small id="otName" class="form-text text-muted mt-0"></small>
+                                <input type="hidden" id="hidID" />
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                @{
+                                    var Oplist = new SelectList(Model.opTypes, "ID", "OpType");
+                                    var OPTypeID = OPTypes.Prepaid;
+                                }
+                                <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID"></select>
+                            </div>
+                        </div>
+                        <div class="table-responsive" style="height:52vh;overflow:auto">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:15%;">Operator</th>
+                                        <th style="width:85%;">
+                                            API List
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            setTimeout(function () {
+                $('#txtSearchUser').focus();
+            }, 500);
+
+            $('#txtSearchUser').on('change', function () {
+                $('#uName').html('Name');
+                $('#otName').html('Outletname');
+                $('#hidID').val(0);
+                $('#__p tbody').html('');
+                $('#rdoIsDenom').addClass('d-none')
+                var umob = $('#txtSearchUser').val();
+                var isid = $('#helpSearch').data().isid;
+                var IsE = { mob: isid ? false : !$v.$IsMob(umob) }
+                IsE.err = (IsE.mob)
+                $v.showErrorFor($('#txtSearchUser'), 'Enter a valid mobile number!', IsE.mob);
+                if (IsE.err) {
+                    return false;
+                }
+                preloader.load();
+                $.post('/UserInfo', { MobileNo: umob })
+                    .done(function (result) {
+                        resultReload(result);
+                        if (result.id == 0) {
+                            an.title = 'Oops';
+                            an.content = 'This is invalid user';
+                            an.alert(an.type.failed);
+                        }
+                        else if (result.id > 0) {
+                            preloader.load();
+                            $('#uName').html(result.name);
+                            $('#otName').html(result.outletName);
+                            $('#hidID').val(result.id);
+                            preloader.remove();
+                            setTimeout(function () {
+                                callPartial();
+                                $('#ddlOType').on('change', function () {
+                                    callPartial();
+                                });
+                            }, 500);
+                        }
+                    })
+                    .catch(function (xhr, e, m) {
+
+                    })
+                    .fail(function (xhr) {
+                        $(this).attr('checked', Is == false);
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+
+        });
+        function callPartial() {
+            preloader.load();
+            $.post('/ADAPI-Switch-U', { OpTypeID:$('#ddlOType').val()})
+                .done(function (result) {
+                    $('#tblAPIOpCode tbody').html(result);
+                    setTimeout(function () {
+                        $('#txtSearchOp').focus();
+                        $("#txtSearchOp").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblAPIOpCode tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    $('.box').on('click', function () {
+                        _showDenom(this)
+                    })
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        function _showDenom(sender) {
+            preloader.load();
+            var param = {
+                OID: $(sender).closest('tr').data().itemOid,
+                OPName: $(sender).closest('tr').find('.OPName').text(),
+                APIId: $(sender).data().itemApiid,
+                APIName: $(sender).children().text(),
+                UserID: $('#hidID').val()
+            };
+            $.post('/ADAPI-Denomination-U', param = param)
+                .done(function (result) {
+                    $('#' + an.id).remove();
+                    mdlA.id = 'mymodalADAPI';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.large);
+                    $('#' + mdlA.id).css('background-color', 'rgba(0,0,0,0.5)');
+                })
+                .catch(function (xhr) {
+                    console.log(xhr.responseText)
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+
+        }
+    </script>
+}

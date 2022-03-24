@@ -1,0 +1,129 @@
+﻿<div class="col-12 distr-info border-shadow pb-3 mb-3">
+    <div class="row">
+        <div class="col-12 pt-2 pb-2">
+            <h6 class="float-left">Recent Top Activities</h6>
+
+            <div class="btn-group float-right">
+                <button type="button" class="btn btn-light active btn-sm btnRecentActivity" data-value="transaction">Transaction</button>
+                <button type="button" class="btn btn-light btn-sm btnRecentActivity" data-value="agentonboarding">Agent On-boarding</button>
+                <button type="button" class="btn btn-light btn-sm btnRecentActivity" data-value="activitylog">Login Activity</button>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="row">
+                <div class="col-sm-12">
+                    <section id="recentActivity" class="bg-white" style="min-height: 350px">
+                        <!--Data will be bind here at runtime-->
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        _transaction();
+    })
+
+    $(".btnRecentActivity").on("click", function () {
+        $(".btnRecentActivity").removeClass("active");
+        $(this).addClass("active");
+
+        var activityType = $(this).data("value");
+        if (activityType == "transaction") {
+            _transaction();
+        }
+        else if (activityType == "agentonboarding") {
+            _agentonboarding();
+        }
+        else if (activityType == "activitylog") {
+            _activityLog();
+        }
+
+    })
+
+    var _transaction = function () {
+        preloader.load();
+        $.post('/recent-transaction-list')
+            .done(result => {
+                $("#recentActivity").html(result);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+
+    var _agentonboarding = function (dataObject, isModal) {
+        dataObject = dataObject || { TopRow: 8 };
+        isModal = isModal || false;
+
+        preloader.load();
+        $.post('/recent-outletofuser-list', dataObject)
+            .done(result => {
+                if (!isModal) {
+                    $("#recentActivity").html(result);
+
+                    $(".btnViewMoreAgent").on("click", function () {
+                        _agentonboarding({ TopRow: 50 }, true);
+                    })
+                }
+                else {
+                    mdlA.id = "mymodel";
+                    mdlA.content = result;
+                    mdlA.alert(mdlA.size.xlarge);
+                    $("#" + mdlA.id).find(".btnViewMoreAgent").remove();
+                    $("#" + mdlA.id).find(".modal-body").append("<button type='button' class='btn btn-danger btn-sm' id='mdlCancel'>Close</button>");
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                }
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+
+    var _activityLog = function (dataObject, isModal) {
+        dataObject = dataObject || { TopRow: 8 };
+        isModal = isModal || false;
+        preloader.load();
+
+        $.post('/recent-login-activity', dataObject)
+            .done(result => {
+                if (!isModal) {
+                    $("#recentActivity").html(result);
+
+                    $(".btnViewMoreLoginActivity").on("click", function () {
+                        _activityLog({ TopRow: 50 }, true);
+                    })
+                }
+                else {
+                    mdlA.id = "mymodel";
+                    mdlA.content = result;
+                    //mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.xlarge);
+                    $("#" + mdlA.id).find(".btnViewMoreLoginActivity").remove();
+                    $("#" + mdlA.id).find(".modal-body").append("<button type='button' class='btn btn-danger btn-sm' id='mdlCancel'>Close</button>");
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                }
+
+                $('[data-toggle="tooltip"]').tooltip();
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+</script>

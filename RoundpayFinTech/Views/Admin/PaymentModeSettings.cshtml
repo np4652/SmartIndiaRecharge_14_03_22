@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Payment Mode Setting";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white" style="line-height:35px;">
+                        <span><i class="fas fa-link"></i> @ViewData["Title"]</span>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblPackages">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:5%">#</th>
+                                        <th style="width:15%">Payment Mode</th>
+                                        <th>Settings</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            _loadGrid();
+        })
+
+        var _loadGrid = function () {
+            preloader.load();
+            $.post('/_PaymentModeSetting')
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    $('input[type="checkbox"]').click(function () {
+                        _updateSettings(this);
+                    })
+                })
+                .fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                })
+        }
+
+        var _updateSettings = function (sender) {
+            preloader.load();
+            var param = {
+                ModeID: $(sender).closest('tr').data().modeId,
+                IsTransactionIdAuto: $(sender).closest('tr').find('[id^=IsTransactionIdAuto_]').is(':checked') ? false : true,
+                IsAccountHolderRequired: $(sender).closest('tr').find('[id^=IsAccountHolderRequired_]').is(':checked'),
+                IsChequeNoRequired: $(sender).closest('tr').find('[id^=IsChequeNoRequired_]').is(':checked'),
+                IsCardNumberRequired: $(sender).closest('tr').find('[id^=IsCardNumberRequired_]').is(':checked'),
+                IsMobileNoRequired: $(sender).closest('tr').find('[id^=IsMobileNoRequired_]').is(':checked'),
+                IsBranchRequired: $(sender).closest('tr').find('[id^=IsBranchRequired_]').is(':checked'),
+                IsUPIID: $(sender).closest('tr').find('[id^=IsUPIID_]').is(':checked'),
+                Status: $(sender).closest('tr').find('[id^=Status_]').is(':checked'),
+            }
+            $.post('/_Payment-Mode-Setting', param = param)
+                .done(function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                })
+        }
+    </script>
+}

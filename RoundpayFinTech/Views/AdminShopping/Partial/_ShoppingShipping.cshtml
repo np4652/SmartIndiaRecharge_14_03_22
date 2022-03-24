@@ -1,0 +1,80 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.Shopping.ShoppingShipping;
+<style>
+    .bank-icon {
+        width: 171px;
+        height: 176px;
+        border-radius: 50%;
+    }
+
+    .img-QR {
+        width: 171px;
+        height: 159px;
+    }
+
+    .form-group {
+        margin-bottom: 10px !important;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <button type="button" class="close cus_modal_close_btn" data-dismiss="modal" aria-label="Close" style="margin-right: 11px;">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <table style="width: 100%;border:1px solid #dee2e6;" class="table">
+            <thead>
+                <tr>
+                    <th colspan="2" style="text-align: center;border:0">
+                        <h5>SHIPPING DETAIL</h5>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Name </b></td>
+                    <td> @Model.CustomerName   </td>
+                </tr>
+                <tr>
+                    <td><b>Mobile No. </b></td>
+                    <td> @Model.MobileNo   </td>
+                </tr>
+                <tr class="bg-g">
+                    <td><b>Address</b></td>
+                    <td>@Model.Address</td>
+                </tr>
+                <tr>
+                    <td><b>Area</b></td>
+                    <td>@Model.Area</td>
+                </tr>
+                <tr class="bg-g">
+                    <td><b>LandMark</b></td>
+                    <td>@Model.LandMark</td>
+                </tr>
+                <tr>
+                    <td><b>City</b></td>
+                    <td>@Model.CityName</td>
+                </tr>
+                <tr class="bg-g">
+                    <td><b>State</b></td>
+                    <td>@Model.StateName</td>
+                </tr>
+                <tr>
+                    <td><b>Pincode</b></td>
+                    <td>@Model.Pin</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="col-12">
+        <input type="hidden" id="hdnOID" />
+        <button class="btn btn-sm btn-danger" id="btnPrint" style="bottom:7px;right: 25px;">
+            Print
+        </button>
+    </div>
+</div>
+
+
+
+
+

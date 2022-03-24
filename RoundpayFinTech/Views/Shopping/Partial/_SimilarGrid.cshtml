@@ -1,0 +1,151 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+@{
+
+}
+
+@if (Model.Any())
+{
+    <div class="upsell-product">
+        <div class="rokan-product-heading rokan-upsell-heading">
+            <h2 class="title-catthum"><span>Similar Products</span></h2>
+        </div>
+        <div class="upsell_product_slider">
+            <div class="owl-slider">
+                <div id="carousel123" class="owl-carousel">
+                    @foreach (var item in Model)
+                    {
+                        <div class="item product_row">
+                            <div class="item-product product-item">
+                                <div class="content-item-product">
+                                    <div class="product-thumb">
+                                        <a href="/Shop/Product/@item.ProductDetailID" class="product-thumb-link">
+                                            @if (item.ImgUrlList.Count >= 2)
+                                            {
+                                                @for (int i = 0; i < item.ImgUrlList.Count; i++)
+                                                {
+                                                    if (i == 0)
+                                                    {
+                                                        <span class="first-thumb">
+                                                            <span class="product-image-container product-image-container-291549638011" style="width: 480px;">
+                                                                <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                                    @*<img class="product-image-photo" src="/Shopping/img/product/27_1_1.jpg" loading="lazy" alt="Australian Certified Organic Beetroot 500g">*@
+                                                                    <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrlList[i]" loading="lazy" alt="@item.ProductName">
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else if (i == 1)
+                                                    {
+                                                        <span class="second-thumb">
+                                                            <span class="product-image-container product-image-container-291304177615" style="width: 480px;">
+                                                                <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                                    <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrlList[i]" loading="lazy" alt="@item.ProductName">
+                                                                </span>
+                                                            </span>
+                                                        </span>
+                                                    }
+                                                    else
+                                                    {
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <span class="first-thumb">
+                                                    <span class="product-image-container product-image-container-291549638011" style="width: 480px;">
+                                                        <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                            @*<img class="product-image-photo" src="/Shopping/img/product/27_1_1.jpg" loading="lazy" alt="Australian Certified Organic Beetroot 500g">*@
+                                                            <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+                                                        </span>
+                                                    </span>
+                                                </span>
+                                            }
+                                        </a>
+                                        <div class="hot-onsale"></div>
+                                        <div class="actions-secondary">
+                                            <ul class="product-extra-link add-to-links">
+                                                <li class="wishlist-product">
+                                                    <a href="javascript: void(0;" onclick="AddToWishlist(@item.ProductDetailID)" class="wishlist-link action towishlist" title="Add to Wishlist">
+                                                    </a>
+                                                </li>
+                                                <li class="quickview-products">
+                                                    <a href="javascript: void(0);" onclick="Quickview(@item.ProductDetailID)" class="quickview-link" title="Quick view">
+                                                    </a>
+                                                </li>
+                                                @*<li class="compare-product">
+                                                        <a href="#" class="compare-link action tocompare" title="Add to Compare">
+                                                        </a>
+                                                    </li>*@
+                                            </ul>
+                                        </div>
+                                        <div class="product-info-cart">
+                                            <div class="actions-primary addcart-link">
+                                                <button type="submit" title="Add to Cart" class="btn-add-to-cart action tocart" onclick="AddToCart(@item.ProductDetailID,1);">
+                                                    <span>Add to Cart</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="product-info">
+                                        <h3 class="product-name">
+                                            <a title="@item.ProductName (@item.AdditionalTitle)" href="/Shop/Product/@item.ProductDetailID" class="product-item-link">
+                                                @item.ProductName (@item.AdditionalTitle)
+                                            </a>
+                                        </h3>
+                                        @*<div class="product-rating">
+                                                <div class="product-reviews-summary">
+                                                    <div class="rating-summary">
+                                                        <span class="label"><span>Rating:</span></span>
+                                                        <div class="rating-result" title="100%">
+                                                            <span style="width:100%"><span><span>100</span>% of <span>100</span></span></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="reviews-actions">
+                                                        <a class="action view" href="australian-certified-organic-beetroot-500g.html#reviews">
+                                                            <span>2</span>&nbsp;<span>Reviews</span>
+                                                        </a>
+                                                        <a class="action add" href="australian-certified-organic-beetroot-500g.html#review-form">Add Your Review</a>
+                                                    </div>
+                                                </div>
+                                            </div>*@
+                                        <div class="info-price">
+                                            <div class="price-box price-final_price" data-role="priceBox" data-product-id="5" data-price-box="product-id-5">
+                                                <span class="price-container price-final_price tax weee">
+                                                    <span data-price-amount="666" data-price-type="finalPrice" class="price-wrapper ">
+                                                        <span class="price">&#8377; @item.SellingPrice</span>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery('#carousel123').owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 3
+                },
+                1000: {
+                    items: 5
+                }
+            }
+        });
+    });
+</script>

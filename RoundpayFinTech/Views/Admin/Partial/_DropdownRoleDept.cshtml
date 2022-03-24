@@ -1,0 +1,6 @@
+﻿@model SelectList
+@Html.Label("ddlRole", "Role", new { @class = "lbl" })
+<select id="ddlRole" aria-describedby="ddlRoleH" tabindex="2" class="custom-select custom-select-md mb3" asp-items="@Model">
+    <option value="0">:: Choose Role ::</option>
+</select>
+<small id="ddlRoleH" class="form-text text-muted d-none"></small>

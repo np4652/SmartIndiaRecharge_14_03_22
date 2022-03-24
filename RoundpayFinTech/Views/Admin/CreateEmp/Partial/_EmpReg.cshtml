@@ -1,0 +1,94 @@
+﻿@model RoundpayFinTech.AppCode.Model.Employee.EmpReg
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Edit Employee</h5><hr />
+        <input type="hidden" id="hfdID" value="@Model.EmpID" />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-6">
+                    <label class="lbl" for="txtReferal">
+                        Referal
+                        <span>
+                            [<small id="ReferalHelp" class="text-success">@Html.Raw(Model.ReferralBy)</small>]
+                        </span>
+                    </label>
+                    @Html.TextBox("txtReferal", Model.ReferralID, new { @class = "form-control ", @placeholder = "Enter Referal", @aria_describedby = "ReferalHelp", @tabindex = 1, @readonly = "" })
+
+                </div>
+                <div class="col-6">
+                    @Html.Label("ddlRole", "Choose Role", new { @class = "lbl" })
+                    @{
+                        var Roles = new SelectList(Model.Roles, "ID", "Role");
+                        int selecteRole = Model.EmpRoleID;
+                    }
+                    <select id="ddlRole" aria-describedby="roleHelp" class="form-control" asp-items="@Roles" asp-for="@selecteRole">
+                        <option value="0">:: Choose Role ::</option>
+                    </select>
+                    <small id="roleHelp" class="form-text text-muted d-none">Role is mandatory</small>
+                </div>
+
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="lbl" for="txtName">Name</label>
+                    <input type="text" class="form-control " id="txtName" placeholder="Enter Name" aria_describedby="nameHelp" value="@Model.Name" />
+                    <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="lbl" for="txtEmpCode">Emp Code</label>
+                    <input type="text" class="form-control " id="txtEmpCode" placeholder="Enter Emp Code" aria_describedby="EmpCodeHelp" value="@Model.EmpCode" />
+                    <small id="EmpCodeHelp" class="form-text text-muted d-none">Emp code is mandatory</small>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="lbl" for="txtMobile">Mobile Number</label>
+                    <input type="text" class="form-control " id="txtMobile" placeholder="Enter Mobile Number" aria_describedby="mobileHelp" value="@Model.MobileNo" />
+                    <small id="mobileHelp" class="form-text text-muted d-none">Mobile number is mandatory</small>
+                </div>
+                <div class="col-md-6">
+                    <label class="lbl" for="txtEmail">E-Mail ID</label>
+                    <input type="text" class="form-control " id="txtEmail" placeholder="Enter E-Mail" aria_describedby="emailHelp" value="@Model.EmailID" />
+                    <small id="emailHelp" class="form-text text-muted d-none">E-Mail is mandatory</small>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="lbl" for="txtAadhar">Aadhar</label>
+                    <input type="text" class="form-control " id="txtAadhar" placeholder="Enter Aadhar" value="@Model.AADHAR" />
+                </div>
+                <div class="col-sm-6">
+                    <label class="lbl" for="txtPAN">PAN</label>
+                    <input type="text" class="form-control " id="txtPAN" placeholder="Enter PAN" value="@Model.PAN" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="row">
+                <div class="col-sm-6">
+                    <label class="lbl" for="txtAddress">Address</label>
+                    <input type="text" class="form-control " id="txtAddress" placeholder="Enter Address" value="@Model.Address" />
+                </div>
+                <div class="col-md-6">
+                    <label class="lbl" for="txtPinCode">Pincode</label>
+                    <input type="text" class="form-control " id="txtPinCode" placeholder="Enter Pincode" aria_describedby="pincodeHelp" value="@Model.Address" />
+                    <small id="pincodeHelp" class="form-text text-muted d-none">Pincode is mandatory</small>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-dark" id="btnCreate">@Html.Raw(Model.EmpID == 0 ? "Create" : "Update")</button>
+    </div>
+</div>
+
+

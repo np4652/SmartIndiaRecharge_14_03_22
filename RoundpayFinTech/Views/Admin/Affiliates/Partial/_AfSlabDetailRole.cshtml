@@ -1,0 +1,89 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.ASlabDetailModel
+@{
+    int counter = 1;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Commission Detail</h5><hr />
+    <input type="hidden" id="hfSid" value="@Model.SlabID" class="d-none" />
+    <input type="hidden" id="hfRid" value="@Model.RoleID" class="d-none" />
+    <input type="hidden" id="hfOid" value="@Model.OID" class="d-none" />
+</div>
+<div class="col-sm-12">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" style="width:45%">Vendor</th>
+                    <th scope="col">Commission</th>
+                    <th>AmtType</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.CommissitionDetail)
+                {
+                    <tr data-Vendor-Id="@item.VendorID">
+                        <td>@counter</td>
+                        <td>@item.VendorName</td>
+                        <td><input type="text" class="form-control" value="@item.CommAmount" /></td>
+                        @*<td>
+                                <div class="btn-group btn-group-sm btn-toggle btnCommType">
+                                    <button class="btn @Html.Raw(item.CommType==0?"btn-dark active":"btn-outline-dark")">COM</button>
+                                    @if (!ApplicationSetting.IsAffiliateRevenue)
+                                    {
+                                        <button class="btn  @Html.Raw(item.CommType==1?"btn-dark active":"btn-outline-dark")">SUR</button>
+                                    }
+                                </div>
+                            </td>*@
+                        <td>
+                            <div class="btn-group btn-group-sm btn-toggle btnAmtType">
+
+                                <button class="btn  @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                                @if (!ApplicationSetting.IsAffiliateRevenue)
+                                {
+                                    <button class="btn @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    counter++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    var updateAfSlabComm = e => {
+        let element = $(e.currentTarget).closest('tr');
+        let param = {
+            VendorID: element.data().vendorId,
+            OID: $('#hfOid').val(),
+            SLABID: $('#hfSid').val(),
+            RoleID: $('#hfRid').val(),
+            AmtType: element.find('.btnAmtType button.active').text() == 'PER' ? 0 : 1,
+            //  CommType: element.find('.btnCommType button.active').text() == 'COM' ? 0 : 1,
+            CommAmount: element.find('input').val(),
+        };
+        console.log(param);
+        $.post('/UpdateAfSlabComm', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.success ? "Success" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    }
+    $('input').change(e => updateAfSlabComm(e));
+    $('.btnCommType,.btnAmtType').unbind().click(e => {
+        $(e.currentTarget).children('button').toggleClass('btn-dark active btn-outline-dark');
+        updateAfSlabComm(e)
+    });
+</script>

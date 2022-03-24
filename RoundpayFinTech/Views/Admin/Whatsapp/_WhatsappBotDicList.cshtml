@@ -1,0 +1,94 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.WhatsappBotDicViewModel>
+
+@if (Model.Any())
+{
+    int i = 0;
+    foreach (var item in Model)
+    {
+        i++;
+        <tr data-format-type="@item.FormatType">
+            <td>@i</td>
+            <td class="pt-1">
+                <span class="h6 d-block pb-2">@item.FormatType <a data-toggle="tooltip" data-placement="top" title="Add new phrase" class="btnAddNewphrase"><i class="fa fa-edit"></i></a></span>
+                @if (item.Keys.Any())
+                {
+                    foreach (var key in item.Keys)
+                    {
+                        <span class="whatsapp-key" data-key-id="@key.KeyId"><i class="fa fa-times-circle"></i> @key.Key</span>
+                    }
+                }
+            </td>
+            <td><textarea class="form-control">@item.ReplyText1</textarea></td>
+            <td><textarea class="form-control">@item.ReplyText2</textarea></td>
+            <td><textarea class="form-control">@item.ReplyText3</textarea></td>
+            <td>
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <input type="checkbox" class="switch IsActive" id="chbIsActive_@i" @Html.Raw(item.IsActive ? "checked='checked'" : "")>
+                    <label for="chbIsActive_@i" class="font-weight-bold lbl"></label>
+                </span>
+            </td>
+        </tr>
+    }
+}
+<script>
+    $('.btnAddNewphrase').click(e => {
+        let formatType = $(e.currentTarget).closest('tr').data().formatType;
+        AddKeyphrase(formatType);
+    });
+
+    var alreadyExistFormat = [];
+
+    $('whatsappBotdicList').find('tr').each(function () {
+        let format = $(this).data().formatType;
+        alreadyExistFormat.push(format);
+    });
+
+    $('.whatsapp-key').find('i').click(e => {
+        let element = $(e.currentTarget).closest('span');
+        let keyId = element.data().keyId;
+        $.post('deletekeyFromWADic', { keyId: keyId }).done(result => {
+            an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === 1) {
+                mdlA.dispose();
+                element.remove();
+            }
+        }).catch(function (xhr, e, msg) {
+            an.title = 'Oops';
+            an.content = 'An error has been occured during request.Reload again!'
+            an.alert(an.type.failed);
+            console.log(xhr.responseText, "\n", e, "\n", msg);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('.IsActive').click(e => {
+        let element = $(e.currentTarget);
+        let req = {
+            FormatType: element.closest('tr').data().formatType,
+            IsActive: element.is(':checked'),
+            Action:'Status Change'
+        }
+        $.post('UpdateWhatsappKeyphrase', req).done(result => {
+            an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === 1) {
+                mdlA.dispose();
+            }
+        }).catch(function (xhr, e, msg) {
+            an.title = 'Oops';
+            an.content = 'An error has been occured during request.Reload again!'
+            an.alert(an.type.failed);
+            console.log(xhr.responseText, "\n", e, "\n", msg);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    })
+</script>

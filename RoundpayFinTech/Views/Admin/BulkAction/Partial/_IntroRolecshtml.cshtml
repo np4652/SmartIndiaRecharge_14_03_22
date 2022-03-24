@@ -1,0 +1,221 @@
+﻿@using Fintech.AppCode.StaticModel
+@using RoundpayFinTech.AppCode.Configuration
+@model UserRegModel
+<div class="input-group mb-2 col-md-1 pr-0">
+    @Html.TextBox("txtReferal", Model.Input, new { @class = "form-control", @placeholder = "Enter Referal", @tabindex = 1, @token = Model.Token, @IsAdminDefined = Model.userInfo.IsAdminDefined })
+
+    <div class="input-group-append">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btnPrefDDL">
+            <span class="sr-only">Toggle Dropdown for preferences</span>
+        </button>
+        <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnPrefDDL">
+            <h5 class="dropdown-header text-center">Preferences</h5>
+            <div class="dropdown-item">
+                <div class="form-inline">
+                    <div class="col-md">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rdoCriteria" id="rdoSelf" value="1" checked>
+                            <label class="form-check-label" for="rdoSelf">Self</label>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rdoCriteria" id="rdoDirect">
+                            <label class="form-check-label" for="rdoDirect">Direct</label>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="rdoCriteria" id="rdoWhole">
+                            <label class="form-check-label" for="rdoWhole">ALL</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="input-group mb-2 col-md-3 pr-0">
+    <select id="ddlRole" aria-describedby="roleHelp" tabindex="2" class="custom-select custom-select-md mb3">
+        <option selected value="0">:: ALL Role ::</option>
+        @if ((Model.roleSlab.Roles ?? new List<Fintech.AppCode.Model.RoleMaster>()).Any())
+        {
+            @foreach (var _roles in Model.roleSlab.Roles)
+            {
+                <option value="@_roles.ID">@_roles.Role</option>
+            }
+        }
+    </select>
+    <div class="input-group-append">
+        <button type="button" class="btn btn-outline-secondary" onclick="GetUser()" id="btnSearch">Search</button>
+        @if (ApplicationSetting.IsBulkFundTransfer)
+        {
+            <button type="button" class="btn btn-outline-secondary" id="btnBulkDebit">Bulk Debit</button>
+        }
+    </div>
+    <small id="roleHelp" class="form-text text-muted d-none">Role is mandatory</small>
+</div>
+<div class="input-group mb-2 col-md-2 pr-0">
+    <select class="form-control" id="ddlBulkAction" onchange="OnChangeAction(this)" aria-describedby="roleHelp">
+        <option value="0">:: Choose Action ::</option>
+        <option value="@BulkUserAction.OTP">OTP</option>
+        <option value="@BulkUserAction.Rental">Rental</option>
+        <option value="@BulkUserAction.Status">Status</option>
+        <option value="@BulkUserAction.GST">GST</option>
+        <option value="@BulkUserAction.TDS">TDS</option>
+        <option value="@BulkUserAction.DMTModel">DMTModel</option>
+        <option value="@BulkUserAction.Intro">Change Intro</option>
+        <option value="@BulkUserAction.Capping">Capping</option>
+        <option value="@BulkUserAction.AssignEmployee">Assign Employee</option>
+        @if (ApplicationSetting.IsAddMoneyEnable)
+        {
+            <option value="@BulkUserAction.PaymentGateway">Payment Gateway</option>
+        }
+        @if (Model.userBalnace.IsUBalance)
+        {
+            <option value="@BulkUserAction.UtilityCapping">UtilityCapping</option>
+        }
+        @if (Model.userBalnace.IsIDBalance)
+        {
+            <option value="@BulkUserAction.IDCapping">IDCapping</option>
+        }
+        @if (Model.userBalnace.IsPacakgeBalance)
+        {
+            <option value="@BulkUserAction.PackageCapping">PackageCapping</option>
+        }
+        @if (Model.userBalnace.IsCBalance)
+        {
+            <option value="@BulkUserAction.PrepaidCardCapping">PrepaidCardCapping</option>
+        }
+        @if (ApplicationSetting.IsAutoBilling)
+        {
+            <option value="@BulkUserAction.AutoBilling">AutoBilling</option>
+        }
+        <option value="@BulkUserAction.AlertBalance">Alert Balance</option>
+        <option value="@BulkUserAction.AssignEmployee">Assign Employee</option>
+    </select>
+</div>
+
+<div class="input-group mb-1 col-md-3 pr-0" style="display:none" id="div_10">
+    <select class="form-control" id="ddlAssignUser" aria-describedby="roleHelp">
+        <option value="0">:: Choose Employee ::</option>
+    </select>
+    <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" id="btnChangeAssigne">Apply</button>
+</div>
+
+
+<div class="input-group mb-2 col-md-2 pr-0" style="display:none" id="div_0">
+    <select class="form-control" id="ddlDMRModel" aria-describedby="ddlDMRModelH" tabindex="14" asp-for=@(Model.userInfo.DMRModelID) asp-items="@Model.DMRModelSelect">
+    </select>
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="ActionHit()">Apply</button>
+    </div>
+</div>
+<div class="input-group mb-2 col-md-2 pr-0" style="display:none" id="div_1">
+    <select class="form-control" id="ddlStatus" aria-describedby="roleHelp">
+        <option value="1">Active</option>
+        <option value="0">Deactive</option>
+    </select>
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="ActionHit()">Apply</button>
+    </div>
+</div>
+<div class="input-group mb-2 col-md-2 pr-0" style="display:none" id="div_2">
+    <select class="form-control" id="ddlRental" aria-describedby="roleHelp">
+        <option value="1">Applicable</option>
+        <option value="0">Not Applicable</option>
+    </select>
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="ActionHit()">Apply</button>
+    </div>
+</div>
+
+@if (ApplicationSetting.IsDoubleWallet)
+{
+    <div class="input-group mb-1 col-md-2 pr-0" style="display:none" id="div_7">
+        <select class="form-control" id="ddlWallet" aria-describedby="roleHelp">
+            <option value="1">Perpaid</option>
+            <option value="2">Utility</option>
+        </select>
+    </div>
+}
+<div class="input-group mb-1 col-md-2 pr-0" style="display:none" id="div_3">
+    <input id="txtAmount" type="text" class="form-control" placeholder="Amount" />
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="ActionHit()">Apply</button>
+    </div>
+</div>
+<div class="input-group mb-1 col-md-2 pr-0" id="div_4" style="display:none">
+    <input id="txtFromIntoID" type="text" class="form-control" placeholder="From ReferalID ID" />
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="ActionHit()">Apply</button>
+    </div>
+</div>
+<div class="input-group mb-1 col-md-2 pr-0" id="div_8" style="display:none">
+    <input id="txtToIntoID" type="text" class="form-control" placeholder="To ReferalID ID" />
+    <div class="input-group-append">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="ActionHit()">Apply</button>
+    </div>
+</div>
+@if (ApplicationSetting.IsAutoBilling)
+{
+    <div class="input-group mb-1 col-md-4 pr-0" style="display:none" id="div_17">
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="EnableAutoBilling(1)">Enable Auto-Billing</button>
+        <button class="btn btn-outline-secondary btnApply" style="border-radius: 0" onclick="EnableAutoBilling(0)">Disable Auto-Billing</button>
+    </div>
+}
+<div class="input-group mb-2 col-md-1 ">
+    <span class="btn btn-outline-success far fa-file-excel" id="btnExport" onclick="GetUser(true)"></span>
+</div>
+
+<script>
+    $('#ddlRole').change(() => {
+        let role = $('#ddlRole').val(),
+            action = $('#ddlBulkAction').val();
+        if (action == 16 && (role == 5 || role == 6 || role == 7)) {
+            $('#div_10').show();
+            GetEmpByRole();
+        }
+        else
+            $('#div_10').hide();
+    });
+
+    $('#btnBulkDebit').on('click', function () {
+        var role = $('#ddlRole').val();
+        if (role == 0) {
+            an.title = 'Oops';
+            an.content = 'Please Select Role First';
+            an.alert(an.type.failed);
+            return false;
+        }
+        preloader.load();
+        $.post('/bdc', { CommonInt : role})
+            .done(function (result) {
+                resultReload(result);
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    });
+
+</script>

@@ -1,0 +1,450 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.PlanApiViewPlan
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Plans</h3>
+        <hr />
+    </div>
+    @if (Model.ERROR == "0")
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    @if (Model.RDATA.FULLTT != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="pill" href="#contFULLTT">FULLTT</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.TOPUP != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contTOPUP">TOPUP</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.ThreeG4G != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#cont3g4g">3G/4G</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.RATECUTTER != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contRATECUTTER">RATE CUTTER</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.TwoG != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#cont2G">2G</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.SMS != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contSMS">SMS</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.Romaing != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contROAMING">ROAMING</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.COMBO != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contCOMBO">COMBO</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.FRC != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contFRC">FRC</a>
+                        </li>
+                    }
+                    @if (Model.RDATA.DATA != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contDATA">DATA</a>
+                        </li>
+                    }
+
+                    @if (Model.RDATA.STV != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contSTV">STV</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    <div id="contFULLTT" class="table-responsive container tab-pane active">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.FULLTT != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.FULLTT)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contTOPUP" class="table-responsive container tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.TOPUP != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.TOPUP)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for top up</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="cont3g4g" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.ThreeG4G != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.ThreeG4G)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contRATECUTTER" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.RATECUTTER != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.RATECUTTER)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for rate cutter</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="cont2G" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.TwoG != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.TwoG)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 2G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contSMS" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.SMS != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.SMS)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for SMS</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contROAMING" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.Romaing != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.Romaing)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for roaming</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contCOMBO" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.COMBO != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.COMBO)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for combo</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contFRC" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.FRC != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.FRC)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for frc</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="contDATA" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.DATA != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.DATA)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for frc</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="contSTV" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.RDATA.STV != null)
+                                {
+                                    foreach (var ftt in Model.RDATA.STV)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for frc</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>

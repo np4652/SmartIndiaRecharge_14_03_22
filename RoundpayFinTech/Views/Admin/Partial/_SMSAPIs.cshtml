@@ -1,0 +1,53 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<SMSAPIDetail>
+@{
+    var counter = 0;
+}
+@foreach (var mdl in Model)
+{
+    <tr  data-item-id="@mdl.ID">
+        <th style="width:1em;" scope="row">@(counter + 1)</th>
+        <td style="width:5em;">
+            <div class="btn-group dropup">
+                <a href="#" id="act@(counter + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#Edit@(counter + 1)" class="dropdown-item">Edit</a>
+                    @if (ApplicationSetting.IsSocialAlert)
+                    {
+                        @if (mdl.IsWhatsApp)
+                        {
+                            <a href="#Wap@(counter + 1)" class="dropdown-item">Whatsapp</a>
+                        }
+                    }
+                </div>
+            </div>
+        </td>
+        <td style="width:6em">
+            @mdl.Name
+            @if (mdl.TransactionType > 0)
+            {
+                <small class="form-text text-muted mt-0">@(mdl.TransactionType == 1 ? "All" : (mdl.TransactionType == 2 ? "Default" : "OTP"))</small>
+            }
+        </td>
+        <td style="width:6em">@mdl._APIType</td>
+        <td class="word-break-wrap" style="width:10em">@mdl.URL</td>
+        <td>
+            <div class="input-group-append">
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <input type="checkbox" class="switch isDefault smai" id="chbIsDefault_@(counter+1)" @Html.Raw(mdl.Default ? "checked='checked'" : "")>
+                    <label for="chbIsDefault_@(counter+1)" class="font-weight-bold lbl"></label>
+                </span>
+            </div>
+        </td>
+        <td>
+            <div class="input-group-append">
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <input type="checkbox" class="switch isActive smai" id="chbIsActive_@(counter+1)" @Html.Raw(mdl.IsActive ? "checked='checked'" : "")>
+                    <label for="chbIsActive_@(counter+1)" class="font-weight-bold lbl"></label>
+                </span>
+            </div>
+        </td>
+    </tr>
+    counter++;
+}

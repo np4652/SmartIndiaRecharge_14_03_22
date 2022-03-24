@@ -1,0 +1,165 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.Shopping.FEImage
+@{
+    var cList = new SelectList(Model.Categories, "MainCategoryID", "Name");
+}
+<div class="row">
+    <div class="col-sm-9">
+        <div class="form-group">
+            <span class="text-monospace">Image Type<sup class="text-danger">*</sup></span>
+            <select class="form-control" id="ddlImgType" required="required" value="0" tabindex="1" asp-for="@Model.ImgTypeID">
+                <option value="0">:: Choose ImageType ::</option>
+                <option value="1">:: Banner ::</option>
+                <option value="2">:: Side Upper ::</option>
+                <option value="3">:: Side Lower ::</option>
+                <option value="4">:: Category Offer ::</option>
+                <option value="5">:: Promotion Pop Up ::</option>
+                <option value="6">:: Right Banner ::</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            &nbsp;&nbsp;
+            <div class="input-group-append">
+                <input type="file" class="form-control d-none" id="fileImage" placeholder="Image" multiple accept=".png,.jpeg,.jpg" tabindex="17" />
+                <label for="fileImage" class="btn btn-info" tabindex="17"><i class="fa fa-upload"></i> Image</label>
+            </div>
+        </div>
+    </div>
+    <div id="divCat" class="col-sm-12" style="display:none;">
+        <div class="form-group">
+            <span class="text-monospace">Category<sup class="text-danger">*</sup></span>
+            <select class="form-control" id="ddlCategory" asp-items="@cList" asp-for="@Model.CategoryID" value="0" tabindex="1">
+                <option value="0">:: Choose Category ::</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "") />
+                <label for="chkActive" class="font-weight-bold lbl">IsActive</label>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div id="imagePreview"></div>
+    </div>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button class="btn btn-outline-success btnSave">@Html.Raw(Model.ID == 0 ? "Save" : "Update")</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    if (@Model.CategoryID> 0) {
+        $('#divCat').removeAttr('style');
+    }
+    $('#ddlImgType').change(function () {
+        let _val = $('#ddlImgType').val();
+        let _style = $('#divCat').attr('style');
+        if (_val == 4 && _style == 'display:none;') {
+            $('#divCat').removeAttr('style');
+        }
+        else {
+            if (_style == undefined) {
+                $('#divCat').attr('style', 'display:none;');
+            }
+        }
+    });
+    $('.btnSave').unbind().click(() => {
+        //if (newFileList.length < 1) {
+        //    an.title = 'Oops';
+        //    an.content = "Image required";
+        //    an.alert(an.type.failed);
+        //    return;
+        //}
+        let _imgType = $('#ddlImgType').val();
+        let _catType = $('#ddlCategory').val();
+        let _imgPath = '@Model.FilePath';
+        console.log(_imgPath);
+        if (_imgType == 0) {
+            an.title = 'Oops';
+            an.content = 'Select image type';
+            an.alert(an.type.failed);
+            return;
+        }
+        if (_imgType == 4 && _catType == 0) {
+            an.title = 'Oops';
+            an.content = 'Select Category type';
+            an.alert(an.type.failed);
+            return;
+        }
+        if (_imgType != 4) {
+            _catType = 0;
+        }
+        if (_imgPath.trim() == '' && newFileList.length == 0) {
+            an.title = 'Oops';
+            an.content = 'Upload image';
+            an.alert(an.type.failed);
+            return;
+        }
+        preloader.load();
+        let param = {
+            CommonInt : @Model.ID,
+            CommonInt2: _catType,
+            CommonInt3: _imgType,
+            CommonBool : $('#chkActive').is(':checked')
+        },
+        formData = new FormData();
+        //formData.append('file', $('#fileImage').val());
+        if (newFileList.length > 0) {
+            formData.append('file', newFileList[0]);
+            alert(newFileList[0]);
+            //for (let i = 0; i < newFileList.length; i++) {
+            //    formData.append('file', newFileList[i]);
+            //}
+        }
+        formData.append('detail', JSON.stringify(param));
+        $.ajax({
+            type: 'POST',
+            url: '/AddFEImg',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: result => {
+                preloader.remove();
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === an.type.success) {
+                    $('span').removeClass('active');
+                    $('#imagePreview').empty();
+                    newFileList = [];
+                    $('.close').button().click();
+                    loadGrid();
+                }
+            },
+            error: xhr => {
+                preloader.remove();
+                console.log(xhr);
+                an.title = 'Oops';
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+            }
+        });
+    });
+    (() => {
+        $('#fileImage').change(e => previewImage(e, 'imagePreview'));
+        var id = @Model.ID;
+        var _src = 'Image/ECommFE/' + '@Model.FileName';
+        if (id > 0) {
+            $('#ddlImgType').val('@Model.ImgTypeID');
+            $('#imagePreview').append(`<div class="previewImage float-left text-center">
+                                                                                <span class="setDefault">
+                                                                                    <input type="checkbox" checked="checked" class="chkDefaultImg" onclick="pro.setDefaultIcon($(this))" data-toggle="tooltip" data-placement="top" data-original-title="Set as defult icon"/>
+                                                                                </span>
+                                                                                <span class="close fa fa-times"></span>
+                                                                                <img src="${_src}" style="width:150px;height:auto;">
+                                                                             </div>`);
+            //preloadedImages(id, 'S2');
+        }
+    })();
+</script>

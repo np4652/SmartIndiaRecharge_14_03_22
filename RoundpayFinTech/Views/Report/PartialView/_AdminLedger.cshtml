@@ -1,0 +1,51 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model List<RoundpayFinTech.AppCode.Model.ProcModel.ProcAdminLedgerResponse>
+
+@{
+    var couter = 1;
+    var DebitAmt = 0M;
+    var CreditAmt = 0M;
+}
+
+@if (Model.Count > 0)
+{
+    for (int i = 0; i < Model.Count; i++)
+    {
+        DebitAmt += Model[i].Debit;
+        CreditAmt += Model[i].Credit;
+
+        <tr>
+            <td>@couter</td>
+            <td>@Model[i].TID</td>
+            <td>@Model[i].EntryDate</td>
+            <td>@Model[i].Description</td>
+            <td>@Model[i].Role</td>
+            <td class="text-right">@Model[i].LastBalance</td>
+            <td class="text-right">@Model[i].Debit</td>
+            <td class="text-right">@Model[i].Credit</td>
+            <td class="text-right">@Model[i].CurentBalance</td>
+            <td>@(Wallet.GetWalletType(Model[i].WalletID))</td>
+            <td>@Model[i].UTR</td>
+            <td>@Model[i].BankName</td>
+            <td>@Model[i].Remark</td>
+        </tr>
+        couter = couter + 1;
+    }
+<tr>
+    <th colspan="5" class="text-right">Total(<i class="fas fa-rupee-sign"></i>)</th>
+    <th class="text-right">@DebitAmt (Dr.)</th>
+    <th class="text-right">@CreditAmt (Cr.)</th>
+    <th class="text-right">@*@Html.Raw(CreditAmt - DebitAmt) (B.)*@</th>
+    <th></th>
+    <th></th>
+</tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="10">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

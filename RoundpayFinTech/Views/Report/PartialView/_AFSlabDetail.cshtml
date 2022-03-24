@@ -1,0 +1,44 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@model SlabDetailModel
+
+@{
+    var couter = 1;
+}
+<table class="table table-bordered">
+    <thead class="bg-primary">
+        <tr>
+            <th>#</th>
+            <th>Vendor Name</th>
+            <th>Commssion</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model!=null && Model.SlabDetails.Any())
+        {
+            foreach (var item in Model.SlabDetails)
+            {
+
+                <tr class="tr_bstatus">
+                    <td scope="col">@couter</td>
+                    <td scope="col">@item.VName
+                    <td class="text-center">
+                        <div class="row">
+                            <div class="col-md-3 text-nowrap">
+                                <span class="text-monospace">Comm : @item.Comm</span>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                couter = couter + 1;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="3">
+                    <center>No Record Found</center>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

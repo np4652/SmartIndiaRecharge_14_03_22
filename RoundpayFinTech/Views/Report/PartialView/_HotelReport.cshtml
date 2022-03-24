@@ -1,0 +1,107 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.ThirdParty.HotelAPI;
+@model HotelReport;
+@{
+    var counter = 1;
+    var mdl = Model.BookingDetails;
+    decimal Opening = 0;
+    decimal TotalRequestedAmount = 0;
+    decimal TotalAmount = 0;
+    decimal TotalCommission = 0;
+    decimal Closing = 0;
+    var colSpan = 10;
+}
+
+@if (mdl.Any())
+{
+    foreach (var item in mdl)
+    {
+
+        if (counter == 1)
+        {
+            Opening = item.LastBalance;
+            Closing = item.Balance;
+        }
+        <tr data-item-id="@item.TID">
+            <td>@counter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        @if (item._Type == RechargeRespType.SUCCESS)
+                        {
+                            <a href="#" class="dropdown-item text-secondary TrReceipt" id="Transaction_@counter" onclick="hotelreceipt('@item.BookingID', '@item.TID')">Receipt</a>
+                        }
+                        <a href="#" class="dropdown-item text-secondary" id="lnkCancelHotel" onclick="CancelHotel('@item.BookingID', '@item.TID', '@item.TransactionID')">Cancel Hotel</a>
+                        @if (item._Type == RechargeRespType.SUCCESS)
+                        {
+                            @*<a href="#" class="dropdown-item text-secondary" id="lnkCancelHotel"><i class="fas fa-angle-double-right"></i> Cancel Hotel</a>*@
+                        }
+                    </div>
+                </div>
+            </td>
+            <td>@item.TransactionID</td>
+            <td>@item.HotelName </td>
+            <td>@item.Destination</td>
+            <td>@item.CheckIn</td>
+            <td>@item.CheckOut</td>
+            <td>@item.TotalGuest</td>
+            <td>@item.BookingID</td>
+            <td>@item.EntryDate</td>
+            <td>@item.LastBalance</td>
+            <td>@item.RequestedAmount</td>
+
+            <td>@item.Amount</td>
+            <td class="text-right"><span class="btn btn-sm btn-outline-@Html.Raw(!item.CommType?"success ":"danger") aupComm " name="@item.TransactionID" id="@item.TID">@item.Commission</span></td>
+            <td class="text-right">@item.Balance</td>
+            <td>
+                @if (item._Type == RechargeRespType.PENDING)
+                {
+                    <span class="badge badge-secondary">@item.Type_</span>
+                }
+
+                @if (item._Type == RechargeRespType.FAILED)
+                {
+                    <span class="badge badge-danger">@item.Type_</span>
+                }
+                @if (item._Type == RechargeRespType.SUCCESS)
+                {
+                    <span class="badge badge-success">@item.Type_</span>
+                }
+            </td>
+            <td>@item.CancellationStatus</td>
+            <td>@item.RequestMode</td>
+            }
+        </tr>
+        counter += 1;
+        TotalRequestedAmount += item.RequestedAmount;
+        TotalAmount += item.Amount;
+        TotalCommission += item.Commission;
+    }
+    <tr class="text-right bg-blue text-white text-monospace">
+        <td colspan="@colSpan" class="h5">
+            <strong>Total</strong>
+        </td>
+        <td>@Opening</td>
+        <td>@TotalRequestedAmount</td>
+        <td>@TotalAmount</td>
+        <td>@TotalCommission</td>
+        <td>@Closing</td>
+        <td colspan="7"></td>
+    </tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="20"><center>No Record Found</center></td>
+    </tr>
+}
+
+@section scripts{
+    <script>
+       
+    </script>
+
+
+}

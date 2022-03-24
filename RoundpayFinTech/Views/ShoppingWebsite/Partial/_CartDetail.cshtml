@@ -1,0 +1,71 @@
+﻿@using RoundpayFinTech.AppCode.Model.ShopingWebSite;
+@model ShoppingWebsiteCartDetails
+<a class="minicart-icon" routerlink="shoppingcart" href="/shoppingcart">
+
+
+    <i class="icon_bag_alt"></i>₹
+    @(Model.CartDetail != null ? Model.CartDetail.Sum(item => item.SellingPrice*item.Quantity) : 0) / -
+</a>
+<ul class="navbar-ul">
+    <div class="notify-drop-title">
+        <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-6">Shopping Cart (<b>@(Model.CartDetail != null ?Model.CartDetail.Count() : 0)</b>)</div>
+            <div class="col-md-6 col-sm-6 col-xs-6 text-right">
+                <a routerlink="shoppingcart" href="/shoppingcart"><i class="fa fa-eye"></i> View Cart</a>
+            </div>
+        </div>
+    </div><!---->
+
+    <div class="drop-content ">
+        @if (Model.CartDetail != null)
+        {
+            @foreach (var item in Model.CartDetail)
+            {
+
+            <li>
+
+                <div class="row">
+
+                    <a href="GetProductDetails/@item.ProductDetailID">
+                        <div class="col-md-3 cus-drop-padding1">
+                            <div class="cart-drop-img" tabindex="0">
+                                <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+                            </div>
+                        </div>
+                        <div class="col-md-9 cus-drop-padding">
+                            <div class="cart-drop-txt">
+                                <p tabindex="0">
+                                        @Html.Raw(@item.ProductName)
+                                </p>
+                                <a href="GetProductDetails/@item.ProductDetailID" class="rIcon cross-icon">
+                                    <i class="fa fa-eye"></i>
+                                </a>
+                                <span>₹ @item.SellingPrice x @item.Quantity = ₹ @(item.SellingPrice* item.Quantity)</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+
+            </li>
+
+            }
+
+        }
+        else
+        {
+        <div class="col-sm-12 col-md-12 col-lg-12" style="padding:0;">
+            <div class="card" style="border: none">
+                <div class="card-img-top-empty"></div>
+                <div class="card-block card-text-sec">
+                    <h5 class="t"></h5>
+                    <p></p>
+                </div>
+            </div>
+        </div>
+        }
+    </div><!---->
+
+    <div class="notify-drop-footer text-center">
+        <a routerlink="shoppingcart" href="/shoppingcart"><i class="fa fa-eye"></i> View Cart</a>
+    </div>
+</ul>

@@ -1,0 +1,647 @@
+﻿@model RechargeReportModel
+@{
+    ViewData["Title"] = "Pending Transaction";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Pending Transaction</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-3">
+                                <i class="fas fa-link"></i> Pending Transaction
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div id="dvAPI">
+                                    @{
+                                        var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                                    }
+                                    <select id="ddlAPI" tabindex="7" class="form-control text-uppercase" asp-items="listAPI">
+                                        <option value="0">:: Select API :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6 col-xs-6">
+                                <div class="input-group">
+                                    @{
+                                        var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" tabindex="7" class="form-control text-uppercase" asp-items="listOperator">
+                                        <option value="0">:: Select Operator :: </option>
+                                    </select>
+                                    <div class="input-group-append btn-group">
+                                        <button type="button" id="btnSearch" class="btn btn-dark text-monospace">Search</button>
+                                        <button type="button" id="btnResend" class="btn btn-info text-monospace">Resend</button>
+                                        <button type="button" id="btnbulkFail" class="btn btn-danger text-monospace">Bulk Fail</button>
+                                        <button type="button" id="btnBSts" class="btn btn-primary text-monospace">BulkStatus Check</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div id="pends">
+                            <div class="table-responsive table-sm">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="tblPendings">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th>#</th>
+                                            <th><input type="checkbox" id="chbResend_All" /></th>
+                                            <th>Actions</th>
+                                            <th>TransactionIDs</th>
+                                            <th>DateTime</th>
+                                            <th>Outlet</th>
+                                            <th>AccountNo</th>
+                                            <th class="text-right">Amount</th>
+                                            <th>Status</th>
+                                            <th>API</th>
+                                            <th>VendorID</th>
+                                            <th>Operator</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="12">
+                                                Searching...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var BlkCnt = 0;
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('#btnSearch').click(function () {
+                pends();
+            });
+            $('#btnSearch').click();
+            $('#btnbulkFail').on('click', function () {
+                _bulkFail();
+            })
+        });
+
+        var pends = function () {
+            preloader.load();
+            $.post('/pending', { APIID: $('#ddlAPI').val(), OID: $('#ddlOperator').val() })
+                .done(function (result) {
+                    resultReload(result);
+                    $('.__p #pends').html(result);
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('[id^=btnSuccess],[id^=btnFail]').click(function () {
+                        var status = this.id.toUpperCase()[3];
+                        var id = $(this).closest('tr').data().itemId;
+                        var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[1]).find('[id^=txtRemark]');
+                        var rem = _CommanRemark == undefined ? txtRemark.val() : _CommanRemark;
+                        var transid =
+                            $($('[data-item-id="' + id + '"]').children('td')[2]).find('small').html().trim().split('[').join('').split(']').join('') + String.fromCharCode(160);
+                        preloader.load();
+                        $.post('/U-S-F', { Status: status, TID: id, TransactionID: transid, Remark: rem })
+                            .done(function (result) {
+                                resultReload(result);
+                                if (result.statuscode !== undefined) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $('[data-item-id="' + id + '"]').remove();
+                                    }
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request.Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                    $('[id^=btnStsCheck]').click(function () {
+                        var id = $(this).closest('tr').data().itemId;
+                        preloader.load();
+                        $.post('/chk-sts', { TID: id })
+                            .done(function (result) {
+                                resultReload(result);
+                                mdlA.id = "mymodel";
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').unbind().click(function () {
+                                    mdlA.dispose();
+                                    pends();
+                                });
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request.Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                    $('[id^=btnAPI]').click(function () {
+
+
+                        var aType = $(this).data().atype;
+                        var aName = $(this).data().aname;
+                        if (aType == 4) {
+                            mdlA.id = 'mypoup';
+                            mdlA.content = mdlA.confirm();
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.small);
+
+                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                mdlA.dispose();
+                            });
+                            var APIID = this.id.split('_')[1];
+                            $('#btnOK').unbind().click(function () {
+                                preloader.load();
+                                $.post('/rqsent', { APIID: APIID })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        if (result.statuscode !== undefined) {
+                                            if (result.statuscode == an.type.failed) {
+                                                an.title = "Oops";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            }
+                                            else if (result.statuscode == an.type.success) {
+                                                an.title = "Well done";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            }
+                                        }
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                        mdlA.dispose();
+                                    });
+                            });
+                        }
+                        else {
+                            var SHtml = '';
+                            var RHtml = '';
+                            $('#tblPendings tbody tr').each(function () {
+
+                                var aTID = $(this).find('td span').eq(0).attr('name');
+                                var aHName = $(this).find('td span').eq(5).html();
+
+                                if (aName === aHName) {
+                                    SHtml += '<tr data-item-id="' + aTID +'">' + $(this).html()  +'</tr>'
+                                }
+                                else {
+                                    RHtml += '<tr data-item-id="' + aTID +'">' + $(this).html() + '</tr>'
+                                }
+                            });
+                            $('#tblPendings tbody').html('');
+                            $('#tblPendings tbody').html(SHtml + RHtml);
+                            $('[id^=btnSuccess],[id^=btnFail]').click(function () {
+                                var status = this.id.toUpperCase()[3];
+                                var id = $(this).closest('tr').data().itemId;
+                                var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[1]).find('[id^=txtRemark]');
+                                var rem = _CommanRemark == undefined ? txtRemark.val() : _CommanRemark;
+                                var transid =
+                                    $($('[data-item-id="' + id + '"]').children('td')[2]).find('small').html().trim().split('[').join('').split(']').join('') + String.fromCharCode(160);
+                                preloader.load();
+                                $.post('/U-S-F', { Status: status, TID: id, TransactionID: transid, Remark: rem })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        if (result.statuscode !== undefined) {
+                                            if (result.statuscode == an.type.failed) {
+                                                an.title = "Oops";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            }
+                                            else if (result.statuscode == an.type.success) {
+                                                an.title = "Well done";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                                $('[data-item-id="' + id + '"]').remove();
+                                            }
+                                        }
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                    });
+                            });
+                            $('[id^=btnStsCheck]').click(function () {
+                                var id = $(this).closest('tr').data().itemId;
+                                preloader.load();
+                                $.post('/chk-sts', { TID: id })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        mdlA.id = "mymodel";
+                                        mdlA.content = result;
+                                        mdlA.options.backdrop = 'static';
+                                        mdlA.alert(mdlA.size.large);
+                                        $('button.close span,#mdlCancel').unbind().click(function () {
+                                            mdlA.dispose();
+                                            pends();
+                                        });
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                    });
+                            });
+                            $(".a_modal").unbind().click(function () {
+                                var td = $(this).parent("td");
+                                var tid = $(this).attr("name");
+                                var transid = $(td).find("#lbltid").val();
+                                var vendorid = $(td).find("#lblvid").val();
+                                var apirequest = $(td).find("#lblapirqid").val();
+                                var moddate = $(td).find("#lblmoddate").val();
+                                var options = $(td).find("#lbloption").val().split('-');
+                                var option1 = options[0];
+                                var option2 = options[1];
+                                var option3 = options[2];
+                                var option4 = options[3];
+                                var custNo = $(td).find('#lblCustNo').val();
+                                var ccName = $(td).find('#hidCCName').val();
+                                var ccMob = $(td).find('#lblCCMobile').val();
+                                var tdate = $(td).find('#hidTDate').val();
+                                var displays = $(td).find('#lbldisplay').val().split('-');
+                                $.post('/Recharge-APiUrl', { TID: tid, T: transid }, function (result) {
+                                    resultReload(result);
+                                    $('#' + an.id).remove();
+                                    mdlA.id = 'mdlReqResp';
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.alert(mdlA.size.large);
+                                    $('button.close span,#mdlCancel').unbind().click(function () {
+                                        mdlA.dispose();
+                                    });
+                                    $("#lbltranid").text(transid);
+                                    $("#lblvendorid").text(vendorid);
+                                    $("#lblapirequestid").text(apirequest);
+                                    $("#lblmodifydate").text(moddate);
+                                    $("#lbloption1").text(option1);
+                                    $("#lbloption2").text(option2);
+                                    $("#lbloption3").text(option3);
+                                    $("#lbloption4").text(option4);
+                                    $("#lbldisplay1").text(displays[0] === '' ? 'Optional1' : displays[0]);
+                                    $("#lbldisplay2").text(displays[1] === '' ? 'Optional2' : displays[1]);
+                                    $("#lbldisplay3").text(displays[2] === '' ? 'Optional3' : displays[2]);
+                                    $("#lbldisplay4").text(displays[3] === '' ? 'Optional4' : displays[3]);
+                                    $('#lblCustNoShow').text(custNo);
+                                    $('#lblCCName').text(ccName);
+                                    $('#lblCCMob').text(ccMob);
+                                    $('#spnTDate').text(tdate);
+                                }).fail(function (xhr) {
+                                    if (xhr.status === 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status === 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                }).always(function () {
+                                    preloader.remove();
+                                });
+                            });
+                        }
+                    });
+
+                    $('#chbResend_All').change(function () {
+                        var IsChecked = $(this).is(':checked');
+                        $('[id^=chbResend]').each(function () {
+                            $(this).prop('checked', IsChecked);
+                        });
+                    });
+                    $('[id^=chbResend]').change(function () {
+                        if (!$(this).is(':checked'))
+                            $('#chbResend_All').prop('checked', false);
+                    });
+                    $('#btnResend').click(function () {
+                        var TIDs = [];
+                        $('[id^=chbResend]').each(function () {
+                            if ($(this).is(':checked') && $('#chbResend_All').attr('id') !== $(this).attr('id')) {
+                                TIDs.push($(this).closest('tr').data().itemId);
+                            }
+                        });
+                        if (TIDs.length == 0) {
+                            an.title = 'Oops';
+                            an.content = 'No row selected';
+                            an.alert(an.type.failed);
+                            return false;
+                        } else {
+                            mdlA.id = 'mymodel';
+                            mdlA.content = '<div class="col-md-12" id="divSelectAPI">'
+                                + '<button type = "button" class="close" aria-label="Close">'
+                                + '<span aria-hidden="true">&times;</span></button>'
+                                + '<h5>Select An API</h5>' +
+                                $('#dvAPI').html()
+                                + '<div class="form-group"></div> <button class="btn btn-outline-dark mr-2" id="btnSendTransaction">Resend</button><button class="btn btn-dark" id="mdlCancel">Cancel</button></div>';
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.small);
+                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                mdlA.dispose();
+                            });
+                            var btnTxt = $('#btnSendTransaction').html();
+                            $('#btnSendTransaction').click(function () {
+                                if (btnTxt !== $('#btnSendTransaction').html())
+                                    return false;
+                                btnLdr.addClass = 'btn-dark';
+                                btnLdr.removeClass = 'btn-outline-dark';
+                                btnLdr.Start($('#btnSendTransaction'), 'Sending...');
+                                preloader.load();
+                                $.post('/ts-resend-t', { Id: TIDs })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        mdlA.id = "resendModel";
+                                        mdlA.content = result;
+                                        mdlA.options.backdrop = 'static';
+                                        mdlA.alert(mdlA.size.large);
+                                        $('button.close span,#mdlCancel').click(function () {
+                                            $('#mymodel,.modal-backdrop').remove();
+                                            mdlA.dispose();
+                                            pends();
+                                        });
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                        try {
+                                            btnLdr.Stop($('#btnSendTransaction'));
+                                        } catch (e) {
+
+                                        }
+                                    });
+                            });
+
+                        }
+                    });
+                    $('#btnBSts').click(function () {
+                        var TIDs = [];
+                        $('[id^=chbResend]').each(function () {
+                            if ($(this).is(':checked') && $('#chbResend_All').attr('id') !== $(this).attr('id')) {
+                                TIDs.push($(this).closest('tr').data().itemId);
+                            }
+                        });
+                        if (TIDs.length == 0) {
+                            an.title = 'Oops StatusCheck';
+                            an.content = 'No row selected';
+                            an.alert(an.type.failed);
+                            return false;
+                        }
+                        BlkCnt = TIDs.length;
+                        preloader.load();
+                        for (i = 0; i < TIDs.length; i++) {
+                            $.post('/chk-sts-blk', { TID: TIDs[i] })
+                                .done(function (result) {
+                                    resultReload(result);
+                                })
+                                .catch(function (xhr, e, msg) {
+                                    an.title = 'Oops';
+                                    an.content = 'An error has been occured during request.Reload again!'
+                                    an.alert(an.type.failed);
+                                })
+                                .fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    if (BlkCnt > 0) {
+                                        BlkCnt--;
+                                    }
+                                    if (BlkCnt == 0) {
+                                        preloader.remove();
+                                        pends();
+                                    }
+                                });
+                        }
+                    });
+                    $(".a_modal").unbind().click(function () {
+                        var td = $(this).parent("td");
+                        var tid = $(this).attr("name");
+                        var transid = $(td).find("#lbltid").val();
+                        var vendorid = $(td).find("#lblvid").val();
+                        var apirequest = $(td).find("#lblapirqid").val();
+                        var moddate = $(td).find("#lblmoddate").val();
+                        var options = $(td).find("#lbloption").val().split('-');
+                        var option1 = options[0];
+                        var option2 = options[1];
+                        var option3 = options[2];
+                        var option4 = options[3];
+                        var custNo = $(td).find('#lblCustNo').val();
+                        var ccName = $(td).find('#hidCCName').val();
+                        var ccMob = $(td).find('#lblCCMobile').val();
+                        var tdate = $(td).find('#hidTDate').val();
+                        var displays = $(td).find('#lbldisplay').val().split('-');
+                        $.post('/Recharge-APiUrl', { TID: tid, T: transid }, function (result) {
+                            resultReload(result);
+                            $('#' + an.id).remove();
+                            mdlA.id = 'mdlReqResp';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.large);
+                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                mdlA.dispose();
+                            });
+                            $("#lbltranid").text(transid);
+                            $("#lblvendorid").text(vendorid);
+                            $("#lblapirequestid").text(apirequest);
+                            $("#lblmodifydate").text(moddate);
+                            $("#lbloption1").text(option1);
+                            $("#lbloption2").text(option2);
+                            $("#lbloption3").text(option3);
+                            $("#lbloption4").text(option4);
+                            $("#lbldisplay1").text(displays[0] === '' ? 'Optional1' : displays[0]);
+                            $("#lbldisplay2").text(displays[1] === '' ? 'Optional2' : displays[1]);
+                            $("#lbldisplay3").text(displays[2] === '' ? 'Optional3' : displays[2]);
+                            $("#lbldisplay4").text(displays[3] === '' ? 'Optional4' : displays[3]);
+                            $('#lblCustNoShow').text(custNo);
+                            $('#lblCCName').text(ccName);
+                            $('#lblCCMob').text(ccMob);
+                            $('#spnTDate').text(tdate);
+                        }).fail(function (xhr) {
+                            if (xhr.status === 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status === 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var _CommanRemark;
+        var _bulkFail = function () {
+            var _html = '<div class="col-md-12 mb-3"> <button type="button" class="close pull-right" aria-label="Close">'
+                + '<span aria-hidden="true">&times;</span></button></div><div class="col-md-12">'
+                + '<label>Remark</label>'
+                + '<textarea class="form-control mb-3" id="txtRemark"></textarea>'
+                + '<button class="btn btn-success mb-3" id="bntGo">GO</button></div>';
+            mdlA.content = _html;
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.small);
+            $('button.close').click(function () {
+                mdlA.dispose();
+            });
+            $('#bntGo').on('click', function () {
+                _CommanRemark = $('#txtRemark').val();
+                $('#tblPendings tr input[type="checkbox"]:checked').each(function (i) {
+                    var _btnCancel = '#' + $(this).closest('tr').find('[id^=btnFail]').attr('id');
+                    $(_btnCancel).click();
+                });
+                mdlA.dispose();
+            });
+        }
+    </script>
+}

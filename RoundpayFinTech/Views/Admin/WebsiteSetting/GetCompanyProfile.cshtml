@@ -1,0 +1,439 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.CompanyProfileDetail
+@{
+    ViewData["Title"] = "Company Profile";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item">Company Profile</li>
+        </ol>
+    </div>
+</div>
+<div id="alertmsg"></div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Company Profile
+                    </div>
+
+
+                    <div class="card-body">
+                        @if (Model.website != null)
+                        {
+                            <div class="row">
+                                <div class="col-sm-8">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <span class="text-danger">*Note: If you change the website address you will not be able to login with old website address</span><br /><br />
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtName", "Company Name", new { @class = "lbl" })
+                                                @Html.TextBox("txtName", Model.Name, new { @class = "form-control text-capitalize", @placeholder = "Enter Name", @aria_describedby = "nameHelp", @tabindex = 1 })
+
+                                                <small id="nameHelp" class="form-text text-muted d-none">Company Name is mandatory</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtHeaderTitle", "Header Title", new { @class = "lbl" })
+                                                @Html.TextBox("txtHeaderTitle", Model.HeaderTitle, new { @class = "form-control", @placeholder = "Enter Header Title", @aria_describedby = "headerTitleHelp", @tabindex = 2 })
+                                                <small id="headerTitleHelp" class="form-text text-muted d-none">Website is mandatory</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtOwnerName", "Owner Name", new { @class = "lbl" })
+                                                @Html.TextBox("txtOwnerName", Model.OwnerName, new { @class = "form-control", @placeholder = "Enter Owner Name", @aria_describedby = "ownerHelp", @tabindex = 3 })
+                                                <small id="ownerHelp" class="form-text text-muted d-none">Owner name is mandatory</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtOwnerDesignation", "Owner Designation", new { @class = "lbl" })
+                                                @Html.TextBox("txtOwnerDesignation", Model.OwnerDesignation, new { @class = "form-control", @placeholder = "Enter Owner Designation", @aria_describedby = "OwnerDesignationHelp", @tabindex = 4 })
+                                                <small id="OwnerDesignationHelp" class="form-text text-muted d-none">Owner Designation is mandatory</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtMobile", "Mobile Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtMobile", Model.mobileNo, new { @class = "form-control", @placeholder = "Enter Mobile Number", @aria_describedby = "mobileHelp", @tabindex = 3 })
+                                                <small id="mobileHelp" class="form-text text-muted d-none">Mobile Number is mandatory</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtEmail", "EmailId", new { @class = "lbl" })
+                                                @Html.TextBox("txtEmail", Model.EmailId, new { @class = "form-control", @placeholder = "Enter Email Id", @aria_describedby = "emailHelp", @tabindex = 4 })
+                                                <small id="mobileHelp" class="form-text text-muted d-none">Mobile Number is mandatory</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtPhoneNo", "Phone Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtPhoneNo", Model.PhoneNo, new { @class = "form-control", @placeholder = "Enter Mobile Number", @aria_describedby = "phoneHelp", @tabindex = 5 })
+                                                <small id="phoneHelp" class="form-text text-muted d-none">Phone Number is mandatory</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtWebsite", "Website*", new { @class = "lbl" })
+                                                @Html.TextBox("txtWebsite", Model.website, new { @class = "form-control", @placeholder = "Enter Website", @aria_describedby = "phoneHelp", @tabindex = 6 })
+                                                <small id="websiteHelp" class="form-text text-muted d-none">Website is mandatory</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtAccountMobileNo", "Accounts Department Mobile Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtAccountMobileNo", Model.AccountMobileNo, new { @class = "form-control", @placeholder = "Enter Accounts Department Mobile No", @aria_describedby = "AccountMobileNoHelp", @tabindex = 7 })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtAccountEmailId", "Accounts Department Email Id", new { @class = "lbl" })
+                                                @Html.TextBox("txtAccountEmailId", Model.AccountEmailId, new { @class = "form-control", @placeholder = "Enter Accounts Department Email Id", @aria_describedby = "AccountMobileNoHelp", @tabindex = 8 })
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtAccountPhoneNo", "Accounts Department Phone Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtAccountPhoneNo", Model.AccountPhoneNos, new { @class = "form-control", @placeholder = "Enter Accounts Department Phone No", @aria_describedby = "AccountPhoneNoHelp", @tabindex = 9 })
+
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtAccountWhatsApp", "Accounts Department WhatsApp Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtAccountWhatsApp", Model.AccountWhatsAppNos, new { @class = "form-control", @placeholder = "Enter Accounts Department Email Id", @aria_describedby = "AccountWhatsAppHelp", @tabindex = 10 })
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtMobileSupport", "Customer Support Mobile Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtMobileSupport", Model.CustomerCareMobileNos, new { @class = "form-control", @placeholder = "Enter Customer Support Mobile No", @aria_describedby = "MobileSupportHelp", @tabindex = 11 })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtEmailIDSupport", "Customer Support EmailId", new { @class = "lbl" })
+                                                @Html.TextBox("txtEmailIDSupport", Model.CustomerCareEmailIds, new { @class = "form-control", @placeholder = "Enter Customer Support EmailId", @aria_describedby = "EmailIDSupportHelp", @tabindex = 12 })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtPhoneNoSupport", "Customer Support Phone Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtPhoneNoSupport", Model.CustomerPhoneNos, new { @class = "form-control", @placeholder = "Enter Customer Support Phone No", @aria_describedby = "PhoneSupportHelp", @tabindex = 13 })
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtWhatsAppSupport", "Customer Support WhatsApp Number", new { @class = "lbl" })
+                                                @Html.TextBox("txtWhatsAppSupport", Model.CustomerWhatsAppNos, new { @class = "form-control", @placeholder = "Enter Customer WhatsApp Number", @aria_describedby = "MobileSupportHelp", @tabindex = 14 })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtInstagramSupport", "Enter Company Instagram Account", new { @class = "lbl" })
+                                                @Html.TextBox("txtInstagramSupport", Model.Instagram, new { @class = "form-control", @placeholder = "Enter Customer Support Phone No", @aria_describedby = "InstagramSupportHelp", @tabindex = 13 })
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtTwitterSupport", "Enter Company Twitter Account", new { @class = "lbl" })
+                                                @Html.TextBox("txtTwitterSupport", Model.Twitter, new { @class = "form-control", @placeholder = "Enter Company Twitter Account", @aria_describedby = "TwitterSupportHelp", @tabindex = 14 })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtFacebookSupport", "Enter Comapny Facebook Account", new { @class = "lbl" })
+                                                @Html.TextBox("txtFacebookSupport", Model.Facebook, new { @class = "form-control", @placeholder = "Enter Comapny Facebook Account", @aria_describedby = "FacebookSupportHelp", @tabindex = 14 })
+
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtSalesEmail", "Enter Sales Person Email", new { @class = "lbl" })
+                                                @Html.TextBox("txtSalesEmail", Model.SalesPersonEmail, new { @class = "form-control", @placeholder = "Enter Sales Person Email", @aria_describedby = "SaleEmailSupportHelp", @tabindex = 14 })
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                       
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtSalesMobile", "Enter Sales Person Mobile", new { @class = "lbl" })
+
+                                                @Html.TextBox("txtSalesMobile", Model.SalesPersonNo, new { @class = "form-control", @placeholder = "Enter Sales Person Mobile", @aria_describedby = "SalemobileSupportHelp", @tabindex = 17 })
+
+                                            </div>
+
+                                        </div>
+
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtReferalID", "Sign UP Referal ID", new { @class = "lbl" })
+                                                @Html.TextBox("txtReferalID", Model.SignupReferalID, new { @type = "number", @class = "form-control ", @placeholder = "Enter Sign Up Referal ID", @aria_describedby = "ReferalHelp", @tabindex = 1, @maxlength = "10", @oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" })
+
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtAddress", "Company Address", new { @class = "lbl" })
+                                                @Html.TextArea("txtAddress", Model.Address, 3, 88, new { @class = "form-control text-capitalize", @placeholder = "Enter Address", @aria_describedby = "addressHelp", @tabindex = 15 })
+                                                <small id="addressHelp" class="form-text text-muted d-none">Company Address is mandatory</small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6" style="margin-top:18px">
+                                            <div class="form-group">
+                                                <button type="button" style="margin-top: 4px;" class="btn btn-dark" id="btnCreate" tabindex="16"> Update</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="card">
+                                        <div class="card-header card-title text-monospace bg-info text-white">Android App [SELF]</div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-sm-6">
+                                                    <div class="input-group">
+                                                        <div class="avatar-upload" data-toggle="tooltip" data-placement="top" title="Upload apk">
+                                                            <div class="avatar-edit">
+                                                                <input type='file' id="uploadSelfApk" data-Is-Test="false" data-Apk-Name="@Model.AppName" class="uploadapk" />
+                                                                <label for="uploadSelfApk">
+                                                                    <i class="text-info fas fa-upload" style="margin-top: 8px;margin-left: 8px;"></i>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <a href="~/apk/@Model.AppName" download="@Model.AppName">
+                                                            <img src="~/images/avatar/android.jpg" class="img-thumbnail rounded-circle" data-toggle="tooltip" data-placement="top" title="click to download">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-6">
+                                                    <div class="input-group">
+                                                        <div class="avatar-upload" data-toggle="tooltip" data-placement="top" title="Upload testing apk">
+                                                            <div class="avatar-edit">
+                                                                <input type='file' id="uploadSelfTestApk" data-Is-Test="true" data-Apk-Name="@Model.AppName" class="uploadapk" />
+                                                                <label for="uploadSelfTestApk">
+                                                                    <i class="text-info fas fa-upload" style="margin-top: 8px;margin-left: 8px;"></i>
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <a href="~/apk/test/@Model.AppName" download="@Model.AppName">
+                                                            <img src="~/images/avatar/androidTest.jpg" class="img-thumbnail rounded-circle" data-toggle="tooltip" data-placement="top" title="click to download">
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 text-danger font-bold text-monospace text-center">
+                                                    <span>@Model.AppName</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    @if (ApplicationSetting.IsWhitelabel)
+                                    {
+                                        <div class="card mt-2">
+                                            <div class="card-header card-title text-monospace bg-primary text-white">Android App [WHITELEBLE]</div>
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-sm-6">
+                                                        <div class="input-group">
+                                                            <div class="avatar-upload" data-toggle="tooltip" data-placement="top" title="Upload apk">
+                                                                <div class="avatar-edit">
+                                                                    <input type='file' id="uploadWLApk" data-Is-Test="false" data-Apk-Name="recharge.apk" class="uploadapk" />
+                                                                    <label for="uploadWLApk">
+                                                                        <i class="text-info fas fa-upload" style="margin-top: 8px;margin-left: 8px;"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <a href="~/apk/recharge.apk" download="recharge.apk">
+                                                                <img src="~/images/avatar/android.jpg" class="img-thumbnail rounded-circle" data-toggle="tooltip" data-placement="top" title="click to download">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <div class="input-group">
+                                                            <div class="avatar-upload" data-toggle="tooltip" data-placement="top" title="Upload testing apk">
+                                                                <div class="avatar-edit">
+                                                                    <input type='file' id="uploadWLTestApk" data-Is-Test="true" data-Apk-Name="recharge.apk" class="uploadapk" />
+                                                                    <label for="uploadWLTestApk">
+                                                                        <i class="text-info fas fa-upload" style="margin-top: 8px;margin-left: 8px;"></i>
+                                                                    </label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <a href="~/apk/test/recharge.apk" download="recharge.apk">
+                                                                <img src="~/images/avatar/androidTest.jpg" class="img-thumbnail rounded-circle" data-toggle="tooltip" data-placement="top" title="click to download">
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-sm-12 text-danger font-bold text-monospace text-center">
+                                                        <span>recharge.apk</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="row">
+                                <div class="col-md-2">
+                                </div>
+                                <div class="col-md-8">
+                                    <span class="text-danger">Invalid Access</span><br /><br />
+                                </div>
+                                <div class="col-md-2">
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+
+        (() => {
+            let element = {
+                nam: $('#txtName'), mob: $('#txtMobile'), eml: $('#txtEmail'), adrs: $('#txtAddress'), btn: $('#btnCreate'), accmob: $('#txtAccountMobileNo'), acceml: $('#txtAccountEmailId'), accphone: $('#txtAccountPhoneNo'), accwhatsapp: $('#txtAccountWhatsApp'), ph: $('#txtPhoneNo'), web: $('#txtWebsite'), ht: $('#txtHeaderTitle'),
+                csmob: $('#txtMobileSupport'), cseml: $('#txtEmailIDSupport'), csph: $('#txtPhoneNoSupport'), cswhatsapp: $('#txtWhatsAppSupport'), Csfacebook: $('#txtFacebookSupport'), CsTwitter: $('#txtTwitterSupport'), CsInstagram: $('#txtInstagramSupport'), CsSaleEmail: $('#txtSalesEmail'), CsSaleMobile: $('#txtSalesMobile'), owner: $('#txtOwnerName'), ownerDes: $('#txtOwnerDesignation') , referalid : $('#txtReferalID')
+            };
+
+            element.btn.click(() => {
+                //Validations------------------------------------------
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start(element.btn, 'Requesting');
+                var IsE = {
+                    nam: (element.nam.val().trim() == ''),
+                    owner: (element.owner.val().trim() == ''),
+                    ownerDes: (element.ownerDes.val().trim() == ''),
+                    adrs: (element.adrs.val().trim() == ''),
+                    mob: (element.mob.val().length !== 10 || !$v.$IsMob(element.mob.val())),
+                    eml: (!$v.$IsEmail(element.eml.val()) || element.eml.val().length > 256),
+                    web: (element.web.val() == ''),
+                    ht: (element.ht.val().trim() == ''),
+                }
+                $v.showErrorFor(element.nam, 'Enter Company Name', IsE.nam);
+                $v.showErrorFor(element.adrs, 'Enter Company Address', IsE.adrs);
+                $v.showErrorFor(element.owner, 'Enter owner name', IsE.owner);
+                $v.showErrorFor(element.ownerDes, 'Enter owner designation', IsE.ownerDes);
+                $v.showErrorFor(element.mob, 'Enter 10 digits mobile number', IsE.mob);
+                $v.showErrorFor(element.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+                $v.showErrorFor(element.web, 'Enter website', IsE.web);
+                $v.showErrorFor(element.ht, 'Enter website header title', IsE.ht);
+                IsE.err = (IsE.nam || IsE.adrs || IsE.mob || IsE.eml || IsE.web || IsE.ht || IsE.owner || IsE.ownerDes);
+                if (IsE.err) {
+                    btnLdr.Stop(element.btn);
+                    return false;
+                }
+                //------------------------------------
+                UserData = {
+                    Name: element.nam.val(), Address: element.adrs.val(), EmailId: element.eml.val(), PhoneNo: element.ph.val(), mobileNo: element.mob.val(), AccountMobileNo: element.accmob.val(), AccountEmailId: element.acceml.val(), website: element.web.val(), HeaderTitle: element.ht.val(), AccountPhoneNos: element.accphone.val(), AccountWhatsAppNos: element.accwhatsapp.val(), CustomerCareMobileNos: element.csmob.val(), CustomerCareEmailIds: element.cseml.val(), CustomerPhoneNos: element.csph.val(), CustomerWhatsAppNos: element.cswhatsapp.val(), Facebook: element.Csfacebook.val(), Twitter: element.CsTwitter.val(), Instagram: element.CsInstagram.val(), SalesPersonNo: element.CsSaleMobile.val(), SalesPersonEmail: element.CsSaleEmail.val(), OwnerName: element.owner.val(), OwnerDesignation: element.ownerDes.val(), SignupReferalID:element.referalid.val()
+                };
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/UpdateCompanyProfile',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(UserData),
+                    success: result => {
+                        an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        btnLdr.Stop(element.btn);
+                    },
+                    error: xhr => {
+                        an.title = "Oops! Error";
+                        an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                        an.alert(-1);
+                        btnLdr.Stop(element.btn);
+                    },
+                    complete: () => preloader.remove()
+                });
+            });
+
+            $('.uploadapk').change(e => {
+                let _id = $(e.currentTarget).attr('id');
+                var formData = new FormData();
+                formData.append('file', $('#' + _id)[0].files[0]);
+                formData.append('FileName', $(e.currentTarget).data().apkName);
+                formData.append('IsTest', $(e.currentTarget).data().isTest);
+                $.ajax({
+                    type: 'POST',
+                    url: '/upload-Apk',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    success: result => {
+                        an.title = result.statuscode == an.type.success ? "Welldone" : "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    },
+                    error: xhr => {
+                        an.title = "Oops! Error";
+                        an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                        an.alert(-1);
+                        btnLdr.Stop(element.btn);
+                    },
+                    complete: () => $(e.currentTarget).val('')
+                })
+            });
+        })();
+
+    </script>
+}

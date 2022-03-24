@@ -1,0 +1,58 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.AddmAtmModel
+
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3><small class="text-muted">Add m-ATM</small></h3>
+        <hr />
+        <div class="row">
+            <input type="hidden" id="hdn_id" value="@Model.UserID" />
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="lbl" for="txtDevId">Device ID</label>
+                    <input aria-describedby="amountHelp" class="form-control" id="txtDevId" placeholder="Enter Device ID" tabindex="1">
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <button class="btn btn-outline-dark" id="btnSave" onclick="AddMAtmRequest()">Make Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        var AddMAtmRequest = function () {
+            debugger;
+            console.log($('#hdn_id').val());
+            console.log($('#txtDevId').val());
+
+            let param = {
+                UserID: $('#hdn_id').val(),
+                DeviceId: $('#txtDevId').val()
+            };
+            preloader.load();
+            $.post('/APIUser/_AddmAtm', param, function (result) {
+                if (result.statuscode == 1) {
+                    mdlA.dispose();
+                }
+                an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+    </script>

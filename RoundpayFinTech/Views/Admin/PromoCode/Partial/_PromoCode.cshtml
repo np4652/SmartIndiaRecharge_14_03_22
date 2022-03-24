@@ -1,0 +1,47 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.PromoCode>
+@{ int i = 1;}
+@foreach (var item in Model)
+{
+    var PromoCodeImage = item.Extension != "" ? "~/Image/PromoCode/" + item.ID + item.Extension + "?a=" + item.ModifyDate : "";
+
+    <tr data-item-id="@item.ID">
+        <th>@i</th>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act_@i">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#" class="dropdown-item">Edit</a>
+                </div>
+            </div>
+        </td>
+        <td class="text-capitalize">@item.Promocode</td>
+        <td class="text-capitalize">@item.Description</td>
+        <td class="text-capitalize">@item.OperatorName</td>
+        <td class="text-capitalize">@item.OpType</td>
+        <td class="text-capitalize">@item.CashBack</td>
+        <td>@item.CashbackMaxCycle</td>
+        <td class="text-capitalize">@item.CycleType</td>
+        <td>@item.ValidFrom</td>
+        <td>@item.ValidTill</td>
+        <td>@item.ModifyDate</td>
+        @if (item.Extension != "")
+        {
+            <td class="align-middle text-center">
+                <img src="@PromoCodeImage" id="Preview_@item.ID" style="width:75px;cursor:pointer" onclick="ShowPreview(@item.ID)" asp-append-version="true" />&nbsp;
+                <input type="file" class="d-none" id="Upload_@item.ID" onchange="UploadImage(@item.ID)" accept="image/jpg,image/jpeg,image/png" />
+                <label class="text-info fa fa-upload"  style="cursor:pointer" for="Upload_@item.ID"></label>
+            </td>
+        }
+        else
+        {
+
+            <td class="align-middle text-center">
+                <label class="text text-danger font-weight-bold">No Image</label>
+                <input type="file" class="d-none" id="Upload_@item.ID" onchange="UploadImage(@item.ID)" accept="image/jpg,image/jpeg,image/png" />
+                <label class="text-info fa fa-upload" for="Upload_@item.ID" style="cursor:pointer"></label>
+            </td>
+        }
+    </tr>
+    i++;
+}

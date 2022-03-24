@@ -1,0 +1,45 @@
+﻿@model IEnumerable<CalculatedGSTEntry>
+
+@{
+    var couter = 1;
+}
+
+@if (Model.Any())
+{
+
+    var TotalDisc = 0M;
+    var TotalTDS = 0M;
+
+    foreach (var item in Model)
+    {
+        TotalDisc += item.Discount;
+        TotalTDS += item.TDSAmount;
+        <tr>
+            <th>@couter</th>
+            <td>@item.InvoiceMonth</td>
+            <td>@item.Name</td>
+            <td>@item.OutletName<small class="font-weight-bold text-monospace"> [@item.Mobile]</small></td>
+            
+            <td>@item.PAN</td>
+            <td class="text-right">@item.Discount </td>
+            <td class="text-right">@item.TDSAmount</td>
+        </tr>
+        couter = couter + 1;
+    }
+    <tr>
+        <th colspan="5" class="text-right">Total</th>
+        <th class="text-right">@TotalDisc</th>
+        <th class="text-right">@TotalTDS</th>
+    </tr>
+}
+else
+{
+    <tr>
+        <td colspan="12" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+
+    </tr>
+}
+
+

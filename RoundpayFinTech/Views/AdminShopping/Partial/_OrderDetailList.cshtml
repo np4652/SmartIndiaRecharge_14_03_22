@@ -1,0 +1,120 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping;
+@model OrderDetail
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-borderless table-striped">
+                <thead>
+                    <tr>
+                        <th>SrNo</th>
+                        <th>Product</th>
+                        <th>ProductName</th>
+                        <th>Vendor</th>
+                        <th>Quantity</th>
+                        <th>Rate/Quantity</th>
+                        <th>Price</th>
+                        <th>Discount</th>
+                        <th class="text-nowrap">Order Status</th>
+                        @if (Model.Role == Fintech.AppCode.StaticModel.Role.Admin)
+                        {
+                            <th>IsPaid</th>
+                            <th>IsClosed</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int counter = 1;
+                        foreach (var item in Model.OrderList)
+                        {
+                            <tr data-Order-DetailID="@item.OrderDetailId">
+                                <td>@counter</td>
+                                <td><img src="/image/Products/@item.ProductId/@item.ImgUrl" style="width:125px;height:125px" /></td>
+                                <td>@item.ProductName</td>
+                                <td>@item.VendorName</td>
+                                <td>@item.Quantity</td>
+                                <td>@item.MRP</td>
+                                <td>@(item.MRP * item.Quantity)</td>
+                                <td>@item.Discount</td>
+                                <td>
+                                    @{
+                                        var enumData = from OrderStatus e in Enum.GetValues(typeof(OrderStatus))
+                                                       select new
+                                                       {
+                                                           Value = (int)e,
+                                                           Text = e.ToString()
+                                                       };
+                                        var statusList = new SelectList(enumData, "Value", "Text");
+                                        @if (Model.Role == Fintech.AppCode.StaticModel.Role.Admin)
+                                        {
+                                            if (item.OrderStatus != (int)OrderStatus.Disapproved && item.OrderStatus != (int)OrderStatus.Cancel)
+                                            {
+                                                <select class="form-control ddlOrderStatus" asp-items="@statusList" asp-for="@item.OrderStatus"></select>
+                                            }
+                                            else
+                                            {
+                                                <span class='text-monospace text-danger'>Cancelled</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (item.OrderStatus == (int)OrderStatus.OrderPlaced)
+                                            {
+                                                <button class='btn btn-sm btn-outline-danger btnOrderCancel'>Cancel</button>
+                                            }
+                                            if (item.OrderStatus == (int)OrderStatus.Disapproved || item.OrderStatus == (int)OrderStatus.Cancel)
+                                            {
+                                                <span class='text-monospace text-danger'>Cancelled</span>
+                                            }
+                                            if (item.OrderStatus == (int)OrderStatus.Approved)
+                                            {
+                                                <span class='text-monospace text-info'>Order Approved</span>
+                                            }
+                                            if (item.OrderStatus == (int)OrderStatus.Dispatched)
+                                            {
+                                                <span class='text-monospace text-primary'>Order Dispatched</span>
+                                            }
+                                            if (item.OrderStatus == (int)OrderStatus.Delivered)
+                                            {
+                                                <span class='text-monospace text-success'>Order Delivered</span>
+                                            }
+                                        }
+                                    }
+                                </td>
+                                @if (Model.Role == Fintech.AppCode.StaticModel.Role.Admin)
+                                {
+                                    <td class="text-nowrap">@Html.Raw(item.IsPaid ? "Paid" : "Not Paid")</td>
+                                    <td>@Html.Raw(item.IsOrderClosed ? "Closed" : "Open")</td>
+                                }
+                            </tr>
+
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var changePartialStatus = e => {
+        preloader.load();
+        let param = {
+            OrderDetailID: $(e.currentTarget).closest('tr').data().orderDetailid,
+            StatusID: $(e.currentTarget).get(0).tagName === 'BUTTON' ? 4 : $(e.currentTarget).val()
+        };
+        $.post('/ChangePartialOrderStatus', param)
+            .done(result => {
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove())
+    };
+    $('.btnOrderCancel').unbind().click(e => changePartialStatus(e));
+    $('.ddlOrderStatus').unbind().change(e => changePartialStatus(e));
+</script>

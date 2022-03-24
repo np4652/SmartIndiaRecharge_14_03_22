@@ -1,0 +1,48 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.FundRequetResp>
+@{ var couter = 1; }
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+    <tr>
+        <td scope="col" style="width:1%">@couter</td>
+        <td scope="col">@item.Bank</td>
+        <td scope="col">@item.AccountHolder  <small class="font-weight-bold text-monospace"> [@item.AccountNo]</small></td>
+        <td scope="col">@item.MODE</td>
+        <td scope="col">@item.TransactionId</td>
+        <td scope="col">@item.MobileNo</td>
+        <td scope="col">@item.ChequeNo</td>
+        <td scope="col">@item.CardNumber</td>
+        <td scope="col">@item.EntryDate</td>
+        <td scope="col" class="text-right">@item.Amount</td>
+        <td scope="col">
+            @if (item.Status == "Requested")
+            {
+                <span class="badge badge-secondary">@item.Status</span>
+            }
+            @if (item.Status == "Accepted")
+            {
+                <span class="badge badge-success">@item.Status</span>
+            }
+            @if (item.Status == "Rejected")
+            {
+                <span class="badge badge-danger">@item.Status</span>
+            }
+        </td>
+        <td scope="col">@item.Remark</td>
+    </tr>
+        couter = couter + 1;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="12"></td>
+    </tr>
+    <tr>
+        <td colspan="12">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+

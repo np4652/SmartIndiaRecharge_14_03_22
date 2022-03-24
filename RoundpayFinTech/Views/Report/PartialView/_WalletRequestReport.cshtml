@@ -1,0 +1,79 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.WalletRequest>
+@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Model;
+@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using RoundpayFinTech.AppCode;
+
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    var userML = new UserML(_lr);
+    var IsChannel = (_lr.RoleID == Role.Admin && _lr.LoginTypeID == LoginType.ApplicationUser || userML.IsCustomerCareAuthorised(ActionCodes.AddEditSLAB)) || !_lr.IsAdminDefined;
+}
+@{ var couter = 1; }
+@if (Model.Any())
+{
+    var Total = 0M;
+    foreach (var item in Model)
+    {
+        Total += item.Amount;
+<tr>
+    <td style="width:1%">@couter</td>
+    <td>@item.TransactionId </td>
+    @if (_lr.RoleID == Role.Admin)
+    {
+        <td>@item.TID </td>
+    }
+    <td>@item.BankRRN </td>
+    <td>@item.UserName <small class="font-weight-bold text-monospace"> [@item.Mobile]</small></td>
+    <td>@item.BankName </td>
+    <td>@item.AccountHolder <small class="font-weight-bold text-monospace"> [@item.AccountNumber]</small></td>
+    <td>@item.TransMode</td>
+    <td class="text-right">@item.Amount</td>
+    <td>@item.Charge</td>
+    <td>@item.EntryDate</td>
+
+    <td>
+        @if (item.Status == 1)
+        {
+            <span class="badge badge-secondary">Requested</span>
+        }
+        @if (item.Status == 2)
+        {
+            <span class="badge badge-success">Accepted</span>
+        }
+        @if (item.Status == 3)
+        {
+            <span class="badge badge-danger">Rejected</span>
+        }
+    </td>
+    <td>@item.Remark</td>
+    <td>@item.ApprovalDate</td>
+    <td class="text-nowrap">Group- @couter</td>
+</tr>
+        couter = couter + 1;
+    }
+    @*<tr><th colspan="10" class="text-right">Total</th><th class="text-right">@Total</th><th colspan="4"></th></tr>*@
+}
+else
+{
+<tr rowspan="2">
+    @if (_lr.RoleID == Role.Admin)
+    {
+        <td colspan="14">
+
+            <center>No Record Found</center>
+        </td>
+    }
+    else
+    {
+        <td colspan="13">
+
+            <center>No Record Found</center>
+        </td>
+    }
+</tr>
+}
+

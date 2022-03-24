@@ -1,0 +1,133 @@
+﻿@model RoundpayFinTech.AppCode.Model.CoupanMaster
+
+<script type="text/javascript" src="~/js/bootstrap-multiselect.js"></script>
+<link href="~/css/bootstrap-multiselect.css" rel="stylesheet" />
+<style>
+
+    #previewThumbnail {
+        align-items: center;
+        overflow-x: auto;
+        flex-wrap: nowrap;
+    }
+
+    .pb-10 {
+        padding-bottom:10px;
+    }
+
+    .my-check input {
+        height: 50%;
+        width: 35%;
+        line-height: 50px;
+        vertical-align: top;
+    }
+
+    .my-check label {
+        margin-left: 20%;
+    }
+</style>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Coupon Master</h5>
+    <ImageGrid></ImageGrid>
+    <div class="row">
+        <div class="form-group col-md-6">
+            <label class="lbl" for="txtMembershipName">Voucher Type</label>
+            <input aria-describedby="slbNameHelp1" class="form-control" id="txtVoucherType" placeholder="Enter Voucher Type" tabindex="1" type="text" value="@Model.VoucherType">
+            <small id="slbNameHelp1" class="form-text text-muted d-none"></small>
+            <input type="hidden" id="hid" value="@Model.VoucherType" class="d-none" />
+            <input type="hidden" id="hidd" value="@Model.ID" class="d-none" />
+        </div>
+
+
+
+
+        <div class="form-group col-md-6">
+            @{
+                var list = new SelectList(Model.OpDetail, "OID", "Name");
+
+
+
+            }
+
+            <label class="lbl" for="">Choose Operator</label>
+            @{
+                if (Model.ID > 0)
+                {
+                    <select aria-describedby="helpBL" class="form-control" id="ddlOperator" disabled="disabled" tabindex="4" asp-items="@list" asp-for="@Model.OID">
+                        <option value="0"> :: Select Op :: </option>
+                    </select>
+                }
+                else
+                {
+                    <select aria-describedby="helpBL" class="form-control" id="ddlOperator" tabindex="4" asp-items="@list" asp-for="@Model.OID">
+                        <option value="0"> :: Select Op :: </option>
+                    </select>
+                }
+            }
+
+            <small id="helpBL" class="form-text text-muted d-none"></small>
+        </div>
+    </div>
+    <div class="row">
+
+        @*<div class="form-group col-md-12">
+
+                <label class="lbl" for="ddlDen_type">Denomination Type</label>
+                <select aria-describedby="helpBL" onchange="den_showhide()" class="form-control" id="ddldenType" tabindex="4">
+                    <option value="0">Fixed Denomination</option>
+                    <option value="1">Range</option>
+                </select>
+                <small id="helpBL" class="form-text text-muted d-none"></small>
+
+            </div>*@
+        <div class="col-md-12 mb-2" id="den_amount">
+            <div class="row">
+                <div class="col-md-6">
+                    <label class="lbl" for="txtTrID">Min Amount </label>
+                    <input aria-describedby="minAmt1" class="form-control" onkeypress="return isNumberwithoutdecimal(event)" placeholder="Enter Min Amount" id="minAmt" name="minAmt" value="@Model.Min" tabindex="2" type="text">
+                    <small id="minAmt1" class="form-text text-muted d-none"></small>
+                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="lbl" for="txtTrID">Max Amount </label>
+                    <input aria-describedby="maxAmt1" class="form-control" onkeypress="return isNumberwithoutdecimal(event)" id="maxAmt" placeholder="Enter Min Amount" name="maxAmt" value="@Model.Max" tabindex="2" type="text">
+                    <small id="maxAmt1" class="form-text text-muted d-none"></small>
+                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                </div>
+            </div>
+        </div>
+        <div class="form-group col-md-12" id="divDenomination">
+
+            <small id="helpBL" class="form-text text-muted d-none"></small>
+
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <label class="lbl" for="txtRemark">Remark</label>
+            <textarea aria-describedby="remHelp" maxlength="200" class="form-control" id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="8" type="text">@Model.Remark</textarea>
+            <small id="remHelp" class="form-text text-muted d-none"></small>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <button class="btn btn-info btn-sm" id="btnCopSave" tabindex="9">Save</button>
+            <button class="btn btn-danger btn-sm" id="mdlCancel" tabindex="10">Cancel</button>
+        </div>
+    </div>
+
+</div>
+
+    <script>
+        $(document).ready(function () {
+            
+        });
+      
+       
+       
+    </script>

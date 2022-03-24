@@ -1,0 +1,53 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model Dashboard_Chart
+
+    <div class="col-12">
+        <div class="card card-statistics" style="margin-top:0;">
+            <div class="card-body">
+                <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+
+                    <a href="/Pendings" class="statistics-item col-md-2">
+                        <span class="count_top text-dark">Recharge Pending</span>
+                        <div class="count text-pink">
+                            <h2 style="font-size:x-large">@Model.PCount <span class="custome-line"> | </span> @Model.PAmount</h2>
+                        </div>
+                    </a>
+                    
+                    <a href="/DMRPendings" class="statistics-item col-md-2 text-white">
+                        <span class="count_top text-dark">DMR Pending</span>
+                        <div class="count text-pink" >
+                            <h2 style="font-size:x-large">@Model.DmrPCount <span class="custome-line"> | </span> @Model.Dmr</h2>
+                        </div>
+                    </a>
+
+                    <a href="/RefundRequest" class="statistics-item col-md-2 text-white">
+                        <span class="count_top text-dark">Dispute Requested</span>
+                        <div class="count text-pink">
+                            <h2 style="font-size:x-large">@Model.DisputeCount <span class="custome-line"> | </span> @Model.Dispute</h2>
+                        </div>
+                    </a>
+
+                    <a href="/DMRRefundRequest" class="statistics-item col-md-2 text-white">
+                        <span class="count_top text-dark">DMR Dispute Requested</span>
+                        <div class="count text-pink">
+                            <h2 style="font-size:x-large">@Model.DMRDisputeCount <span class="custome-line"> | </span> @Model.DMRDispute</h2>
+                        </div>
+                    </a>
+
+                    <a href="/KYCUsers" class="statistics-item col-md-2 text-white">
+                        <span class="count_top text-dark">KYC Requested</span>
+                        <div class="count text-pink">
+                            <h2 style="font-size:x-large">@Model.KCount</h2>
+                        </div>
+                    </a>
+
+                    <a href="/WalletRequestApproval" class="statistics-item col-md-2 text-white">
+                        <span class="count_top text-dark">Move To Wallet Requested</span>
+                        <div class="count text-pink">
+                            <h2 style="font-size:x-large">@Model.MTBCount <span class="custome-line"> | </span> @Model.MoveToBank</h2>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>

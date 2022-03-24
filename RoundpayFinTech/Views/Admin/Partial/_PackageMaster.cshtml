@@ -1,0 +1,96 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model PackageModel
+@{
+    int i = 1;
+}
+@foreach (var item in Model.Slabs)
+{
+    <tr data-item-id="@item.ID">
+        <th class="align-middle">@i</th>
+        @if (ApplicationSetting.IsPackageAllowed)
+        {
+            <td class="align-middle">
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item">Edit</a>
+                        <a href="#" class="dropdown-item" id="LPC_@(item.ID)">Level Package Commission</a>
+                    </div>
+                </div>
+            </td>
+        }
+        <td class="align-middle">
+            @item.Slab
+        </td>
+        <td class="align-middle">
+            <div class="row mr-0">
+                @foreach (var service in Model.Services)
+                {
+                    var IsActive = Model.Packages.Any(x => x.ID == item.ID && x.ServiceID == service.ServiceID && x.IsActive == true);
+                    <div class="col-md-4 text-nowrap">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                @if (service.IsServiceActive)
+                                {
+                                    <div class="input-group-text">
+                                        <input type="checkbox" id="chbService_@Html.Raw(i+"_"+service.ServiceID+'_'+item.ID)" @Html.Raw(IsActive ? "checked='checked'" : "")>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="input-group-text">
+                                        <i class="fa fa-exclamation-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="Only Visible"></i>
+                                    </div>
+                                }
+                            </div>
+                            <label class="form-control" for="chbService_@Html.Raw(i+"_"+service.ServiceID+'_'+item.ID)">@service.ServiceName</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </td>
+        <td class="align-middle">
+            @(item.PackageCost)
+        </td>
+        <td class="align-middle">
+            @(item.IsShowMore ? "Yes" : "No")
+        </td>
+        <td class="align-middle">
+            @(item.IsDefault ? "Yes" : "No")
+        </td>
+        <td class="align-middle">
+            <div class="col-sm-6 input-group-append">
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <input type="checkbox" class="switch" id="chbSelfAssigned_@i" @Html.Raw(item.SelfAssigned?"checked='checked'":"")/>
+                    <label for="chbSelfAssigned_@i" class="font-weight-bold lbl"></label>
+                </span>
+            </div>
+            @*@(item.SelfAssigned ? "Yes" : "No")*@
+        </td>
+        <td class="align-middle">
+            @(item.IsActive ? "Active" : "De-active")
+        </td>
+    </tr>
+    i++;
+}
+<script>
+    (() => {
+        $('[data-toggle="tooltip"]').tooltip();
+        $('[id^="chbSelfAssigned_"]').change(e => {
+            let element = $(e.currentTarget);
+            var param = {
+                AvailablePackageId: element.closest('tr').data().itemId,
+                IsAvailable: element.is(':checked'),
+                SelfAssigned: element.is(':checked'),
+                UserId: 1
+            }
+            $.post('/Update-Available-Pkg', param)
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? "Well done!" : "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                })
+        })
+    })();
+    </script>

@@ -1,0 +1,42 @@
+﻿.top-navbar {
+    border-bottom: 1px solid #585858;
+    background: #2b2b2b;
+}
+
+.nav-item.show {
+    background: #F88A40 !important;
+}
+
+.bg-greenhead {
+    background: linear-gradient(85deg, #F88A40, #F88A40);
+}
+
+.main-wrapper .breadcrumb {
+    background: #fff !important;
+}
+
+.bg-purple {
+    background-color: #F88A40 !important;
+}
+
+
+.bg-gradientorange {
+    background: linear-gradient(85deg, #000000, #000000);
+}
+
+.horizontal-main.hor-menu {
+    background: #fff !important;
+    border-bottom: 1px solid #d5d8e2;
+    border-top: 0;
+    z-index: 1;
+    margin-top: 0;
+    box-shadow: 0 1px 15px 1px #c0c0c7;
+}
+
+.bor-rad {
+    border-radius: 4px;
+}
+
+.bg-dark {
+    background-image: linear-gradient(to left,#6a7076,#343a40) !important;
+}

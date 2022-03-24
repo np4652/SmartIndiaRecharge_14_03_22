@@ -1,0 +1,73 @@
+﻿@model IEnumerable<Fintech.AppCode.Model.Reports.PaymentModeMaster>
+@{
+    int i = 1;
+    if (Model != null)
+    {
+        foreach(var item in Model)
+        {
+            <tr data-Mode-Id="@item.ID">
+                <td>@i</td>
+                <td>@item.MODE</td>
+                <td>
+                    <div class="input-group-append float-left col-md-3 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsBranchRequired)+"_"+i)" @Html.Raw(item.IsBranchRequired ? "checked=checked" : "")>
+                            <label for="@(nameof(item.IsBranchRequired)+"_"+i)" class="font-weight-bold lbl">@nameof(item.IsBranchRequired)</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-3 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsTransactionIdAuto)+"_"+i)" @Html.Raw(item.IsTransactionIdAuto ? "" : "checked=checked")>
+                            <label for="@(nameof(item.IsTransactionIdAuto)+"_"+i)" class="font-weight-bold lbl">IsTransactionIdRequired</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-3 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsChequeNoRequired)+"_"+i)" @Html.Raw(item.IsChequeNoRequired ? "checked=checked" : "")>
+                            <label for="@(nameof(item.IsChequeNoRequired)+"_"+i)" class="font-weight-bold lbl">@nameof(item.IsChequeNoRequired)</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-3 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsCardNumberRequired)+"_"+i)" @Html.Raw(item.IsCardNumberRequired ? "checked=checked" : "")>
+                            <label for="@(nameof(item.IsCardNumberRequired)+"_"+i)" class="font-weight-bold lbl">@nameof(item.IsCardNumberRequired)</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-4 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsAccountHolderRequired)+"_"+i)" @Html.Raw(item.IsAccountHolderRequired ? "checked=checked" : "")>
+                            <label for="@(nameof(item.IsAccountHolderRequired)+"_"+i)" class="font-weight-bold lbl">@nameof(item.IsAccountHolderRequired)</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-2 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.Status)+"_"+i)" @Html.Raw(item.Status ? "checked=checked" : "")>
+                            <label for="@(nameof(item.Status)+"_"+i)" class="font-weight-bold lbl">@nameof(item.Status)</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-3 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsMobileNoRequired)+"_"+i)" @Html.Raw(item.IsMobileNoRequired ? "checked=checked" : "")>
+                            <label for="@(nameof(item.IsMobileNoRequired)+"_"+i)" class="font-weight-bold lbl">@nameof(item.IsMobileNoRequired)</label>
+                        </span>
+                    </div>
+
+                    <div class="input-group-append float-left col-md-2 mb-2">
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="@(nameof(item.IsUPIID)+"_"+i)" @Html.Raw(item.IsUPIID ? "checked=checked" : "")>
+                            <label for="@(nameof(item.IsUPIID)+"_"+i)" class="font-weight-bold lbl">@nameof(item.IsUPIID)</label>
+                        </span>
+                    </div>
+                </td>
+            </tr>
+            @(i = i + 1);
+        }
+    }
+}
+

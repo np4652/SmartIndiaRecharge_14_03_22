@@ -1,0 +1,684 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel
+@{
+    int ThemeID = Convert.ToInt32(ViewData["Theme"] ?? 0);
+    int WID = Convert.ToInt32(ViewData["WID"] ?? 0);
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["HTitle"]</title>
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    @if ((ViewData["Title"] ?? "").ToString() == PageTitle.Whatsapp)
+    {
+        @RenderSection("icon", false)
+    }
+    else
+    {
+        <link rel="apple-touch-icon" sizes="57x57" href="~/images/favicons/apple-icon-57x57.png">
+        <link rel="apple-touch-icon" sizes="60x60" href="~/images/favicons/apple-icon-60x60.png">
+        <link rel="apple-touch-icon" sizes="72x72" href="~/images/favicons/apple-icon-72x72.png">
+        <link rel="apple-touch-icon" sizes="76x76" href="~/images/favicons/apple-icon-76x76.png">
+        <link rel="apple-touch-icon" sizes="114x114" href="~/images/favicons/apple-icon-114x114.png">
+        <link rel="apple-touch-icon" sizes="120x120" href="~/images/favicons/apple-icon-120x120.png">
+        <link rel="apple-touch-icon" sizes="144x144" href="~/images/favicons/apple-icon-144x144.png">
+        <link rel="apple-touch-icon" sizes="152x152" href="~/images/favicons/apple-icon-152x152.png">
+        <link rel="apple-touch-icon" sizes="180x180" href="~/images/favicons/apple-icon-180x180.png">
+        <link rel="icon" type="image/png" sizes="192x192" href="~/images/favicons/android-icon-192x192.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicons/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="96x96" href="~/images/favicons/favicon-96x96.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicons/favicon-16x16.png">
+        <link rel="manifest" href="~/images/favicons/manifest.json">
+        <link rel="icon" type="image/png" href="~/images/favicons/favicon.ico">
+    }
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css"/>*@
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link rel="stylesheet" href="~/css/table-loader.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.css" />
+        <link href="~/css/reseller.css" rel="stylesheet" />
+        <link href="~/css/new-custom-css/main.css" rel="stylesheet" />
+        <link href="~/css/applicationSetting.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.min.css" />
+        <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/table-loader.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.min.css" />
+        <link href="~/css/reseller.min.css" rel="stylesheet" />
+        <link href="~/css/new-custom-css/main.min.css" rel="stylesheet" />
+        <link href="~/css/applicationSetting.min.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    @RenderSection("head", required: false)
+</head>
+<body>
+    <div style="position: fixed; right: -24px;top: 50%;background: black;transform: rotate(90deg);z-index: 1;">
+        <a href="/support" class="nav-link text-white font-bold">Support</a>
+    </div>
+    <div class="top-navbar">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-1 col-xs-12">
+                    <div class="mobile-only-brand float-left">
+                        <div class="nav-header float-left">
+                            <div class="logo-wrap">
+                                <a asp-area="" asp-controller="Admin" asp-action="Index" class="navbar-brand"><img src="@ViewData["Host"]/Image/Website/@ViewData["WID"]/white-logo.png" height="26" class="d-inline-block align-top" alt="@ViewData["CName"]" /></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-11 d-none d-sm-block d-md-block">
+                    <ul class="nav navbar-right top-nav float-right" style="font-size:12px">
+                        @*  *@
+                        <li>
+                            <a href="/RefundRequest" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Dispute Count">
+                                <i class="fas fa-archive text-info"></i>
+                                <span id="spTotalDisputCount"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/Pendings" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Pending Count">
+                                <i class="fas fa-phone-slash text-light"></i>
+                                <span id="spTotalPendingCount"></span>
+                            </a>
+                        </li>
+                        @*  *@
+                        <li>
+                            <a href="/GetUsersList" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="new Users">
+                                <i class="fa fa-users text-warning"></i>
+                                <span id="txtPendingViews"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/FundRequestApproval" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Fund Request">
+                                <i class="fas fa-rupee-sign text-success"></i>
+                                <span id="a_Fund"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="/callmerequest" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Call Me">
+                                <i class="fa fa-phone text-primary"></i>
+                                <span id="callMeCount"></span>
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="/DisplayReport/3" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Failed">
+                                <i class="far fa-times-circle text-danger"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="/DisplayReport/1" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Pendings">
+                                <i class="fa fa-hourglass text-warning"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <a target="_blank" href="/DisplayLive" class="nav-link text-white font-bold" data-toggle="tooltip" data-placement="top" title="Live">
+                                <i class="fas fa-video text-success"></i>
+                            </a>
+                        </li>
+                        <li>
+                            <span class="nav-link text-white font-bold"><span class="custom bal"></span></span>
+                        </li>
+                        <li>
+                            <div class="dropdown" id="UINFO">
+                                <button class="btn btnProfileSetting btnProfileSetting-sm p-0" id="btnProfileSetting" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img id="profileImg" />
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="drpdn_LoginInfo">
+                                    <div class="bg-new pt-3 pb-2">
+                                        <div class="row ">
+                                            <div class="col-lg-3">
+                                                <button class="btn btnProfileSetting ml-2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <div class="row">
+                                                    <div class="col-lg-9 pl-0">
+                                                        <span id="fullName" class="ml-4" style="font-size: 12px; font-weight: 900;"></span>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <a href="/ProfileUser"><i class="fas fa-edit" style="font-size: 12px; border-radius: 50%;"></i></a>
+                                                    </div>
+                                                    <div class="col-lg-12">
+                                                        <span class="dropdown-item-text mt-0 pl-2" style="font-size: 11px; "></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" id="wallet">Wallet</a>
+                                    <a href="/API-Document" class="dropdown-item" target="_blank">API Document</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#" id="changepass">Change Password</a>
+                                    <a class="dropdown-item" href="#" id="changepin">Change Pin</a>
+                                    <a href="javascript:Two_FA_Win()" class="dropdown-item" target="_top">Two Factor Authentication</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="/api-status-check" class="dropdown-item" target="_top">Response-Matcher</a>
+                                    <a href="/error-master" class="dropdown-item" target="_top">ERROR MASTER</a>
+                                    <a href="javascript:recentLoginActivity()" class="dropdown-item">Recent Login Activity</a>
+                                    <a class="dropdown-item" href="#" id="logoutAll">Logout All Devices</a>
+                                    <a class="dropdown-item" href="#" id="logout">Logout</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-greenhead">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a asp-area="" asp-controller="Admin" asp-action="Index" class="nav-link">Dashboard</a></li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuUserMgmt" data-toggle="dropdown">UserManagement</a>
+                    <div class="dropdown-menu cusdrop" area-labelledby="drpdnMenuUserMgmt">
+                        <ul class="mega-menu cuslistsec">
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">User</div></li>
+                                    <li><a href="/CreateUser" class="dropdown-item">Create User</a></li>
+                                    <li> <a href="/UserList" class="dropdown-item">User List</a></li>
+                                    <li> <a href="/GetUsersList" class="dropdown-item">New User List</a></li>
+                                    <li><a href="/CustomerCares" class="dropdown-item">Customer Care List</a></li>
+                                    <li><a href="/OutletList" class="dropdown-item">Outlet List</a></li>
+                                    @if (ApplicationSetting.IsShowPartner)
+                                    {
+                                        <li><a href="/PartnerView?s=partners" class="dropdown-item">Partner List</a></li>
+                                    }
+                                    <li><a href="/FOSList" class="dropdown-item">FOS User List</a></li>
+                                    <li><a href="/AssignRetailer" class="dropdown-item">Assign Retailer to FOS</a></li>
+                                </ul>
+                            </li>
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">Bulk Action</div></li>
+                                    <li><a href="/BulkUserAction" class="dropdown-item">User Bulk Action</a></li>
+                                    <li><a href="/EmpBulkAction" class="dropdown-item">Employee Bulk Action</a></li>
+                                    <li><a href="/BulkSMS" class="dropdown-item">Bulk SMS</a></li>
+                                    <li><a href="/BulkEmail" class="dropdown-item">Bulk Email</a></li>
+                                    <li> <a href="/BulkApp" class="dropdown-item">Notification</a></li>
+                                    @if (ApplicationSetting.IsSocialAlert)
+                                    {
+                                        <li><a href="/BulkSocialAlert" class="dropdown-item">Bulk Social Alert</a></li>
+                                    }
+                                    @if (ApplicationSetting.IsAgreementApproval)
+                                    {
+                                        <li> <a href="/AgreementApproval" class="dropdown-item">User Agreement Approval</a></li>
+                                    }
+                                </ul>
+                            </li>
+                            @if (ApplicationSetting.IsSalesTeam == true)
+                            {
+                                <li class="sublist">
+                                    <ul>
+                                        <li><div class="dropdown-header">Employee</div></li>
+                                        <li><a href="/Employee/List" class="dropdown-item">Employee User</a></li>
+                                        <li><a href="/Admin/EmployeeMeetingDetail" class="dropdown-item">Employee Meeting Detail</a></li>
+                                        <li><a href="/Admin/EmployeeMeetingReport" class="dropdown-item">Employee Meeting Report</a></li>
+                                        <li><a href="/Admin/EmployeeAttendanceReport" class="dropdown-item">Employee Attendance Report</a></li>
+
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMenuApiMgmt" data-toggle="dropdown">API & Operator Management</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMenuApiMgmt">
+                        <div class="dropdown-header">APIs</div>
+                        <a asp-controller="Admin" asp-action="APICircleCode" class="dropdown-item">APICircleCode</a>
+                        <a href="/Recharge-API" class="dropdown-item">Recharge API</a>
+                        <a href="/SMSAPI" class="dropdown-item">SMS API</a>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-header">Operator</div>
+                        <a href="/OperatorMaster" class="dropdown-item">OperatorMaster</a>
+                        <a href="/APIOpCode" class="dropdown-item">API Operator Code</a>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-header">Switching</div>
+                        <a href="/UserwiseAPISwitch" class="dropdown-item">Userwise API Switch</a>
+                        <a href="/USwitchDetail" class="dropdown-item">User Switch Detail</a>
+                        <a href="/CircleSwitching" class="dropdown-item">Circle Switch</a>
+                        <a href="/CircleSwitchingMultiAPI" class="dropdown-item">Circle Switch Multi API</a>
+                        @if (ApplicationSetting.IsCircleSlabShow)
+                        {
+                            <a href="/CircleBlocked" class="dropdown-item">Circle Block</a>
+                        }
+                        <a href="/DenominationAPISwitching" class="dropdown-item">Denomination Switch</a>
+                        <a href="/D-Switch-Report" class="dropdown-item">Denomination Switch Report</a>
+                        @if (ApplicationSetting.IsUserwiseDenominationSwitch)
+                        {
+                            <a href="/DenominationAPISwitchingU" class="dropdown-item">User Denomination Switch</a>
+                            <a href="/D-Switch-Report-U" class="dropdown-item">User Denomination Switch Report</a>
+                        }
+
+                        <a href="/APISwitching" class="dropdown-item">API Switch</a>
+                        @if (ApplicationSetting.IsShopping)
+                        {
+                            <a href="/AffiliateVendor" class="dropdown-item">Affiliate Vendor</a>
+                        }
+                        @if (ApplicationSetting.IsOperatorDailyLimit)
+                        {
+                            <a href="/UserWiseLimit" class="dropdown-item">Userwise Daily Limit</a>
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMenuComm" data-toggle="dropdown">Commission</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMenuComm">
+                        <a href="/SlabMaster" class="dropdown-item">Slab Master</a>
+                        @if (ApplicationSetting.IsPackageAllowed)
+                        {
+                            <a href="/PackageMaster" class="dropdown-item">Package Master</a>
+                        }
+                        @if (ApplicationSetting.IsVASAPIResale)
+                        {
+                            <a href="/VASPackageMaster" class="dropdown-item">VAS Package Master</a>
+                        }
+                        <a href="/SlabCommissionSetting" class="dropdown-item">Channel Slab Bulk Setting</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="drpdnMenuMaster" data-toggle="dropdown" aria-expanded="false">Masters & Setting</a>
+                    <div class="dropdown-menu" area-labelledby="drpdnMenuMaster">
+                        <ul class="mega-menu1 cuslistsec">
+
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">Masters</div></li>
+                                    @if (ApplicationSetting.IsAreaMaster)
+                                    {
+                                        <li><a href="/area-master" class="dropdown-item">Area Master</a></li>
+                                    }
+                                    <li><a href="/Denomination-master" class="dropdown-item">Denomination Master</a></li>
+                                    <li><a href="/DenominationRange-Master" class="dropdown-item">Denomination Range Master</a></li>
+                                    <li><a href="/DepartmentRoleMaster" class="dropdown-item">Department Role Master</a></li>
+                                    <li><a href="/range-master" class="dropdown-item">Range Master</a></li>
+                                    <li><a href="/BankMasterAdmin" class="dropdown-item">Edit Bank Master</a></li>
+                                    <li><a href="/bank-master" class="dropdown-item">Bank Master</a></li>
+                                    <li><a href="/IPMaster" class="dropdown-item">IP Master</a></li>
+                                    <li><a href="/DTHChannelCategory" class="dropdown-item">DTH Channels Category</a></li>
+                                    <li><a href="/DTHChannelMaster" class="dropdown-item">DTH Channels</a></li>
+                                    <li><a href="/DTHPackage" class="dropdown-item">DTH Package</a></li>
+                                    <li><a href="/PublicEServices" class="dropdown-item">Public-E-Services</a></li>
+                                    @if (ApplicationSetting.RegistrationType == Fintech.AppCode.StaticModel.RegistrationChargeType.RegCharge)
+                                    {
+                                        <li><a href="/getMasterRole" class="dropdown-item">Master Role</a></li>
+                                    }
+                                    <li><a href="/Pincodearea" class="dropdown-item">Pin Code Area</a></li>
+                                    @if (ApplicationSetting.IsB2CEnabled)
+                                    {
+                                        <li><a href="/promocode-master" class="dropdown-item">Promo Code Master</a></li>
+                                        <li><a href="/membershipmaster" class="dropdown-item">MemberShip Master</a></li>
+                                    }
+                                    <li><a href="/CoupanMaster" class="dropdown-item">Coupon Master</a></li>
+                                </ul>
+                            </li>
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">Setting</div></li>
+                                    <li><a href="/EmailAPI" class="dropdown-item">Email Setting</a></li>
+                                    <li><a href="/FundRequestToRole" class="dropdown-item">Fund Request To Role Setting</a></li>
+                                    <li><a class="dropdown-item" href="/SystemSetting">System Setting</a></li>
+                                    <li><a class="dropdown-item" href="#" id="doctypemaster_minus1">KYC Doc Setting</a></li>
+                                    <li><a class="dropdown-item" href="/NumberSeries">Number Series Setting</a></li>
+                                    <li><a class="dropdown-item" href="#" id="invoiceSet">Invoice Setting</a></li>
+                                    <li><a href="/News" class="dropdown-item">News</a></li>
+                                    <li><a href="/MessageSetting" class="dropdown-item">MessageSetting</a></li>
+                                    <li><a href="/PaymentModeSetting" class="dropdown-item">Payment Mode Setting</a></li>
+                                    @if (ApplicationSetting.IsECollectEnable)
+                                    {
+                                        <li><a href="/BonafideAccount" class="dropdown-item">Bonafide Account</a></li>
+                                    }
+                                    @if (ApplicationSetting.IsWhatsappAgent)
+                                    {
+                                        <li><a href="/WhatsappBotSetting" class="dropdown-item">WA Bot Dictionary</a></li>
+                                    }
+
+                                    <li><a href="/ReferSetting" class="dropdown-item">Referral Setting</a></li>
+                                    <li><a href="/MasterPaymentGateway" class="dropdown-item">Master PaymentGateway</a></li>
+                                    <li><a href="/PaymentGateway" class="dropdown-item">PaymentGateway</a></li>
+                                </ul>
+                            </li>
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">Branding</div></li>
+                                    <li><a href="/WebsiteList" class="dropdown-item">User Website List</a></li>
+                                    <li><a href="/Website-Setting" class="dropdown-item">Website Setting</a></li>
+                                    <li><a href="/Theme" class="dropdown-item">Themes</a></li>
+                                    <li><a href="/CompanyProfile" class="dropdown-item">Company Profile</a></li>
+                                    <li><a href="/BannerMaster" class="dropdown-item">Banner Setting</a></li>
+                                    <li><a href="/popup" class="dropdown-item">Popup Master</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnAdminReport" data-toggle="dropdown" aria-expanded="false">Report</a>
+                    <div class="dropdown-menu" area-labelledby="dwnAdminReport">
+                        <ul class="mega-menu1 cuslistsec">
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">Admin Report</div></li>
+                                    <li><a href="/Daybook" class="dropdown-item">Admin Daybook(Operator)</a></li>
+                                    <li><a href="/DaybookAPIDatewise" class="dropdown-item">Admin Daybook(APIDatewise)</a></li>
+                                    <li><a href="/DaybookDateAPIwise" class="dropdown-item">Admin Daybook(Date-APIwise)</a></li>
+                                    @if (ApplicationSetting.IsCCFApplicable)
+                                    {
+                                        <li><a href="/AdminDaybookDMR" class="dropdown-item">Daybook CCF</a></li>
+                                    }
+                                    <li><a href="/AdminLedger" class="dropdown-item">Ledger</a></li>
+                                    <li><a href="/SentSmsReport" class="dropdown-item">SendSMS Report</a></li>
+                                    @if (ApplicationSetting.IsWebNotification)
+                                    {
+                                        <li><a href="/Report/WebNotification" class="dropdown-item">Web Notification Report</a></li>
+                                    }
+                                    <li><a href="/SalesSummary" class="dropdown-item">Sales Summary(Operatorwise)</a></li>
+                                    <li><a href="/USalesSummary" class="dropdown-item">Sales Summary(APIUser)</a></li>
+                                    <li><a href="/USalesSummaryDate" class="dropdown-item">Sales Summary(APIUser-Daywise)</a></li>
+                                    @if (ApplicationSetting.IsActivityShow)
+                                    {
+                                        <li><a href="/CustomerCareActivity" class="dropdown-item">Activity Log</a></li>
+                                    }
+
+                                    @*new menus*@
+                                    <li><a href="/FailToSuccessR" class="dropdown-item">FailToSuccess Recharges</a></li>
+                                    <li><a href="/AdminSettlement" class="dropdown-item">Admin Settlement</a></li>
+                                    <li><a href="/LogDetails" class="dropdown-item">Log Details</a></li>
+
+                                    <li><a href="/PGTransactionReport" class="dropdown-item">PaymentGatewayLog Details</a></li>
+                                    <li><a href="/PSTReport" class="dropdown-item">PST Report</a></li>
+                                    @if (ApplicationSetting.IsShowSubscription)
+                                    {
+                                        <li><a href="/UserSubcriptionAssign" class="dropdown-item">Leads Deatil</a></li>
+                                    }
+                                    <li><a href="/MNPUserView" class="dropdown-item">MNP User</a></li>
+                                    <li><a href="/MNPClaim" class="dropdown-item">MNP Claim</a></li>
+                                </ul>
+                            </li>
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">User Report</div></li>
+                                    <li>
+                                        <a href="/RechargeReport" class="dropdown-item">Recharge Report</a>
+                                    </li>
+                                    <li>
+                                        <a href="/DMRReport" class="dropdown-item">DMT Report</a>
+                                    </li>
+                                    <li>
+                                        <a href="/AEPSReport" class="dropdown-item">MiniBank Report</a>
+                                    </li>
+                                    <li>
+                                        <a href="/DTHSubscriptionReport" class="dropdown-item">DTH Subscription Report</a>
+                                    </li>
+                                    <li>
+                                        <a href="/UserLedger" class="dropdown-item">User Ledger</a>
+                                    </li>
+                                    @if (ApplicationSetting.ISServiceLimitTransfer)
+                                    {
+                                        <li>
+                                            <a href="/UserPackageLimitLedger" class="dropdown-item">User Service  Limit Ledger</a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a href="/UDaybook" class="dropdown-item">User Daybook</a>
+                                    </li>
+                                    @if (ApplicationSetting.IsCCFApplicable)
+                                    {
+                                        <li>
+                                            <a href="/UDaybookDMR" class="dropdown-item">User Daybook DMT</a>
+                                        </li>
+                                    }
+                                    <li>
+                                        <a href="/FundRequestReport" class="dropdown-item">User Fund Orders</a>
+                                    </li>
+                                    <li>
+                                        <a href="/FundReceiveStatement" class="dropdown-item">Fund Debit-Credit</a>
+                                    </li>
+                                    <li>
+                                        <a href="/RefundHistory" class="dropdown-item">Dispute Settlement</a>
+                                    </li>
+                                    <li><a href="/WTRHistory" class="dropdown-item">Wrong2Right Request History</a></li>
+                                    <li><a href="/WalletRequestReport" class="dropdown-item">Move-To-Bank Request History</a></li>
+                                    @if (ApplicationSetting.IsTarget)
+                                    {
+                                        <li><a href="/TopPerformer" class="dropdown-item">Top Performers</a></li>
+                                    }
+                                    <li> <a href="/BBPSComplainReport" class="dropdown-item">BBPSComplainReport</a></li>
+                                </ul>
+                            </li>
+                            <li class="sublist">
+                                <ul>
+                                    <li>
+                                        <div class="dropdown-header">Summary</div>
+                                    </li>
+                                    <li><a href="/USalesSummaryRD" class="dropdown-item">Sales Summary(Datewise)</a></li>
+                                    <li><a href="/USalesSummaryR" class="dropdown-item">Sales Summary(Rolewise)</a></li>
+                                    <li><a href="/USalesSummaryOP" class="dropdown-item">Sales Summary(Operatorwise)</a></li>
+                                    <li><a href="/USalesSummaryOPD" class="dropdown-item">Sales Summary(OperatorDatewise)</a></li>
+                                    <li><a href="/UserSettlement" class="dropdown-item">Wallet Summary</a></li>
+                                    <li><a href="/LeadServiceRequests" class="dropdown-item">Lead Service Request Report</a></li>
+                                    <li><a href="/BillFetchReport" class="dropdown-item">Bill Fetch Report</a></li>
+                                    <li><a href="FetchBillSummary" class="dropdown-item">Fetch Bill Summary</a></li>
+                                </ul>
+                            </li>
+                            @if (ApplicationSetting.IsAccountStatement)
+                            {
+                                <li class="sublist">
+                                    <ul>
+                                        <li>
+                                            <div class="dropdown-header">Financial Serives</div>
+                                        </li>
+                                        <li>
+                                            <a href="/AccStmt" class="dropdown-item">Account Statement Summary</a>
+                                        </li>
+                                        <li>
+                                            <a href="/ASC/0" class="dropdown-item">Balance Sheet</a>
+                                        </li>
+                                        <li>
+                                            <a href="#" class="dropdown-item" id="lnkVchEntry">Voucher Entry </a>
+                                        </li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </li>
+                @if (ApplicationSetting.IsGSTEnable)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dwnInvoices" data-toggle="dropdown">Invoices</a>
+                        <div class="dropdown-menu" area-labelledby="dwnInvoices">
+                            <a href="/GSTSummary" class="dropdown-item">GST Summary</a>
+                            <a href="/TDSSummary" class="dropdown-item">TDS Summary</a>
+                            <a href="/InvoiceList" class="dropdown-item">Invoice List</a>
+                            <a href="/UploadStatus" class="dropdown-item">Uploaded Invoice</a>
+                        </div>
+                    </li>
+                }
+
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnRequests" data-toggle="dropdown" aria-expanded="false">Requests</a>
+                    <div class="dropdown-menu cusdrop" area-labelledby="dwnRequests">
+                        <ul class="mega-menu1 cuslistsec">
+                            <li class="sublist">
+                                <ul>
+                                    <li><div class="dropdown-header">Requests</div></li>
+                                    <li><a href="/Pendings" class="dropdown-item">Recharge Pendings</a> </li>
+                                    <li><a href="/RefundRequest" class="dropdown-item">Recharge Dispute</a> </li>
+                                    <li><a href="/DMRPendings" class="dropdown-item">DMT Pendings</a> </li>
+                                    <li><a href="/DMRRefundRequest" class="dropdown-item">DMR Dispute</a></li>
+                                    <li><a href="/AEPSPendings" class="dropdown-item">MiniBank Pendings</a> </li>
+                                    <li><a href="/PendingPGTransactionReport" class="dropdown-item">PG Report</a> </li>
+                                    <li><a href="/DTHSubscriptionPending" class="dropdown-item">DTH Subscription Pendings</a> </li>
+                                    <li><a href="/EServicesPendings.php" class="dropdown-item">EServices Pendings</a> </li>
+                                    <li><a href="/FundRequestApproval" class="dropdown-item">Fund Order</a> </li>
+                                    <li><a href="/WalletRequestApproval" class="dropdown-item">Move To Bank Request</a> </li>
+                                    <li><a href="/UtrStatement" class="dropdown-item">UTR Statements</a> </li>
+
+                                    <li><a href="/AdvertisementRequest" class="dropdown-item">Advertisement Request</a> </li>
+
+                                </ul>v
+                            </li>
+                            <li class="sublist">
+                                <ul>
+                                    <li>
+                                        <div class="dropdown-header">&nbsp;</div>
+                                    </li>
+                                    <li><a href="/CallbackData" class="dropdown-item">Callback Requests</a> </li>
+                                    <li><a href="/callmerequest" class="dropdown-item">Call Me Requests</a> </li>
+                                    <li><a href="/WTRRequest" class="dropdown-item">Wrong2Right Request</a> </li>
+                                    <li><a href="/KYCUsers" class="dropdown-item">KYC User Request</a> </li>
+                                    <li><a href="/RailwayOutletPending" class="dropdown-item">Railway KYC Pending</a> </li>
+
+                                    <li>
+                                        <a href="/P2AInvoiceUploaded" class="dropdown-item">Uploaded P2A Invoice</a>
+                                    </li>
+                                    @if (ApplicationSetting.IsShowPartner)
+                                    {
+                                        <li><a href="/PartnerView" class="dropdown-item">Partner's Request</a> </li>
+                                    }
+                                    <li>
+                                        <a href="/BankDetailsUpdateRequest" class="dropdown-item">Settlement Account Request</a>
+                                    </li>
+
+                                    @if (ApplicationSetting.IsLeadServiceEnabled)
+                                    {
+                                        <li><a href="/LeadServiceRequests" class="dropdown-item">Lead Service Request</a></li>
+                                    }
+                                    @if (ApplicationSetting.IsAutoClearancePage)
+                                    {
+                                        <li><a href="/AutoClr" class="dropdown-item">Auto Clearance</a></li>
+                                    }
+                                    @if (ApplicationSetting.IsLowBalanceAlertAllowed)
+                                    {
+                                        <li><a href="/AutoLowBalance" class="dropdown-item">Auto Low Balance Aelrt</a></li>
+                                    }
+                                    @if (ApplicationSetting.IsBulkQRGeneration)
+                                    {
+                                        <li><a href="/BulkQRGeneration" class="dropdown-item">Bulk Qr Generation</a></li>
+                                    }
+                                    <li><a href="/bankreconciliation" class="dropdown-item">Bank Reconciliation</a></li>
+                                    <li>
+                                        <a href="/DebitFundRequest" class="dropdown-item">Debit Fund Request</a>
+                                    </li>
+                                </ul>
+                            </li>
+
+                        </ul>
+                    </div>
+                </li>
+                @if (ApplicationSetting.IsECommerceAllowed)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dwnShopping" data-toggle="dropdown">Shopping</a>
+                        <div class="dropdown-menu" area-labelledby="dwnShopping">
+                            @*<a href="@Url.Action("category","shopping")" class="dropdown-item">Category</a>*@
+                            <a href="@Url.Action("MainCategory","Shopping")" class="dropdown-item">Category</a>
+                            <a href="/Filter" class="dropdown-item">Filter &amp; Brands</a>
+                            <a href="/AddProduct" class="dropdown-item">Add Product</a>
+                            <a href="/AllProduct" class="dropdown-item">All Product</a>
+                            <a href="/Shop" class="dropdown-item">Shop</a>
+                            <a href="/shopping/OrderReport" class="dropdown-item">Order's Report</a>
+                            <a href="/FEImage" class="dropdown-item">FE Images</a>
+                            @if (ApplicationSetting.IsECommDeliveryAllowed)
+                            {
+                                <a href="/shopping/DeliveryPersonnel" class="dropdown-item">Delivery Personnel</a>
+                                <a href="OrderDelivery" class="dropdown-item">Order Delivery</a>
+                            }
+                        </div>
+                    </li>
+                }
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnDevice" data-toggle="dropdown">Device Management</a>
+                    <div class="dropdown-menu" area-labelledby="dwnDevice">
+                        <a href="/Master/Vendor" class="dropdown-item">Vendor Master</a>
+                        <a href="/Master/DeviceModel" class="dropdown-item">Device Master</a>
+                        <a href="/MPosDeviceInventory" class="dropdown-item">MPOS Device Inventory</a>
+                        <a href="/mAtmRequests" class="dropdown-item">m-ATM Request</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    @if (ApplicationSetting.IsWhatsappAgent)
+                    {
+                        <a href="/WhatsAppConversationNew?ID=0" data-id="1" class="nav-link">Whatsapp Chat</a>
+                    }
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="main-wrapper body-content">
+        <div id="alertmsg"></div>
+        @RenderBody()
+        @*<hr />*@
+    </div>
+    <footer style="margin-top:5px">
+        <div class="container-fluid text-center">
+            <p>&copy;2012-@ViewData["CName"]</p>
+        </div>
+    </footer>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery/dist/popper.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.js"></script>
+        <script src="~/lib/jquery/dist/moment.js"></script>
+        <script src="~/js/validator.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script>var $$IsWebNotify='@ApplicationSetting.IsWebNotification';</script>
+        <script src="~/js/AppUtility.min.js" asp-append-version="true"></script>
+        <script src="~/js/admin.min.js"></script>
+        <script src="~/js/Common/jquery-customselect.js"></script>
+
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery/dist/popper.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.min.js"></script>
+        <script src="~/lib/jquery/dist/moment.min.js"></script>
+        <script src="~/js/validator.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script>var $$IsWebNotify='@ApplicationSetting.IsWebNotification';</script>
+        <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+        <script src="~/js/admin.min.js"></script>
+        <script src="~/js/Common/jquery-customselect.js"></script>
+
+    </environment>
+    <script>
+        var $$host = '@(ViewData["Host"])';
+    </script>
+    @RenderSection("Scripts", required: false)
+    @*@if (ApplicationSetting.IsRPOnly)
+        {
+        <script charset="UTF-8" src="//web.webpushs.com/js/push/9b2b97541217dbc110d8cb05816349a4_1.js" async></script>
+        }*@
+</body>
+</html>

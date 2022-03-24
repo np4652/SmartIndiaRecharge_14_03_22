@@ -1,0 +1,163 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.MNPDetailsResp
+
+@{
+    var data = Model.data;
+}
+<div>
+    <style>
+        .datepicker {
+            z-index: 1100 !important;
+        }
+    </style>
+    <div class="row partnerView">
+        <div class="col-12">
+            <h5>MNP User Details</h5>
+        </div>
+
+        <div class="col-6">
+            <ul>
+                <li>Name : <span>@data.Name</span></li>
+
+                <li>
+                    FRC Date :<span>
+
+                        @*<input aria-describedby="slbFRCDatekHelp" class="form-control " id="txtFRCDate" name="txtFRCDate" placeholder="Enter FRC Date" tabindex="3" type="text" value="@data.FRCDate">
+                        <small id="slbFRCDatekHelp" class="form-text text-muted d-none"></small>*@
+
+                        <input aria-describedby="dtFRCDDate" class="form-control" id="dtFRCDate" tabindex="5" type="text" value="@data.FRCDate.ToString()" />
+                    </span>
+                </li>
+                <li>
+                    FRC Demo Number :<span>
+
+                        <input aria-describedby="slbFRCDemoNoHelp" class="form-control " id="txtFRCDemoNo" name="txtFRCDemoNo" placeholder="Enter FRC Demo No" tabindex="3" type="text" value="@data.FRCDemoNumber">
+                        <small id="slbFRCDemoNoHelp" class="form-text text-muted d-none"></small>
+                    </span>
+                </li>
+                <li>
+                    Remark :<span>
+
+                        <input aria-describedby="slbRemarkHelp" class="form-control " id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text" value="@data.Remark">
+                        <small id="slbRemarkHelp" class="form-text text-muted d-none"></small>
+                    </span>
+                </li>
+
+            </ul>
+        </div>
+        <div class="col-6">
+
+            <ul>
+                <li>MobileNo: <span>@data.MobileNo</span></li>
+                <li>
+                    FRC Type:<span>
+
+                        <input aria-describedby="txtFRCTypeHelp" class="form-control " id="txtFRCType" name="txtFRCType" placeholder="Enter FRC Type" tabindex="3" type="text" value="@data.FRCType">
+                        <small id="txtFRCTypeHelp" class="form-text text-muted d-none"></small>
+                    </span>
+                </li>
+                <li>
+                    FRC Demo Date:<span>
+
+                        @*<input aria-describedby="txtFRCDemoDateHelp" class="form-control " id="txtFRCDemoDate" name="txtFRCDemoDate" placeholder="Enter FRC Demo Date" tabindex="3" type="text" value="@data.FRCDoneDate">
+                        <small id="txtFRCDemoDateHelp" class="form-text text-muted d-none"></small>*@
+
+                        <input aria-describedby="dtFRCDoneDate" class="form-control" id="dtFRCDoneDate" tabindex="5" type="text" value="@data.FRCDoneDate" />
+                    </span>
+                </li>
+                <li>
+                    Reimbursement Amount:<span>
+
+                        <input aria-describedby="txtAmountHelp" class="form-control " id="txtAmount" name="txtAmount" placeholder="Enter Reimbursement Amount" tabindex="3" type="text" value="@data.Amount">
+                        <small id="txtAmountHelp" class="form-text text-muted d-none"></small>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12">
+            <div class="col-6">
+                @if (Model.RoleID == 1)
+                {
+                    if (Model.data.VerifyStatus == 2)
+                    {
+                        <div class="input-group-prepend" style="position: relative; top: 40px;">
+                            <a href="#" class="btn btn-outline-danger" id="reject_1" onclick="UpdateStatus(3)">
+                                <i class="far fa-times-circle"></i>
+                            </a>
+                        </div>
+                    }
+                    if (Model.data.VerifyStatus == 1)
+                    {
+                        <div class="input-group-prepend" style="position: relative; top: 40px;">
+                            <a href="#" class="btn btn-outline-success" id="accept_1" onclick="UpdateStatus(2)">
+                                <i class="far fa-check-circle"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-danger" id="reject_1" onclick="UpdateStatus(3)">
+                                <i class="far fa-times-circle"></i>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="col-6" style="float:right">
+                <a id="btnClose" class="btn btn-dark" style="color:#fff;float:right">Close</a>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .partnerView {
+        font-weight: 400;
+    }
+
+        .partnerView .partnerdetail {
+            border: 1px solid #eee;
+            margin: 15px;
+            padding: 20px 0;
+        }
+
+        .partnerView ul {
+            list-style: none;
+        }
+
+            .partnerView ul li {
+                padding: 5px;
+            }
+
+                .partnerView ul li span {
+                    font-weight: 600;
+                    margin-left: 5px;
+                }
+
+        .partnerView h5 {
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .partnerView img {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #eee;
+            margin: 15px 0;
+        }
+</style>
+
+
+<script>
+    $(document).ready(function () {
+        $('#dtFRCDoneDate').datetimepicker(
+            {
+                format: 'DD MMM YYYY'
+            });
+    });
+
+    $(document).ready(function () {
+        $('#dtFRCDate').datetimepicker(
+            {
+                format: 'DD MMM YYYY'
+            });
+    });
+
+</script>

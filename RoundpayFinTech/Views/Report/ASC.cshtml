@@ -1,0 +1,553 @@
+﻿@model Fintech.AppCode.Model.CommonReq
+@using Fintech.AppCode.Configuration
+@{
+    ViewData["Title"] = "Account Statement";
+
+}
+<input type="hidden" id="hdnUserID" value="@Model.UserID" />
+<input type="hidden" id="hdnAreaID" value="@Model.CommonInt" />
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-file-invoice"></i> Account Statement
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="3500">3500</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-2 col-xs-2 @Html.Raw(!ApplicationSetting.IsAreaMaster ? "d-none" : "")">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Area</label>
+                                    <select id="ddlArea" tabindex="1" class="form-control">
+                                        <option value="0">All</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2 @Html.Raw(Model.CommonBool1 ? "" : "d-none")">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlUserType">Select Users</label>
+                                    <select id="ddlUserType" tabindex="1" class="form-control">
+                                        <option value="1">FOS</option>
+                                        <option value="2">Channel</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtsFromDate" class="form-control" id="dtFromDate" tabindex="4" type="text" readonly="readonly">
+                                    <small id="dtsFromDate" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="dtsToDate" class="form-control" id="dtToDate" tabindex="5" type="text" readonly="readonly">
+                                        <small id="dtsToDate" class="form-text text-muted d-none"></small>
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="6" class="btn btn-outline-dark">Search</button>
+                                            <button class="btn btn-outline-success far fa-file-excel" id="btnExport"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-md-6 ">
+                                <div class="text-center">
+                                    <label class="text-danger" id="lblNeg"> You Will Give : 0 </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="text-center">
+                                    <label class="text-success" id="lblPos"> You Will Get : 0 </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive vh-2">
+                            <table class="table table-bordered" id="tblAccStmt">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th style="width:10%;">User</th>
+                                        @if (ApplicationSetting.IsAreaMaster)
+                                        {
+                                            <th style="width:10%;">Area</th>
+                                        }
+                                        @if (Model.CommonBool)
+                                        {
+                                            <th class="text-right" style="width:10%;">Prepaid Bal</th>
+                                        }
+                                        @if (Model.CommonBool2)
+                                        {
+                                            <th class="text-right" style="width:10%;">Utility Bal</th>
+                                        }
+                                        <th class="text-right" style="width:10%;">Opening</th>
+                                        <th class="text-right" style="width:10%;">Purchase</th>
+                                        <th class="text-right" style="width:10%;">Last Purchase</th>
+                                        <th class="text-center" style="width:10%;">Last Purchase Date</th>
+                                        <th class="text-right" style="width:10%;">Collection</th>
+                                        <th class="text-right" style="width:10%;">Last Collection</th>
+                                        <th class="text-center" style="width:10%;">Last Collection Date</th>
+                                        <th class="text-right" style="width:10%;">Closing</th>
+                                        <th class="text-center" style="width:20%;">Collection</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            LoadArea();
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+        });
+        $("#btnSearch,#btnExport").click(function () {
+            search(this);
+        });
+        var search = function (sender) {
+            var ULedgerReportFilter =
+            {
+                FromDate_F: $("#dtFromDate").val(),
+                ToDate_F: $("#dtToDate").val(),
+                TopRows: $("#ddlTop").val().trim(),
+                AreaID: $('#ddlArea').val(),
+                UType: $('#ddlUserType').val()
+            };
+            preloader.load();
+            if (sender.id.indexOf('Export') > -1 || parseInt(ULedgerReportFilter.TopRows) > 4000) {
+                window.location = "/as-c?" + $.param(ULedgerReportFilter);
+                preloader.remove();
+            }
+            else {
+                preloader.load();
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.ajax({
+                    type: 'POST',
+                    url: '/as-c',
+                    contentType: 'application/json',
+                    data: JSON.stringify(ULedgerReportFilter),
+                    success: function (result) {
+                        $('#tblAccStmt tbody').html(result);
+                        $('[id^=Collect_]').on('click', function () {
+                            preloader.load();
+                            var UID = $(this).data().uid;
+                            var nam = $(this).data().nam;
+                            var mob = $(this).data().mob;
+
+                            $.post('/as-collect', { UserID: UID, CommonStr: nam, CommonStr2: mob })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    mdlA.id = 'mymodel';
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.alert(mdlA.size.default);
+                                    $('button.close span,#mdlCancel').unbind().click(function () {
+                                        mdlA.dispose();
+                                    });
+                                }).catch(function (xhr, ex, message) {
+                                    an.title = 'Oops';
+                                    an.content = message;
+                                    an.alert(an.type.failed);
+                                    an.autoClose = 2;
+                                }).fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                }).always(function () {
+                                    preloader.remove();
+                                });
+                        });
+                        $('[id^=FTAS_]').on('click', function () {
+                            var UID = $(this).data().uid;
+                            var nam = $(this).data().nam;
+                            var mob = $(this).data().mob;
+                            console.log(UID);
+                            console.log(nam);
+                            console.log(mob);
+                            $.post('/F-T', { pid: 0, uid: UID })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    $('#' + an.id).remove();
+                                    mdlA.id = 'mymodal';
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.options.keyboard = false;
+                                    mdlA.alert(mdlA.size.default);
+                                    $('[name="options"]').on('change', function () {
+                                        var bType = $(this).data().btype;
+                                        var lbltxt = $(this).data().text;
+                                        $('#btnBType').val(bType);
+                                    });
+                                    $('#spnNam').html(nam);
+                                    $('#spnMob').html(mob);
+                                    var amt = $('#txtAmount');
+                                    var comm = $('#txtCommission');
+                                    var amtCom = $('#txtAmount,#txtCommission');
+                                    var ttl = 0;
+                                    amt.focus();
+                                    var tamt = $('#spnRup');
+                                    var oType = 0;
+                                    var remk = $('#txtRemark');
+                                    var stk = $('#txtSecKey');
+                                    var btnT = $('#bT');
+                                    var btnTxt = btnT.html();
+                                    var wt = 1;
+                                    $('#btnGroup').click(function () {
+                                        $(this).find('.btn').toggleClass('active');
+                                        if ($(this).find('.btn-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-dark');
+                                        }
+                                        if ($(this).find('.btn-outline-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-outline-dark');
+                                        }
+                                        amt.focus();
+                                        if ($('#btnGroup.btn-toggle').find('.btn.active').text() === 'Credit') {
+                                            comm.removeAttr('disabled').val(0);
+                                            $('#spnT').html('Transferable');
+                                            btnT.html('Transfer');
+                                            oType = 0;
+                                        } else {
+                                            oType = 1;
+                                            btnT.html('Deduct');
+                                            comm.attr('disabled', 'true').val(0);
+                                            $('#spnT').html('Deductible')
+                                        }
+                                        btnTxt = btnT.html();
+                                    });
+
+                                    $('#btnGroupUType').click(function () {
+                                        $(this).find('.btn').toggleClass('active');
+                                        if ($(this).find('.btn-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-dark');
+                                        }
+                                        if ($(this).find('.btn-outline-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-outline-dark');
+                                        }
+                                        amt.focus();
+                                        btnTxt = btnT.html();
+                                    });
+                                    amtCom.on('keyup', function () {
+                                        if (!$v.$IsNum(amt.val())) {
+                                            amt.val(0);
+                                        }
+                                        var am = parseInt(amt.val());
+                                        amt.val(am);
+                                        if ($('#btnBType').data().isadminflat == "True") {
+                                            tamt.text(amt.val());
+                                            return true;
+                                        }
+                                        var cm = comm.val();
+                                        try {
+                                            cm = cm.split('.').length - 1 > 1 ? parseFloat(cm) : cm;
+                                            if (cm.split('.').length - 1 == 1) {
+                                                cm = cm.split('.')[0] == '' ? 0 + cm : cm;
+                                                cm = cm.split('.')[1] == '' ? cm + 0 : cm;
+                                                cm = $v.$numOnly(cm.split('.')[0]) + '.' + $v.$numOnly(cm.split('.')[1]);
+                                                cm = cm;
+                                            } else {
+                                                cm = $v.$numOnly(parseInt(cm));
+                                            }
+                                        } catch (e) {
+                                            console.log(e)
+                                        }
+                                        cm = cm == '' || cm == null ? '0' : cm;
+                                        comm.val(cm);
+                                        ttl = (parseFloat(cm) !== 0 ? (am + (am * parseFloat(cm) / 100)) : am);
+                                        tt2 = am;
+                                        tamt.text(ttl);
+                                    });
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                    an.autoClose = 5;
+                                    btnT.click(function () {
+                                        if (btnTxt !== btnT.html())
+                                            return false;
+                                        btnLdr.addClass = 'btn-dark';
+                                        btnLdr.removeClass = 'btn-outline-dark';
+                                        btnLdr.Start(btnT, oType === 0 ? 'Tranfering...' : 'Deducting...');
+                                        if (ttl < 1) {
+                                            an.title = 'Info';
+                                            an.content = 'Enter amount!';
+                                            an.alert(an.type.info);
+                                            btnLdr.Stop(btnT);
+                                            return false;
+                                        }
+                                        if (($('#chbIsMarkCredit').is(':checked') == false) && remk.val() == '') {
+                                            an.title = 'Info';
+                                            an.content = 'Enter Remark!';
+                                            an.alert(an.type.info);
+                                            btnLdr.Stop(btnT);
+                                            return false;
+                                        }
+                                        wt = parseInt($('#btnBType').val());
+                                        var FundProcessReq = { UserID: UID, Amount: tt2, OType: oType, Remark: remk.val(), WalletType: wt, SecurityKey: stk.val(), IsMarkCredit: $('#chbIsMarkCredit').is(':checked') }
+                                        preloader.load();
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '/FT',
+                                            dataType: 'json',
+                                            contentType: 'application/json',
+                                            data: JSON.stringify(FundProcessReq),
+                                            success: function (result) {
+                                                resultReload(result);
+                                                an.autoClose = 5;
+                                                if (result.statuscode === -1) {
+                                                    an.title = 'Oops';
+                                                    an.content = result.msg;
+                                                    an.alert(an.type.failed);
+                                                } else {
+                                                    an.title = oType === 0 ? 'Transfered' : 'Deducted';
+                                                    an.content = result.msg.replace('{User}', '<b>' + nam + '</b>');
+                                                    an.alert(oType === 0 ? an.type.success : an.type.info);
+                                                    mdlA.dispose();
+                                                    $('#btnSearch').click();
+                                                }
+                                                btnLdr.Stop(btnT);
+                                                preloader.remove();
+                                            },
+                                            error: (xhr) => {
+                                                an.title = 'Oops';
+                                                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                                                an.alert(an.type.failed);
+                                                btnLdr.Stop(btnT);
+                                                preloader.remove();
+                                            }
+                                        });
+                                    });
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        });
+                        $('.a_modal').on('click', function () {
+                            var mob = $(this).data().amob;
+                            var ULedgerReportFilter =
+                            {
+                                DebitCredit_F: -1,
+                                TransactionId_F: '',
+                                FromDate_F: $("#dtFromDate").val(),
+                                ToDate_F: $("#dtToDate").val(),
+                                Mobile_F: mob,
+                                TopRows: 50
+                            };
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/paccstmt',
+                                contentType: 'application/json',
+                                data: JSON.stringify(ULedgerReportFilter),
+                                success: function (result) {
+                                    resultReload(result);
+                                    $('#' + an.id).remove();
+                                    mdlA.id = 'paraccstmt';
+                                    mdlA.content = result;
+                                    mdlA.options.backdrop = 'static';
+                                    mdlA.alert(mdlA.size.xlarge);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (xhr, result) {
+                                    an.title = "Oops";
+                                    an.content = result;
+                                    an.alert(an.type.failed);
+                                    if (result === 'parsererror') {
+                                        reload();
+                                    }
+                                },
+                                complete: function () {
+                                    btnLdr.Stop($("#btnSearch"));
+                                    preloader.remove();
+                                }
+                            });
+                        });
+                        HitCount();
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                        if (result === 'parsererror') {
+                            reload();
+                        }
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });
+            }
+        };
+        var LoadArea = () => {
+            preloader.load();
+            $.post('/gm', { uid: $('#hdnUserID').val() })
+                .done(function (result) {
+                    resultReload(result);
+                    if (result != null) {
+                        $.each(result, function (index, value) {
+                            $('#ddlArea').append('<option value="' + value.areaID + '">' + value.area + '</option>');
+                        });
+                        $('#ddlArea').val($('#hdnAreaID').val());
+                        $('#btnSearch').click();
+                    }
+                }).catch(function (xhr, ex, message) {
+                    an.title = 'Oops';
+                    an.content = message;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        };
+        var HitCount = () => {
+            var n = 0, p = 0;
+            $('#tblAccStmt').find('tr').each(function (i, el) {
+                var $tds = $(this).find('td');
+                var val = parseInt($tds.eq(10).text());
+                if (!isNaN(val)) {
+                    if (val < 0)
+                        n += val;
+                    else
+                        p += val;
+                }
+            });
+            $('#lblNeg').html('You Will Give : ' + n);
+            $('#lblPos').html('You Will Get : ' + p);
+        };
+    </script>
+}

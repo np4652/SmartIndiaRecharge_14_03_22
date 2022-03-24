@@ -1,0 +1,48 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.AffiliatedItem>
+@{
+
+}
+<div class="row">
+    
+    @{
+        if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                if (item.LinkType == 1)
+                {
+                    <div class="col-md">
+                        @Html.Raw(item.Link)
+                    </div>
+
+
+                }
+                else if (item.LinkType == 2)
+                {
+                    <div class="col-md">
+                        @if (item.ImgUrl != "")
+                        {
+                            @Html.Raw("<a href='" + item.Link + "' target='_blank'><img src='/image/AffiliateItem/" + item.VendorID + "/" + item.ImgUrl + "' class='img-fluid'/></a>")
+                        }
+                        else
+                        {
+                            @Html.Raw("<a href='" + item.Link + "'>Click Here</a>");
+                        }
+                    </div>
+                }
+                else if (item.LinkType == 3)
+                {
+                    <div class="col-md">
+                        @item.Link
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <div class="col-md-12">
+                <h4 class="text-danger">No Data Found</h4>
+            </div>
+        }
+    }
+</div>

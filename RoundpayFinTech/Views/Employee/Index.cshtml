@@ -1,0 +1,337 @@
+﻿
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<style>
+    .obj-rotate {
+        -webkit-transform: rotate(360deg);
+        -webkit-transition-duration: 2s;
+    }
+    .card-body {
+        min-height: 229px;
+    }
+    .secction-Overlay {
+        color: #fff;
+        height: 81%;
+        position: absolute;
+        Width: 99%;
+        top: 49px;
+        background: rgba(0,0,0,0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-home"></i> Dashboard</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="bg-purple row grid-margin" id="Div_Pening">
+            <div class="col-12">
+                <div class="card card-statistics" style="margin-top:0;">
+                    <div class="card-body min-height-unset">
+                        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between">
+                            <a href="#" class="statistics-item col-md-2 text-center" id="linkCurrentTotal">
+                                <span class="count_top text-dark">Current Month Total</span>
+                                <div class="count text-pink">
+                                    <h2 style="font-size:x-large">0</h2>
+                                </div>
+                            </a>
+                            <a href="#" class="statistics-item col-md-2 text-white text-center linkCurrentJunk">
+                                <span class="count_top text-dark">Current Month Junk</span>
+                                <div class="count text-pink">
+                                    <h2 style="font-size:x-large">0</h2>
+                                </div>
+                            </a>
+
+                            <a href="#" class="statistics-item col-md-2 text-white text-center linkCurrentFollowup">
+                                <span class="count_top text-dark">Current Month Followup</span>
+                                <div class="count text-pink">
+                                    <h2 style="font-size:x-large">0</h2>
+                                </div>
+                            </a>
+
+                            <a href="#" class="statistics-item col-md-2 text-white text-center linkCurrentMatured">
+                                <span class="count_top text-dark">Current Month Matured</span>
+                                <div class="count text-pink">
+                                    <h2 style="font-size:x-large">0</h2>
+                                </div>
+                            </a>
+
+                            <a href="#" class="statistics-item col-md-2 text-white text-center linkTodayFollowup">
+                                <span class="count_top text-dark">Today Followup</span>
+                                <div class="count text-pink">
+                                    <h2 style="font-size:x-large">0</h2>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="br-pagebody">
+            <div class="row">
+                <div class="col-md-12 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <span class="text-monospace">Today Records</span>
+                                    </div>
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="refresh"><i class="fas fa-sync"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-1">
+                                <toadyLivePST />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <span class="text-monospace">Last 7 Days Primary</span>
+                                    </div>
+
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="LastSeveDayPrimary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <span class="text-monospace">Last 7 Days Secondary</span>
+                                    </div>
+
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="LastSeveDaySecondary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <span class="text-monospace">Last 7 Days Tertiary</span>
+                                    </div>
+
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="LastSeveDayTertiary"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <span class="text-monospace">Commitment Vs Acheivement</span>
+                                    </div>
+                                    <div class="col-sm-6 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" id="btnSetCommitment"><i class="fa fa-edit"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div id="divCommitmentSummary" class="p-1">
+                                            <div class="secction-Overlay"><span><img src="/images/Curve-Loading.gif" style="width:325px" /></span></div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-12 pt-2">
+                                        <div id="chartdiv"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        Lastday Vs Today Data
+                                    </div>
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="divLastdayVsTodayChart" class="p-1">
+                                    <div class="secction-Overlay"><span><img src="/images/Curve-Loading.gif" style="width:325px" /></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        LMTD Vs MTD
+                                    </div>
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" id="ShowLMTDVsMTDGrid"><i class="fa fa-table"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="divComparisionChart" class="p-1">
+                                    <div class="secction-Overlay"><span><img src="/images/Curve-Loading.gif" style="width:325px" /></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        <span class="text-monospace">TargetSegment</span>
+                                    </div>
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="divTargetSegment" class="p-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-sm-12">
+                    <div class="form-group">
+                        <div class="card">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-8">
+                                        Attandance
+                                    </div>
+                                    <div class="col-sm-4 text-right">
+                                        <div class="box-tools">
+                                            <button class="btn bg-teal btn-sm" data-widget="collapse"><i class="fa fa-minus"></i></button>
+                                            <button class="btn bg-teal btn-sm" data-widget="remove"><i class="fa fa-times"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body p-0">
+                                <div id="divEmpDownlineUser" class="p-1"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @section scripts{
+                <script src="~/js/chart/highcharts.js"></script>
+                <script src="~/js/chart/exporting.js"></script>
+                <script>
+                    Q.LivePST();
+                    Q.GetComparision();
+                    Q.TargetSegment();
+                    Q.CommitmentSummary();
+                    Q.CommitmentSummarychart();
+                    Q.EmpDownlineUser();
+                    Q.GetLastdayVsTodayData();
+                    Q.LastSevenDayPSTChart();
+                    Q.followUpStats();
+                    $('[data-widget="refresh"]').click(e => {
+                        $(e.currentTarget).find('i').addClass('obj-rotate');
+                        Q.LivePST();
+                        setTimeout(() => { $(e.currentTarget).find('i').removeClass('obj-rotate') }, 6 * 1000);
+                    })
+                    $('#btnSetCommitment').click(() => {
+                        $.post('/Employee/GetUserCommitment').done(result => {
+                            mdlA.id = "modalCommitment";
+                            mdlA.title = "Set Commitment";
+                            mdlA.content = result;
+                            mdlA.modal(mdlA.size.xlarge);
+                        })
+                    });
+                    $('#ShowLMTDVsMTDGrid').click(() => {
+                        mdlA.id = 'LMTDVsMTDGrid';
+                        mdlA.title = 'LMTD Vs MTD';
+                        mdlA.content = '<div class="row"><div class="col-sm-12"><LMTDVsMTDGrid></LMTDVsMTDGrid></div></div>';
+                        mdlA.modal(mdlA.size.large);
+                        Q.GetComparision();
+                    });
+                </script>
+            }
+        </div>
+    </div>
+</div>

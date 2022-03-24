@@ -1,0 +1,212 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.Reports.Filter.FundReciveModel
+@{
+    ViewData["Title"] = "Fund Debit-Credit";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">User Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2 pr-0">
+                                <label class="lbl" for="dtFromDate">From Date</label>
+                                <input aria-describedby="dtsFromDate" class="form-control" id="dtFromDate" tabindex="1" type="text">
+                                <small id="dtsFromDate" class="form-text text-muted d-none"></small>
+
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2 pr-0">
+                                <label class="lbl" for="dtToDate">To Date</label>
+                                <input aria-describedby="dtsToDate" class="form-control" id="dtToDate" tabindex="2" type="text">
+                                <small id="dtsToDate" class="form-text text-muted d-none"></small>
+                            </div>
+                            @*<div class="col-md-2 col-sm-2 col-xs-2">
+                                    <label class="lbl" for="txtTrID">Transaction ID</label>
+                                    <input aria-describedby="txtsTrID" class="form-control" id="txtTrID" name="txtsTrID" placeholder="Enter Transaction ID" tabindex="3" type="text" value="">
+                                    <small id="txtsTrID" class="form-text text-muted d-none"></small>
+                                </div>*@
+                            <div class="col-md-2 col-sm-2 col-xs-2 pr-0">
+                                @{
+                                    var listWallet = new SelectList(Model.Walletes, "ID", "Name");
+                                }
+                                <label class="lbl" for="ddlWalletType">WalletType</label>
+                                <select id="ddlWalletType" class="form-control" asp-items="listWallet"></select>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3 pr-0">
+                                <label class="lbl" for="txtMob">MobileNo</label>
+                                <div class="input-group">
+                                    <input type="text" id="txtMob" tabindex="7" class="form-control" placeholder="Enter Mobile No" value="@Model.LoginMob" />
+                                    <div class="input-group-append">
+                                        <span class="input-group-text switch switch-sm bg-white align">
+                                            <input type="checkbox" class="switch" id="chbIsSelf" tabindex="8" checked="checked">
+                                            <label for="chbIsSelf">IsSelf</label>
+                                        </span>
+                                    </div>
+                                </div>
+                                <small id="txtsMob" class="form-text text-muted d-none"></small>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1 pr-0">
+                                <label class="lbl" for="ddlServices">Debit/Credit</label>
+                                <select id="ddlServices" tabindex="3" class="form-control">
+                                    <option value="@ServiceType.FundTransfer">Credit</option>
+                                    <option value="@ServiceType.FundDeduction">Debit</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <label class="lbl" for="txtOtherUser">Received By</label>
+                                <div class="input-group">
+                                    <input aria-describedby="txtOtherUserH" class="form-control" id="txtOtherUser" placeholder="Enter Received By">
+                                    <small id="txtOtherUserH" class="form-text text-muted d-none"></small>
+                                    <div class="input-group-append">
+                                        @*<button id="btnSearch" tabindex="5" class="btn btn-sm btn-outline-dark ">Search</button>*@
+                                        <span id="btnSearch" tabindex="8" class="btn btn-outline-dark"><i class="fa fa-search"></i></span>
+                                        <span class="btn btn-outline-success fa fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm tblrecord mt-2">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            $('#ddlServices').on('change', function () {
+                var lbl = parseInt($(this).val()) == 4 ? 'Received By' : 'Fund Transfered To';
+                $('#txtOtherUser').attr('placeholder', 'Enter ' + lbl);
+                $('[for=txtOtherUser]').html(lbl);
+            });
+            var Q = getQueryString();
+            if (Q.hasOwnProperty('IsSelf')) {
+                if (Q.IsSelf === '0') {
+                    $('#chbIsSelf').click();
+                    $('#txtMob').val('');
+                }
+            }
+            search();
+            //$("#btnSearch").trigger('click');
+            //$('#btnSearch').click();
+            //$("#btnSearch").click(e => search(e.currentTarget));
+            $("#btnSearch,#btnExport").click(e => search(e.currentTarget));
+        });
+
+        var search = function (sender) {
+            var filter = { FDate: '', TDate: '', MobileNo: '', ServiceID: 0, IsSelf: true, WalletTypeID: 1, OtherUserMob: '' };
+            //ULFundReceiveReportFilter.TID = $("#txtTrID").val().trim();
+            filter.TDate = $("#dtToDate").val().trim();
+            filter.FDate = $("#dtFromDate").val().trim();
+            filter.ServiceID = $('#ddlServices').val();
+            filter.MobileNo = $('#txtMob').val().trim();
+            filter.IsSelf = $('#chbIsSelf').is(':checked');
+            filter.WalletTypeID = $('#ddlWalletType').val();
+            filter.OtherUserMob = $('#txtOtherUser').val().trim();
+            if ((typeof (sender) != "undefined") && (sender.id.indexOf('Export') > -1 || parseInt(filter.TopRows) > 4000)) {
+                window.open("/FundReceive-Statement-Excel?" + $.param(filter), '_blank');
+            }
+            else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.ajax({
+                    type: 'POST',
+                    url: '/FundReceive-Statement',
+                    contentType: 'application/json',
+                    data: JSON.stringify(filter),
+                    success: (result) => {
+                        $('.tblrecord').html(result);
+                        btnLdr.Stop($("#btnSearch"));
+                    },
+                    error: (xhr, result) => {
+                        btnLdr.Stop($("#btnSearch"));
+                        an.title = "Oops! Error";
+                        an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                        an.alert(-1);
+                        an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                        if (result === 'parsererror') {
+                            reload();
+                        }
+                    },
+                    complete: () => btnLdr.Stop($("#btnSearch"))
+                });
+            }
+        };
+    </script>
+}
+

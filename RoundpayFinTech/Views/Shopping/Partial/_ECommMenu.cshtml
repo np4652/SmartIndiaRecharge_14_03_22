@@ -1,0 +1,59 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ShoppingMenu>
+@{
+
+}
+@if (Model.Any())
+{
+    <div class="vertical-menu-content">
+        <div id="cmm-vertical" class="cmm-container">
+            <ul id="vertical-menu" class="cmm-theme-vertical-menu-light cmm cmm-vertical vertical-align-left submenu-vertical-default cmm-menu-fade-up">
+                @foreach (var menuLvl0 in Model)
+                {
+                    <li class="cmm-item-depth-0 cmm-mega cmm-has-icon cmm-layout-full menu-item-has-children cmm-item-has-content" data-settings='{&quot;width&quot;:&quot;&quot;,&quot;layout&quot;:&quot;full&quot;}'>
+                        <a aria-haspopup="true" href="#" class="cmm-nav-link"><span class="cmm-icon"><i class="cs-font clever-icon-tablet"></i></span><span class="cmm-item-label">@menuLvl0.Name</span></a><div class="cmm-content-container">
+                            @if(menuLvl0.MenuLevel1.Any())
+                            {
+                                <div class="cmm-content-wrapper">
+                                    <div class="vc_row wpb_row vc_row-fluid">
+                                        @foreach (var menuLvl1 in menuLvl0.MenuLevel1)
+                                        {
+                                            <div class="wpb_column vc_column_container vc_col-sm-6">
+                                                <div class="vc_column-inner">
+                                                    <div class="wpb_wrapper">
+                                                        <div class="vc_wp_custommenu wpb_content_element">
+                                                            <div class="widget widget_nav_menu">
+                                                                <h2 class="widgettitle">@menuLvl1.SubCategoryName</h2>
+                                                                @if (menuLvl1.MenuLevel2.Any())
+                                                                {
+                                                                    <div class="menu-sub-menu-01-container">
+                                                                        <ul id="Ul1" class="menu">
+                                                                            @foreach (var menuLvl2 in menuLvl1.MenuLevel2)
+                                                                            {
+                                                                                <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-239"><a href="/FilteredProductList/@menuLvl2.CategoryID">@menuLvl2.Name</a></li>
+                                                                            }
+                                                                          </ul>
+                                                                    </div>
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                    @*<img class="cmm-panel-image" src="website-assets/img/icon/bg-megamenu-electronics.png" width="441" height="254" alt="" style="right: -30px;">*@
+                                </div>
+                            }
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+}
+
+<script>
+    jQuery(document).ready(function () {
+
+    });
+</script>

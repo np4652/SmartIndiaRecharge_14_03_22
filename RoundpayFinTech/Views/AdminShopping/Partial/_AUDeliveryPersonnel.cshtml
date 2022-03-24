@@ -1,0 +1,138 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.AUDeliverPersonnel
+@{
+    var cList = new SelectList(Model.Cities, "CityID", "CityName");
+}
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            Name
+            <input type="text" placeholder="Name" class="form-control" id="txtName" value="@Model.Name" data-id="@Model.ID" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            Mobile
+            <input type="text" placeholder="Mobile" class="form-control" id="txtMobile" value="@Model.Mobile" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            Password
+            <input type="text" placeholder="Password" class="form-control" id="txtPass" value="@Model.Password" />
+        </div>
+    </div>
+    <!--<div class="col-sm-6">-->
+    @*<div class="form-group">
+            DOB
+            <input type="text" placeholder="Date of Birth" class="form-control" id="txtDob" value="@Model.DOB" />
+        </div>*@
+    <!--<div class="form-group">
+        Date of Birth-->
+    @*<input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />*@
+    <!--<div class="input-group date" id="datetimepicker1">
+                <input type="text" class="form-control" id="dtFromDate" readonly="readonly" value="@DateTime.Now.ToString(" dd/MM/yyyy")">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+            </div>
+            <small id="Small3" class="form-text text-muted d-none"></small>
+        </div>
+    </div>-->
+    <div class="col-sm-12">
+        <div class="form-group">
+            Address
+            <input type="text" placeholder="Address" class="form-control" id="txtAddress" value="@Model.Address" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            Area
+            <input type="text" placeholder="Area" class="form-control" id="txtArea" value="@Model.Area" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            Pincode
+            <input type="text" placeholder="Pincode" class="form-control" id="txtPincode" value="@Model.Pincode" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <span class="text-monospace">City<sup class="text-danger">*</sup></span>
+            <select class="form-control" id="ddlCity" asp-items="@cList" asp-for="@Model.CityId" required="required" value="0" tabindex="1">
+                <option value="0">:: Choose City ::</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            Vehicle Number
+            <input type="text" placeholder="Vehicle Number" class="form-control" id="txtVehicleNumber" value="@Model.VehicleNumber" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            Aadhar
+            <input type="text" placeholder="Aadhar ID" class="form-control" id="txtAadhar" value="@Model.Aadhar" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            DL Number
+            <input type="text" placeholder="DL ID" class="form-control" id="txtDLId" value="@Model.DLId" />
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "") />
+                <label for="chkActive" class="font-weight-bold lbl">IsActive</label>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button class="btn btn-outline-success" id="btnSaveFilter">@Html.Raw(Model.ID == 0 ? "Save" : "Update")</button>
+        </div>
+    </div>
+</div>
+
+@*<script src="~/js/datepickerHelper.js"></script>*@
+<script>
+    $('#btnSaveFilter').unbind().click(() => {
+        let param = {
+            ID: $('#txtName').data().id,
+            Name: $('#txtName').val(),
+            Mobile: $('#txtMobile').val(),
+            DOB: $('#txtDob').val(),
+            Address: $('#txtAddress').val(),
+            Area: $('#txtArea').val(),
+            CityId: $('#ddlCity').val(),
+            Pincode: $('#txtPincode').val(),
+            VehicleNumber: $('#txtVehicleNumber').val(),
+            Aadhar: $('#txtAadhar').val(),
+            DLId: $('#txtDLId').val(),
+            IsActive: $('#chkActive').is(':checked'),
+            Password: $('#txtPass').val()
+        };
+        $.post('/AUDeliveryPersonnel', param)
+            .done(result => {
+                an.id = "ssalert"
+                an.title = result.status == 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.status);
+                $('button.close:last').click();
+                if (result.status == 1) {
+                    loadGrid();
+                }
+            })
+            .fail(xhr => {
+                an.id = "ssalert"
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => btnLdr.Stop());
+    });
+
+    $(function () {
+        $('#datetimepicker1').datetimepicker();
+    });
+</script>

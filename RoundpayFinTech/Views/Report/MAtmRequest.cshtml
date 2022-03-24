@@ -1,0 +1,319 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model bool
+@{
+    ViewData["Title"] = "m-ATM Request";
+
+}
+<style>
+    select {
+        width: 100% !important;
+    }
+
+    .hide {
+        display: none;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-md-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-md-2 text-right">
+                                <span class="btn btn-outline-success border-bottom-none" id="btnExport">
+                                    <i class="far fa-file-excel"></i> Export Excel
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card-body">
+                        <div class="row" style="display:none;">
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="5000">ALL</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtM">Mobile No/User ID</label>
+                                    <input aria-describedby="txtM" class="form-control" id="txtM" tabindex="1" type="text" placeholder="Enter User Mobile No" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlmAtmStatus">m-ATM Status</label>
+                                    <select id="ddlmAtmStatus" tabindex="1" class="form-control">
+                                        <option value="0"> :: Select Status :: </option>
+                                        <option value="0">APPLIED</option>
+                                        <option value="1">APPROVED</option>
+                                        <option value="2">REJECTED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        <option value="@Criteria.OutletID">@nameof(Criteria.OutletID)</option>
+                                        <option value="@Criteria.OutletMobile">@nameof(Criteria.OutletMobile)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtSearch">Enter Criteria Text</label>
+                                    <div class="input-group" style="width: 100%;">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover table-responsive-sm" id="tblOutlets">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        @if (Model)
+                                        {
+                                            <th>Action</th>
+                                            <th scope="col">OutletId</th>
+                                            <th scope="col">UserId</th>
+                                            <th scope="col">Role</th>
+                                        }
+                                        <th scope="col">PartnerName</th>
+                                        <th scope="col">Company</th>
+                                        <th scope="col">Outlet Name</th>
+                                        <th scope="col">MobileNo</th>
+                                        <th scope="col">EmailID</th>
+                                        <th scope="col">m-ATM Serial</th>
+                                        <th scope="col">m-ATM Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divGrid"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            
+            an.autoClose = 5;
+            $("#btnSearch").click(function () {
+                search(this);
+            });
+            $("#btnSearch").click();
+            $("#btnExport").click(function () {
+                console.log('in');
+                var filter = {
+                    TopRows: $('#ddlTop').val(),
+                    MobileNo: $('#txtM').val(),
+                    Criteria: $('#ddlCriteria').val(),
+                    CriteriaText: $('#txtSearch').val(),
+                    IsExport: true,
+                    mAtamStatus: $('#ddlmAtmStatus').val() != undefined ? $('#ddlmAtmStatus').val() : 0,
+                };
+                window.location = "/_mAtmRequestsListExport?" + $.param(filter);
+            });
+            $('#ddlApi').change(function () {
+                let ddlApiVal = $('#ddlApi').val();
+                if (ddlApiVal > 0) {
+                    $('.api').removeClass('hide');
+                }
+                else {
+                    var check = $('.api').hasClass('hide');
+                    if (check == false) {
+                        $('.api').addClass('hide');
+                    }
+                }
+            });
+        });
+
+        var search = function (sender) {
+            var filter = {
+                TopRows: $('#ddlTop').val(),
+                MobileNo: $('#txtM').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtSearch').val(),
+                //IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false,
+                IsExport : false,
+                mAtamStatus: $('#ddlmAtmStatus').val() != undefined ? $('#ddlmAtmStatus').val() : 0,
+            };
+            //if (filter.TopRows > 4000 && sender.id.indexOf('Export') < 0) {
+            //    an.title = 'Exporting to excel';
+            //    an.content = 'Because you have selected all record!';
+            //    an.alert(an.type.info);
+            //    an.autoClose = 10;
+            //}
+            if (filter.IsExport) {
+                window.location = "/_mAtmRequestsListExport?" + $.param(filter);
+            } else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/mAtmRequestList',
+                    contentType: 'application/json',
+                    data: JSON.stringify(filter),
+                    success: function (result) {
+                        resultReload(result);
+                        $('#divGrid').html(result);
+                        $(".dropdown-toggle").dropdown();
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('tr div.dropdown-menu a.dropdown-item.btnAccept').click(function () {
+                            UpdateMAtmStatus($(this).closest('tr').data().itemId, 2);
+                        });
+
+                        $('tr div.dropdown-menu a.dropdown-item.btnReject').click(function () {
+                            UpdateMAtmStatus($(this).closest('tr').data().itemId, 3);
+                        });
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        resultReload(result);
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });
+            }
+        };
+
+        var UpdateMAtmStatus = function (outletid, sts) {
+            preloader.load();
+            $.post('/UpdatemAtmRequests', { id: outletid, status: sts }, function (result) {
+                $("#btnSearch").click();
+                an.title = result.statuscode == 1 ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var showKycDocuments = function (outletid, uId) {
+            preloader.load();
+            $.post('/KYC/DocumentDetails', { oid: outletid, uid: uId }, function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                $('#outlateName').html($($('[data-item-Id="' + outletid + '"]').find('td')[2]).text());
+
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+        
+        var AddMAtm = function (id) {
+            console.log('in');
+            preloader.load();
+            $.post('/APIUser/AddmAtmRequest', { id: id }, function (result) {
+                //$('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.small);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                preloader.remove();
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+    </script>
+}

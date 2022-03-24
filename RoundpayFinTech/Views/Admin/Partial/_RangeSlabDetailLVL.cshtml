@@ -1,0 +1,221 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model RangeDetailModel
+    <style>
+        .text-orientation-vertical {
+            writing-mode: vertical-lr;
+            text-orientation: mixed;
+            transform: rotate(180deg);
+        }
+
+        hr.style14 {
+            border: 0;
+            height: 1px;
+            background-image: -webkit-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+            background-image: -moz-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+            background-image: -ms-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+            background-image: -o-linear-gradient(left, #f0f0f0, #8c8b8b, #f0f0f0);
+        }
+
+        input[type="text"] {
+            text-align: right;
+            padding-right: 2px;
+        }
+    </style>
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <div class="row">
+        <div class="col-md-8">
+            <h5>Commission Detail</h5>
+        </div>
+        <div class="col-md-4">
+            @{
+                var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                //var OpTypeID = @Model.OpTypeID == 0 ? 1 : @Model.OpTypeID;
+            }
+            <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@Model.OpTypeID">
+                <option value="">:: Operator Type ::</option>
+            </select>
+        </div>
+    </div>
+
+
+    <div class="table-responsive">
+        <table class="table table-hover" id="tblRNG">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Operator</th>
+                    <th scope="col">RoleWise</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.IsAdminDefined)
+                {
+                    var i = 1;
+                    foreach (var item in Model.Operators)
+                    {
+                <tr data-item-id="@item.OID">
+                    <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                    <td class="align-middle" style="width:12%">
+                        @item.Operator
+                        <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@Html.Raw(item.IsBBPS ? item.OperatorType + ",BBPS" : item.OperatorType)</small>
+                        <input type="hidden" id="@(i+"hidOpType_"+item.OpType)" value="@item.OpType" />
+                        <label class="font-weight-bold text-monospace mb-0 text-nowrap">
+                            Range(@item.MinRange-@item.MaxRange)
+                        </label>
+                        @if (Model.IsAdmin && item.OpType == 14)
+                        {
+                            var slabDetailFOrModel = Model.SlabDetails.Where(x => x.OID == item.OID && x.RangeId == item.RangeId).FirstOrDefault();
+                            var DMRModelID = slabDetailFOrModel.DMRModelID;
+                            <select class="form-control-sm" id="ddlDMRModel_@i" aria-describedby="ddlDMRModelH_@i" tabindex="14" asp-for=@(DMRModelID) asp-items="@Model.DMRModelSelect" data-oid="@item.OID" data-slabid="@Model.SlabID">
+                                <option value="0">:: Choose DMTModel ::</option>
+                            </select>
+                        }
+                    </td>
+                    
+                    <td class="align-middle">
+                        <div class="container-fluid" style="padding-left:0;padding-right:0">
+                            <div class="row mr-0">
+                                <div class="col-md-1 text-orientation-vertical" style="padding: 0px;max-width: 3px;">
+                                    <strong class="h6 text-info">GENRAL</strong>
+                                </div>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    var slabDetails = Model.SlabDetails.Where(x => x.RoleID == role.ID && x.OID == item.OID && x.RangeId == item.RangeId).ToList();
+                                    var slabDetail = new RangeCommission();
+                                    if (slabDetails.Count > 0)
+                                    {
+                                        slabDetail = slabDetails[0];
+                                    }
+                                    <div class="col-md">
+                                        <input type="hidden" id="hidrng_@Html.Raw(i+"_"+role.ID)" value="@item.RangeId" class="d-none" />
+                                        <label class="font-weight-bold text-monospace mb-0" for="chbSlab_@Html.Raw(i+"_"+role.ID)">
+                                            @role.Role
+                                        </label>
+
+                                        <div class="form-inline">
+                                            @Html.TextBoxFor(modelItem => slabDetail.Comm, new { @id = "txtRComAmt_" + i + "_" + role.ID, @class = "text-right", @placeholder = "0.0", @style = "width:8.8em;border-radius:0px;", @aria_describedby = "helpRComAmt_" + i + "_" + role.ID })
+
+                                            <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" id="@("ITAG_" + i + "_" + role.ID)" data-toggle="tooltip" data-placement="top" title="Last Modified: @Html.Raw(slabDetail.ModifyDate==null?"Not yet":slabDetail.ModifyDate)"></i>
+                                            @Html.HiddenFor(modelItem => slabDetail.Comm, new { @id = "hidRComAmt_" + i + "_" + role.ID, @class = "form-control text-right", @placeholder = "0.0", @style = "width:5em" })
+                                        </div>
+                                        <small id="helpComAmt_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                        <div class="btn-group btn-toggle" id="btnRGroupComType_@Html.Raw(i+"_"+role.ID)">
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.CommType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;font-size:x-small">COM</button>
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.CommType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;font-size:x-small">SUR</button>
+                                        </div>
+                                        <div class="btn-group btn-toggle" id="btnRGroupAmtType_@Html.Raw(i+"_"+role.ID)">
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;font-size:x-small">PER</button>
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;font-size:x-small">FIX</button>
+                                        </div>
+                                        <div>
+                                            <label class="font-weight-bold text-monospace mb-0">
+                                                MaxComm/FixedCharge
+                                            </label>
+                                            <div class="form-inline">
+                                                @Html.TextBoxFor(modelItem => slabDetail.MaxComm, new { @id = "txtRMComAmt_" + i + "_" + role.ID, @class = "text-right", @placeholder = "0.0", @style = "width:5.3em", @aria_describedby = "helpRMComAmt_" + i + "_" + role.ID })
+                                                @Html.HiddenFor(modelItem => slabDetail.MaxComm, new { @id = "hidRMComAmt_" + i + "_" + role.ID, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+
+                                                @Html.TextBoxFor(modelItem => slabDetail.FixedCharge, new { @id = "txtFixedCharge_" + i + "_" + role.ID, @class = "text-right", @placeholder = "0.0", @style = "width:5.3em;margin-left:3px;", @aria_describedby = "txtFixedChargeH_" + i + "_" + role.ID })
+                                                @Html.HiddenFor(modelItem => slabDetail.FixedCharge, new { @id = "txtFixed_" + i + "_" + role.ID, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                            </div>
+                                            <small id="txtFixedChargeH_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+
+
+
+
+                        <div class="container-fluid" style="padding-left:0;padding-right:0;margin-top:20px">
+
+                            <div class="row mr-0">
+                                <div class="col-md-1 text-orientation-vertical" style="padding: 0px;max-width: 3px;">
+                                    <strong class="h6 text-info">Real</strong>
+                                </div>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    var slabDetails = Model.SlabDetails.Where(x => x.RoleID == role.ID && x.OID == item.OID && x.RangeId == item.RangeId).ToList();
+                                    var slabDetail = new RangeCommission();
+                                    if (slabDetails.Count > 0)
+                                    {
+                                        slabDetail = slabDetails[0];
+                                    }
+                                    <div class="col-md">
+                                        <input type="hidden" id="hidrng_@Html.Raw(i+"_"+role.ID)" value="@item.RangeId" class="d-none" />
+                                        @*<label class="font-weight-bold text-monospace mb-0" for="chbSlab_@Html.Raw(i+"_"+role.ID)">
+                                            @role.Role
+                                        </label>*@
+
+                                        <div class="form-inline">
+                                            @Html.TextBoxFor(modelItem => slabDetail.RComm, new { @id = "txtRRComAmt_" + i + "_" + role.ID, @class = "text-right", @placeholder = "0.0", @style = "width:8.8em;border-radius:0px;", @aria_describedby = "helpRRComAmt_" + i + "_" + role.ID })
+
+                                            <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" id="@("ITAG_" + i + "_" + role.ID)" data-toggle="tooltip" data-placement="top" title="Last Modified: @Html.Raw(slabDetail.ModifyDate==null?"Not yet":slabDetail.ModifyDate)"></i>
+                                            @Html.HiddenFor(modelItem => slabDetail.RComm, new { @id = "hidRRComAmt_" + i + "_" + role.ID, @class = "form-control text-right", @placeholder = "0.0", @style = "width:5em" })
+                                        </div>
+                                        <small id="helpRRComAmt_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                        <div class="btn-group btn-toggle" id="btnRRGroupComType_@Html.Raw(i+"_"+role.ID)">
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.RCommType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;font-size:x-small">COM</button>
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.RCommType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;font-size:x-small">SUR</button>
+                                        </div>
+                                        <div class="btn-group btn-toggle" id="btnRRGroupAmtType_@Html.Raw(i+"_"+role.ID)">
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.RAmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;font-size:x-small">PER</button>
+                                            <button class="btn btn-sm @Html.Raw(slabDetail.RAmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;font-size:x-small">FIX</button>
+                                        </div>
+                                        <div>
+                                            <label class="font-weight-bold text-monospace mb-0">
+                                                MaxComm/FixedCharge
+                                            </label>
+                                            <div class="form-inline">
+                                                @Html.TextBoxFor(modelItem => slabDetail.RMaxComm, new { @id = "txtRRMComAmt_" + i + "_" + role.ID, @class = "text-right", @placeholder = "0.0", @style = "width:5.3em", @aria_describedby = "txtRRMComAmt_" + i + "_" + role.ID })
+                                                @Html.HiddenFor(modelItem => slabDetail.RMaxComm, new { @id = "hidRRMComAmt_" + i + "_" + role.ID, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+
+                                                @Html.TextBoxFor(modelItem => slabDetail.RFixedCharge, new { @id = "txtRFixedCharge_" + i + "_" + role.ID, @class = "text-right", @placeholder = "0.0", @style = "width:5.3em;margin-left:3px;", @aria_describedby = "txtRFixedChargeH_" + i + "_" + role.ID })
+                                                @Html.HiddenFor(modelItem => slabDetail.RFixedCharge, new { @id = "txtRFixed_" + i + "_" + role.ID, @class = "form-control-sm text-right", @placeholder = "0.0", @style = "width:5em" })
+                                            </div>
+                                            <small id="txtRFixedChargeH_@Html.Raw(i+"_"+role.ID)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                        </div>
+                                    </div>
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </td>
+
+
+                </tr>
+
+                        i++;
+                    }
+
+                }
+
+            </tbody>
+        </table>
+        @if (Model != null)
+        {
+            <input type="hidden" value="@Model.SlabID" id="hid" />
+        }
+    </div>
+</div>
+
+@*<script>
+    (() => $('#ddlOType').unbind().on('change', () => loadRangeComm(@Model.SlabID)))();
+</script>*@
+<script>
+    $('#ddlOType').on('change', function () {
+        var value = $(this).val();
+        value = value != undefined ? "hidOpType_" + value : '';
+        $('#tblRNG tbody tr').filter(function () {
+            $(this).toggle($(this).html().indexOf(value) > -1)
+        });
+    });
+</script>

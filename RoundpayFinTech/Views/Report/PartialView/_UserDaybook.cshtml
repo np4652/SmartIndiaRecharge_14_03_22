@@ -1,0 +1,101 @@
+﻿@model List<RoundpayFinTech.AppCode.Model.Daybook>
+
+@{
+    var couter = 1;
+    var IsEndUser = ViewBag.IsEndUser == null ? false : (bool)ViewBag.IsEndUser;
+}
+
+@if (Model.Count > 0)
+{
+    var TotalHits = 0;
+    var TotalAmount = 0M;
+    var SuccessHits = 0;
+    var SuccessAmount = 0M;
+    var FailedHits = 0;
+    var FailedAmount = 0M;
+    var PendingHits = 0;
+    var PendingAmount = 0M;
+    var SelfCommission = 0M;
+    var Commission = 0M;
+    var Incentive = 0M;
+    var TeamCommission = 0M;
+
+    foreach (var item in Model)
+    {
+        TotalHits += item.TotalHits;
+        TotalAmount += item.TotalAmount;
+        SuccessHits += item.SuccessHits;
+        SuccessAmount += item.SuccessAmount;
+        FailedHits += item.FailedHits;
+        FailedAmount += item.FailedAmount;
+        PendingHits += item.PendingHits;
+        PendingAmount += item.PendingAmount;
+        SelfCommission += item.SelfCommission;
+        Commission += item.Commission;
+        Incentive += item.Incentive;
+        TeamCommission += item.TeamCommission;
+        <tr data-item-id="@item.OID">
+            <td class="text-right">@couter</td>
+            <td>@item.Operator</td>
+            <td class="text-right">@item.TotalHits</td>
+            <td class="text-right">@item.TotalAmount</td>
+            <td class="text-right">@item.SuccessHits</td>
+            <td class="text-right">@item.SuccessAmount</td>
+            <td class="text-right">@item.FailedHits</td>
+            <td class="text-right">@item.FailedAmount</td>
+            <td class="text-right">@item.PendingHits</td>
+            <td class="text-right">@item.PendingAmount</td>
+            @if (!IsEndUser)
+            {
+                <td class="text-right">@item.SelfCommission</td>
+            }
+            <td class="text-right">@item.Commission</td>
+            <td class="text-right">
+                <span class="btn btn-sm btn-success">@item.Incentive</span>
+                @if (ApplicationSetting.IsCircleSlabShow)
+                {
+                    <span class="btn btn-sm btn-success" onclick="Circle(@item.OID)"><i class="far fa-dot-circle"></i>  @item.CircleComm</span>
+                }
+
+            </td>
+            @if (!IsEndUser)
+            {
+                <td class="text-right">@item.TeamCommission</td>
+            }
+        </tr>
+
+        couter = couter + 1;
+
+    }
+    <tr>
+        <th colspan="2" class="text-right">Total</th>
+        <th class="text-right">@TotalHits</th>
+        <th class="text-right">@TotalAmount</th>
+        <th class="text-right">@SuccessHits</th>
+        <th class="text-right">@SuccessAmount</th>
+        <th class="text-right">@FailedHits</th>
+        <th class="text-right">@FailedAmount</th>
+        <th class="text-right">@PendingHits</th>
+        <th class="text-right">@PendingAmount</th>
+        @if (!IsEndUser)
+        {
+            <th class="text-right">@SelfCommission</th>
+        }
+        <th class="text-right">@Commission</th>
+        <th class="text-right">@Incentive</th>
+        @if (!IsEndUser)
+        {
+            <th class="text-right">@TeamCommission</th>
+        }
+    </tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="15">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+
+

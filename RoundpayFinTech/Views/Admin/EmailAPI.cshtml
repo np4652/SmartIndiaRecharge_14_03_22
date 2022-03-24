@@ -1,0 +1,225 @@
+﻿@{
+    ViewData["Title"] = "Email Setting";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"] </li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Email Settings
+                        <div class="float-right"><button id="btnNew" class="btn btn-default btn-sm">New</button></div>
+                    </div>
+
+                    <div class="card-body" style="">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Actions</th>
+                                        <th scope="col">From Email</th>
+                                        <th scope="col">Host Name</th>
+                                        <th scope="col">Port</th>
+                                        <th scope="col">Is Active</th>
+                                        <th scope="col">Is Email Verified</th>
+                                        <th scope="col">Is SSL</th>
+                                        <th scope="col">Is Default</th>
+                                        <th scope="col">Send E-Mail</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                           
+                            <ul class="alert-danger" style=" padding: 10px 37px 11px;">
+                                <i class="fas fa-angle-double-right"></i>   Note :-
+                                <li style="padding: 3px;">Fill User Email-id and Password.</li>
+                                <li style="padding: 3px;">Select Provider Name and Port Number.</li>
+                                <li style="padding: 3px;">Disable Double Factor Authentication of Gmail Account*
+                                    Allow Less Secure App Access(for Gmail) - <a href="https://myaccount.google.com/u/2/lesssecureapps" target="_blank" @*style="color:white"*@><b>Click Here</b></a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                     
+                    </div>
+                    @*<div class="card-header bg-gradientorange text-white">
+                           
+                        </div>*@
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            preloader.load();
+            an.autoClose = 5;
+          
+            $.post('/EmailAPIs').
+                done(function (result) {
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                }).catch(function (err) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                    $('tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['API Commission']) < 0) {
+                            return true;
+                        }
+                        var apiid = 0;
+                        apiid = $(this).closest('tr').data().itemId;
+                        GetAPICom(apiid);
+                    });
+
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['Edit', 'New']) < 0) {
+                            return true;
+                        }
+                        preloader.load();
+                        var id = 0;
+                        if ($(this).text() === 'Edit') {
+                            id = $(this).closest('tr').data().itemId;
+                        }
+                        $.post('/EmailAPI/' + id)
+                            .done(function (result) {
+                                resultReload(result);
+                                mdlA.id = 'mymodel';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.default);
+                                setTimeout(function () {
+                                    $('#txtFromEmail').focus();
+                                }, 500);
+
+                             
+                                var ct = { tnam: $('#txtFromEmail'), pwd: $('#txtPassword'), host: $('#txtHost'), ddlPort: $('#ddlPort'), btnSaveAPI: $('#btnSaveAPI'), hid: $('#hid'), isactive: $('#chbIsActive'), isssl: $('#chbIsSSL'), userMailID: $('#txtUserMailId') }
+                                $('button.close span,#mdlCancel').unbind().click(function () {
+                                    mdlA.dispose();
+                                });
+                             
+                                $('[data-toggle="tooltip"]').tooltip();
+                                ct.btnTxt = ct.btnSaveAPI.html();
+                               
+                                ct.btnSaveAPI.click(function () {
+                                    if (ct.btnTxt !== ct.btnSaveAPI.html())
+                                        return false;
+
+                                    btnLdr.addClass = 'btn-dark';
+                                    btnLdr.removeClass = 'btn-outline-dark';
+                                    btnLdr.Start(ct.btnSaveAPI, id == 0 ? 'Saving' : 'Updating');
+
+
+
+                                
+                                    let APIDetail =
+                                    {
+                                        FromEmail: ct.tnam.val(),
+                                        Password: ct.pwd.val(),
+                                        Port: ct.ddlPort.val(),
+                                        HostName: ct.host.val(),
+                                        ID: ct.hid.val(),
+                                        IsActive: ct.isactive.is(':checked'),
+                                        IsSSL: ct.isssl.is(':checked'),
+                                        UserMailID: ct.userMailID.val()
+                                    };
+                                   // console.log(APIDetail);
+                                    an.autoClose = 5;
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/Email-API',
+                                        dataType: 'json',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(APIDetail),
+                                        success: function (result) {
+                                            resultReload(result);
+                                            if (result.statuscode == an.type.failed) {
+                                                an.title = "Oops";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            }
+                                            else if (result.statuscode == an.type.success) {
+                                                an.title = "Well done";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                                rel(2);
+                                            }
+                                        },
+                                        statusCode: {
+                                            500: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Server error';
+                                                an.alert(an.type.failed);
+                                            },
+                                            0: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Internet Connection was broken';
+                                                an.alert(an.type.failed);
+                                            }
+                                        },
+                                        error: function (result) {
+                                            checkError(result);
+                                            an.title = 'Oops';
+                                            an.content = 'An error occured!';
+                                            an.alert(an.type.failed);
+                                        },
+                                        complete: function () {
+                                            btnLdr.Stop(ct.btnSaveAPI);
+                                        }
+                                    });
+                                });
+                            }).catch(function (xhr, ex, message) {
+                                an.title = 'Oops';
+                                an.content = message;
+                                an.alert(an.type.failed);
+                                an.autoClose = 2;
+                            }).fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                    });
+                });
+
+        });
+
+
+    </script>
+
+}

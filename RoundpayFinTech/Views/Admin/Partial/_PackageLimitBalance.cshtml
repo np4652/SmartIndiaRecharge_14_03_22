@@ -1,0 +1,58 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model GetAddService
+@{
+    var counter = 1;
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Service Limit Balance</h3>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="form-row">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblAddonService">
+                <thead class="bg-tableth" >
+                    <tr data-item-id="2">
+                        <th scope="col">#</th>
+                        <th scope="col">Services</th>
+                        <th scope="col">Available Limit</th>
+                    </tr>
+                </thead>
+                @if (Model.AddonServList != null)
+                {
+                    if (Model.Statuscode == 1)
+                    {
+                        <tbody id="tbodyt">
+                            @foreach (var item in Model.AddonServList)
+                            {
+                                <tr data-item-id="@item.OID" data-optypeid="@item.OpTypeID" >
+                                    <td>@counter</td>
+                                    <td>@item.DisplayName</td>
+                                    <td>@item.IDLimit</td>
+                                </tr>
+                                counter++;
+                            }
+                        </tbody>
+                    }
+                    else
+                    {
+                        <tbody>
+                            <tr>@Html.Raw(@Model.Msg)</tr>
+                        </tbody>
+                    }
+
+                }
+                else
+                {
+                    <tbody>
+                        <tr>No Record Exist!</tr>
+                    </tbody>
+                }
+            </table>
+
+        </div>
+    </div>
+</div>

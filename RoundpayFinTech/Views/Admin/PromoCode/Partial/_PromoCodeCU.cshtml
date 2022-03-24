@@ -1,0 +1,167 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.PromoCode
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="text-info">Promo Code Details</h3><hr />
+    </div>
+
+    <div class="col-md-12">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @{
+                        var opTypes = new SelectList(Model.OpTypes, "ID", "OpType");
+                        var operatorList = new SelectList(Model.Operator, "OID", "Name");
+                        var ID = Model.ID;
+                        var IsFixed = ID == 0 ? true : Model.IsFixed;
+                        var IsGift = ID > 0 ? Model.IsGift : false;
+                    }
+                    <label class="lbl" for="ddlOpType">Choose OpType</label>
+                    <select aria-describedby="helpOT" class="form-control" id="ddlOpType" tabindex="1" asp-items="@opTypes" asp-for="@Model.OpTypeID">
+                        <option value="0"> :: Select OpType :: </option>
+                    </select>
+                    <small id="helpOT" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <label class="lbl" for="ddlOperator">Choose Operator</label>
+                <select class="form-control" id="ddlOperator" tabindex="2" asp-items="@operatorList" asp-for="@Model.OID">
+                    <option value="0"> :: Select Operator :: </option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label("txtPromocode", "Promo Code", new { @class = "lbl" })
+                    @Html.TextBox("txtPromocode", Model.Promocode, new { @class = "form-control text-capitalize", @placeholder = "Enter Prom Code", @aria_describedby = "helpPromocode", @tabindex = 3 })
+                    <small id="helpPromocode" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label("txtCashback", "Cashback(₹)", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtCashback", Model.CashBack, new { @class = "form-control text-capitalize", @placeholder = "Enter Cashback", @aria_describedby = "helpCashback", @tabindex = 4 })
+                        <div class="btn-group btn-toggle" id="IsFixed">
+                            <button class="btn @Html.Raw(IsFixed==true?"btn-dark active":"btn-outline-dark")">F</button>
+                            <button class="btn @Html.Raw(IsFixed==false?"btn-dark active":"btn-outline-dark")">V</button>
+
+                        </div>
+                    </div>
+                    <small id="helpCashback" class="form-text text-danger d-none"></small>
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.Label("txtDescription", "Short Description", new { @class = "lbl" })
+                    @Html.TextBox("txtDescription", Model.Description, new { @class = "form-control text-capitalize", @placeholder = "Enter Description", @aria_describedby = "helpDescription", @tabindex = 5 })
+                    <small id="helpDescription" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    @Html.Label("txtOfferDetail", "Offer Detail", new { @class = "lbl" })
+                    @Html.TextArea("txtOfferDetail", Model.OfferDetail, new { @class = "form-control text-capitalize", @placeholder = "Enter Description", @aria_describedby = "helpOfferDetail", @tabindex = 6 })
+                    <small id="helpOfferDetail" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.Label("txtCashbackMaxCycle", "Cashback Max Cycle", new { @class = "lbl" })
+                    @Html.TextBox("txtCashbackMaxCycle", Model.CashbackMaxCycle, new { @class = "form-control text-capitalize", @placeholder = "Enter Cashback Max Cycle", @aria_describedby = "helpCashbackMaxCycle", @tabindex = 6 })
+                    <small id="helpCashbackMaxCycle" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.Label("txtCashbackCycleType", "Cashback Cycle Type", new { @class = "lbl" })
+                    <select aria-describedby="helpCT" class="form-control" id="ddlCashbackCycleType" tabindex="7" asp-for="@Model.CashBackCycleType">
+                        <option value="0">::Select::</option>
+                        @if (Model.CashBackCycleType == 1)
+                        {
+                            <option value="1" selected>Monthly</option>
+                            <option value="2">LifeTime</option>
+                        }
+                        else if (Model.CashBackCycleType == 2)
+                        {
+                            <option value="1">Monthly</option>
+                            <option value="2" selected>LifeTime</option>
+                        }
+                        else
+                        {
+                            <option value="1">Monthly</option>
+                            <option value="2">LifeTime</option>
+                        }
+
+                    </select>
+                    <small id="helpCT" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    @Html.Label("txtAfterTransNum", "After Transaction Number", new { @class = "lbl" })
+                    @Html.TextBox("txtAfterTransNum", Model.AfterTransNumber, new { @class = "form-control text-capitalize", @placeholder = "Enter Cashback Max Cycle", @aria_describedby = "helpAfterTransNum", @tabindex = 8 })
+                    <small id="helpAfterTransNum" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    @Html.Label("txtIsGift", "Is Gift?", new { @class = "lbl" })
+                    <div class="btn-group btn-toggle" id="IsGift">
+                        <button class="btn @Html.Raw(IsGift==false?"btn-dark active":"btn-outline-dark")">No</button>
+                        <button class="btn @Html.Raw(IsGift==true?"btn-dark active":"btn-outline-dark")">Yes</button>
+
+
+                    </div>
+                    <small id="helpIsGift" class="form-text text-danger d-none"></small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <input type="file" id="fileUploadPromocode" class="form-control d-none" accept="image/png,image/jpg,image/jpeg" />
+                    <label class="form-control btn btn-primary @Html.Raw(ID>0?"d-none":"")" for="fileUploadPromocode" tabindex="9">Upload Promo Image</label>
+                    <input type="hidden" id="hdPromoCodeId" value="@Model.ID" class="d-none" />
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl" for="dtFromDate">Valid From</label>
+                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="10" type="text" readonly="readonly" value="@Html.Raw(ID>0?Model.ValidFrom:DateTime.Now.ToString("dd MMM yyyy"))" />
+
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl" for="dtToDate">Valid Till</label>
+                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="11" type="text" value="@Html.Raw(ID>0?Model.ValidTill:DateTime.Now.ToString("dd MMM yyyy"))" />
+
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <button class="btn btn-outline-dark" id="btnSave">Save</button>
+                <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

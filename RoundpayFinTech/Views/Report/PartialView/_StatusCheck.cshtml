@@ -1,0 +1,51 @@
+﻿@model RoundpayFinTech.AppCode.Model.ResponseStatus
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>@ViewData["Heading"]</h5>
+    @if (Model.Statuscode == 1 || Model.Msg.Contains((char)160))
+    {
+        if (Model.Msg.Contains((char)160))
+        {
+            var descArr = Model.Msg.Split((char)160);
+            if (descArr.Length == 4)
+            {
+                <div class="form-group">
+                    <h5>@Model.Msg.Split((char)160)[0]</h5>
+                    <small class="form-text text-muted mt-0">@Model.Msg.Split((char)160)[1]</small>
+                </div>
+                <div class="form-group">
+                    <label class="lbl">Request</label>
+                    <textarea class="form-control" rows="5">@Model.Msg.Split((char)160)[2]</textarea>
+                </div>
+                <div class="form-group">
+                    <label class="lbl">Response</label>
+                    <textarea class="form-control" rows="10">@Model.Msg.Split((char)160)[3]</textarea>
+                </div>
+            }
+            else
+            {
+                <div class="form-group">
+                    <label class="lbl">Message</label>
+                    <textarea class="form-control" rows="5">@Model.Msg</textarea>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="form-group">
+                <label class="lbl">Message</label>
+                <textarea class="form-control" rows="5">@Model.Msg</textarea>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="form-group">
+            <label class="lbl">Message</label>
+            <textarea class="form-control" rows="5">@Model.Msg</textarea>
+        </div>
+    }
+    <button class="btn btn-outline-dark" id="mdlCancel">Ok</button>
+</div>

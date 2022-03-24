@@ -1,0 +1,161 @@
+﻿@using RoundpayFinTech.AppCode.Model.Paymentgateway
+@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.StaticModel;
+@model PGModelForRedirection
+
+@{
+    if (Model != null)
+    {
+        if (Model.Statuscode == ErrorCodes.One)
+        {
+            Layout = null;
+            <html>
+            <head>
+                <title>Merchant Checkout Page</title>
+
+            </head>
+            <body>
+                <center><h1>Please do not refresh this page...</h1></center>
+                <center><h4>PGType : @Model.PGType</h4></center>
+                @if (Model.RPayRequest != null)
+                {
+                    <form action="@Model.RPayRequest.callback_url" method="POST">
+                        <script src="https://checkout.razorpay.com/v1/checkout.js"
+                                data-key="@(Model.RPayRequest.key_id)"
+                                data-amount="@(Model.RPayRequest.amount)"
+                                data-currency="INR"
+                                data-order_id="@(Model.RPayRequest.order_id)"
+                                data-buttontext="Pay With Razorpay"
+                                data-name="@(Model.RPayRequest.name)"
+                                data-description="transaction"
+                                data-image="@(Model.RPayRequest.image)"
+                                data-prefill.name="@(Model.RPayRequest.Prefill_name)"
+                                data-prefill.email="@(Model.RPayRequest.Prefill_email)"
+                                data-prefill.contact="@(Model.RPayRequest.Prefill_contact)"
+                                data-retry="false"
+                                data-theme.color="#F37254"></script>
+                        <script>
+                            setTimeout(function () {
+                                try {
+                                    var ctrl = document.getElementsByClassName('razorpay-payment-button')[0];
+                                    if (ctrl != undefined) {
+                                        ctrl.click();
+                                        ctrl.remove();
+                                    }
+                                } catch (err) { }
+
+                            }, 500);
+                        </script>
+                        <input type="hidden" custom="Hidden Element" name="hidden">
+                    </form>
+                }
+                else if (Model.PGType == PaymentGatewayType.PAYTMJS)
+                {
+                    <script>
+                    function onScriptLoad() {
+                        let payTMJSconfig = {
+                        "root": "",
+                        "style": {
+                            "bodyColor": "#cccc33",
+                            "themeBackgroundColor": "",
+                            "themeColor": "",
+                            "headerBackgroundColor": "",
+                            "headerColor": "#5933cc",
+                            "errorColor": "",
+                            "successColor": ""
+                        },
+                        "flow": "DEFAULT",
+                        "data": {
+                            "orderId": '@Model.paytmJSRequest.OrderID',
+                            "token": '@Model.paytmJSRequest.Token',
+                            "tokenType": "TXN_TOKEN",
+                            "amount": '@Model.paytmJSRequest.Amount',
+                            "userDetail": {
+                                "mobileNumber": "",
+                                "name": ""
+                            }
+                        },
+                        "merchant": {
+                            "mid": '@Model.paytmJSRequest.MID',
+                            "name": "",
+                            "redirect": true
+                        },
+                        "labels": {},
+                        "payMode": {
+                            "labels": {},
+                            "filter": [],
+                            "order": ['@Model.paytmJSRequest.PayMode']
+                        },
+                        "handler": {
+                            notifyMerchant: function (eventType, data) {
+                                console.log("notifyMerchant handler function called");
+                                console.log("eventType => ", eventType);
+                                console.log("data => ", data);
+                                if (eventType == 'APP_CLOSED') {
+                                    window.close();
+                                }
+                            }
+                        }
+                        };
+                        if (window.Paytm && window.Paytm.CheckoutJS) {
+                            window.Paytm.CheckoutJS.onLoad(function excecuteAfterCompleteLoad() {
+                                window.Paytm.CheckoutJS.init(payTMJSconfig).then(function onSuccess() {
+                                    window.Paytm.CheckoutJS.invoke();
+                                }).catch(function onError(error) {
+                                    console.log("error => ", error);
+                                });
+                            });
+                        }
+                    }
+
+                    </script>
+                    <script type="application/javascript" onload="onScriptLoad();" crossorigin="anonymous" src="@(Model.URL)merchantpgpui/checkoutjs/merchants/@(Model.paytmJSRequest.MID).js"></script>
+                }
+                else if (Model.PGType == PaymentGatewayType.CASHFREE)
+                {
+                    if (!string.IsNullOrEmpty(Model.URL))
+                    {
+
+                        <form method="get" action="@(Model.URL??string.Empty)" name="cashfree_form">
+                        </form>
+                        <script type="text/javascript">
+                            document.cashfree_form.submit();
+                        </script>
+                    }
+                    else
+                    {
+                        <center>"No URl Found"</center>
+                    }
+                }
+                else
+                {
+                    <form method="post" action="@(Model.URL??string.Empty)" name="paytm_form">
+                        @foreach (var item in Model.KeyVals)
+                        {
+                            <input type="hidden" name="@item.Key" value="@item.Value" />
+                        }
+                    </form>
+                    <script type="text/javascript">
+                        document.paytm_form.submit();
+                    </script>
+                }
+
+            </body>
+
+        </html>
+
+    }
+    else
+    {
+        <center>
+            <span class="h2 text-center text-danger">@Model.Msg</span>
+        </center>
+    }
+}
+else
+{
+    <center>
+        <span class="h2 text-center text-danger">Model Is NULL</span>
+    </center>
+}
+} 

@@ -1,0 +1,341 @@
+﻿@model RoundpayFinTech.AppCode.Model.PartnerAEPSResponseModel
+@{
+    Layout = null;
+}
+@{
+    var banklist = Model.BankList;
+    var bankDetail = Model.BankDetails;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>AEPS</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,100;1,300;1,400;1,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style type="text/css">
+        body {
+            font-family: 'Lato', sans-serif;
+            background: url(@Model.BgPath);
+            background-size: cover;
+        }
+        /*.bg-border
+        {
+          border-radius: 3px 3px 0 0;
+            background: url(../img/banner2.jpg);
+            box-shadow: 1px 1px 20px 0px #525252;
+            background-size: cover;
+            height: 80vh
+        }*/
+        .bg-sec {
+            margin: 2em 1.5em;
+        }
+        /*.bg-border-right
+        {
+        border-right: 2px solid #5f5f5f;
+            height: 73vh;
+        }
+        */
+        .logosec {
+        }
+
+        .top-header {
+            background: #ececec;
+        }
+
+        .baner-area {
+            padding: 0.5em 1em 0.5em 2em;
+        }
+
+            .baner-area .logosec img {
+                width: 120px
+            }
+
+        .formsec {
+            padding: 3em 2em;
+            background: #ffffff;
+            border-radius: 0;
+            margin-right: 0em;
+            width: 100%;
+            height: auto;
+        }
+
+            .formsec h2 {
+                margin-bottom: 1rem;
+                font-size: 30px;
+            }
+
+            .formsec h3 {
+                font-size: 15px;
+                font-weight: 700;
+                color: #484848;
+                margin-bottom: 15px;
+            }
+
+            .formsec label {
+                font-size: 13px;
+                margin-bottom: 8px;
+                font-weight: 700;
+                color: #797979;
+            }
+
+        .cus-frm-ctrl {
+            height: calc(1.2em + .75rem + 2px);
+            border-radius: 1.1rem;
+        }
+
+        .cusfrm-grp {
+            margin-bottom: 7px;
+        }
+
+        .cus-submit-btn {
+            margin-top: 1.3rem;
+            background: #3F51B5;
+            border: 0;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .cus-cancel-btn {
+            margin-top: 1.3rem;
+            background: #d80101;
+            border: 0;
+            border-radius: 2px;
+            font-size: 12px;
+            margin-left: 0.4rem;
+        }
+
+        .footersec {
+            padding: 0.3em 2em 0;
+            background: #ececec;
+            color: #fff;
+            position: relative;
+        }
+
+        .footersec-info ul {
+            padding: 0;
+            list-style: none;
+            margin-bottom: 5px;
+            color: #505050;
+            font-weight: 600;
+        }
+
+        .footersec-info li {
+            font-size: 13px;
+            padding-bottom: 2px;
+            display: inline-block;
+            padding-right: 0.2rem
+        }
+
+            .footersec-info li img {
+                width: 100px;
+                margin-top: -12px;
+                margin-left: 3px;
+            }
+
+        .customercare ul {
+            list-style: none;
+            padding: 0;
+            float: right;
+            margin-top: 10px;
+        }
+
+        .customercare li {
+            line-height: 23px;
+            font-size: 13px;
+            color: #505050;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+            .customercare li i {
+                padding-right: 5px;
+            }
+
+        .footersec-info {
+            padding: 0.5em 0;
+        }
+
+        .right-sedimg img {
+            position: absolute;
+            bottom: 0;
+            top: 0;
+            opacity: 1;
+            width: 100%;
+            height: 100%;
+        }
+
+        .cusfrm-grpbtn {
+            position: relative;
+        }
+
+        .inputbtn {
+            position: absolute;
+            border-radius: 0px 15px 15px 0;
+            right: 3px;
+            z-index: 2;
+            border: none;
+            top: 31px;
+            height: 33px;
+            cursor: pointer;
+            color: white;
+            background-color: #3f51b5;
+            transform: translateX(2px);
+            font-size: 12px;
+        }
+
+        #suggestedList {
+            background: #fff;
+            display: none;
+            position: absolute;
+            z-index: 10;
+            max-height: 400px;
+            overflow-y: auto;
+            width: 76%;
+        }
+
+            #suggestedList div {
+                padding: 5px 10px;
+                cursor: pointer;
+            }
+
+                #suggestedList div img {
+                    width: 50px;
+                }
+
+                #suggestedList div:hover {
+                    background-color: gainsboro;
+                }
+        .inputbtn1 {
+            position: absolute;
+            border-radius: 0px 15px 15px 0;
+            right: 3px;
+            z-index: 2;
+            border: none;
+            top: 28px;
+            height: 33px;
+            cursor: pointer;
+            color: white;
+            background-color: #3f51b5;
+            transform: translateX(2px);
+            font-size: 12px;
+        }
+        @@media (max-width: 470px) {
+            .baner-area .logosec img {
+                width: 150px;
+                display: block;
+                margin: auto;
+            }
+
+            .customercare ul {
+                list-style: none;
+                padding: 0;
+                text-align: center;
+                margin-top: 0;
+                float: none;
+            }
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <div class="bg-sec">
+        <div class="container-fluid">
+            <div class="bg-border">
+                <div class="top-header">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-6 ">
+                            <div class="baner-area">
+                                <div class="logosec">
+                                    <img src="@Model.LogoPath">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-xs-6 ">
+                            <div class="baner-area">
+                                <div class="logosec customercare">
+                                    <ul>
+                                        <li><i class="fa fa-envelope-o" aria-hidden="true"></i>: @Model.CompanyEmail</li> ||
+                                        <li><i class="fa fa-phone" aria-hidden="true"></i>: @Model.CompanyMobile</li>
+
+                                    </ul>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-7 d-none d-sm-block bg-border-right pr-0">
+                        <div class="right-sedimg">
+                            <img src="@Model.BannerPath">
+                        </div>
+
+                    </div>
+                    <div class="col-md-5">
+                        <div class="formsec">
+                            <h2>AEPS</h2>
+                            <h3>Tell us your numberand we will figure out rest</h3>
+                            <div class="form-group">
+                                <label class="lbl f-w-bold m-b-6 float-left" for="ddlBank">Choose Bank</label>
+                                @*<a onclick="DeviceRegisterOpen();" class="lbl f-w-bold m-b-6 text-danger float-right cursor-pointer"> <span>Device Register</span></a>*@
+                            <div class="form-group cusfrm-grpbtn">
+                                <input type="text" class="form-control cus-frm-ctrl" id="txtBank" placeholder="Bank List" name="BankList" list="banks" />
+                                <button type="button" class="btn btn-primary inputbtn1">Device Register</button>
+                            </div>
+                            </div>
+                            <div class="form-group cusfrm-grpbtn">
+                                @Html.Label("txtAadhar", "Aadhar", new { @class = "lbl" })
+                                @*<a class="lbl f-w-bold m-b-6 text-danger float-right cursor-pointer" id="lnkSampleImg" onclick="CaptureAvdm(this.id,'bal')">Mini Statement</a>*@
+                                @Html.TextBox("txtAadhar", null, new { @class = "form-control cus-frm-ctrl", @placeholder = "Enter Aadhar", @aria_describedby = "AadharHelp", @tabindex = 1 })
+                                <button type="button" class="btn btn-primary inputbtn">Mini Statement</button>
+                                <small id="AadharHelp" class="form-text text-danger  d-none">Invalid Aadhar</small>
+                            </div>
+                            <div class="form-group cusfrm-grpbtn">
+                                @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                                @*<a class="lbl f-w-bold m-b-6 text-danger float-right cursor-pointer" id="lnkSampleImg" onclick="CaptureAvdm(this.id,'bal')">Check Balance</a>*@
+                                @Html.TextBox("txtAmount", null, new { @class = "form-control cus-frm-ctrl", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1, @type = "number" })
+                                <button type="button" class="btn btn-primary inputbtn">Check Balance</button>
+                                <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                            </div>
+                            <div class="form-group mt-3">
+                                <button class="btn btn-outline-primary" id="btnPay" onclick="CaptureAvdm(this.id,'with')">Withdrawl</button>
+                                <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="footersec">
+                <div class="row">
+                    <div class="col-md-8">
+                        <div class="footersec-info">
+                            <ul>
+                                <li><i class="fa fa-map-marker" aria-hidden="true"></i> @Model.CompanyName</li>||
+                                <li><i class="fa fa-phone" aria-hidden="true"></i> @Model.CompanyMobile</li>||
+                                <li><i class="fa fa-envelope-o" aria-hidden="true"></i> @Model.CompanyEmail</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="footersec-info pull-right">
+                            <ul>
+                                <li>Powered By <img src="/Image/Partner/banklogo.png"></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+<script src="~/js/PartnerAEPS.js"></script>

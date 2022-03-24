@@ -1,0 +1,50 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.TodayTransactorsModal>
+@*@{
+    var parms = new Dictionary<string, string>
+{
+                { "type", (ViewBag.Type) }
+            };
+}*@
+<div class="row">
+    <a style="position:absolute;top:-48px;right:44px" href="#" onclick="GetExcel(@ViewBag.Type)"><i class="text-success fa fa-file-excel fa-2x"></i></a>
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-borderless table-striped">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>Sr.</th>
+                        <th>Outlet Name</th>
+                        <th>Mobile Number</th>
+                        <th>Transaction Count</th>
+                        <th class="text-right">Transaction Amount</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model.Any())
+                    {
+                        int counter = 1;
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@counter</td>
+                                <td>@item.OutletName</td>
+                                <td>@item.MobilleNo</td>
+                                <td>@item.TransactionCount</td>
+                                <td class="text-right"><i class="fas fa-rupee-sign mr-1 text-success"></i>@item.Amount</td>
+                            </tr>
+                            counter++;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    var GetExcel = function (type) {
+        let param = {
+            Type: type
+        };
+        window.open("/TodayTransactorsExcel?" + $.param(param), '_blank');
+    }
+</script>

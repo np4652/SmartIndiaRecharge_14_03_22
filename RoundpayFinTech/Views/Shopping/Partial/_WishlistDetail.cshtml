@@ -1,0 +1,117 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.CartDetail>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            @if (Model.Any())
+            {
+                <table class="table table-borderless table-striped">
+                    <thead class="bg-info text-white">
+                        <tr>
+                            <th>#</th>
+                            <th colspan="2">Detail</th>
+                            <th class="text-right">Rate</th>
+                            <th class="text-right">Discount</th>
+                            <th class="text-right">Selling Price</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int counter = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr data-item-Id="@item.ID" data-pdId="@item.ProductDetailID">
+                                    <td class="align-middle">@counter</td>
+                                    <td class="align-middle cartimg"><img src="~/image/Products/@item.ProductID/@item.ImgUrl" /></td>
+                                    <td class="align-middle"><span class="pl-4">@item.ProductName (@item.AdditionalTitle)</span></td>
+                                    <td class="align-middle">&#8377; @Html.Raw(item.MRP.ToString("0.00"))</td>
+                                    <td class="align-middle text-right pl-3">&#8377; @item.Discount.ToString("0.00")</td>
+                                    <td class="align-middle">&#8377; @Html.Raw(item.SellingPrice.ToString("0.00"))</td>
+                                    <td class="align-middle text-center">
+                                        <span class="btnAddToCart"><i class="text-success fa fa-plus fa-2x"></i></span>
+                                        <span class="btnRemoveItem"><i class="text-danger fa fa-times fa-2x"></i></span>
+                                    </td>
+                                </tr>
+                                counter++;
+                            }
+                            <tr>
+                                <td colspan="7" class="text-right">
+                                    <div class="cart main actions">
+                                        <a class="action continue" href="/Shopping" title="Continue Shopping">
+                                            <span>Continue Shopping</span>
+                                        </a>
+                                        <a class="action continue" href="/ECommCart" title="Go to Cart">
+                                            <span>Go to Cart</span>
+                                        </a>
+                                        <a class="action continue" href="javascript:void(0);" title="Go to Cart" id="btnClear">
+                                            <span>Clear Wishlist</span>
+                                        </a>
+                                    </div>
+                                    @*<span class="btn btn-success">Continue Shopping</span>
+                                        <span class="btn btn-info" id="btnProceed">Proceed To Pay</span>*@
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <h4 class="text-monospace text-danger">No Item Found !!</h4>
+            }
+        </div>
+    </div>
+</div>
+<script>
+    $('.btnAddToCart').click(e => {
+        AddToCart($(e.currentTarget).closest('tr').data().pdid, 1);
+    });
+    $('.btnRemoveItem').unbind().click(e => {
+        $.post('/ECommRemoveItemFromWishlist', { ID: $(e.currentTarget).closest('tr').data().Id, PdId: $(e.currentTarget).closest('tr').data().pdid }).done(result => {
+            anEC.id = 'removeAlert';
+            anEC.title = result.statuscode == anEC.type.success ? 'Well Done' : 'Oops';
+            anEC.content = result.msg;
+            anEC.alert(result.statuscode);
+            if (result.statuscode == anEC.type.success) {
+                WishlistCount();
+                $(e.currentTarget).closest('tr').remove();
+            }
+        }).fail(xhr => {
+            anEC.title = 'Oops';
+            anEC.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            anEC.alert(anEC.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('#btnClear').click(e => {
+        $.post('/ECommClearWishlist').done(result => {
+            anEC.id = 'removeAlert';
+            anEC.title = result.statuscode == anEC.type.success ? 'Well Done' : 'Oops';
+            anEC.content = result.msg;
+            anEC.alert(result.statuscode);
+            if (result.statuscode == anEC.type.success) {
+                mdlE.dispose();
+                location.href = "/Shopping";
+            }
+        }).fail(xhr => {
+            anEC.title = 'Oops';
+            anEC.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            anEC.alert(anEC.type.failed);
+        }).always(() => preloader.remove());
+    });
+
+    $('#btnProceed').click(() => {
+        preloader.load();
+        $('.modal').remove();
+        $.post('/ProceedToPay').done(result => {
+            mdlA.id = "ProccedToPay";
+            mdlA.title = "Proceed To Pay";
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.large);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+</script>

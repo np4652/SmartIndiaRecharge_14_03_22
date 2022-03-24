@@ -1,0 +1,248 @@
+﻿@using System.Text.RegularExpressions;
+@using RoundpayFinTech.AppCode.Configuration;
+@model IEnumerable<RoundpayFinTech.Models.SattlementAccountModels>
+
+
+
+
+@{
+    int counter = 0;
+    /// Layout = null;
+}
+
+
+
+<table id="tblsendeno1" class="table table-bordered table-striped table-responsive-sm">
+    <thead class="bg-tableth">
+        <tr>
+            <th>#</th>
+            <th>Bank name</th>
+            <th class="text-nowrap">Account Number</th>
+            <th class="text-nowrap">Account Holder Name</th>
+            <th>IFSC</th>
+            <th class="text-nowrap">
+                Approval Status</>
+                @if (ApplicationSetting.IsSattlemntAccountVerify)
+                {
+                <th class="text-nowrap">Verification Status</th>
+            }
+                <th>Default</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var mdl in Model)
+            {
+
+                <tr data-item-id="@mdl.ID">
+                    <th style="width:1em;" scope="row">@(counter + 1)</th>
+                    <td style="width:6em">
+                        @mdl.BankName
+                    </td>
+                    <td style="width:6em">
+                        @mdl.AccountNumber
+                    </td>
+                    <td style="width:6em">
+                        @mdl.AccountHolder
+                    </td>
+                    <td style="width:6em">
+                        @mdl.IFSC
+                    </td>
+
+                    <td style="width:6em">
+                        @mdl.ApprovalText
+                    </td>
+
+                    @if (ApplicationSetting.IsSattlemntAccountVerify)
+                    {
+                        <td style="width:6em">
+                            @if (@mdl.VerificationStatus == 0)
+                            {
+                                <button tabindex="6" onclick="verifyAccountUser(@mdl.ID,this)" class="btn btn-info btn-sm btnEditCard">Verify</button>
+                            }
+                            @if (@mdl.VerificationStatus == 1)
+                            {
+                                var utr = mdl.UTR;
+                                if (utr!=null && utr.Length>2)
+                                {
+                                    var utr1 = utr.Substring(0, 2);
+                                    var utr2 = utr.Substring(utr.Length - 2, 2);
+                                    var utr3 = utr.Substring(2, (utr.Length - 2));
+                                    var utr4 = Regex.Replace(utr3, "[0-9]", "*");
+                                    utr = utr1 + utr4 + utr2;
+                                }
+
+
+                                        <button tabindex="6" onclick="getUTR(@mdl.ID,@mdl.VerificationStatus,'@utr')" class="btn btn-info btn-sm btnEditCard">Verify UTR</button>
+                            }
+                            @if (@mdl.VerificationStatus == 2)
+                            {
+                                @mdl.VerificationText
+                            }
+                        </td>
+                    }
+                    <td style="width:6em">
+
+                        <span class="input-group-text switch switch-sm bg-white ">
+                            <input type="checkbox" onchange="changeDefault(@mdl.ID,this)" class="switch" id="chbIsDefult_@mdl.ID" tabindex="3" @Html.Raw(mdl.IsDefault ? "checked='checked'" : "")>
+                            <label for="chbIsDefult_@mdl.ID" class="font-weight-bold lbl"></label>
+                        </span>
+
+                    </td>
+                    <td style="width:6em">
+
+                        <button tabindex="6" onclick="DelecteAccount(@mdl.ID)" class="btn btn-info btn-sm btnEditCard">Delete</button>
+
+                    </td>
+                </tr>
+                counter++;
+            }
+        </tbody>
+    </table>
+    <script>
+
+        function changeDefault(id, b) {
+            var Is = $(b).is(':checked')
+            preloader.load();
+            $.post(`/Toggle-Settlement-IsDefault/${id}`, function (result) {
+
+                an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                if (result.statuscode == an.type.success)
+                    result.statuscode = Is ? an.type.success : an.type.info;
+                an.id = "an2";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                partialGrid();
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+
+
+
+        }
+
+        function DelecteAccount(id) {
+            preloader.load();
+            $.post(`/Toggle-Settlement-Delete/${id}`, function (result) {
+                if (result.statuscode == an.type.success) {
+                    an.title = "Success"
+                    an.id = "an1";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    partialGrid();
+                }
+                else {
+                    an.title = "Error"
+                    an.content = result.msg;
+                    an.alert(an.type.failed);
+
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+
+
+
+        }
+        var verifyAccountUser = function (id, sender) {
+            $(sender).addClass('d-none');
+            preloader.load();
+            an.id = 'alertAccount';
+            an.parent = $('#alertmsg');
+            $.post('/verify-account-user', { id },
+                function (result) {
+                    if (result.statuscode == an.type.failed || result.statuscode == 3) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(an.type.failed);
+                        $(sender).removeClass('d-none');
+                    }
+                    else {
+                        an.title = "Well done!";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        partialGrid();
+                    }
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+        function getUTR(ID, Vstatus,maskedUTR) {
+            if (Vstatus == 1) {
+                var html = `<div class="form-group"><label class="lbl" for="txtIfsc">UTR</label>
+                    <input aria-describedby="txtIfsc" maxlength="16" class="form-control" id="txtUTR"  placeholder="Enter Bank ReferenceID" tabindex="2" type="text" value="" data-id="${ID}"></div>
+               <div class="form-group"><button tabindex="6" class="btn btn-outline-dark" id="btnSubmit" style="display:block; margin:auto;
+    background: #17a2b8;
+    border: none;
+    color: #fff;">Submit</button></div>
+                <p style="font-size: 11px;
+            font-weight: bold;
+           
+            background: #ebe2e2;
+            color: #000;
+            padding: 7px;
+            border-radius: 3px;">We have sent Rs 1 in Your Bank Account With UTR NO ${maskedUTR}. Please check your Statement and enter complete UTR to Verify your Bank Account </p>
+                <p style="font-size: 11px;
+            font-weight: bold;
+           
+            background: #ebe2e2;
+            color: #000;
+            padding: 7px;
+            border-radius: 3px;">हमने आपके बैंक खाते में यूटीआर नं ${maskedUTR} के साथ 1 रुपये भेजे हैं। कृपया अपना बैंक विवरण जांचें और अपना बैंक खाता सत्यापित करने के लिए पूरा UTR दर्ज करें</p>`;
+                var mdlA1 = mdlA;
+                mdlA1.content = html;
+                mdlA1.id = 'mymodal1';
+                mdlA1.title = "Enter UTR";
+                mdlA1.options.backdrop = 'static';
+                mdlA1.modal(mdlA1.size.default);
+                $('#btnSubmit').click(function () {
+                    if ($('#txtUTR').val() == '') {
+                        return false;
+                    }
+                    preloader.load();
+                    an.id = 'alertAccount';
+                    an.parent = $('#alertmsg');
+                    $.post('/update-utr', { id: $('#txtUTR').data().id, utr: $('#txtUTR').val() },
+                        function (result) {
+                            if (result.statuscode == an.type.failed) {
+                                an.title = "Oops! Error";
+                                an.content = result.msg;
+                                an.alert(an.type.failed);
+                            }
+                            else {
+                                an.title = "Well done!";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                setTimeout(function () {
+                                    $(`#${mdlA1.id}`).find('button.close').click();
+                                }, 1000);
+                                partialGrid();
+                            }
+                        }).catch(function () {
+                            console.clear();
+                        }).fail(function (xhr) {
+                            $(_this).attr('checked', Is == false);
+                            an.title = 'Oops';
+                            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(function () {
+                            preloader.remove();
+                            
+                        });
+                });
+            }
+        }
+
+        $('#ddlBank1').select2({ dropdownParent: "#mymodal" })
+    </script>

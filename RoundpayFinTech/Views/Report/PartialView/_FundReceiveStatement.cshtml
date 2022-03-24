@@ -1,0 +1,87 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.Reports.Filter.FundReciveModel;
+
+@{
+    var couter = 1;
+    decimal TotalAmount = 0;
+    decimal TotalCurrent = 0;
+}
+
+@if (Model.ProcFundReceiveStatementResponses.Any())
+{
+    <table class="table table-bordered table-striped" id="tblFRec">
+        <thead class="bg-tableth">
+            <tr>
+                <th style="width:1%">#</th>
+                <th>Transaction ID</th>
+                <th>TranDate</th>
+                <th>User</th>
+                <th>Description</th>
+                <th>@(Model.ServiceID == ServiceType.FundTransfer ? "ReceivedBy" : "FundTransferedTo")</th>
+                <th>WalletType</th>
+                <th>Remark</th>
+                <th class="text-right text-nowrap">Amount(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap" style="width:10%;">Current(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-center">Service</th>
+                <th class="text-right">Receipt</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.ProcFundReceiveStatementResponses)
+            {
+                <tr>
+                    <td>@couter</td>
+                    <td>@item.TransactionID</td>
+                    <td>@item.EntryDate</td>
+                    <td>@item.UserName<small class="font-weight-bold text-monospace"> [@item.MobileNo]</small></td>
+                    <td>@item.Description</td>
+                    <td>@item.OtherUser</td>
+                    <td>@(Wallet.GetWalletType(item.WalletID))</td>
+                    <td>@item.Remark</td>
+                    <td class="text-right">@item.Amount</td>
+                    <td class="text-right">@item.CurrentAmount</td>
+                    <td class="text-center">
+                        @if (item.ServiceTypeID == ServiceType.FundTransfer)
+                        {
+                            @Html.Raw("FundTransfer");
+                        }
+                        @if (item.ServiceTypeID == ServiceType.FundDeduction)
+                        {
+                            @Html.Raw("FundDeduction");
+                        }
+                    </td>
+                    <td class="text-right">
+                        @if (Model.ServiceID == ServiceType.FundTransfer && item.ServiceTypeID == ServiceType.FundTransfer)
+                        {
+                            <a id="LnkPrint" class="btn btn-round btn-danger tooltips fa fa-print phone footable-loaded" href="/APIUser/FundReceiveStatementInvoice?Invoice=@item.TransactionID"></a>
+                        }
+                        else
+                        {
+                            <span>No Receipt</span>
+                        }
+                    </td>
+                </tr>
+                couter += 1;
+                TotalAmount += Convert.ToDecimal(item.Amount);
+                TotalCurrent += Convert.ToDecimal(item.CurrentAmount);
+            }
+            <tr class="text-right text-white bg-blue" >
+                <td colspan="8">Total</td>
+                <td>@TotalAmount</td>
+                <td>@TotalCurrent</td>
+                <td colspan="2"></td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-bordered text-center">
+        <tr>
+            <td>
+                No Record Found
+            </td>
+        </tr>
+    </table>
+}

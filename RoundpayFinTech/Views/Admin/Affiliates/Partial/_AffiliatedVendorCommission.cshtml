@@ -1,0 +1,63 @@
+﻿@model RoundpayFinTech.AppCode.Model.AfVendorCommission
+@{
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Commission</h5><hr />
+        <input type="hidden" id="hfID" value="@Model.VendorID" />
+    </div>
+</div>
+<div class="row">
+    @if (Model.Commissions != null)
+    {
+        foreach (var item in Model.Commissions)
+        {
+            <div class="col-md-3 CommSection" data-Category-Id="@item.OID">
+                <span>@item.Operator</span>
+                <div class=" input-group">
+                    <input type="text" class="form-control txtComm" value="@item.Commission" />
+                    <div class="input-group-append">
+                        <div class="btn-group btn-toggle btnAmtType" id="@Html.Raw("btnAmtType_"+item.OID)">
+                            <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                            <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+
+<script>
+    $('.txtComm').change(e => updateComm(e));
+    $('.btnAmtType button').click(e => {
+        if (!$(e.currentTarget).hasClass('active')) {
+            $('.btnAmtType .btn').toggleClass('btn-dark active btn-outline-dark');
+            updateComm(e)
+        }
+    });
+    var updateComm = (e) => {
+        var ele = $(e.currentTarget).closest('.CommSection');
+        var param = {
+            OID: ele.data().categoryId,
+            VendorID: $('#hfID').val(),
+            comm: ele.find('.txtComm').val(),            
+            AmtType: ele.find('.btnAmtType button.active').text() == 'PER' ? 0 : 1
+        };
+        $.post('/SaveAfVendorCateComm', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.error ? 'Oops' : 'Success';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                mdlA.dispose();
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    }
+</script>

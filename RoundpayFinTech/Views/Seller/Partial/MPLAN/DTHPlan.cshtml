@@ -1,0 +1,188 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.SubMplanDTHSimplePlanResp
+<style>
+    .clsBtn {
+        width: 115px;
+        margin: 5px 0;
+        font-size: small;
+    }
+    td {
+        font-size: 12px!important;
+    }
+    .fa-rupee-sign {
+        font-size: 0.69rem;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Plan</h3>
+        <hr />
+    </div>
+    @if (Model.Records != null)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="pill" href="#contPLAN">PLAN</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#contAddOnPack">ADD ON PACK</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    <div id="contPLAN" class="table-responsive container tab-pane active">
+                        <table class="table table-bordered table-striped table-responsive-sm">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>Plan</th>
+                                    <th>Validity:Rs</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.Plan != null)
+                                {
+                                    foreach (var pln in Model.Records.Plan)
+                                    {
+                                        <tr>
+                                            <td>@pln.PlanName</td>
+                                            <td class="align-middle">
+                                                <div class="container">
+                                                    <div class="row mr-0">
+                                                        @if ((pln.RS.OneMonth ?? "").Length > 1)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.OneMonth??"")">1 Month:<i class="fas fa-rupee-sign"></i>@(pln.RS.OneMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.ThreeMonth ?? "").Length > 1)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.ThreeMonth??"")">3 Months:<i class="fas fa-rupee-sign"></i>@(pln.RS.ThreeMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.SixMonth ?? "").Length > 1)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.SixMonth??"")">6 Months:<i class="fas fa-rupee-sign"></i>@(pln.RS.SixMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.NineMonth ?? "").Length > 1)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.NineMonth??"")">9 Months:<i class="fas fa-rupee-sign"></i>@(pln.RS.NineMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.OneYear ?? "").Length > 1)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.OneYear??"")">1 Year:<i class="fas fa-rupee-sign"></i>@(pln.RS.OneYear ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.FiveYear ?? "").Length > 1)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.FiveYear??"")">5 Years:<i class="fas fa-rupee-sign"></i>@(pln.RS.FiveYear ?? "")</span>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@pln.Desc</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found!</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contAddOnPack" class="table-responsive container tab-pane fade">
+                        <table class="table table-bordered table-striped table-responsive-sm">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>Plan</th>
+                                    <th>Validity:Rs</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.AddOnPack != null)
+                                {
+                                    foreach (var pln in Model.Records.AddOnPack)
+                                    {
+                                        <tr>
+                                            <td>@pln.PlanName</td>
+                                            <td class="align-middle">
+                                                <div class="container">
+                                                    <div class="row mr-0">
+                                                        @if ((pln.RS.OneMonth ?? "").Length > 0)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.OneMonth??"")">1 Month:<i class="fas fa-rupee-sign"></i>@(pln.RS.OneMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.ThreeMonth ?? "").Length > 0)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.ThreeMonth??"")">3 Months:<i class="fas fa-rupee-sign"></i>@(pln.RS.ThreeMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.SixMonth ?? "").Length > 0)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.SixMonth??"")">6 Months:<i class="fas fa-rupee-sign"></i>@(pln.RS.SixMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.NineMonth ?? "").Length > 0)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.NineMonth??"")">9 Months:<i class="fas fa-rupee-sign"></i>@(pln.RS.NineMonth ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.OneYear ?? "").Length > 0)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.OneYear??"")">1 Year:<i class="fas fa-rupee-sign"></i>@(pln.RS.OneYear ?? "")</span>
+                                                            </div>
+                                                        }
+                                                        @if ((pln.RS.FiveYear ?? "").Length > 0)
+                                                        {
+                                                            <div class="col-md-4">
+                                                                <span class="btn btn-outline-success btn-sm clsBtn" id="spnOferAmt_@(pln.RS.FiveYear??"")">5 Years:<i class="fas fa-rupee-sign"></i>@(pln.RS.FiveYear ?? "")</span>
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td>@pln.Desc</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found!</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>

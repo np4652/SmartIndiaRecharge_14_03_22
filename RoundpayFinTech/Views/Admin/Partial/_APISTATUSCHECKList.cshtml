@@ -1,0 +1,49 @@
+﻿@using Fintech.AppCode.StaticModel
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>API Status Checked List</h5>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm" id="tblStatusList">
+            <thead class="shadow">
+                <tr>
+                    <th colspan="14">
+                        <div class="row mb-1">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <select name="ddl_TStatus" id="ddl_TStatus" class="form-control">
+                                    <option value="@RechargeRespType.SUCCESS">@RechargeRespType._SUCCESS</option>
+                                    <option value="@RechargeRespType.FAILED">@RechargeRespType._FAILED</option>
+                                    <option value="@RechargeRespType.BALANCE">@RechargeRespType._BALANCE</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <input class="form-control" id="txtSearchText" type="text" placeholder="Search in Checks" />
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <button type="button" id="btn_Search" class="btn btn-outline-dark">Search</button>
+                            </div>
+                        </div>
+                    </th>
+                </tr>
+                <tr>
+                    <th scope="col" style="width:1%">#</th>
+                    <th scope="col">Actions</th>
+                    <th scope="col">StatusID</th>
+                    <th scope="col">ErrorCode</th>
+                    <th scope="col">Checks</th>
+                    <th scope="col">Status</th>
+                    <th scope="col">VendorID</th>
+                    <th scope="col">OperatorID</th>
+                    <th scope="col">TransactionID</th>
+                    <th scope="col">Balance</th>
+                    <th scope="col">IndLength</th>
+                    <th scope="col">EntryDate</th>
+                    <th scope="col">ModifyDate</th>
+                </tr>
+
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

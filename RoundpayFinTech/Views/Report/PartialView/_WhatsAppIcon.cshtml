@@ -1,0 +1,16 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Microsoft.AspNetCore.Http;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@model RoundpayFinTech.AppCode.Model.ProcModel.CompanyProfileDetail
+@{
+    LoginResponse _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    string WhatsAppMsgLink = "https://api.whatsapp.com/send?phone=+91" + Model.CustomerWhatsAppNos + "&text=Hi this is my User ID: " + _lr.UserID;
+}
+
+
+
+<a href="@WhatsAppMsgLink" target="_blank">
+    <img src="~/images/WhatsappIcon.png" class="img-fluid" style="height:50px">
+</a>

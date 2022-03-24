@@ -1,0 +1,165 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProceedToPay
+@{
+
+}
+<div class="row">
+    <div class="col-sm-8">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="card">
+                    <div class="card-header bg-info">
+                        <h5 class="text-white">
+                            Shipping Address
+                            <a href="javascript:void(0)" class="text-white float-right cursor-pointer" id="btnNewAddress"><i class="fa fa-edit pr-1"></i>New</a>
+                        </h5>
+                    </div>
+                    <div class="card-body pr-1 pl-2">
+                        <div class="divAddress pr-2">
+                            @if (Model.Addresses != null && Model.Addresses.Any())
+                            {
+                                foreach (var item in Model.Addresses)
+                                {
+                                    <div class="form-group">
+                                        <label class="form-control" for="chkAddress_@item.ID">
+                                            <span class="pr-2"><input type="radio" id="chkAddress_@item.ID" data-Address-Id="@item.ID" name="ShippingAddress" @Html.Raw(item.IsDefault ? "checked='checked'" : "") /></span>
+                                            @Html.Raw(item.Address)
+                                        </label>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-4 mb-2">
+        <div class="card">
+            <div class="card-header bg-info">
+                <h5 class="text-white">Payment Detail</h5>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <div class="form-inline">
+                        <strong>Total Items : </strong><span class="pl-1"> @Html.Raw(Model.Quantity)</span>
+                    </div>
+                    <div class="form-inline">
+                        <strong> Total MRP : </strong><del><span class="text-danger pl-1"> @Html.Raw(Model.TotalMRP)</span></del>
+                    </div>
+                    <div class="form-inline">
+                        <strong> Total Discount : </strong> <span class="pl-1">@Html.Raw(Model.TotalDiscount)</span>
+                    </div>
+                    <div class="form-inline">
+                        <strong> Selling Price : </strong> <span class="pl-1">@Html.Raw(Model.TotalSellingPrice)</span>
+                    </div>
+                    <div class="form-inline">
+                        <strong> Shipping Charge : </strong><span class="pl-1"> @Html.Raw(Model.ShippingCharge)</span>
+                    </div>
+                    <div class="form-inline">
+                        <strong> Total Cost : </strong> <span class="pl-1">@Html.Raw(Model.TotalCost)</span>
+                    </div>
+                    <div class="form-inline">
+                        <strong> Deduction From @Model.PWallet : </strong><span class="pl-1">@Html.Raw(Model.PDeduction)</span>
+                    </div>
+                    @if (Model.SDeduction > 0)
+                    {
+                        <div class="form-inline">
+                            <strong> Deduction From @Model.SWallet : </strong> <span class="pl-1">@Html.Raw(Model.SDeduction)</span>
+                        </div>
+                    }
+                </div>
+                <input type="hidden" id="txtPWallet" value="@Html.Raw(@Model.PDeduction)" />
+                <input type="hidden" id="txtSWallet" value="@Html.Raw(@Model.SDeduction)" />
+                <div class="form-group">
+                    <button class="btn btn-block btn-outline-info" id="btnPalceOrder">Place Your Order</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <div class="table-responsive">
+                <table class="table table-sm table-borderless">
+                    <thead class="bg-info text-white">
+                        <tr>
+                            <th>#</th>
+                            <th class="text-center" colspan="2">Product</th>
+                            <th class="text-center">MRP</th>
+                            <th class="text-center">Discount</th>
+                            <th class="text-center">Selling Price</th>
+                            <th class="text-center">Quantity</th>
+                            <th class="text-center">Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.CartDetails.Any())
+                        {
+                            int counter = 1;
+                            foreach (var item in Model.CartDetails)
+                            {
+                                <tr>
+                                    <td class="align-middle">@counter</td>
+                                    <td class="align-middle cartimg"><img src="/image/Products/@item.ProductID/@item.ImgUrl" /> </td>
+                                    <td class="align-middle">@item.ProductName</td>
+                                    <td class="align-middle text-center">@item.MRP</td>
+                                    <td class="align-middle text-center">@item.Discount @Html.Raw(item.DiscountType ? "%" : "")</td>
+                                    <td class="align-middle text-center">@item.SellingPrice</td>
+                                    <td class="align-middle text-center">@item.Quantity</td>
+                                    <td class="align-middle text-center">@(item.SellingPrice*item.Quantity)</td>
+                                </tr>
+                                counter++;
+                            }
+                        }
+                    </tbody>
+                    <tfoot class="bg-info text-white"><tr><th colspan="8">&nbsp;</th></tr></tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#btnNewAddress').click(() => {
+        $.post('/_ShippingAddress').done(result => {
+            mdlA.id = "newAddress";
+            mdlA.title = "New Address";
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.small);
+        });
+    })
+
+    $('#btnPalceOrder').click(() => {
+        preloader.load();
+        if ($('input[name="ShippingAddress"]:checked').length < 1) {
+            an.title = "Validation Error:";
+            an.content = "Please select shipping address";
+            an.alert(an.type.failed);
+            preloader.remove();
+            return false
+        };
+        let param = {
+            AddressID: $('input[name="ShippingAddress"]:checked').data().addressId,
+            PDeduction: $('#txtPWallet').val(),
+            SDeduction: $('#txtSWallet').val()
+        };
+        $.post('/PlaceOrder', param)
+            .done(result => {
+                an.id = 'OrderAlert';
+                an.title = result.statuscode == an.type.success ? 'Congratulations' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    mdlA.dispose();
+                    $('#CartCount').html(0);
+                }
+
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+</script>

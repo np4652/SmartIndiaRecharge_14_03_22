@@ -1,0 +1,81 @@
+﻿@model RoundpayFinTech.AppCode.Model.IRViewModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>Roundpay - IRCTC</title>
+    <link href="~/css/style_IR.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+</head>
+<body>
+    <main class="d-flex align-items-center min-vh-100 py-3 py-md-0">
+        <div class="container">
+            <div class="card login-card">
+                <div class="row no-gutters">
+                    <div class="col-md-5">
+                        <img src="/images/IR/side.jpg" alt="login" class="login-card-img">
+                    </div>
+                    <div class="col-md-7">
+                        <div class="card-body">
+                            <div class="login-main">
+                                <div class="brand-wrapper text-center">
+                                    <img src="https://roundpay.net/Image/Website/1/irctcLogo.png" alt="logo" class="logo">
+                                </div>
+                                <p class="login-card-description">Sign into your account</p>
+                                @using (Html.BeginForm("IRUserLogin", "Railway", FormMethod.Post))
+                                {
+                                    <div class="form-group">
+                                        @Html.Label("lblUserId", "User ID", new { @class = "sr-only" })
+                                        @Html.TextBoxFor(m => m.LoginId, new { @class = "form-control", @placeholder = "Enter RailwayID" })
+                                    </div>
+                                    <div class="form-group mb-4">
+                                        @Html.Label("lblUserId", "User ID", new { @class = "sr-only" })
+                                        @Html.TextBoxFor(m => m.mobile, new { @class = "form-control", @placeholder = "Enter Registered Mobile Number" })
+                                    </div>
+                                    @if (Model.StatusCode != 1)
+                                    {
+                                        <div class="row">
+                                            <div class="col-8 offset-2">
+                                                <div class="form-group">
+                                                    @Html.Label("lblValidationMsg", Model.Msg, new { @class = "lbl text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                    <input name="login" id="login" class="btn btn-block login-btn mb-4" type="submit" value="Login">
+                                    <input type="button" class="btn btn-block login-btn mb-4 text-danger" value="Cancel" id="btnDecline" />
+                                }
+                                <nav class="login-card-footer-nav">
+                                    <a href="#!">Terms Of Use.</a>
+                                    <a href="#!">Privacy Policy</a>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script>
+        $('#btnDecline').click(function () {
+            $.post('/IRDeclineTransaction')
+                .done(function (result) {
+                    window.location.href = '/UnAuthorizedAccess';
+                })
+                .fail(function (xhr) {
+                    window.location.href = '/UnAuthorizedAccess';
+                });
+        });
+    </script>
+     
+</body>
+</html>

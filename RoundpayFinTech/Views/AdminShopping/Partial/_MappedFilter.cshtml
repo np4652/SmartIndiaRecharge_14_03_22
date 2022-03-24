@@ -1,0 +1,48 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.FilterMapping
+@{ 
+    var filters = Model.filter;
+}
+<input type="hidden" value="@Model.SubCategoryId" id="hfSCID"/>
+    <div class="row">
+        @if (filters.Any())
+        {
+            @foreach (var item in filters)
+            {
+                <div class="col-sm-3">
+                    <div class="form-group">
+                        <div class="input-group">
+
+                            <label class="form-control">
+                                @item.FilterName
+                            </label>
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input class="chkFilter" data-Filte-Id="@item.ID" type="checkbox"  @Html.Raw(item.IsActive?"checked='checked'":"")/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+<script>
+    $('.chkFilter').unbind().click(e => {
+        let param = {
+            CommonInt: $('#hfSCID').val(),
+            CommonInt2: $(e.currentTarget).data().filteId,
+            CommonBool: $(e.currentTarget).is(':checked')
+        };
+        console.log(param);
+        $.post('/updateFilterMapping', param)
+            .done(result => {
+                an.title = result.statuscode == 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    })
+</script>

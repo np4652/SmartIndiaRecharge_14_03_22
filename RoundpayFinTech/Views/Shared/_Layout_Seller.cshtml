@@ -1,0 +1,491 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.Model.ProcModel;
+@using RoundpayFinTech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+<!DOCTYPE html>
+@{
+    SellerDashboard _model = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<SellerDashboard>(SessionKeys.Service);
+    var IsMarkedGreen = ViewData["IsMarkedGreen"] != null ? Convert.ToBoolean(ViewData["IsMarkedGreen"]) : false;
+    int ThemeID = Convert.ToInt32(ViewData["Theme"]);
+    int WID = Convert.ToInt32(ViewData["WID"]);
+    var IsPaymentGateway = ViewData["IsPaymentGateway"] != null ? Convert.ToBoolean(ViewData["IsPaymentGateway"]) : false;
+}
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["HTitle"]</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="~/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="~/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="~/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="~/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="~/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="~/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="~/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="~/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="~/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="~/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="~/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="~/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="~/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="~/images/favicons/manifest.json">
+
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="~/images/favicons/favicon.ico">
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.css" />
+        <link rel="stylesheet" href="~/AvailableThemes/@ThemeID/css/site.css" />
+        <link rel="stylesheet" href="~/css/table-loader.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.css" />
+        <link href="~/AvailableThemes/@ThemeID/css/reseller.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/Sheeda.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/dashboard.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/main.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.min.css" />
+        <link rel="stylesheet" href="~/css/scrollbar.min.css" />
+        <link rel="stylesheet" href="~/AvailableThemes/@ThemeID/css/site.min.css" asp-append-version="true" />
+        <link rel="stylesheet" href="~/css/table-loader.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.min.css" />
+        <link href="~/AvailableThemes/@ThemeID/css/reseller.min.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/Sheeda.min.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/dashboard.css" rel="stylesheet" />
+        <link href="~/AvailableThemes/@ThemeID/css/main.min.css" rel="stylesheet" />
+        <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+    </environment>
+    <style>
+        .navbar-nav li:hover > ul.dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-submenu {
+            position: relative;
+        }
+
+            .dropdown-submenu > .dropdown-menu {
+                top: 0;
+                left: 100%;
+                margin-top: -6px;
+            }
+
+        /* rotate caret on hover */
+        .dropdown-menu > li > a:hover:after {
+            text-decoration: underline;
+            transform: rotate(-90deg);
+        }
+
+        .chart {
+            vertical-align: middle;
+            width: 100%;
+            margin: 0 auto;
+            position: relative;
+            display: inline-block;
+        }
+
+        p {
+            text-align: center;
+            font-family: 'Verdana', sans-serif;
+            font-size: 10px;
+        }
+
+        canvas {
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div style="position: fixed; right: -24px;top: 50%;background: black;transform: rotate(90deg);z-index: 1;">
+        <a href="/support" class="nav-link text-white font-bold">Support</a>
+    </div>
+
+    @*<div style="position: fixed;bottom:10px;right:-12px;max-width:100px;overflow:hidden;z-index:1">
+            <a class="callMe "><img src="~/images/CallMe.gif" class="img-fluid rounded-circle cus-image" /></a>
+            <section id="wiSection" style="text-align: center;"></section>
+
+        </div>*@
+    <div class="top-navbar">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-1 col-xs-12">
+                    <div class="mobile-only-brand float-left">
+                        <div class="nav-header float-left">
+                            <div class="logo-wrap">
+                                <a asp-area="" asp-controller="Seller" asp-action="Index" class="navbar-brand">
+                                    <img src="@ViewData["Host"]/Image/Website/@ViewData["WID"]/white-logo.png" height="27" class="d-inline-block align-top" alt="@ViewData["CName"]" />
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-11 d-none d-sm-block d-md-block">
+                    <ul class="nav navbar-right top-nav float-right">
+                        @if (ApplicationSetting.IsAddMoneyEnable)
+                        {
+                            if (ApplicationSetting.IsPaymentGatway)
+                            {
+                                <li>
+                                    <a class="nav-link text-white font-bold" href="/addmoney"><i class="fas fa-plus"></i> Money</a>
+                                </li>
+                            }
+                            if (ApplicationSetting.IsUPI && (ApplicationSetting.IsFraudPrevention && IsMarkedGreen || !ApplicationSetting.IsFraudPrevention))
+                            {
+                                <li>
+                                    <a class="nav-link text-white font-bold" href="/addmoneyUPI"><i class="fas fa-plus"></i> UPI</a>
+                                </li>
+                                if (ApplicationSetting.IsUPIQR && IsPaymentGateway)
+                                {
+                                    <li id="liQR">
+                                        <a class="nav-link text-white font-bold"><i class="fas fa-2x fa-qrcode"></i></a>
+                                    </li>
+                                }
+                            }
+                            if (ApplicationSetting.IsCOIN)
+                            {
+                                <li id="liQRCoin">
+                                    <a class="nav-link text-warning font-bold"><i class="fas fa-2x fa-qrcode"></i></a>
+                                </li>
+                            }
+                        }
+                        <li>
+                            <span class="nav-link text-white font-bold"><span class="custom bal"></span></span>
+                        </li>
+                        <li>
+                            <div class="dropdown" id="UINFO">
+                                <button class="btn btnProfileSetting btnProfileSetting-sm p-0" id="btnProfileSetting" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <img id="profileImg" />
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="drpdn_LoginInfo">
+                                    <div class="bg-new pt-3 pb-2">
+                                        <div class="row ">
+                                            <div class="col-lg-3">
+                                                <button class="btn btnProfileSetting ml-2" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                                            </div>
+                                            <div class="col-lg-9">
+                                                <div class="row">
+                                                    <div class="col-lg-9 pl-0">
+                                                        <span id="fullName" class="ml-4" style="font-size: 12px; font-weight: 900;white-space:nowrap"></span>
+                                                    </div>
+                                                    <div class="col-lg-3">
+                                                        <a href="/ProfileUser"><i class="fas fa-edit" style="font-size: 12px; border-radius: 50%;"></i></a>
+                                                    </div>
+
+                                                    <div class="col-lg-12">
+                                                        <small class="dropdown-item-text mt-0 pl-2"></small>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+
+
+                                        </div>
+                                    </div>
+                                    <a class="dropdown-item" href="#" id="myBalance">My Balance</a>
+                                    @if (ApplicationSetting.IsWalletToWallet)
+                                    {
+                                        <a class="dropdown-item" href="#" id="wTowft">Wallet To Wallet</a>
+                                    }
+                                    <a class="dropdown-item" href="/ProfileUser" id="updatePro">Update Profile</a>
+                                    <a class="dropdown-item callMe" href="#" id="callMe">Call Me</a>
+                                    <a class="dropdown-item" href="#" id="changepass">Change Password</a>
+                                    <a class="dropdown-item" href="#" id="changepin">Change Pin</a>
+                                    <a href="javascript:Two_FA_Win()" class="dropdown-item" target="_top">Two Factor Authentication</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a href="javascript:recentLoginActivity()" class="dropdown-item">Recent Login Activity</a>
+                                    <a class="dropdown-item" href="#" id="logoutAll">Logout All Devices</a>
+                                    <a class="dropdown-item" href="#" id="logout">Logout</a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg sticky-top navbar-dark bg-greenhead">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggler" data-toggle="collapse" data-target=".navbar-collapse" aria-controls="" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+        </div>
+        <div class="navbar-collapse collapse" id="menu">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item"><a asp-area="" asp-controller="Seller" asp-action="Index" class="nav-link">Dashboard</a></li>
+                @if (ApplicationSetting.IsMultiLevel && _model.IsMLM)
+                {
+                    <li class="nav-item"><a asp-area="" asp-controller="Seller" asp-action="CUserSeller" class="nav-link">Create User</a></li>
+                }
+                <li class="nav-item">
+                    <a href="/fund-request" class="nav-link">Fund Request</a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMenuComm" data-toggle="dropdown">Services</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMenuComm">
+                        @if (_model != null && _model.PackageCl != null)
+                        {
+                            var serviceName = "";
+                            for (int i = 0; i < _model.PackageCl.Count; i++)
+                            {
+                                if (_model.PackageCl[i].IsServiceActive && _model.PackageCl[i].IsActive)
+                                {
+                                    @if (_model.PackageCl[i].ServiceID == 18)
+                                    {
+                                        <a href="https://www.irctc.co.in/nget/train-search" target="_blank" class="dropdown-item">@_model.PackageCl[i].Name</a>
+                                    }
+                                    else
+                                    {
+                                        if (_model.PackageCl[i].IsDisplayService)
+                                        {
+                                            if (serviceName != _model.PackageCl[i].Service)
+                                            {
+                                                serviceName = _model.PackageCl[i].Service;
+                                                <div class="dropright">
+                                                    <ul style="list-style:none;padding-left: unset;">
+                                                        <li class="dropdown-submenu">
+                                                            <a class="dropdown-item dropdown-toggle" href="#">@_model.PackageCl[i].Service</a>
+                                                            <ul class="dropdown-menu">
+                                                                @{
+                                                                    var _subList = _model.PackageCl.Where(x => x.ParentID == _model.PackageCl[i].ParentID);
+                                                                    if (_subList != null && _subList.ToList().Count > 0)
+                                                                    {
+                                                                        foreach (var _l in _subList)
+                                                                        {
+                                                                            <li><a class="dropdown-item" href="/Service/@_l.ServiceID">@_l.Name</a></li>
+                                                                        }
+                                                                    }
+                                                                }
+                                                            </ul>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                                _model.PackageCl.RemoveAll(x => x.IsDisplayService == true && x.Service == serviceName);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (_model.PackageCl[i].SCode == "ACCOP")
+                                            {
+                                                <a href="/GetAccountOpeningBanner/@_model.PackageCl[i].ServiceID" class="dropdown-item">@_model.PackageCl[i].Name</a>
+                                            }
+                                            else
+                                            {
+                                                <a href="/Service/@_model.PackageCl[i].ServiceID" class="dropdown-item">@_model.PackageCl[i].Name</a>
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    </div>
+
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMenuComm" data-toggle="dropdown">Commission</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMenuComm">
+                        <a href="/SlabCommission" class="dropdown-item">SlabDetail</a>
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnUserReport" data-toggle="dropdown">User Report</a>
+                    <div class="dropdown-menu" area-labelledby="dwnUserReport">
+                        <a href="/RechargeReport" class="dropdown-item">Recharge Report</a>
+                        <a href="/DMRReport" class="dropdown-item">DMT Report</a>
+                        <a href="/AEPSReport" class="dropdown-item">MiniBank Report</a>
+                        <a href="/DTHSubscriptionReport" class="dropdown-item">DTH Subscription Report</a>
+                        <a href="/UserLedger" class="dropdown-item">User Ledger</a>
+                        <a href="/UDaybook" class="dropdown-item">User Daybook</a>
+                        @if (ApplicationSetting.IsCCFApplicable)
+                        {
+                            <a href="/UDaybookDMR" class="dropdown-item">User Daybook DMT</a>
+                        }
+                        <a href="/FundRequestReportSelf" class="dropdown-item">My Fund Orders</a>
+                        <a href="/FundReceiveStatement" class="dropdown-item">Fund Debit-Credit</a>
+                        <a href="/RefundHistory" class="dropdown-item">Dispute Settlement</a>
+                        <a href="/WalletRequestReport" class="dropdown-item">Move-To-Bank Request History</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="/USalesSummary" class="dropdown-item">User Sales Summary</a>
+                        @if (Convert.ToInt32(ViewData["WID"]) == 1)
+                        {
+                            <a href="/GSTSummary" class="dropdown-item">GST Summary</a>
+                            <a href="/InvoiceList" class="dropdown-item">Invoice List</a>
+                            <a href="/UploadStatus" class="dropdown-item">Uploaded Invoice</a>
+                        }
+                        <a href="/UserSettlement" class="dropdown-item">Userwise Settlement</a>
+                        @if (ApplicationSetting.IsAccountStatement)
+                        {
+                            <a href="/AccStmt" class="dropdown-item">Account Ledger</a>
+                        }
+                        <a href="/HotelReport" class="dropdown-item">Hotel Report</a>
+                    </div>
+                </li>
+                @if (ApplicationSetting.IsDisplayCertificate)
+                {
+                    <li class="nav-item">
+                        <a href="javascript:loadDownloasWin()" class="nav-link">Download Certificates</a>
+                    </li>
+                }
+                @if (ApplicationSetting.IsECommerceAllowed)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dwnShopping" data-toggle="dropdown">Shopping</a>
+                        <div class="dropdown-menu" area-labelledby="dwnShopping">
+                            <a href="/Dashboard/I" class="dropdown-item">Go To WebSite</a>
+                            <a href="/Shop" class="dropdown-item">Shop</a>
+                            @*<a href="/shopping/OrderList" class="dropdown-item">Orders</a>*@
+                            <a href="/shopping/OrderReport" class="dropdown-item">Orders Report</a>
+
+                        </div>
+                    </li>
+                }
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="dwnMore" data-toggle="dropdown">BBPS</a>
+                    <div class="dropdown-menu" area-labelledby="dwnMore">
+                        <a href="/BBPSComplaints" class="dropdown-item">BBPS Complaint</a>
+                        <a href="/BBPSTranStatusCheck" class="dropdown-item">BBPS Transaction Status Check</a>
+                        <a href="/BBPSComplaintsStatusCheck" class="dropdown-item">BBPS Complaint Status Check</a>
+                    </div>
+                </li>
+                @if (ApplicationSetting.IsMultiLevel)
+                {
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="dwnMore" data-toggle="dropdown">My Team</a>
+                        <div class="dropdown-menu" area-labelledby="dwnMore">
+                            <a href="/Team" class="dropdown-item">Team</a>
+                            <a href="/Level" class="dropdown-item">Level</a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        </div>
+    </nav>
+    <div class="main-wrapper">
+        <div id="alertmsg"></div>
+        @RenderBody()
+    </div>
+    <footer>
+        <div class="container-fluid text-center">
+            <p>&copy;2012-@ViewData["CName"]</p>
+        </div>
+    </footer>
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/jquery/dist/popper.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.js"></script>
+        <script src="~/lib/jquery/dist/moment.js"></script>
+        <script src="~/js/validator.js" asp-append-version="true"></script>
+        <script src="~/lib/chart/canvasjs.min.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+        <script>var $$IsWebNotify='@ApplicationSetting.IsWebNotification';</script>
+        <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+        <script src="~/js/require.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/jquery/dist/popper.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/dropdown.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/tooltip.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/popover.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/util.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/dist/alert.min.js"></script>
+        <script src="~/lib/jquery/dist/moment.min.js"></script>
+        <script src="~/js/validator.min.js" asp-append-version="true"></script>
+        <script src="~/lib/chart/canvasjs.min.js"></script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+        <script>var $$IsWebNotify='@ApplicationSetting.IsWebNotification'</script>
+        <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+        <script src="~/js/require.js"></script>
+    </environment>
+    <script>
+        var $$host = '@(ViewData["Host"])';
+    </script>
+    @RenderSection("Scripts", required: false)
+    @*@if (ApplicationSetting.IsRPOnly)
+        {
+            <script charset="UTF-8" src="//web.webpushs.com/js/push/9b2b97541217dbc110d8cb05816349a4_1.js" async></script>
+        }*@
+    @if (ApplicationSetting.IsAddMoneyEnable)
+    {
+        if (ApplicationSetting.IsCOIN)
+        {
+            <script>
+                $(document).ready(function () {
+                    $('#liQRCoin a').unbind().click(function () {
+                        $.post("/CoinQRModalPopup", {}, function (result) {
+                            resultReload(result);
+                            mdlA.id = "qrModelCoin";
+                            mdlA.isHeaderBorder = true;
+                            mdlA.title = "  ";
+                            mdlA.content = result;
+                            mdlA.modal(mdlA.size.large);
+                            $('#qrModel .modal-header').remove();
+                            $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                        });
+                    });
+                });
+            </script>
+        }
+        if (ApplicationSetting.IsUPI)
+        {
+            <script>
+            $(document).ready(function () {
+                $('#liQR a').unbind().click(function () {
+                    $.post("/UserVADetail", {}, function (result) {
+                        resultReload(result);
+                        var _d = 0;//new Date().getTime();
+                        mdlA.id = "qrModel";
+                        mdlA.isHeaderBorder = true;
+                        mdlA.title = "  ";
+                        mdlA.content = `<div class="text-center">
+
+     @if (ApplicationSetting.IsBankAccountNoReplaceWithSmartCollect)
+     {
+         <p><img class="img-thumbnail" src="${$$host + '/Report/UserUPIQRCodeShortURL?ShortURL='}${result.userSDetail.smartQRShortURL}" alt="QR Code" style="width:350px"></p>
+        <p>Your virtual account detail for instant wallet payment</p>
+        <div class="text-secondary">BANK : ${result.userSDetail.bankName}</div>
+        <div class="text-secondary">IFSC : ${result.userSDetail.ifsc}</div>
+        <div class="text-secondary">VirtualAccount : ${result.userSDetail.smartAccountNo}</div>
+     }
+     else {
+         <p>Scan the QR code using your UPI apps</p>
+        <img class="mb-3 mt-3" src="${$$host + '/Image/QRImg/UPI.png'}" style="width: 57%;">
+        <p><img class="img-thumbnail" src="${$$host + '/Report/UserUPIQRCode?a=0&b='}${_d}" alt="QR Code" style="width:250px"></p>
+        @if (ApplicationSetting.IsECollectEnable) {
+            <p>Your virtual account detail for instant wallet payment</p>
+            <div class="text-secondary">BANK : ${result.bankName}</div>
+            <div class="text-secondary">IFSC : ${result.ifsc}</div>
+            <div class="text-secondary">VirtualAccount : ${result.virtualAccount}</div>
+
+        }
+
+     }
+            <button class="btn btn-outline-primary w-75 mt-3 mb-2" id="mdlCancel">Close</button>
+                                </div>`;
+                        mdlA.modal(mdlA.size.default);
+                        $('#qrModel .modal-header').remove();
+                        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                    });
+
+                });
+            });
+            </script>
+        }
+    }
+</body>
+</html>

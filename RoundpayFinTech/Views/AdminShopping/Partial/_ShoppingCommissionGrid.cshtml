@@ -1,0 +1,118 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ShoppingCommissionExtend
+@{
+
+}
+@if (Model.CommissionDetail.Any())
+{
+    int counter = 1;
+    foreach (var item in Model.Items)
+    {
+        <tr data-Category-Id="@item.CategoryID">
+            <td>@counter</td>
+            <td>@item.CategoryName</td>
+            <td>
+                <div class="row">
+                    @foreach (var role in Model.Roles)
+                    {
+                        var CommDetails = new RoundpayFinTech.AppCode.Model.Shopping.ShoppingCommission();
+                        CommDetails = Model.CommissionDetail.Where(x => x.RoleID == role.ID && x.CategoryID == item.CategoryID).FirstOrDefault();
+                        CommDetails = CommDetails != null ? CommDetails : new RoundpayFinTech.AppCode.Model.Shopping.ShoppingCommission();
+                        <div class="col-sm-2 form-group">
+                            <label>@role.Role</label>
+                            <div class="input-group" data-Role-Id="@role.ID">
+                                <input type="text" class="form-control txtComm" value="@CommDetails.Commission">
+                                <div class="input-group-prepend" id="btnComType">
+                                    <div class="btn-group btn-toggle">
+                                        <button class="btn btn-sm btn-dark active" style="border-radius:0">C</button>
+                                        <button class="btn btn-sm btn-outline-dark" style="border-radius:0">S</button>
+                                    </div>
+                                    <div class="btn-group btn-toggle" id="btnAmtType_@(item.CategoryID)_@(role.ID)">
+                                        @if (@CommDetails.AmountType)
+                                        {
+                                            <button class="btn btn-sm btn-outline-dark btnAmtType" style="border-radius:0">P</button>
+                                            <button class="btn btn-sm btn-dark btnAmtType active" style="border-radius:0">F</button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-sm btn-dark btnAmtType active" style="border-radius:0">P</button>
+                                            <button class="btn btn-sm btn-outline-dark btnAmtType" style="border-radius:0">F</button>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </td>
+        </tr>
+        counter++;
+    }
+}
+
+<script>
+    $('.btnAmtType').on('click', function () {
+        var _this = this;
+        var parent = $(_this).parent().attr('id');
+        console.log(parent);
+        var allButtons = $('#' + parent + ' :button');
+        $.each(allButtons, function (index, item) {
+            $(item).removeClass();
+            if (item == _this) {
+                $(item).addClass('btn btn-sm btn-dark btnAmtType active');
+            }
+            else {
+                $(item).addClass('btn btn-sm btn-outline-dark btnAmtType');
+            }
+        })
+    });
+
+    $('.txtComm').unbind().change(e => UpdateComm($(e.currentTarget)))
+    var UpdateComm = sender => {
+        let selectedDiv = sender.closest('div.input-group');
+        let btnText = selectedDiv.find('.btnAmtType.active')[0].outerText;
+        param = {
+            SlabID: $('#hfSlabID').val(),
+            CategoryID: sender.closest('tr').data().categoryId,
+            Commission: selectedDiv.find('input.txtComm').val(),
+            CommType: btnText === "F" ? true : false,
+            RoleID: selectedDiv.data().roleId
+        };
+        $.post('/_UpdateShoppingComm', param)
+            .done(result => {
+                an.title = result.statuscode === 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    };
+
+    $('#btnSetAll').unbind().click(function () {
+        if ($('#txtAmtForAll').val() <= 0) {
+            an.title = 'Oops';
+            an.content = 'Amount must greater than zero';
+            an.alert(an.type.failed);
+            return;
+        }
+        param = {
+            SlabID: $('#hfSlabID').val(),
+            CategoryID: $('#ddlCat').val(),
+            Commission: $('#txtAmtForAll').val(),
+            CommType: $('#btnAmtTypeForAll button.active').text()[0] === 'F' ? true : false,
+            RoleID: $('#ddlRoles').val()
+        };
+        $.post('/_UpdateShoppingComm', param)
+            .done(result => {
+                an.title = result.statuscode === 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                loadGrid();
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+</script>

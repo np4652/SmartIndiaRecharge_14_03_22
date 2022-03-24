@@ -1,0 +1,98 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.Employee.EmployeeList
+@{
+
+}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="form-group">
+            <select class="form-control" id="ddlEmplRole" aria-describedby="roleHelp">
+                <option value="0">:: Select Employee Role ::</option>
+                <option value="@EmployeeRole.Sales_Head">Sales Head</option>
+                <option value="@EmployeeRole.State_Head">State Head</option>
+                <option value="@EmployeeRole.Cluster_Head">Cluster Head</option>
+                <option value="@EmployeeRole.ASM">ASM</option>
+                <option value="@EmployeeRole.TSM">TSM</option>
+            </select>
+        </div>
+    </div>
+</div>
+<div class="row" id="divEmp">
+    @if (Model != null && Model.Employees.Any())
+    {
+        foreach (var item in Model.Employees)
+        {
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" id="chkEmp_@item.EmpID" class="chkEmp" data-Employee-Id="@item.EmpID" />
+                            </div>
+                        </div>
+                        <label class="form-control" for="chkEmp_@item.EmpID">@item.Name [@item.MobileNo/Role : @item.EmpRole]</label>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+<script>
+    var loadEmployee = () => {
+        preloader.load();
+        let _id = $('#ddlEmplRole').val();        
+        $.post('/SelectEmpByroleInBulk', { Id: _id })
+            .done(result => {
+                $('#divEmp').empty();
+                for (let x = 0; x < result.length; x++) {
+                    $('#divEmp').append(
+                        `<div class="col-sm-4">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" class="chkEmp" id="chkEmp_${result[x].empID}" data-Employee-Id="${result[x].empID}"/>
+                                        </div>
+                                    </div>
+                                    <label class="form-control" for="chkEmp_${result[x].empID}">${result[x].name} [${result[x].mobileNo}/ Role : ${result[x].empRole}]</label>
+                                </div>
+                            </div>
+                        </div>`
+                    );
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => {
+                preloader.remove();
+                $('.chkEmp').unbind().click(e => assignUser(e));
+            });
+    }
+    $('#ddlEmplRole')[0].selectedIndex = 1;
+    loadEmployee()
+    $('#ddlEmplRole').change(() => loadEmployee());
+
+    var assignUser = e => {
+        preloader.load();
+        $('.chkEmp').not($(e.currentTarget)).prop('checked', false);
+        if ($(e.currentTarget).is(':checked')) {
+            let EmpID = $(e.currentTarget).data().employeeId;
+            $.post('/AssignUserToEmp', { EmpID: EmpID, mobileNo: $('#hfdUMob').val() })
+                .done(result => {
+                    an.id = "assignAlert";
+                    an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                })
+                .fail(xhr => {
+
+                })
+                .always(() => preloader.remove());
+        }
+    };
+
+    $('.chkEmp').unbind().click(e => assignUser(e));
+    
+</script>

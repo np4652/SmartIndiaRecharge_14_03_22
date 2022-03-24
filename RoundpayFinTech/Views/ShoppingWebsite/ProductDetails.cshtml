@@ -1,0 +1,369 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel
+@model AllProductInfo
+
+
+
+<div class="bg">
+  
+    @if (Model != null)
+    {
+
+        <!---->
+
+        <div class="breadcrumb-area  ">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="breadcrumbs">
+                            <ul>
+                                <li><a href="/" routerlink="">Home <i class="fa fa-angle-right"></i></a></li>
+                                <li><a href="ProductList/M/@Model.MainCategoryID">@Model.MaincategoryName <i class="fa fa-angle-right"></i></a></li>
+                                <li><a href="ProductList/C/@Model.CategoryID">@Model.CategoryName <i class="fa fa-angle-right"></i></a></li>
+                                <li>
+                                    <a href="ProductList/S/@Model.SubCategoryId">@Model.SubCategoryName </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        <!---->
+        <div class="mm-page mm-slideout" id="mm-0">
+            <div class="product-details-area mt-20">
+                <div class="container-fluid">
+                    <div class="product-details">
+                        <div class="row">
+
+                            <div class="col-lg-4">
+                                <div class="xzoom-container">
+                                    <img class="xzoom4" id="xzoom-fancy" src="@Model.FrontImage_1200" xoriginal="@Model.FrontImage_1200" />
+                                    <div class="xzoom-thumbs">
+                                        <a href="@Model.FrontImage_1200">
+                                            <img class="xzoom-gallery4" width="80" src="@Model.FrontImage" xpreview="@Model.FrontImage_1200" title="Image">
+                                        </a>
+                                        <a href="@Model.SideImage_1200">
+                                            <img class="xzoom-gallery4" width="80" src="@Model.SideImage" title="Image">
+                                        </a>
+                                        <a href="@Model.BackImage_1200">
+                                            <img class="xzoom-gallery4" width="80" src="@Model.BackImage" title="Image">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="col-lg-8 mt-sm-50">
+                                <div class="row">
+                                    <div class="col-lg-8 col-md-7">
+                                        <div class="product-details-desc">
+                                            <h2>@Model.Title</h2>
+                                            <div class="product-price-rating">
+                                                <div class="pro-list-heart">
+                                                    <a class="product-wishlist" onclick="AddWishListProduct(@Model.POSId)" href="javascript:void(0);" title="Add to WishList">
+                                                        <i aria-hidden="true" class="fa fa-heart">
+                                                        </i>
+                                                    </a>
+                                                </div>
+                                                <div class="del-price-sec">
+                                                    <del> ₹ @Model.MRP  /-</del>
+                                                </div>
+                                                <span> ₹ @Model.SellingPrice/-</span>
+                                                <span class="off">₹ @Model.Discount off</span>
+                                                <div class="">
+                                                    <i class="fa fa-star">
+                                                    </i>
+                                                    <i class="fa fa-star">
+                                                    </i>
+                                                    <i class="fa fa-star">
+                                                    </i>
+                                                    <i class="fa fa-star">
+                                                    </i>
+                                                    <i class="fa fa-star-o">
+                                                    </i>
+                                                </div>
+                                            </div>
+
+                                            @foreach (var item in Model.filters)
+                                            {
+                                                <div class="filter mt-1">
+                                                    
+                                                    <label>@item.name :</label>
+                                                    <ul class="list-none" style="    display: inline-block;">
+                                                        <!---->
+                                                        @foreach (var ol in item.option_Lists)
+                                                        {
+                                                            <li>
+                                                                <a class="active" href="#"> @ol.OptionName</a>
+                                                            </li>
+                                                        }
+
+                                                    </ul>
+                                                </div>
+                                            }
+                                            <div class="d-none d-sm-block  product-highlight-des">
+                                                <h3>Product Highlights</h3>
+                                                <div class="pro-desc-highlight prodetails-list-scroll">
+                                                    @Html.Raw(@Model.Description)
+                                                </div>
+                                                @*<p  id="view-More">View More...</p>*@
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+
+                                    <div class="col-lg-4 col-md-5 cus-right-sec-padding stiky">
+                                        <div id="deliverycode">
+                                        </div>
+                                        <div class="enter-pincode-sec" id="dvpincode">
+                                            <div class="cus-width-sec">
+                                                <input class="pin-input-sec ng-untouched ng-pristine ng-valid"
+                                                   id="txtpincode" maxlength="6" placeholder="enter pincode" type="number">
+                                            </div>
+                                            <hr>
+                                        </div>
+                                        <div class="product-action stuck text-left">
+                                            <hr class="d-md-none">
+                                            <div class="d-md-none  product-highlight-des">
+                                                <h3>Product Highlights</h3>
+                                                <div> @Html.Raw(@Model.AdditionalDescription)</div>
+                                            </div>
+                                            <div class="product-quantity mt-50">
+                                                <label>Quatity:</label>
+                                                <input max="5" min="1" type="number" id="txtquannum" value="1" class="ng-untouched ng-pristine ng-valid">
+                                            </div>
+                                            <div class="add-to-get mt-15 d-none d-sm-block">
+                                                <a class="add-to-cart" onclick="AddToCart('@Model.POSId',@Model.POSId,($('#txtquannum').val()))">Add to Cart</a>
+                                                <a class="add-to-cart buynow" onclick="BuyNow(@Model.POSId)">Buy Now</a>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="product-review-area mt-45">
+                <div class="container-fluid container-fluid-cus">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <ul class="nav nav-tabs product-review-nav">
+                                <li><a class="active show" data-toggle="tab" href="#description">Description</a></li>
+                                <li>
+                                    <a data-toggle="tab" href="#specifications" class="show">Specifications</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane fade in active show" id="description">
+                                    <div class="product-description">
+                                         <h3>Product information</h3><div>
+                                            @Html.Raw(@Model.Description)
+                                    </div>
+                                    </div>
+                                </div>
+                                <div class="tab-pane fade specifications" id="specifications">
+                                    @if (@Model.Specification == null)
+                                    {
+                                        <table class="table table-bordered">
+                                            <tbody>
+                                                @if (@Model.SpecificFeatures != null)
+                                                {
+                                                    @foreach (var item in @Model.SpecificFeatures)
+                                                    {
+                                                        <tr>
+                                                            <td style="width: 40%">@item.Key</td>
+                                                            <td> @item.Value </td>
+                                                        </tr>
+                                                    }
+                                                }
+                                            </tbody>
+                                        </table>
+                                    }
+                                    else
+                                    {
+                                        <div class="product-specification">
+                                            @Html.Raw(@Model.Specification)
+                                        </div>
+                                    }
+                                </div>
+                                <div class="tab-pane fade" id="reviews">
+                                    <div class="blog-comments product-comments mt-0">
+                                        <ul class="list-none">
+                                            <li>
+                                                <div class="comment-avatar text-center">
+                                                    <img alt="" src="assets/images/blog/comment/4.jpg">
+                                                    <div class="product-rating mt-10">
+                                                        <i class="fa fa-star">
+                                                        </i>
+                                                        <i class="fa fa-star">
+                                                        </i>
+                                                        <i class="fa fa-star">
+                                                        </i>
+                                                        <i class="fa fa-star"></i><i class="fa fa-star-o"></i>
+                                                    </div>
+                                                </div>
+                                                <div class="comment-desc">
+                                                    <span>27 Aug 2019</span>
+                                                    <h4>Jenney Kelley</h4>
+                                                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p>
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="comment-avatar text-center">
+                                                    <img alt="" src="assets/images/blog/comment/5.jpg">
+                                                    <div class="product-rating mt-10">
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star"></i>
+                                                        <i class="fa fa-star-o"></i>
+                                                    </div>
+                                                </div><div class="comment-desc"><span>27 Aug 2019</span><h4>Brandon William</h4><p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. </p></div>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="blog-comment-form product-comment-form mt-05">
+                                        <h4><span>Add Review</span></h4>
+                                        <div class="row mt-30">
+                                            <div class="col-sm-6 single-form">
+                                                <input placeholder="Name" type="text">
+                                            </div>
+                                            <div class="col-sm-6">
+                                                <input placeholder="Email" type="text">
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <div class="product-rating style-2">
+                                                    <span>Your Rating:</span>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                    <i class="fa fa-star"></i>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <textarea placeholder="Messages">
+                                                            </textarea>
+                                            </div>
+                                            <div class="col-sm-12">
+                                                <button class="btn-common mt-25">Submit</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="best-sellers mt-45">
+                <div class="container-fluid fix">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="section-title">
+                                <h3>Similar Products</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="SimilarProducts"></div>
+                </div>
+            </div>
+            <!---->
+        <div class="best-sellers mt-45">
+                <div class="container-fluid fix">
+                    <div class="row">
+                        <div class="col-lg-12"><div class="section-title"><h3>Recent Viewed Products</h3></div></div>
+                    </div>
+                    <div id="RecentViewProducts"></div>
+                </div>
+            </div>
+        </div>
+    }
+    else{
+        <div>
+            <b>No Product Found</b>
+        </div>
+    }
+</div>
+
+
+@section scripts{
+
+
+<script>
+              $(document).ready(function () {
+
+                  SimilarProducts('@ViewData["POSId"].ToString()', "SimilarProducts", "1");
+                  RecentView('@ViewData["POSId"].ToString()', "RecentViewProducts", "1");
+
+                  $("#txtpincode").focusout(function() {
+                       preloaderSmall.load();
+                     var pincode=$(this).val();
+                      $.post('/checkcelivery', { PinCode: pincode })
+                          .done(function (result) {
+                              preloaderSmall.remove();
+                              let deliverycode = $('#deliverycode');
+                              deliverycode.empty();
+                                $("#dvpincode").hide();
+                                    deliverycode.prepend(` <div class="cus-outter-deliver-sec">
+                                                    <div class="product-deliver-sec">
+                                                        <span>
+                                                            <i aria-hidden="true" class="fa fa-car"></i>
+                                                        </span>
+                                                        <p>${result!=null?"Delivery available":"Delivery not available"}  </p>
+                                                        <hr>
+                                                    </div>
+                                                    <div class="_3cBS">
+                                                        <span>${pincode}</span>
+                                                      <span style="cursor:pointer" class="_2oRS" id="spnpincodechange"> Change</span>
+                                                    </div>
+                                                </div>`);
+                          }).fail(xhr => console.log(xhr.responseText))
+            })
+
+            $(document).on('click','#spnpincodechange',function(){
+                 let deliverycode = $('#deliverycode');
+                              deliverycode.empty();
+                              $("#dvpincode").show();
+            // code here
+        });
+             });
+
+
+
+              var SimilarProducts = (posid, selector = "SimilarProducts", websiteid = "1") => {
+                  
+                  try {
+                      $.post('/SimilarProducts', { POSId: posid, WebSiteId: websiteid })
+                          .done(function (result) {
+                              $('#' + selector).html(result);
+                          }).fail(xhr => console.log(xhr.responseText))
+                  }
+                  catch (err) {
+                      console.log(err.message);
+                  }
+              }
+
+              var RecentView = (posid, selector = "RecentViewProducts", websiteid = "1") => {
+                
+                  try {
+                      $.post('/RecentView', { POSId: posid, WebSiteId: websiteid })
+                          .done(function (result) {
+                              
+                              $('#' + selector).html(result);
+                          }).fail(xhr => console.log(xhr.responseText))
+                  }
+                  catch (err) {
+                      console.log(err.message);
+                  }
+              }
+            
+
+</script>
+    }

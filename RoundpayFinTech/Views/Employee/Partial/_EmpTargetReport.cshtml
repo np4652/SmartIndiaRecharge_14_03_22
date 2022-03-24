@@ -1,0 +1,161 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.EmployeeTargetReport>
+@{
+    int i = 1;
+}
+@if (Model.Any())
+{
+
+    <table class="table table-bordered">
+        <thead class="bg-tableth">
+            <tr>
+                <th colspan="7"><strong>Team Data</strong></th>
+                @*<th colspan="6"><strong>Primary</strong></th>*@
+                <th colspan="9"><strong>Prepaid Recharge</strong></th>
+                <th colspan="9"><strong>DMT</strong></th>
+                <th colspan="9"><strong>BBPS</strong></th>
+                <th colspan="9"><strong>AEPS</strong></th>
+                @*<th colspan="2"><strong>Date</strong></th>*@
+            </tr>
+            <tr>
+                <th class="text-nowrap text-monospace">#</th>
+                <th class="text-nowrap text-monospace">AM</th>
+                <th class="text-nowrap text-monospace">Sales Head</th>
+                <th class="text-nowrap text-monospace">Circle Head</th>
+                <th class="text-nowrap text-monospace">ZBM</th>
+                <th class="text-nowrap text-monospace">ASM</th>
+                <th class="text-nowrap text-monospace">TSM</th>
+                @*<th class="text-nowrap text-monospace">User</th>*@
+
+                @*<th class="text-nowrap text-monospace">Pri Amt LM</th>
+                    <th class="text-nowrap text-monospace">Pri Amt LMTD</th>
+                    <th class="text-nowrap text-monospace">Pri Amt MTD</th>
+                    <th class="text-nowrap text-monospace">Pri Target</th>
+                    <th class="text-nowrap text-monospace">Ach Tar</th>
+                    <th class="text-nowrap text-monospace">Incentive</th>*@
+
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Target</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ach</th>
+
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Target</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ter Growth</th>
+
+
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Target</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ach Growth</th>
+
+                <th class="text-nowrap text-monospace">Ter Amt LM</th>
+                <th class="text-nowrap text-monospace">Target</th>
+                <th class="text-nowrap text-monospace">Ter Amt LMTD</th>
+                <th class="text-nowrap text-monospace">Ter Amt MTD</th>
+                <th class="text-nowrap text-monospace">TOL-LMTD</th>
+                <th class="text-nowrap text-monospace">TOL-LM</th>
+                <th class="text-nowrap text-monospace">TOL-MTD</th>
+                <th class="text-nowrap text-monospace">Outlet Growth</th>
+                <th class="text-nowrap text-monospace">Ter Growth</th>
+
+                @*<th class="text-nowrap text-monospace">TransactionDate</th>
+                <th class="text-nowrap text-monospace">EntryDate</th>*@
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.AM</td>
+                    <td>@item.SHDetail</td>
+                    <td>@item.CDetail</td>
+                    <td>@item.ZDetail</td>
+                    <td>@item.ADetail</td>
+                    <td>@item.TSMDetail</td>
+                    @*<td>@item.UserDetail</td>*@
+
+                    @*Primary*@
+                    @*<td>@item.LMPrimary</td>
+                    <td>@item.LMTDPrimary</td>
+                    <td>@item.MTDPrimary</td>
+                    <td>@item.TargetPrimary</td>
+                    <td>@item.AchTargetPrimary</td>
+                    <td>@item.IncentivePrimary</td>*@
+
+                    @*Prepaid*@
+                    <td>@item.LMPrepaid</td>
+                    <td>@item.LMTDPrepaid</td>
+                    <td>@item.TargetPrepaid</td>
+                    <td>@item.MTDPrepaid</td>
+                    <td>@item.TOLMPrepaid</td>
+                    <td>@item.TOLMTDPrepaid</td>
+                    <td>@item.TOMTDPrepaid</td>
+                    <td>@item.AchTargetPrepaid</td>
+                    <td>@item.IncentiveTarget</td>
+
+                    @*DMT*@
+                    <td>@item.LMDMT</td>
+                    <td>@item.LMTDDMT</td>
+                    <td>@item.TargetDMT</td>
+                    <td>@item.MTDDMT</td>
+                    <td>@item.TOLMDMT</td>
+                    <td>@item.TOLMTDDMT</td>
+                    <td>@item.TOMTDDMT</td>
+                    <td>@item.GrowthDMT</td>
+                    <td>@item.TerGrowthDMT</td>
+
+                    @*BBPS*@
+                    <td>@item.LMBBPS</td>
+                    <td>@item.LMTDBBPS</td>
+                    <td>@item.TargetBBPS</td>
+                    <td>@item.MTDBBPS</td>
+                    <td>@item.TOLMBBPS</td>
+                    <td>@item.TOLMTDBBPS</td>
+                    <td>@item.TOMTDBBPS</td>
+                    <td>@item.GrowthBBPS</td>
+                    <td>@item.AchGrowthBBPS</td>
+
+                    @*AEPS*@
+                    <td>@item.LMAEPS</td>
+                    <td>@item.LMTDAEPS</td>
+                    <td>@item.TargetAEPS</td>
+                    <td>@item.MTDAEPS</td>
+                    <td>@item.TOLMAEPS</td>
+                    <td>@item.TOLMTDAEPS</td>
+                    <td>@item.TOMTDAEPS</td>
+                    <td>@item.GrowthAEPS</td>
+                    <td>@item.AchGrowthAEPS</td>
+
+                    @*<td>@item.TransactionDate</td>
+                    <td>@item.EntryDate</td>*@
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}
+
+
+
+else
+{
+    <div class="col-sm-12 text-danger text-monospace">No Data Found</div>
+}
+

@@ -1,0 +1,42 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Model;
+@using RoundpayFinTech.AppCode.Model.ProcModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    LoginResponse  _model = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+}
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ResponseStatus>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Upline List</h3>
+    <div class="table-responsive">
+        <table class="table" id="tblBankMaster">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col">Role</th>
+                    <th scope="col">Outlet Name</th>
+                    <th scope="col">Mobile No</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    if (item.CommonInt == _model.UserID && _model.RoleID!=Role.Admin)
+                    {
+                        break;
+                    }
+                        <tr>
+                            <td scope="col">@item.Msg</td>
+                            <td scope="col">@item.CommonStr</td>
+                            <td scope="col">@item.CommonStr2</td>
+                        </tr>
+                    }
+            </tbody>
+        </table>
+    </div>
+</div>
+

@@ -1,0 +1,185 @@
+﻿@{
+    ViewData["Title"] = "DTH Channel Category";
+}
+<style>
+    td .dropdown-menu.show {
+        background: rgba(0,0,0,0.8) !important;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white" style="line-height:35px;">
+                        <span><i class="fas fa-link"></i> @ViewData["Title"]</span>
+                        <div class="col-sm-1 float-right">
+                            <button class="btn btn-sm btn-outline-light" id="btnNew"><span class="fa fa-plus"></span> New</button>
+                        </div>
+                        <div class="col-md-4 col-sm-4 col-xs-4 float-right">
+                            <input id="txtSearch" class="form-control" placeholder="Search" />
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblCategory">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:5%">#</th>
+                                        <th style="width:10%">Action Menu</th>
+                                        <th>Category</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+    <script>
+        var _Package = []; var preOperator; var objArray = {};
+        $(document).ready(function () {
+            _loadGrid();
+            $('#btnNew').click(function () {
+                _loadPackageById(0);
+            });
+            $('#txtSearch').focus();
+            $("#txtSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('#tblCategory tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        })
+
+        var _loadGrid = function () {
+            preloader.load();
+            $.post('/_DTHChannelCategory', { id: 0 })
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('.Edit').on('click', function () {
+                        _loadPackageById($(this).closest('tr').data().packageId)
+                    })
+                    $('.Delete').on('click', function () {
+                        _deletePackage($(this).closest('tr').data().packageId)
+                    })
+                })
+                .fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                })
+        }
+
+        var _loadPackageById = function (_id) {
+            preloader.load();
+            $.post('/_DTHChannelCategoryByID', { id: _id })
+                .done(function (result) {
+                    mdlA.id = 'PackageModal';
+                    mdlA.content = result;
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+
+                    $('#ddlOpTypes').on('change', function () {
+                        _bindOperators();
+                    })
+                    $('#btnSave').on('click', function () {
+                        _SavePackage();
+                    })
+
+                    $('#chkMore').click(function () {
+                        if ($(this).is(':checked')) {
+                            AddToArray();
+                        }
+                    });
+
+                    $('#txtPackageMRP').change(function () {
+                        if ($('#chkMore').is(':checked') && preOperator != $('#ddlOperator').val()) {
+                            AddToArray();
+                        }
+                    })
+
+
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                })
+        }
+
+        var _SavePackage = function () {
+            preloader.load();
+            var param = {};
+            param = {
+                ID: $('#txtID').val(),
+                Category: $('#txtCategory').val(),
+            };
+            $.post('/Save-DTHChannel-Category', param = param)
+                .done(function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == an.type.success) {
+                        mdlA.dispose();
+                        _loadGrid();
+                        _Package = [];
+                    }
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                    _Package = [];
+                })
+        }
+
+        var _deletePackage = function (_id) {
+            preloader.load();
+            var param = {
+                ID: _id,
+                Del: true
+            }
+            $.post('/Save-DTHChannel-Category', param = param)
+                .done(function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    mdlA.dispose();
+                    _loadGrid();
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                })
+        }
+    </script>
+}

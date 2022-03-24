@@ -1,0 +1,205 @@
+﻿@using Fintech.AppCode.StaticModel;
+@{
+    ViewData["Title"] = "Aggrement Approval";
+
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-file-invoice"></i> Aggrement Approval
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="3500">3500</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        <option value="@Criteria.UserID">UserID</option>
+                                        <option value="@Criteria.OutletMobile">Outlet Mobile</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <span id="btnSearch" tabindex="8" class="btn btn-outline-dark"><i class="fa fa-search"></i></span>
+                                            <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                        </div>
+                                    </div>
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive vh-2">
+                            <table class="table table-bordered" id="tblAgrApp">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th style="width:10%;" class="text-center">Mobile No</th>
+                                        <th class="text-center">Outlet Name</th>
+                                        <th class="text-center">Email</th>
+                                        <th class="text-center">PAN</th>
+                                        <th class="text-center">AADHAR</th>
+                                        <th class="text-center">Agreement Remark</th>
+                                        <th class="text-center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('#btnSearch').click();
+        });
+        $('#ddlCriteria').change(function () {
+            $('label[for=txtSearch]').html("Select Criteria");
+            if ($(this)[0].selectedIndex > 0) {
+                $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+            }
+        });
+        $("#btnSearch,#btnExport").click(function () {
+            search(this);
+        });
+        var search = function (sender) {
+            var ULedgerReportFilter =
+            {
+                TopRows: $("#ddlTop").val().trim(),
+                SearchType: $("#ddlCriteria").val(),
+                Search: $("#txtSearch").val()
+            };
+            preloader.load();
+            if (sender.id.indexOf('Export') > -1 || parseInt(ULedgerReportFilter.TopRows) > 4000) {
+                window.location = "/aggr-appr?" + $.param(ULedgerReportFilter);
+                preloader.remove();
+            }
+            else {
+                preloader.load();
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.ajax({
+                    type: 'POST',
+                    url: '/aggr-appr',
+                    contentType: 'application/json',
+                    data: JSON.stringify(ULedgerReportFilter),
+                    success: function (result) {
+                        $('#tblAgrApp tbody').html(result);
+                        $('[id^=Approve_]').on('click', function () {
+                            preloader.load();
+                            outletName = $(this).closest('tr').find('[id^=txtOutletName_]').val();
+                            email = $(this).closest('tr').find('[id^=txtEmail_]').val();
+                            pan = $(this).closest('tr').find('[id^=txtPAN_]').val();
+                            aadhar = $(this).closest('tr').find('[id^=txtAADHAR_]').val();
+                            remark = $(this).closest('tr').find('[id^=txtRemark_]').val();
+                            
+                            if (outletName == "" || email == "" || pan == "" || aadhar == "" || remark == "" ) {
+                                an.title = 'Oops! ';
+                                an.content = 'Please Fill All Records.';
+                                an.alert(an.type.failed);
+                                an.autoClose = 2;
+                                return false;
+                            }
+
+                            $.post('/update-aggr-appr', { UserID: $(this).data().uid, OutletName: outletName, Email: email, PAN: pan, AADHAR: aadhar, AgreementRemark: remark })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == an.type.success)
+                                        $('#btnSearch').click();
+                                }).catch(function (xhr, ex, message) {
+                                    an.title = 'Oops';
+                                    an.content = message;
+                                    an.alert(an.type.failed);
+                                    an.autoClose = 2;
+                                }).fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                }).always(function () {
+                                    preloader.remove();
+                                });
+                        });
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                        if (result === 'parsererror') {
+                            reload();
+                        }
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    }
+                });
+            }
+        };
+        
+        
+    </script>
+}

@@ -1,0 +1,285 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Model;
+@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using RoundpayFinTech.AppCode;
+@model bool
+@{
+    ViewData["Title"] = "Wallet Request History";
+}
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    var userML = new UserML(_lr);
+    var IsChannel = (_lr.RoleID == Role.Admin && _lr.LoginTypeID == LoginType.ApplicationUser || userML.IsCustomerCareAuthorised(ActionCodes.AddEditSLAB)) || !_lr.IsAdminDefined;
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="mb-1">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-1">
+                                    <label class="lbl" for="ddlStatus">Choose Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="1">REQUESTED</option>
+                                        <option value="2">ACCEPTED</option>
+                                        <option value="3">REJECTED</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2 pr-1 pl-1">
+                                <div class="mb-1">
+                                    <label class="lbl" for="dtFromDate">Approved On</label>
+                                    <input aria-describedby="dtApproveDate" class="form-control" id="dtApproveDate" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            @*<div class="col-md-2 col-sm-2 col-xs-2">
+            <div class="mb-1">
+                <label class="lbl" for="dtFromDate">Date of Request from</label>
+                <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                <small id="Small3" class="form-text text-muted d-none"></small>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-2">
+            <div class="mb-1" id="asdf">
+                <label class="lbl" for="dtToDate">Date of Request To</label>
+                <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                <small id="Small4" class="form-text text-muted d-none"></small>
+            </div>
+        </div>*@
+                            @{
+                                var ModeList = new SelectList(ViewBag.TransModes, "OID", "Name");
+                            }
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-1">
+                                    <label class="lbl" for="ddlAPI">Choose Mode</label>
+                                    <select id="ddlMode" tabindex="7" class="form-control" asp-items="@ModeList">
+                                        <option value="0">:: Select Mode :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            @if (_lr.RoleID == Role.Admin)
+                            {
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-1">
+                                        <label class="lbl" for="txtMobileNo">Outlet Mobile No</label>
+                                        <input aria-describedby="txtMobileNo" class="form-control" id="txtMobileNo" name="txtMobileNo" placeholder="Enter Mobile No." tabindex="9" type="text" value="">
+                                        <small id="txtMobileNo" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-1">
+                                    <label class="lbl" for="txtTransactionId">Transaction Id</label>
+                                    <input aria-describedby="txtTransactionId" class="form-control" id="txtTransactionId" name="txtTransactionId" placeholder="Enter Transaction Id." tabindex="9" type="text" value="">
+                                    <small id="txtTransactionId" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <label class="lbl text-white" for="btnSearch">Search Action</label>
+                                    <div class="input-group">
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="10" class="btn btn-dark">Search</button>
+                                            @if (_lr.RoleID == Role.Admin)
+                                            {
+                                                <span class="btn btn-outline-success pt-2" id="btnExport">Get Settlement</span>
+                                                <span class="btn btn-outline-success pt-2" id="btnBeneficiery">Get Beneficiery </span>
+                                            }
+                                        </div>
+                                    </div>
+
+                                </div>
+                         
+                        </div>
+                        <div class="table-responsive table-sm table-mh vh-2">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblFR">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th>TransactionId</th>
+                                        @if (_lr.RoleID == Role.Admin)
+                                        {
+                                            <th>TID</th>
+                                        }
+                                        <th class="text-nowrap">Bank RRN</th>
+                                        <th>Outlet</th>
+                                        <th>Bank</th>
+                                        <th>AccountHolder</th>
+                                        <th class="text-nowrap">Transfer Mode</th>
+                                        <th class="text-right text-nowrap">Requested Amount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th class="text-nowrap">Transaction Charges</th>
+                                        <th>RequestDate</th>
+                                        <th>Status</th>
+                                        <th>Remark</th>
+                                        <th class="text-nowrap">Approval Date</th>
+                                        <th class="text-nowrap">Group</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            DTPicker($('#dtApproveDate'), new Date().toDateString(), function () { }, function () { });
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            $('#btnSearch,#btnExport,#btnBeneficiery').click(e => search(e.currentTarget));
+            $('#btnSearch').click();
+        });
+        var search = function (sender) {
+            var param = {
+                FDate: $('#dtFromDate').val(), TDate: $('#dtToDate').val(), CommonInt3: $('#ddlMode').val(), CommonInt: parseInt($('#ddlStatus').val()), CommonInt2: $('#ddlTop').val(), Mobile: $('#txtMobileNo').val(), TransactionId: $('#txtTransactionId').val(), ApprovalDate: $('#dtApproveDate').val()
+            };
+            if (sender.id.indexOf('Export') > -1) {
+                _cWin(param);
+                //window.location = 'Wallet-Request-Report?' + $.param(param)
+            }
+            else if (sender.id.indexOf('Beneficiery') > -1) {
+                window.location = 'Wallet-Bene-List?' + $.param(param)
+            }
+            else {
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                preloader.load();
+                $.post('/Wallet-Request-Report', param)
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#tblFR tbody').html(result);
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                        btnLdr.Stop($('#btnSearch'));
+                    });
+            }
+        };
+
+        var _cWin = param => {
+            console.log(param.ApprovalDate);
+            $.get('/Approval-Group', { CommonStr: param.ApprovalDate }).done(result => {
+                mdlA.id = "cWin";
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.default);
+                $('button.close').unbind().click(() => mdlA.dispose());
+                $('.btnDownload').unbind().click(e => {
+                    param.ShowGroupID = $(e.currentTarget).closest('tr').find('td:eq(0)').text();
+                    param.GroupID = $(e.currentTarget).data().groupId;
+                    window.location = 'Wallet-Request-Report?' + $.param(param)
+                })
+            });
+        }
+    </script>
+}
+

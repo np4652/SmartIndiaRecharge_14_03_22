@@ -1,0 +1,24 @@
+﻿@model Fintech.AppCode.Model.Reports.AccountSummary
+@{
+    var Type = Model.Commission < 1 ? "Dr." : "Cr.";
+    var cls = Model.Closing < 0 ? "text-danger" :"text-success";
+ }
+<table class="table table-hover table-responsive-sm mb-0" id="asum">
+    <thead class="shadow">
+        <tr>
+            <th class="text-right border-right text-muted" scope="col">Opening</th>
+            <th class="text-right border-right text-muted" scope="col">Sales</th>
+            <th class="text-right border-right text-muted" scope="col">Collection</th>
+            <th class="text-right border-right text-muted" scope="col">Closing</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th class="text-right border-right @cls" scope="row">  @Model.Opening</th>
+            <th class="text-right border-right text-success" scope="row">  @Model.Sales</th>
+            <th class="text-right border-right text-success" scope="row">  @Model.CCollection</th>
+            <th class="text-right border-right @cls" scope="row">  @Model.Closing (@Type)</th>
+        </tr>
+    </tbody>
+</table>

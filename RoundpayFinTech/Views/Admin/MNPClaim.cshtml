@@ -1,0 +1,158 @@
+﻿@model string
+
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> MNP Claim List</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">MNP Claim List</li>
+        </ol>
+    </div>
+</div>
+
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> MNP Claim List
+                    </div>
+                    <div class="card-body" style="">
+
+
+                        <input type="hidden" id="hftype" value="@Model" />
+                        <input type="hidden" id="hfCurrentID" />
+                        <div class="table-responsive" id="divPartnerList">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/js/datepickerHelper.js"></script>
+    <script>
+        var statuscode = { SUCCESS: 1, ERROR: -1, INFO: 2 }
+        var status = false;
+        if ($("#hftype").val() == 'MnpClaim') {
+            status = true;
+        }
+        var pends;
+        $(document).ready(function () {
+            an.autoClose = 5;
+            pends = function () {
+                preloader.load();
+                $.post('/MNPClaim', { s: '@Model' })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#divPartnerList').html(result);
+                        $(".dropdown-toggle").dropdown();
+
+                        var ct = { btnReject: $('#btnReject'), txtUserName: $('#txtxusername'), txtPassword: $('#txtpassword') }
+
+                        ct.btnReject.click(function () {
+                            alert('tests')
+
+                                });
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            pends();
+            $('#btnSearch').click(function () {
+                pends();
+            });
+        });
+        function ViewData(ID) {
+            $("#hfCurrentID").val(ID);
+            $.post('/MNPClaimByID', { id: ID }, function (result) {
+                mdlA.id = 'mdlMsgbx';
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.xlarge);
+                $('#btnClose').click(function () {
+                    mdlA.dispose();
+                });
+            });
+        }
+        function UpdateStatus(status) {
+            var Remark = $('#txtRemark').val();
+            var Amount = $('#txtAmount').val();
+            var FRCDate = $('#dtFRCDate').val();
+            var FRCDemoNo = $('#txtFRCDemoNo').val();
+            var FRCType = $('#txtFRCType').val();
+            var FRCDoneDate = $('#dtFRCDoneDate').val();
+
+            if (status == 2)
+            {
+                  var IsE = {
+                txtAmount: ($('#txtAmount').val() === null || !$v.$numOnly($('#txtAmount').val())),
+                txtRemark: ($('#txtRemark').val() === null || $('#txtRemark').val() === ''),
+                txtFRCDemoNo: ($('#txtFRCDemoNo').val() === null || !$v.$numOnly($('#txtFRCDemoNo').val())),
+                txtFRCType: ($('#txtFRCType').val() === null || !$v.$numOnly($('#txtFRCType').val())),
+                
+                     }
+                 $v.showErrorFor($('#txtAmount'), 'Amount is  numeric mandatory field', IsE.txtAmount);
+                $v.showErrorFor($('#txtRemark'), 'Remark is mandatory field', IsE.txtRemark);
+                $v.showErrorFor($('#txtFRCDemoNo'), 'FRC Demo is  numeric mandatory field', IsE.txtFRCDemoNo);
+                $v.showErrorFor($('#txtFRCType'), 'FRC Type is  numeric mandatory field', IsE.txtFRCType);
+
+                IsE.err = (IsE.txtAmount || IsE.txtRemark || IsE.txtFRCDemoNo || IsE.txtFRCType);
+                                    if (IsE.err) {
+                                        return false;
+                                    }
+            }
+            if (status == 3)
+            {
+                  var IsE = {
+                txtAmount: ($('#txtAmount').val() === null || !$v.$numOnly($('#txtAmount').val())),
+                txtRemark : ($('#txtRemark').val() === null || $('#txtRemark').val() === '' )
+                     }
+                 $v.showErrorFor($('#txtAmount'), 'Amount is  numeric mandatory field', IsE.txtAmount);
+                 $v.showErrorFor($('#txtRemark'), 'Remark is mandatory field', IsE.txtRemark);
+
+                      IsE.err = (IsE.txtAmount || IsE.txtRemark );
+                                    if (IsE.err) {
+
+                                        return false;
+                                    }
+            }
+
+          
+
+            $.post('/UpdateClaimMNPStatus', { ID: $("#hfCurrentID").val(), status:status ,Amount:Amount  ,Remark:Remark , FRCDate: FRCDate , FRCDemoNo: FRCDemoNo , FRCType: FRCType , FRCDoneDate: FRCDoneDate }, function (result) {
+                if (result.statuscode == 1) {
+                    mdlA.dispose();
+                    an.content = result.msg;
+                    an.alert(result.msg);
+                    an.autoClose = 5;
+                    pends();
+                }
+            })
+        }
+
+    </script>
+}

@@ -1,0 +1,65 @@
+﻿@model RoundpayFinTech.AppCode.Model.MasterVendorModel
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">@Html.Raw(Model.ID == 0 ? "Create New Vendor" : "Update Vendor")</h5><hr />
+        <input type="hidden" id="hfdID" value="@Model.ID" />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="lbl" for="txtName">Vendor Name</label>
+                    <input type="text" class="form-control " id="txtName" placeholder="Enter Vendor Name" aria_describedby="nameHelp" value="@Model.VendorName" />
+                    <small id="nameHelp" class="form-text text-muted d-none">Vendor Name is mandatory</small>
+                </div>
+                <div class="col-md-12">
+                    <label class="lbl" for="txtRemark">Description</label>
+                    <input type="text" class="form-control " id="txtRemark" placeholder="Enter additional description" value="@Model.Remark" />
+                </div>
+            </div>
+            </div>
+        <button type="button" class="btn btn-dark" id="btnCreate">@Html.Raw(Model.ID == 0 ? "Create" : "Update")</button>
+    </div>
+</div>
+<script>
+    $('#btnCreate').click(function () {
+        if ($('#txtName').val().trim() == "") {
+            an.title = 'Oops';
+            an.content = 'Vendor name required';
+            an.alert(an.type.warning);
+            return;
+        }
+        preloader.load();
+        let param = {
+            ID: @Model.ID,
+            VendorName: $('#txtName').val(),
+            Remark: $('#txtRemark').val()
+        }
+        $.post('/MasterVendorCUP', param)
+            .done(function (result) {
+                if (result.statuscode == 1) {
+                    an.title = 'Success';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                    _load();
+                } else {
+                    an.title = 'Oops';
+                    an.content = 'Record update failed. Try again.';
+                    an.alert(an.type.failed);
+                }
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });
+
+</script>

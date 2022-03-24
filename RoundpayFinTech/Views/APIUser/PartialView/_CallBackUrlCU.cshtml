@@ -1,0 +1,62 @@
+﻿@model RoundpayFinTech.AppCode.Model.UserCallBackModel
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3><small class="text-muted">Call Back Url</small></h3>
+    </div>
+    <div class="col-4 mt-3">
+        <div class="mb-3">
+            <h5>Replacement Values</h5>
+            <small class="text-uppercase text-monospace">Click on <i class="far fa-clone" data-toggle="tooltip" data-placement="top" title="COPY"></i> button to copy</small>
+        </div>
+        <div id="div_replacements"></div>
+    </div>
+
+    <div class="col-8">
+        <div class="form-group">
+            <label class="lbl">Call Back Type</label>
+            <select id="ddltype" aria-describedby="nameHelpddltype" tabindex="5" class="custom-select custom-select-md mb3">
+                <option value="0-zero">:: Choose Callback Type ::</option>
+                @foreach (var item in Model.CallBackTypeList)
+                {
+                    if (Model.CallbackType == item.ID)
+                    {
+                        <option value="@item.ID-@item.Parameters" selected="selected">@item.Type</option>
+                    }
+                    else
+                    {
+                        <option value="@item.ID-@item.Parameters">@item.Type</option>
+                    }
+                }
+            </select>
+            <small id="nameHelpddltype" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <label class="lbl">Call Back URL</label>
+            <textarea id="txturl" aria-describedby="urlhelp" class="form-control">@Model.URL</textarea>
+            <small id="urlhelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group @(Model.CallbackType == 3 ? "" : "d-none")" id="dv_UpdateURL">
+            <label class="lbl">Update URL</label>
+            <textarea id="txtUpdateurl" aria-describedby="updateUrlhelp" class="form-control">@Model.UpdateUrl</textarea>
+            <small id="updateUrlhelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <span id="lblparam" class="form-text text-dark"></span>
+        </div>
+        <div class="form-group">
+            <label class="lbl">Remark</label>
+            <textarea id="txtremark" aria-describedby="remarkHelp" class="form-control">@Model.Remark</textarea>
+            <small id="remarkHelp" class="form-text text-muted"></small>
+        </div>
+        <button class="btn btn-outline-dark" id="btnCallBack">Save</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+
+    </div>
+
+</div>
+<script>
+    
+</script>

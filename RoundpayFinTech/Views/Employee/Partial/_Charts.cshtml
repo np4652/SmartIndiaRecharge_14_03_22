@@ -1,0 +1,148 @@
+﻿<style>
+    [aria-labelledby="id-66-title"] {
+        display: none !important;
+    }
+
+    .highcharts-button, .highcharts-title, .highcharts-subtitle {
+        display: none !important;
+    }
+</style>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            <div id="divLastdayVsTodayChart"></div>
+        </div>
+        <div class="col-sm-12">
+            <div id="chartdiv"></div>
+        </div>
+        <div class="col-sm-12">
+            <div id="divComparisionChart"></div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="~/lib/jquery/dist/popper.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/dist/dropdown.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/dist/tooltip.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/dist/popover.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/dist/util.min.js"></script>
+<script src="~/lib/bootstrap/dist/js/dist/alert.min.js"></script>
+<script src="~/lib/jquery/dist/moment.min.js"></script>
+<script src="~/js/validator.min.js"></script>
+<script src="~/js/site.min.js" asp-append-version="true"></script>
+<script src="~/js/EmpUtility.js" asp-append-version="true"></script>
+<script src="~/js/chart/highcharts.js"></script>
+<script src="~/js/chart/exporting.js"></script>
+<script src="~/js/chart/armchart/core.js"></script>
+<script src="~/js/chart/armchart/charts.js"></script>
+<script src="~/js/chart/armchart/animated.js"></script>
+<script src="~/js/serviceworker.js"></script>
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('/sw.js').then(function (registration) {
+                // Registration was successful
+                console.log('ServiceWorker registration successful with scope: ', registration.scope);
+            }, function (err) {
+                // registration failed :(
+                console.log('ServiceWorker registration failed: ', err);
+            });
+        });
+    }
+
+    let data = getQueryString();
+
+    if (data !== undefined && data.chartType === '1') {
+        if (sessionStorage.getItem("dataForCommitment")) {
+            var result = JSON.parse(sessionStorage.getItem("dataForCommitment"));
+            am4core.useTheme(am4themes_animated);
+            let chart = am4core.create("chartdiv", am4charts.PieChart3D);
+            chart.hiddenState.properties.opacity = 1;
+            chart.data = result;
+            let series = chart.series.push(new am4charts.PieSeries3D());
+            series.dataFields.value = "amount";
+            series.dataFields.category = "service";
+        }
+        else {
+            $.post('App/CommitmentSummarychart', { UserID: data.UserID })
+                .done(result => {
+                    sessionStorage.setItem('dataForCommitment', JSON.stringify(result))
+                    am4core.useTheme(am4themes_animated);
+                    let chart = am4core.create("chartdiv", am4charts.PieChart3D);
+                    chart.hiddenState.properties.opacity = 1;
+                    chart.data = result;
+                    let series = chart.series.push(new am4charts.PieSeries3D());
+                    series.dataFields.value = "amount";
+                    series.dataFields.category = "service";
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        $('.highcharts-button,.highcharts-title,.highcharts-subtitle').remove();
+    }
+
+    if (data !== undefined && data.chartType === '2') {
+        if (sessionStorage.getItem("LastdayVsTodayData")) {
+            var result = JSON.parse(sessionStorage.getItem("LastdayVsTodayData"));
+            console.log(result)
+            let _Type = [], _lastdayData = [], _todayData = [];
+            _Type = result.map(e => e.type);
+            _lastdayData = result.map(e => e.lastDay);
+            _todayData = result.map(e => e.today);
+            Q.LastdayVsTodayChart(_Type, _lastdayData, _todayData);
+        }
+        else {
+            $.post('App/LastdayVsTodayData', { UserID: data.UserID })
+                .done(result => {
+                    console.log(result)
+                    let _Type = [], _lastdayData = [], _todayData = [];
+                    _Type = result.map(e => e.type);
+                    _lastdayData = result.map(e => e.lastDay);
+                    _todayData = result.map(e => e.today);
+                    Q.LastdayVsTodayChart(_Type, _lastdayData, _todayData);
+                    sessionStorage.setItem('LastdayVsTodayData', JSON.stringify(result))
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        $('.highcharts-button,.highcharts-title,.highcharts-subtitle').remove();
+    }
+    if (data !== undefined && data.chartType === '3') {
+        if (sessionStorage.getItem("ComparisionChart")) {
+            var result = JSON.parse(sessionStorage.getItem("ComparisionChart"));
+            let _Type = [], _lm = [], _lmtd = [], _mtd = [];
+            _Type.push(result.map(e => e.type));
+            _lm.push(result.map(e => e.lm));
+            _lmtd.push(result.map(e => e.lmtd));
+            _mtd.push(result.map(e => e.mtd));
+            Q.ComparisionChart(_Type, _lm, _lmtd, _mtd);
+        }
+        else {
+            $.post('App/ComparisionChart', { UserID: data.UserID })
+                .done(result => {
+                    $('#divComparision').empty().append('<table class="table table-hover">').find('table')
+                        .append('<thead class="bg-tableth"><tr><th>Type</th><th>LM</th><th>LMTD</th><th>MTD</th><th>Growth</th></tr></thead>')
+                        .append(result.map(e => `<tr><td>${e.type}</td><td>${e.lm}</td><td>${e.lmtd}</td><td>${e.mtd}</td><td>${e.growth}%</td></tr>`));
+                    let _Type = [], _lm = [], _lmtd = [], _mtd = [];
+                    _Type.push(result.map(e => e.type));
+                    _lm.push(result.map(e => e.lm));
+                    _lmtd.push(result.map(e => e.lmtd));
+                    _mtd.push(result.map(e => e.mtd));
+                    Q.ComparisionChart(_Type, _lm, _lmtd, _mtd);
+                    sessionStorage.setItem('ComparisionChart', JSON.stringify(result))
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        $('.highcharts-button,.highcharts-title,.highcharts-subtitle').remove();
+    }
+</script>
+

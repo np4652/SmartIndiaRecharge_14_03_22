@@ -1,0 +1,98 @@
+﻿@model RoundpayFinTech.AppCode.Model.MPosDeviceInventoryModel
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Assign MPOS Device</h5><hr />
+        <input type="hidden" id="hfdID" value="@Model.ID" />
+    </div>
+    <div class="col-md-12">
+        <div class="form-group">
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="lbl" for="txtSrNo">Device Serial No.</label>
+                    <label type="lbl" class="form-control " id="txtSrNo">@Model.DeviceSerial</label>
+                </div>
+                <div class="col-md-12">
+                    <label class="lbl" for="txtSrNo">Assign To</label>
+                    <input type="text" class="form-control " id="txtUser" placeholder="Enter User Id" aria_describedby="nameHelp" value="@Model.UserId" />
+                    <small id="nameHelp" class="form-text text-muted d-none">UserId is mandatory</small>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-dark" id="btnCreate">@Html.Raw(Model.UserId == 0 ? "Map" : "Assign")</button>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+
+    });
+
+    $('#btnCreate').click(function () {
+        if ($('#txtUser').val().toString().trim() != '') {
+            preloader.load();
+            if (this.innerText === 'Assign') {
+                let param = {
+                    ID: @Model.ID,
+                    UserName: $('#txtUser').val()
+                }
+                $.post('/MPosDeviceAssign', param)
+                    .done(function (result) {
+                        //console.log(result);
+                        if (result.statuscode == 1) {
+                            an.title = 'Success';
+                            an.content = result.msg;
+                            an.alert(an.type.success);
+                            mdlA.dispose();
+                            _load();
+                        } else {
+                            an.title = 'Oops';
+                            an.content = result.msg;
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    })
+                    .always(() => preloader.remove());
+            }
+            else {
+                let param = {
+                    ID: @Model.ID,
+                    UserName: $('#txtUser').val()
+                }
+                $.post('/MPosDeviceMap', param)
+                    .done(function (result) {
+                        //console.log(result);
+                        if (result.statuscode == 1) {
+                            an.title = 'Success';
+                            an.content = result.msg;
+                            an.alert(an.type.success);
+                            mdlA.dispose();
+                            _load();
+                        } else {
+                            an.title = 'Oops';
+                            an.content = result.msg;
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    })
+                    .always(() => preloader.remove());
+            }
+        }
+        else {
+            an.title = 'Oops';
+            an.content = 'Enter UserId';
+            an.alert(an.type.failed);
+        }
+    });
+</script>

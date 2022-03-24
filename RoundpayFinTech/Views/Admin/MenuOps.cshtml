@@ -1,0 +1,97 @@
+﻿@{
+    ViewData["Title"] = "9c34176d6b9710399c3cf3128acc6b24";
+}
+<h2>9c34176d6b9710399c3cf3128acc6b24</h2>
+<div id="__p">
+    <div class="row mb-1">
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <input id="txt" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="9c34176d6b9710399c3cf3128acc6b24" />
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover table-sm" id="tbl">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col" style="width:5%;">#</th>
+                    <th scope="col" style="width:15%;">Menu</th>
+                    <th scope="col" style="width:80%;">Operations</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('#txt').on('change', function () {
+                var txt = $('#txt').val();
+                preloader.load();
+                $.post('/menu-op', { txt: txt })
+                    .done(function (result) {
+                        $('#tbl tbody').html(result);
+                        $('[id^=chbAPI_]').change(function () {
+                            var _this = this;
+                            var mid = $(this).closest('tr').data().itemId;
+                            var oid = this.id.split('_')[2];
+                            var ia = $(this).is(':checked');
+                            $.post('/umenu-op', { txt: txt, mid: mid, oid: oid, ia: ia })
+                                .done(function (result) {                                   
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $(_this).addClass('is-invalid');
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $(_this).addClass('is-valid');
+                                    }
+                                })
+                                .catch(function (xhr, e, m) {
+
+                                })
+                                .fail(function (xhr) {
+                                    $(this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+                    })
+                    .catch(function (xhr, e, m) {
+
+                    })
+                    .fail(function (xhr) {
+                        $(this).attr('checked', Is == false);
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            });
+        });
+    </script>
+}

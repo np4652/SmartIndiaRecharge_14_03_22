@@ -1,0 +1,47 @@
+﻿<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>DO Sender KYC</h3>
+    <div >
+        @Html.Label("txtName", "Enter Name", new { @class = "lbl" })
+        @Html.TextBox("txtName", null, new { @class = "form-control", @placeholder = "Enter Name", @aria_describedby = "txtNameH", @tabindex = 1 })
+        <small id="txtNameH" class="form-text text-muted">Name as per ID proof</small>
+    </div>
+    <div>
+        @Html.Label("txtAadhar", "Enter AADHAR Number", new { @class = "lbl" })
+        @Html.TextBox("txtAadhar", null, new { @class = "form-control ", @placeholder = "Enter AADHAR Number", @aria_describedby = "txtAadharH", @tabindex = 1 })
+        <small id="txtAadharH" class="form-text text-muted">Aadhar number is required</small>
+    </div>
+    <div>
+        <span>
+            <input type='file' id="fileAddhar1" class="d-none" />
+            <label for="fileAddhar1" class="btn btn-outline-info mt-2">Upload Front Aadhar</label>
+        </span>
+        <span>
+            <input type='file' id="fileAddhar2" class="d-none" />
+            <label for="fileAddhar2" class="btn btn-outline-info mt-2">Upload Back Aadhar</label>
+        </span>
+    </div>
+    <div>
+        <span>
+            <input type='file' id="filePic" class="d-none" />
+            <label for="filePic" class="btn btn-outline-info mt-2">Upload Sender Photo</label>
+        </span>
+    </div>
+    <div>
+        @Html.Label("txtPanNo", "Enter PAN Number", new { @class = "lbl" })
+        @Html.TextBox("txtPanNo", null, new { @class = "form-control ", @placeholder = "Enter PAN Number", @aria_describedby = "txtPanNoH", @tabindex = 1 })
+        <small id="txtPanNoH" class="form-text text-muted">PAN number is required</small>
+    </div>
+    <div class="form-group">
+        <span>
+            <input type='file' id="filePAN" class="d-none" />
+            <label for="filePAN" class="btn btn-outline-info mt-2">Upload PAN Image</label>
+        </span>
+    </div>
+    <div >
+        <button class="btn btn-outline-danger" id="btnDoKYC">DO KYC</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+</div>

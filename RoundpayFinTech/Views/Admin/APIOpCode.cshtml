@@ -1,0 +1,168 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OpTypeMaster>
+@{
+    ViewData["Title"] = "APIOpCode";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Operator Management</li>
+            <li class="breadcrumb-item active">API Operator Code</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> API Operator Code
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row mb-1 form-group">
+                            <div class="col-md-4 col-xs-4">
+                                <input id="txtSearchOp" class="form-control text-left" placeholder="Search Operator" />
+                            </div>
+                            <div class="col-md-3 col-xs-3">
+                                @{
+                                    var Oplist = new SelectList(Model, "ID", "OpType");
+                                    var OPTypeID = OPTypes.Prepaid;
+                                }
+                                <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID"></select>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col" style="width:15%;">Operator</th>
+                                        <th scope="col" style="width:85%;">API List</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            preloader.load();
+            an.autoClose = 5;     
+            _loadPartial();
+            $('#ddlOType').change(function () {
+                _loadPartial();
+            })
+        });
+
+        var _loadPartial = function () {
+            preloader.load();
+              $.post('/API-OpCode', {OpTypeID:$('#ddlOType').val()})
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    setTimeout(function () {
+                        $('#txtSearchOp').focus();
+                        $("#txtSearchOp").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblAPIOpCode tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    var fieldName = $(this).attr('id');
+                    $('input[id^=txtOp_],input[id^=txtBillOp_]').on('change', function () {
+                        preloader.load();
+                        var opID = $(this).closest('tr').data().itemId;
+                        var suffix = $(this).attr('id').replace('txtOp_', '').replace('txtBillOp_', '');
+                        var oprCode = $('#txtOp_' + suffix).val(), billOprCode = $('#txtBillOp_' + suffix).val();
+                        var fieldName = $(this).attr('id');
+                        var hidapiID = $('#' + fieldName.replace('txtOp', 'hidOp').replace('txtBillOp', 'hidOp'));
+                        var apiID = fieldName.split('_')[2];
+                        if (oprCode == '') {
+                            preloader.remove();
+                            return false;
+                        }
+                        var IsE = { opcode: oprCode.length > 100 }
+                        $v.showErrorFor($(this), 'Exceed max length 100!', IsE.opcode);
+                        IsE.err = (IsE.opcode)
+                        if (IsE.err) {
+                            preloader.remove();
+                            return false;
+                        }
+                        //if (oprCode === hidapiID.val()) {
+                        //    preloader.remove();
+                        //    return true;
+                        //}
+                        var APIOpCode = { OID: opID, APIID: apiID, OpCode: oprCode, BillOpCode: billOprCode }
+                        $.ajax({
+                            type: 'POST',
+                            url: '/API-Op-Code',
+                            data: JSON.stringify(APIOpCode),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    hidapiID.val(oprCode);
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (xhr, result) {
+                                an.title = "Oops";
+                                an.content = result;
+                                an.alert(an.type.failed);
+                                if (result === 'parsererror') {
+                                    reload();
+                                }
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+                    });
+                })
+                .catch(function () {
+                })
+                .fail(function () {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+}
+

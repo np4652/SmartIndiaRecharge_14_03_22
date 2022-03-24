@@ -1,0 +1,24 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.DTHChannelCategory
+@{
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="mb-3 text-info">DTH Channel Category</h5><hr />
+    </div>
+    <div class="col-sm-12">
+        <input type="hidden" id="txtID" value="@(Model!=null?Model.ID:0)" />
+        <div class="form-group">
+            <label>Category Name</label>
+            <input type="text" class="form-control" id="txtCategory" value="@(Model!=null ?Model.Category:"")" />
+        </div>
+        <div class="form-group">         
+            <button class="btn btn-outline-success" id="btnSave">SAVE</button>
+        </div>
+    </div>
+</div>
+

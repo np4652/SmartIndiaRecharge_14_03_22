@@ -1,0 +1,422 @@
+﻿@using  Fintech.AppCode.StaticModel;
+@model int
+@{
+    ViewData["Title"] = "Fund Order";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Fund Order</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Fund Order
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive table-sm tblrecord">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblFA">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th>Action</th>
+                                        <th>User</th>
+                                        @if (Model == Role.Admin)
+                                        {
+                                            <th>Role</th>
+                                        }
+                                        <th>Bank</th>
+                                        <th>AccountHolder</th>
+                                        <th>Mode</th>
+                                        <th>TransID</th>
+                                        <th>MobileNo</th>
+                                        <th>ChequeNo</th>
+                                        <th>CardNumber</th>
+                                        <th>EntryDate</th>
+                                        <th class="text-right text-nowrap">Amount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        @if (Model != Role.Admin)
+                                        {
+                                            <th>Status</th>
+                                        }
+                                        <th>Attachmnet</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            search();
+        });
+        var search = function () {
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/Fund-Report-Approval',
+                data: {},
+                contentType: 'application/json',
+                success: function (result) {
+                    $('#tblFA tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('tr div.dropdown-menu a.dropdowntransfer').click(function () {
+                        preloader.load();
+                        var pid = $(this).attr("name");
+                        var commsn = $($(this).closest('tr').find('td')[7]).find('[type="hidden"]').val();
+                        $.post('/F-T', { pid }, function (result) {
+                            $('#' + an.id).remove();
+                            mdlA.id = 'mymodal';
+                            mdlA.content = result;
+
+                            mdlA.options.backdrop = 'static';
+                            mdlA.options.keyboard = false;
+                            mdlA.alert(mdlA.size.default);
+
+                            var amt = $('#txtAmount');
+                            var comm = $('#txtCommission');
+                            if (comm.val() == 0)
+                                comm.val(commsn);
+                            var amtCom = $('#txtAmount,#txtCommission');
+                            var ttl = amt.val() == '' ? 0 : amt.val();
+                            setTimeout(function () {
+                                amt.focus();
+                            }, 350);
+                            var tamt = $('#spnRup');
+                            if (!$v.$IsNum(amt.val())) {
+                                amt.val(0);
+                            }
+                            var am = parseInt(amt.val());
+                            amt.val(am);
+                            if ($('#btnBType').data().isadminflat == "True") {
+                                tamt.text(amt.val());
+                                return true;
+                            }
+                            var cm = comm.val();
+                            try {
+                                cm = cm.split('.').length - 1 > 1 ? parseFloat(cm) : cm;
+                                if (cm.split('.').length - 1 == 1) {
+                                    cm = cm.split('.')[0] == '' ? 0 + cm : cm;
+                                    cm = cm.split('.')[1] == '' ? cm + 0 : cm;
+                                    cm = $v.$numOnly(cm.split('.')[0]) + '.' + $v.$numOnly(cm.split('.')[1]);
+                                    cm = cm;
+                                } else {
+                                    cm = $v.$numOnly(parseInt(cm));
+                                }
+                            } catch (e) {
+
+                            }
+                            cm = cm == '' || cm == null ? '0' : cm;
+                            comm.val(cm);
+                            ttl = (parseFloat(cm) !== 0 ? (am + (am * parseFloat(cm) / 100)) : am);
+                            tamt.text(ttl);
+                            var oType = 0;
+                            var wt = 1;
+                            var remk = $('#txtRemark').val();
+                            var stk = $('#txtSecKey');
+                            var btnT = $('#bT');
+                            var btnTxt = btnT.html();
+                            $("#btnGroup").hide();
+                            $("#btnGroup").parent("div").children("h3").html("Fund Transfer");
+                            $('.btn-toggle').click(function () {
+                                $(this).find('.btn').toggleClass('active');
+                                if ($(this).find('.btn-dark').length > 0) {
+                                    $(this).find('.btn').toggleClass('btn-dark');
+                                }
+                                if ($(this).find('.btn-outline-dark').length > 0) {
+                                    $(this).find('.btn').toggleClass('btn-outline-dark');
+                                }
+                                amt.focus();
+                                if ($('#btnGroup.btn-toggle').find('.btn.active').text() === 'Credit') {
+                                    comm.removeAttr('disabled').val(0);
+                                    $('#spnT').html('Transferable');
+                                    btnT.html('Transfer');
+                                    oType = 0;
+                                } else {
+                                    oType = 1;
+                                    btnT.html('Deduct');
+                                    comm.attr('disabled', 'true').val(0);
+                                    $('#spnT').html('Deductible');
+                                }
+                                btnTxt = btnT.html();
+                            });
+
+                            $('button.close span,#mdlCancel').click(function () {
+                                mdlA.dispose();
+                            });
+                            an.autoClose = 5;
+                            btnT.click(function () {
+                                if (btnTxt !== btnT.html())
+                                    return false;
+
+                                btnLdr.addClass = 'btn-dark';
+                                btnLdr.removeClass = 'btn-outline-dark';
+                                btnLdr.Start(btnT, 'Tranfering...');
+                                var cte = {
+                                    userid: $("#spnUserId"),
+                                    amount: $("#txtAmount"),
+                                    remark: $("#txtRemark")
+                                }
+                                var Utrno = $('#txtUTR');
+                                var IsE = { rmk: (Utrno.val().trim() == "") };
+                                var $v = $validator;
+                                $v.showErrorFor(Utrno, 'UTR Number is Mandatory', IsE.rmk);
+
+                                if (IsE.rmk) {
+                                    btnLdr.Stop(btnT);
+                                    return false;
+                                }
+                                if ((!$('#chbIsMarkCredit').is(':checked') == false) && $("#txtRemark").val() == '') {
+                                    an.title = 'Info';
+                                    an.content = 'Enter Remark!';
+                                    an.alert(an.type.info);
+                                    btnLdr.Stop(btnT);
+                                    return false;
+                                }
+                                wt = parseInt($('#btnBType').val());
+                                var name = $("#spnNam").text();
+                                var remark = $('#txtUTR').val() + String.fromCharCode(160) + $('#txtRemark').val();
+                                var FundProcessReq = { UserID: cte.userid.text(), Amount: $('#txtAmount').val(), OType: 0, Remark: remark, PaymentId: pid, WalletType: wt, SecurityKey: stk.val(), IsMarkCredit: $('#chbIsMarkCredit').is(':checked')}
+                                preloader.load();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/FT',
+                                    dataType: 'json',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(FundProcessReq),
+                                    success: function (result) {
+                                        if (result.statuscode === -1) {
+                                            an.title = 'Oops';
+                                            an.content = result.msg;
+                                            an.alert(an.type.failed);
+                                        } else {
+                                            an.title = 'Transfered';
+                                            an.content = result.msg.replace('{User}', '<b>' + name + '</b>');
+                                            an.alert(oType === 0 ? an.type.success : an.type.info);
+                                            try {
+                                                $(cSelctr.closest('tr').find('td')[4]).html((oType === 0 ? (parseFloat($(cSelctr.closest('tr').find('td')[4]).html()) + ttl) : (parseFloat($(cSelctr.closest('tr').find('td')[4]).html()) - ttl)));
+                                            } catch (e) {
+                                            }
+                                            mdlA.dispose(function () {
+                                                search();
+                                            });
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        btnLdr.Stop(btnT);
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+                        }).fail(function (xhr) {
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });;
+                        return false;
+
+                    });
+                    $('tr div.dropdown-menu a.dropdownreject').click(function () {
+                        preloader.load();
+                        var tid = $(this).attr("name");
+                        $.post('/F-R', { "PaymentId": tid }, function (result) {
+                            $('#' + an.id).remove();
+                            mdlA.id = 'mymodal';
+                            mdlA.content = result;
+
+                            mdlA.options.backdrop = 'static';
+                            mdlA.options.keyboard = false;
+                            mdlA.alert(mdlA.size.default);
+
+                            var amt = $('#txtAmount');
+                            var ttl = 0;
+                            setTimeout(function () {
+                                amt.focus();
+                            }, 350);
+                            var oType = 0;
+                            var btnT = $('#bR');
+                            var btnTxt = btnT.html();
+                            amt.attr("disabled", "disabled");
+                            $("#btnGroup").hide();
+                            $('button.close span,#mdlCancel').click(function () {
+                                mdlA.dispose();
+                                search();
+                            });
+                            an.autoClose = 5;
+                            btnT.click(function () {
+                                if (btnTxt !== btnT.html())
+                                    return false;
+                                var $v = $validator;
+                                btnLdr.addClass = 'btn-dark';
+                                btnLdr.removeClass = 'btn-outline-dark';
+                                btnLdr.Start(btnT, oType === 0 ? 'Tranfering...' : 'Deducting...');
+                                var cte = { remark: $("#txtRemark") }
+                                var name = $("#spnNam").text();
+
+                                if ($("#ddlreason").val() == "0") {
+                                    $v.showErrorFor($("#ddlreason"), 'Reason is mandatory', true);
+                                    btnLdr.Stop(btnT);
+                                    return false;
+                                }
+                                else
+                                    $v.showErrorFor($("#ddlreason"), '', false);
+                                var rmk = $("#ddlreason :selected").text() + ' - ' + cte.remark.val();
+                                var FundProcessReq = { Remark: rmk, PaymentId: tid }
+                                preloader.load();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/FR',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(FundProcessReq),
+                                    success: function (result) {
+                                        resultReload(result);
+                                        if (result.statuscode === -1) {
+                                            an.title = 'Oops';
+                                            an.content = result.msg;
+                                            an.alert(an.type.failed);
+                                        } else {
+                                            an.title = 'Rejected';
+                                            an.content = result.msg;
+                                            an.alert(oType === 0 ? an.type.success : an.type.info);
+                                            mdlA.dispose(function () {
+                                                search();
+                                            });
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        btnLdr.Stop(btnT);
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+                        }).fail(function (xhr) {
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });;
+                        return false;
+                    });
+                    $('tr button.showReceipt').click(function () {
+                        _showReceipt(this);
+                    });
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops";
+                    an.content = result;
+                    an.alert(an.type.failed);
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+                },
+                complete: function () {
+                    btnLdr.Stop($("#btnSearch"));
+                    preloader.remove();
+                }
+            });
+        };
+
+        var _showReceipt = function (sender) {
+            var fileName = $(sender).data().itemUrl;
+            if (fileName != "" && fileName != undefined) {
+                $('#' + an.id).remove();
+                mdlA.id = 'modalReceipt';
+                mdlA.content = '<div class="row"><div class="col-md-12">'
+                    + '<button type="button" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+                    + '</div><div class="col-md-12"><img src="/Image/PaymentReceipt/' + fileName + '"style="width:100%;height:75vh"/></div></div>';
+                mdlA.options.backdrop = 'static';
+                mdlA.options.keyboard = false;
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+            }
+            else {
+                an.title = 'Alert';
+                an.content = 'No Attachment Found.';
+                an.alert(an.type.failed);
+            }
+        }
+    </script>
+}
+

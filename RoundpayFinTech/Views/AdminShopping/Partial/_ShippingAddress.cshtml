@@ -1,0 +1,83 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ShippingAddressModal
+@{ 
+    var states = new SelectList(Model.States, "StateID", "StateName");
+    var cities = new SelectList(Model.Cities, "CityID", "CityName");
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <label>Customer Name</label>
+            <input type="text" id="txtCustomerName" class="form-control" placeholder="Enter Customer Name" />
+        </div>
+        <div class="form-group">
+            <label>Address Title</label>
+            <input type="text" id="txtTitle" class="form-control" placeholder="Enter Address Title(i.e Home Or Office)" />
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <textarea id="txtAddress" class="form-control" placeholder="Address" rows="4"></textarea>
+        </div>
+        <div class="form-group">
+            <label>State</label>
+            <select id="ddlState" class="form-control" asp-items="@states"><option value="0">:: Select State ::</option></select>
+        </div>
+        <div class="form-group">
+            <label>City</label>
+            <select id="ddlCity" class="form-control" asp-items="@cities"><option value="0"> :: Select City :: </option></select>
+        </div>
+        <div class="form-group">
+            <label>Landmark</label>
+            <input type="text" id="txtLandmark" class="form-control" placeholder="Landmark" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>PIN</label>
+            <input type="text" id="txtPIN" class="form-control" placeholder="PIN Code" />
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <label>Mobile NO</label>
+            <input type="text" id="txtMobileNo" class="form-control" placeholder="Mobile No" />
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group text-right">
+            <button id="btnSaveAddress" class="btn btn-outline-success">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#btnSaveAddress').click(() => {
+        let param = {
+            CustomerName: $('#txtCustomerName').val(),
+            Title: $('#txtTitle').val(),
+            Address: $('#txtAddress').val(),
+            CityID: $('#ddlCity').val(),
+            StateID: $('#ddlState').val(),
+            Landmark: $('#txtLandmark').val(),
+            PIN: $('#txtPIN').val(),
+            MobileNo: $('#txtMobileNo').val()
+        }
+        $.post('/SaveShippingAddress', param).done(result => {
+            an.id = "ShippingAddressalert";
+            an.title = result.statuscode === an.type.success ? "Well done" : "Opps";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === 1) {
+                $('#newAddress').remove();
+                $('.divAddress').prepend(`<div class="form-group">
+                                            <label class="form-control">
+                                                <input type="radio" id="chkAddress_${result.id}" data-Address-Id="${result.id}" name="ShippingAddress" />
+                                                <span class="pl-2">                                            
+                                                    ${result.address}
+                                                <span>
+                                             </label>
+                                         </div>`);
+            }
+        });
+    });
+</script>

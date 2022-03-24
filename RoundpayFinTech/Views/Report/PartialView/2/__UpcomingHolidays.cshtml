@@ -1,0 +1,122 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Microsoft.AspNetCore.Http;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.BankHoliday>
+@{
+    LoginResponse _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+}
+
+@functions{
+    string GetSection(string DateAsString, string Remark)
+    {
+        string HTMLToRender = "";
+        DateTime DateAsDateTime;
+        if (DateTime.TryParse(DateAsString, out DateAsDateTime))
+        {
+            HTMLToRender = @"<p id='P1'>{0}</p>
+<span> {1} </span>
+<div class='holiday-day'><small>{2}</small></div>";
+            HTMLToRender = string.Format(HTMLToRender, DateAsDateTime.ToString("dd"), DateAsDateTime.ToString("MMM"), Remark);
+        }
+        else
+        {
+            HTMLToRender = @"<p id='P1'>--</p>
+<span> -- </ span >
+<div class='holiday-day'><small>--</small></div>";
+        }
+
+        return HTMLToRender;
+    }
+}
+
+
+@if (_lr.RoleID == Role.Retailor_Seller)
+{
+    <style>
+        .card-holiday {
+            background: #5A0E2A;
+            height: 150px
+        }
+    </style>
+}
+else
+{
+    <style>
+        .card-holiday {
+            background: #5A0E2A;
+        }
+    </style>
+}
+
+<style>
+    .card-holiday h6 {
+        font-size: 13px !important;
+        text-align: center;
+        color: #fff;
+    }
+
+    .calendar-holi {
+        width: 100%;
+        height: 100%;
+        text-align: center;
+        overflow: hidden;
+        color: #fff;
+        margin: 16px 0;
+    }
+
+    .first-holi, .second-holi, .third-holi {
+        width: 33.333%;
+        float: left;
+    }
+
+    .calendar-holi p {
+        font-size: 27px;
+        margin-bottom: 0;
+        line-height: 20px;
+        color: #fff;
+    }
+
+    .calendar-holi span {
+        font-size: 16px;
+        font-weight: 500;
+    }
+
+    .holiday-day {
+        font-size: 12px;
+    }
+</style>
+
+
+
+<div class="card card-holiday">
+    <h6 style="background: no-repeat;">Upcoming Holidays</h6>
+    <div class="card-body">
+        <div class="calendar-holi">
+            @if (Model != null && Model.Count() > 0)
+            {
+                <div class="first-holi">
+                    @Html.Raw(GetSection(Model.ElementAt(0).Date, Model.ElementAt(0).Remark))
+                </div><div class="second-holi">
+                    @Html.Raw(Model.Count() > 1 ? GetSection(Model.ElementAt(1).Date, Model.ElementAt(1).Remark) : GetSection("", ""))
+                </div>
+                <div class="third-holi">
+                    @Html.Raw(Model.Count() > 2 ? GetSection(Model.ElementAt(2).Date, Model.ElementAt(2).Remark) : GetSection("", ""))
+                </div>
+            }
+            else
+            {
+                <div class="first-holi">
+                    @Html.Raw(GetSection("", ""))
+                </div>
+                <div class="second-holi">
+                    @Html.Raw(GetSection("", ""))
+                </div>
+                <div class="third-holi">
+                    @Html.Raw(GetSection("", ""))
+                </div>
+            }
+        </div>
+    </div>
+</div>

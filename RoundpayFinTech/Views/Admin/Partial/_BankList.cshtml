@@ -1,0 +1,28 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.Bank>
+@{ int i = 1;}
+
+@foreach (var item in Model)
+{
+<tr id="_22">
+    <td>@i</td>
+    <td>@item.BankName</td>
+    <td>@item.AccountHolder</td>
+    <td>@item.AccountNo</td>
+    <td>@item.IFSCCode</td>
+
+</tr>
+
+    i++;
+}
+
+
+
+
+
+
+
+
+
+
+
+

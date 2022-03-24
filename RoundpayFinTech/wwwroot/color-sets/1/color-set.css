@@ -1,0 +1,52 @@
+﻿.top-navbar {
+    border-bottom: 1px solid #585858;
+    background: #2b2b2b;
+}
+
+.main-wrapper h5 {
+    line-height: 1.6 !important;
+    margin-bottom: 0 !important;
+}
+
+.bg-greenhead {
+    background: linear-gradient(85deg, #393877, #36356f);
+}
+
+.main-wrapper .breadcrumb {
+    background: #5756a7 !important;
+}
+
+.bg-purple {
+    background-color: #5756a7 !important;
+}
+
+.bg-gradientorange {
+    background: linear-gradient(85deg, #ce508d, #b5426d);
+}
+#navbar {
+    background: #8a89d3 !important;
+}
+
+#profileImage {
+    background: #8a89d3 !important;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: #ffffff;
+    background-color: #5756ab;
+    border-color: #5756ab;
+    border-radius: 3px;
+}
+
+.nav-tabs .nav-link:hover, .nav-tabs .nav-link:focus {
+    color: #ffffff;
+    background-color: #5756ab;
+    border-color: #5756ab;
+    border-radius: 3px;
+}
+
+.badge-primary {
+    color: #fff;
+    background-color: #5756ab;
+    padding: 5px;
+}

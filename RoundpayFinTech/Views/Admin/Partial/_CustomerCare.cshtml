@@ -1,0 +1,59 @@
+﻿@using RoundpayFinTech.AppCode.Model.DepartmentModel
+@model IEnumerable<Customercare>
+@if (Model != null)
+{
+    @if (Model.Any())
+    {
+        var i = 0;
+        @foreach (var item in Model)
+        {
+            i = i + 1;
+    <tr data-item-id="@item.ID">
+        <th scope="row">@i</th>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act@(i)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#" class="dropdown-item">Edit</a>
+                </div>
+            </div>
+        </td>
+        <td>@item.Name <small class="font-weight-bold text-monospace"> [@(item.Prefix + "" + item.ID)]</small></td>
+        <td>@item.MobileNo</td>
+        <td>@item.Role</td>
+        <td>@item.Department</td>
+        <td>@item.EntryDate</td>
+        <td>@item.ModifyDate</td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isact_@i" @(item.IsActive ? "checked='checked'" : "")>
+                <label for="isact_@i"></label>
+            </span>
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isotp_@i" @(item.IsOTP ? "checked='checked'" : "")>
+                <label for="isotp_@i"></label>
+            </span>
+        </td>
+        <td style="text-align:center"><span class="btn btn-sm btn-outline-danger" id="showp_@i"><i class="fas fa-low-vision"></i> Show</span></td>
+
+    </tr>
+        }
+    }
+    else
+    {
+        <tr rowspan="2">
+            <td colspan="10" class="text-center">No Record Found</td>
+        </tr>
+    }
+}
+else
+{
+        <tr rowspan="2">
+            <td colspan="10" class="text-center">No Record Found</td>
+        </tr>
+}
+
+

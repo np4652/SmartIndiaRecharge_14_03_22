@@ -1,0 +1,21 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.IncentiveDetail>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Cashback</h3>
+        <hr />
+    </div>
+</div>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-3">
+            <div class="form-control text-center denomination">
+                <i class="fas fa-rupee-sign"></i> <span class="txtDenom"> @item.Denomination</span><br />
+                <span class="text-danger txtComm">@item.Comm @Html.Raw(item.AmtType?"":"%")</span>
+            </div>
+        </div>
+        }
+</div>

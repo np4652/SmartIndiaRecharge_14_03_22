@@ -1,0 +1,162 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel.Menu>
+@{
+    ViewData["Title"] = "Products";
+    var cList = new SelectList(Model, "MainCategoryID", "Name");
+}
+
+<style>
+    td.rp-cust-text{
+        font-size: 10px;
+        text-overflow: ellipsis;
+        max-height:70px;
+        
+    }
+
+        td.rp-cust-text p, td.rp-cust-text h1, td.rp-cust-text span, td.rp-cust-text p strong {
+            font-size: 10px !important;
+            text-overflow: ellipsis;
+            max-height: 70px;
+            font-weight:500;
+        }
+
+        td.rp-cust-text ul li, td.rp-cust-text ul li span {
+            font-size: 12px !important;
+        }
+
+        td.rp-cust-text ol li, td.rp-cust-text ol li span {
+            font-size: 12px!important;
+        }
+    .calcHeight {
+        height: calc(100vh - 268.875px - 50px)!important;
+    }
+    .rp-cust-text img
+    {
+        width:87px;
+    }
+</style>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-2 text-right">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <select class="form-control" id="ddlCategory" asp-items="@cList">
+                                        <option value="0">:: Choose Main Category ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <select class="form-control" id="ddlLevel1">
+                                        <option value="0">:: Choose Category ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <select class="form-control" id="ddlLevel2">
+                                        <option value="0">:: Choose Subcategory ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <input type="text"  id="txtSearch" class="form-control" placeholder="Search Product" />
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-condensed" id="tblProduct">
+                                        <thead class="bg-grey text-white">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Product Name</th>
+                                                <th style="width:25%">Description</th>
+                                                <th style="width:25%">WalletDeductionPerc(S)</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    @*<script type="text/javascript" src="//cdn.tinymce.com/4/tinymce.min.js"></script>*@
+    <script type="text/javascript" src="~/lib/TinyMCE/tinymce.min.js?a=1"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script src="~/js/Shopping/ShoppingCategory.js"></script>
+    <script>
+        var loadGrid = () => {
+            preloader.load();
+            let param = {
+                CID: $('#ddlCategory').val(),
+                SID1: $('#ddlLevel1').val(),
+                SID2: $('#ddlLevel2').val(),
+            }
+            $.post('/_AllProduct', param)
+                .done(result => $('#tblProduct tbody').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        $("#txtSearch").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $('#tblProduct tbody tr').filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+        loadGrid();
+
+        (() => {
+            $('#ddlCategory').focus().select2();
+
+            $('#ddlLevel1, #ddlLevel2').select2();
+
+            $('#ddlCategory').change(e => bindCategoryLevel1(e, 'ddlLevel1'));
+
+            $('#ddlLevel1').change(e => bindCategoryLevel2(e, 'ddlLevel2'));
+
+            $('#ddlCategory')[0].selectedIndex = 0;
+            $('#ddlCategory').trigger('change');
+            setTimeout(function () {
+                $('#ddlLevel1')[0].selectedIndex = 0;
+                $('#ddlLevel1').trigger('change');
+                setTimeout(function () {
+                    $('#ddlLevel2')[0].selectedIndex = 0;
+                }, 500);
+            }, 500);
+            $('#ddlLevel2').change(e => loadGrid());
+        })();
+    </script>
+}

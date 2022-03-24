@@ -1,0 +1,330 @@
+﻿@{
+    ViewData["Title"] = "Website Setting";
+}
+@section head{
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">File</th>
+                                        <th scope="col">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var LoadWebsiteImages = function () {
+                preloader.load();
+                an.autoClose = 5;
+                $.post('/_WebsiteSetting')
+                    .done(function (result) {
+                        $('#__p tbody').html(result);
+
+                        $("#dlogoUpload").change(() => {
+                            var formData = new FormData();
+                            formData.append('file', $("#dlogoUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-logo',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: result => {
+                                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode === 1) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: result => {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                       
+                        //White-logo change
+                        $("#dwhitelogoUpload").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#dwhitelogoUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-whitelogo',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: result => {
+                                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode === 1) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: result => {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                                    an.alert(an.type.failed);
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+
+                        $("#db2clogoUpload").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#db2clogoUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-b2clogo',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: result => {
+                                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode === 1) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: result => {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                                    an.alert(an.type.failed);
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                        //Service Image
+                        $("#dservicesUpload").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#dservicesUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-serviceimage',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    //window.location.href = window.location.href;
+                                    if (result.statuscode == an.type.success) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: function (xhr, result) {
+                                    checkError(result);
+                                    an.title = "Oops! Error";
+                                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                                    an.alert(an.type.failed);
+                                    preloader.remove()
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                        $('[id^=btnSer_]').change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $(this)[0].files[0]);
+                            formData.append('n', $(this).attr("id").split('_')[1]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-serviceimages',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == an.type.success) {
+                                        LoadWebsiteImages();
+                                    }
+                                    //window.location.href = window.location.href;
+                                },
+                                error: function (xhr, result) {
+                                    checkError(result);
+                                    an.title = "Oops! Error";
+                                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                                    an.alert(an.type.failed);
+                                    preloader.remove()
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                        $('[id^=btnSerRem_]').click(function () {
+                            preloader.load();
+                            $.post('/removeServiceImg', { n: $(this).attr("id").split('_')[1] })
+                                .done(function (result) {
+                                    an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    //window.location.href = window.location.href;
+                                    if (result.statuscode == an.type.success) {
+                                        LoadWebsiteImages();
+                                    }
+                                }).fail(xhr => {
+                                    an.title = xhr.status === 0 ? 'Internet Connection was broken' : 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        });
+                        //Bg-image change
+                        $("#dbgmainUpload").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#dbgmainUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-bgimage',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    //window.location.href = window.location.href;
+                                    if (result.statuscode == an.type.success) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: function (xhr, result) {
+                                    checkError(result);
+                                    an.title = "Oops! Error";
+                                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                                    an.alert(an.type.failed);
+                                    preloader.remove()
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                        $("#dsignUpload").change(() => {
+                            var formData = new FormData();
+                            formData.append('file', $("#dsignUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-sign',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: result => {
+                                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode === 1) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: result => {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                        $("#CertificateFooterImage").change(() => {
+                            var formData = new FormData();
+                            formData.append('file', $("#CertificateFooterImage")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-CertificateFooterImage',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: result => {
+                                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode === 1) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: result => {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                        $("#_applogoChange").change(() => {
+
+                            var formData = new FormData();
+                            formData.append('file', $("#_applogoChange")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/upload-AppImage',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: result => {
+                                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode === 1) {
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                error: result => {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: () => preloader.remove()
+                            });
+                        });
+                    })
+                    .fail(xhr => {
+                        an.title = xhr.status === 0 ? 'Internet Connection was broken' : 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => preloader.remove());
+            }
+            LoadWebsiteImages();
+        });
+    </script>
+}

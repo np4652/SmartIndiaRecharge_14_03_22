@@ -1,0 +1,785 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel
+@model RoundpayFinTech.AppCode.Model.ProcModel.GetEditUser
+@{
+    SelectList items = null;
+    if (Model.Roles != null)
+    {
+        items = new SelectList(Model.Roles, "ID", "Role");
+    }
+    SelectList itemsSlab = null;
+    if (Model.Slabs != null)
+    {
+        itemsSlab = new SelectList(Model.Slabs, "ID", "Role");
+    }
+    ViewData["Title"] = "Edit User Section";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item">UserList</li>
+            <li class="breadcrumb-item active">EditUser</li>
+        </ol>
+    </div>
+</div>
+<div id="alertmsg"></div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-5 ">
+                                <div class="form-group">
+                                    <input type="hidden" id="hidOutletID" value="@Model.OutletID" />
+                                    @Html.Label("txtName", "Name", new { @class = "lbl" })
+                                    @Html.TextBox("txtName", Model.Name, new { @class = "form-control text-capitalize", @placeholder = "Enter Name", @aria_describedby = "nameHelp", @tabindex = 1 })
+                                    <input id="hidId" value="@Model.UserID" type="hidden" />
+                                    <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtMobile", "Mobile Number", new { @class = "lbl" })
+                                        @Html.TextBox("txtMobile", Model.MobileNo, new { @class = "form-control", @placeholder = "Enter Mobile Number", @aria_describedby = "mobileHelp", @tabindex = 3 })
+                                        <small id="mobileHelp" class="form-text text-muted d-none">Mobile Number is mandatory</small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtAlternateMobile", "Alternate Mobile Number", new { @class = "lbl" })
+                                        @Html.TextBox("txtAlternateMobile", Model.AlternateMobile, new { @class = "form-control text-uppercase", @placeholder = "Enter AlternateMobileNo", @aria_describedby = "AlternateMobileHelp", @tabindex = 2 })
+                                        <small id="AlternateMobileHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("ddlRole", "Role", new { @class = "lbl" })
+                                    <select id="ddlRole" asp-items="@items" asp-for="RoleID" aria-describedby="ddlRoleHelp" tabindex="14" class="custom-select custom-select-md mb3">
+                                        <option selected value="">:: Choose Role ::</option>
+
+                                    </select>
+                                    <small id="ddlRoleHelp" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtPinCode", "PinCode", new { @class = "lbl" })
+                                        @Html.TextBox("txtPinCode", Model.Pincode, new { @class = "form-control", @placeholder = "Enter PinCode", @aria_describedby = "pinHelp", @tabindex = 9 })
+                                        <small id="pinHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtCity", "City", new { @class = "lbl" })
+                                        <label class="form-control" id="txtCity" aria_describedby="cityHelp">@Model.City</label>
+                                        <small id="cityHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+
+                                        @Html.Label("txtPAN", "PAN", new { @class = "lbl" })
+                                        @Html.TextBox("txtPAN", Model.PAN, new { @class = "form-control text-uppercase", @placeholder = "Enter PAN", @aria_describedby = "panHelp", @tabindex = 11 })
+                                        <small id="panHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        @{
+                                            int i = 0;
+                                            @if (ApplicationSetting.ActiveFlatType != FlatTypeMaster.DisableFlat)
+                                            {
+                                                @if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.ByAdminOnly && Model.IsAdmin)
+                                                {
+                                                    i = 1;
+                                                }
+                                                else if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.FlatToAll || ApplicationSetting.ActiveFlatType == FlatTypeMaster.FlatToAllByDifference)
+                                                {
+                                                    i = 1;
+                                                }
+                                            }
+                                            if (i == 1)
+                                            {
+                                                @Html.Label("txtCommRate", "Comm Rate", new { @class = "lbl" })
+                                                @Html.TextBox("txtCommRate", Model.CommRate, new { @class = "form-control text-uppercase", @placeholder = "Enter Comm Rate", @aria_describedby = "CommRateHelp", @tabindex = 11})
+                                            }
+                                            else
+                                            {
+                                                @Html.Label("txtCommRate", "Comm Rate", new { @class = "lbl" })
+                                                @Html.TextBox("txtCommRate", Model.CommRate, new { @class = "form-control text-uppercase", @placeholder = "Enter Comm Rate", @aria_describedby = "CommRateHelp", @tabindex = 11, @readonly = "readonly" })
+                                            }
+                                        }
+
+                                        <small id="CommRateHelp" class="form-text text-muted d-none">Enter Comm Rate</small>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("ddlQualification", "Qualification", new { @class = "lbl" })
+                                        <select class="form-control" id="ddlQualification" aria-describedby="QualificationHelp" tabindex="15" asp-for="@(Model.Qualification)">
+                                            <option value="">:: Choose Qualification ::</option>
+                                            <option value="SSC">SSC</option>
+                                            <option value="HSC">HSC</option>
+                                            <option value="Graduate">Graduate</option>
+                                            <option value="Post Graduate">Post Graduate</option>
+                                            <option value="Diploma">Diploma</option>
+                                        </select>
+                                        <small id="QualificationHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("ddlPopulation", "Poupulation", new { @class = "lbl" })
+                                        <select class="form-control" id="ddlPoupulation" aria-describedby="PoupulationHelp" tabindex="16" asp-for="@(Model.Poupulation)">
+                                            <option value="">:: Choose Poupulation ::</option>
+                                            <option value="0 to 2000">0 to 2000</option>
+                                            <option value="2000 to 5000">2000 to 5000</option>
+                                            <option value="5000 to 10000">5000 to 10000</option>
+                                            <option value="10000 to 50000">10000 to 50000</option>
+                                            <option value="50000 to 100000">50000 to 100000</option>
+                                            <option value="100000+">100000+</option>
+                                        </select>
+                                        <small id="PoupulationHelp" class="form-text text-muted d-none"></small>
+
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("ddlBank", "Bank", new { @class = "lbl" })
+                                        <select class="form-control" id="ddlBank" aria-describedby="BankHelp" tabindex="15" asp-for=@(Model.BankName) asp-items="@Model.Bankselect">
+                                            <option value="">:: Choose Bank ::</option>
+                                        </select>
+                                        <small id="BankHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtBranch", "Branch", new { @class = "lbl" })
+                                        @Html.TextBox("txtBranch", Model.BranchName, new { @class = "form-control text-uppercase", @placeholder = "Enter Branch Name", @aria_describedby = "branchHelp", @tabindex = 10 })
+                                        <small id="branchHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtifsc", "IFSC", new { @class = "lbl" })
+                                        @Html.TextBox("txtifsc", Model.IFSC, new { @class = "form-control text-uppercase", @placeholder = "Enter IFSC", @aria_describedby = "ifscHelp", @tabindex = 10 })
+                                        <small id="ifscHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("ddlLocationType", "Location Type", new { @class = "lbl" })
+                                        <select class="form-control" id="ddlLocationType" aria-describedby="ddlLocationTypeHelp" tabindex="14" asp-for="@(Model.LocationType)">
+                                            <option value="">:: Choose Location Type ::</option>
+                                            <option value="Rural" selected="selected">Rural</option>
+                                            <option value="Urban">Urban</option>
+                                            <option value="Metro">Metro</option>
+                                            <option value="Semi Urban">Semi Urban</option>
+                                        </select>
+                                        <small id="ddlLocationTypeHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+
+
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 form-group">
+                                        @Html.Label("txtLandmark", "Landmark", new { @class = "lbl" })
+                                        @Html.TextBox("txtLandmark", Model.Landmark, new { @class = "form-control text-uppercase", @placeholder = "Landmark", @aria_describedby = "LandmarkHelp", @tabindex = 10 })
+                                        <small id="LandmarkHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="col-md-5 ">
+                                <div class="form-group">
+                                    @Html.Label("txtOutletName", "Outlet Name", new { @class = "lbl" })
+                                    @Html.TextBox("txtOutletName", Model.OutletName, new { @class = "form-control text-capitalize", @placeholder = "Enter Outlet Name", @aria_describedby = "outletnameHelp", @tabindex = 2 })
+                                    <small id="outletnameHelp" class="form-text text-muted d-none">Outlet Name is mandatory</small>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            @Html.Label("txtEmail", "Email ID", new { @class = "lbl" })
+                                            @Html.TextBox("txtEmail", Model.EmailID, new { @class = "form-control text-lowercase", @placeholder = "Enter Email ID", @aria_describedby = "emailHelp", @tabindex = 4 })
+                                            <small id="emailHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            @Html.Label("txtWhatsappNo", "Whatsapp Number", new { @class = "lbl" })
+                                            @Html.TextBox("txtWhatsappNo", Model.WhatsAppNumber, new { @class = "form-control text-lowercase", @placeholder = "Enter Whatsapp Number", @aria_describedby = "txtWhatsappNoHelp", @tabindex = 4 })
+                                            <small id="txtWhatsappNoHelp" class="form-text text-muted d-none">Whatsapp Number is mandatory</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                @if (Model.LoginID == Model.UserID)
+                                {
+                                    <div class="form-group">
+                                        @Html.Label("ddlSlab", "Slab", new { @class = "lbl" })
+                                        <select id="ddlSlab" asp-items="@itemsSlab" asp-for="SlabID" aria-describedby="slabHelp" tabindex="14" class="custom-select custom-select-md mb3">
+                                            <option selected value="0">:: Choose Slab ::</option>
+                                        </select>
+                                        <small id="slabHelp" class="form-text text-muted d-none">Slab is mandatory</small>
+                                    </div>
+                                }
+                                @*<div class="form-group">
+            @Html.Label("txtAddress", "Address", new { @class = "lbl" })
+            @Html.TextBox("txtAddress", Model.Address, new { @class = "form-control", @placeholder = "Enter Address", @aria_describedby = "addressHelp", @tabindex = 5 })
+            <small id="addressHelp" class="form-text text-muted d-none"></small>
+        </div>*@
+
+                                @if (ApplicationSetting.WithCustomLoginID)
+                                {
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtAddress", "Address", new { @class = "lbl" })
+                                                @Html.TextBox("txtAddress", Model.Address, new { @class = "form-control", @placeholder = "Enter Address", @aria_describedby = "addressHelp", @tabindex = 5 })
+                                                <small id="addressHelp" class="form-text text-muted d-none"></small>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                @Html.Label("txtCustomLogin", "Custom Login Name", new { @class = "lbl" })
+                                                @Html.TextBox("txtCustomLogin", Model.CustomLoginID, new { @id = "txtCustomLogin", @class = "form-control", @placeholder = "Enter Custome Login Name", @aria_describedby = "LoginName", @tabindex = 3 })
+                                                <small id="LoginName" class="form-text text-muted d-none">Custome Login name is mandatory</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                        }
+                                        else
+                                        {
+                                        <div class="form-group">
+                                            @Html.Label("txtAddress", "Address", new { @class = "lbl" })
+                                            @Html.TextBox("txtAddress", Model.Address, new { @class = "form-control", @placeholder = "Enter Address", @aria_describedby = "addressHelp", @tabindex = 5 })
+                                            <small id="addressHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                        }
+                                   
+                                    <div class="form-group">
+                                        @Html.Label("txtState", "State", new { @class = "lbl" })
+                                        <label class="form-control" id="txtState" aria-describedby="StateHelp"></label>
+                                        <input id="hddStateID" value="@Model.StateID" type="hidden" />
+                                        <small id="StateHelp" class="form-text text-muted d-none"></small>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("txtGSTIN", "GSTIN", new { @class = "lbl" })
+                                            @Html.TextBox("txtGSTIN", Model.GSTIN, new { @class = "form-control text-uppercase", @placeholder = "Enter GSTIN", @aria_describedby = "gstinHelp", @tabindex = 10 })
+                                            <small id="gstinHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("txtAADHAR", "AADHAR", new { @class = "lbl" })
+                                            @Html.TextBox("txtAADHAR", Model.AADHAR, new { @class = "form-control", @placeholder = "Enter AADHAR", @aria_describedby = "aadharHelp", @tabindex = 12 })
+                                            <small id="aadharHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+
+                                            @Html.Label("txtDOB", "Date Of Birth", new { @class = "lbl" })
+                                            <input aria-describedby="dtFromDate" class="form-control" id="txtDOB" tabindex="5" type="text" readonly="readonly" value="@(string.IsNullOrEmpty(Model.DOB)? DateTime.Now.AddYears(-18).ToString(" dd MMM yyyy"):Convert.ToDateTime(Model.DOB).ToString(" dd MMM yyyy"))" />
+                                            <small id="dobHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("ddlShopType", "Shop Type", new { @class = "lbl" })
+                                            <select class="form-control" id="ddlShopType" aria-describedby="ShopTypeHelp" tabindex="14" asp-for="@(Model.ShopType)">
+                                                <option value="">:: Choose Shop Type ::</option>
+                                                <option value="Kirana Shop">Kirana Shop</option>
+                                                <option value="Mobile Shop">Mobile Shop</option>
+                                                <option value="Copier Shop">Copier Shop</option>
+                                                <option value="Internet cafe">Internet cafe</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <small id="ShopTypeHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("txtAccountNumber", "Account Number", new { @class = "lbl" })
+                                            @Html.TextBox("txtAccountNumber", Model.AccountNumber, new { @class = "form-control text-uppercase", @placeholder = "Account Number", @aria_describedby = "AccountNumberHelp", @tabindex = 10 })
+                                            <small id="AccountNumberHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                        <div class="col-md-6 form-group">
+                                            @Html.Label("txtAccountName", "Account Name", new { @class = "lbl" })
+                                            @Html.TextBox("txtAccountName", Model.AccountName, new { @class = "form-control text-uppercase", @placeholder = "Account Name", @aria_describedby = "AccountNameHelp", @tabindex = 10 })
+                                            <small id="AccountNameHelp" class="form-text text-muted d-none"></small>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        @if ((Model.IsLoginWebsite == true || Model.IsAdmin) && ApplicationSetting.IsWhitelabel)
+                                        {
+                                            if ((Model.IsAdmin && Model.ReferalID == 1) || (Model.ReferalID == Model.LoginID && !Model.IsAdmin))
+                                            {
+                                                <div class="col-md-12 form-group">
+                                                    @Html.Label("txtWebsite", "Website", new { @class = "lbl" })
+                                                    <div class="input-group">
+                                                        @Html.TextBox("txtWebsite", Model.WebsiteName, new { @class = "form-control text-capitalize", @placeholder = "Enter Website", @aria_describedby = "websiteHelp", @tabindex = 1 })
+                                                        @Html.HiddenFor(modelItem => Model.WID, new { @id = "hidWID_", @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+
+                                                        <div class="input-group-append">
+                                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                                <input type="checkbox" id="chbIsWebsite" tabindex="2" @Html.Raw(Model.IsWebsite ? "checked='checked'" : "") )>
+                                                                <label for="chbIsWebsite" class="font-weight-bold lbl">IsWebsite</label>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <small id="websiteHelp" class="form-text text-muted d-none">
+                                                        Website is mandatory
+                                                    </small>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            <div class="col-md-2 text-center">
+                                <img class="rounded-circle mt-4" src="@Html.Raw(Model.ProfilePic==null ? "/images/avatar/defualt.png" : Model.ProfilePic)" />
+                                @{
+                                    var btnCls = "btn btn-danger";
+                                    btnCls = Model.KYCStatus == KYCStatusType.REKYC ? "btn btn-secondary" : (Model.KYCStatus == KYCStatusType.APPLIED ? "btn btn-info" : (Model.KYCStatus == KYCStatusType.COMPLETED ? "btn btn-success" : btnCls));
+                                }
+                                <span class="@btnCls">@("KYC " + KYCStatusType.GetKYCStatus(Model.KYCStatus))</span>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-5">
+                                @Html.Hidden("hidId", null, new { @class = "d-none" })
+                                @if (Model.KYCStatus == 0 || Model.KYCStatus == KYCStatusType.INCOMPLETE || Model.KYCStatus == KYCStatusType.REJECTED || Model.KYCStatus == KYCStatusType.REKYC)
+                                {
+                                    <div class="form-group">
+                                        <button type="button" class="btn btn-dark" id="btnCreate" tabindex="16"> Update</button>
+                                        <button type="button" class="btn btn-outline-dark" id="btnUpdateKYC" onclick="UpdateKYC()" tabindex="16"> Update KYC</button>
+                                    </div>
+                                }
+
+                            </div>
+                            @if (Model.IsAdmin)
+                            {
+                                <div class="col-md-2">
+                                    <select class="form-control" id="ddlDMRModel" aria-describedby="ddlDMRModelH" tabindex="14" asp-for=@(Model.DMRModelID) asp-items="@Model.DMRModelSelect">
+                                        <option value="0">:: Choose DMTModel ::</option>
+                                    </select>
+                                    <small id="ddlDMRModelH" class="form-text text-muted d-none"></small>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group pt-1">
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" id="chbISGSTAPPLICABLE" tabindex="14" @Html.Raw(Model.IsGSTApplicable ? "checked='checked'" : "")>
+                                            <label for="chbISGSTAPPLICABLE">IsGST</label>
+                                        </span>
+                                        <span class="switch switch-sm">
+                                            <input type="checkbox" id="chbISTDSAPPLICABLE" tabindex="15" @Html.Raw(Model.IsTDSApplicable ? "checked='checked'" : "")>
+                                            <label for="chbISTDSAPPLICABLE">IsTDS</label>
+                                        </span>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/js/datepickerHelper.js"></script>
+    <script>
+        //var ct = {
+        //    nam: $('#txtName'), namo: $('#txtOutletName'), mob: $('#txtMobile'), eml: $('#txtEmail'), txtWhatsappNo: $('#txtWhatsappNo'), slb: $('#ddlSlab'), adrs: $('#txtAddress'), cty: $('#txtCity'), pcd: $('#txtPinCode'), gstn: $('#txtGSTIN'), pan: $('#txtPAN'), adhr: $('#txtAADHAR'), gaplcbl: $('#chbISGSTAPPLICABLE'), tdaplcbl: $('#chbISTDSAPPLICABLE'), UserID: $('#hidId'), btn: $('#btnCreate'), state: $('#hddStateID'), Comm: $('#txtCommRate'), ddlDMRModel: $('#ddlDMRModel'), txtDOB: $('#txtDOB'), ddlShopType: $('#ddlShopType'), ddlQualification: $('#ddlQualification'), ddlPoupulation: $('#ddlPoupulation'), ddlLocationType: $('#ddlLocationType'), txtLandmark: $('#txtLandmark'), ddlBank: $('#ddlBank'), txtifsc: $("#txtifsc"), txtAccountNumber: $("#txtAccountNumber"), txtAccountName: $("#txtAccountName"), txtAlternateMobile: $('#txtAlternateMobile'), wnam: $('#txtWebsite'), isweb: $('#chbIsWebsite'), Wid: $('#hidWID_'), txtBranch: $('#txtBranch')
+        //};
+        var ct = {
+            nam: $('#txtName'), namo: $('#txtOutletName'), mob: $('#txtMobile'), eml: $('#txtEmail'), txtWhatsappNo: $('#txtWhatsappNo'), slb: $('#ddlSlab'), adrs: $('#txtAddress'), cty: $('#txtCity'), pcd: $('#txtPinCode'), gstn: $('#txtGSTIN'), pan: $('#txtPAN'), adhr: $('#txtAADHAR'), gaplcbl: $('#chbISGSTAPPLICABLE'), tdaplcbl: $('#chbISTDSAPPLICABLE'), UserID: $('#hidId'), btn: $('#btnCreate'), state: $('#hddStateID'), Comm: $('#txtCommRate'), ddlDMRModel: $('#ddlDMRModel'), txtDOB: $('#txtDOB'), ddlShopType: $('#ddlShopType'), ddlQualification: $('#ddlQualification'), ddlPoupulation: $('#ddlPoupulation'), ddlLocationType: $('#ddlLocationType'), txtLandmark: $('#txtLandmark'), ddlBank: $('#ddlBank'), txtifsc: $("#txtifsc"), txtAccountNumber: $("#txtAccountNumber"), txtAccountName: $("#txtAccountName"), txtAlternateMobile: $('#txtAlternateMobile'), wnam: $('#txtWebsite'), isweb: $('#chbIsWebsite'), Wid: $('#hidWID_'), txtBranch: $('#txtBranch'), txtCustomLogin: $('#txtCustomLogin')
+        };
+        $(document).ready(function () {
+            var dtDOB = function () {
+                var d = new Date();
+                if ($('#txtDOB').val() == '') {
+                    d.setFullYear(d.getFullYear() - 5);
+                    var FDate = DTPicker($('#txtDOB'), d.toDateString(), function () { }, function () {
+                        $('dp').addClass('d-none');
+                    });
+                }
+                else {
+                    var FDate = DTPicker($('#txtDOB'), $('#txtDOB').val(), function () { }, function () {
+                        $('dp').addClass('d-none');
+                    });
+                }
+            }
+            dtDOB();
+            var pincode = $('#txtPinCode').val();
+            if (pincode.length == 6) {
+                pincoded(pincode);
+            }
+            $("#txtPinCode").change(function () {
+                var pincode = $(this).val();
+                if (pincode.length == 6) {
+                    pincoded(pincode);
+                }
+            });
+
+            if ($('#btnCreate').index() == -1 ) {
+                $('input:checkbox').on('change', function () {
+                    _switch(this);
+                });
+            }
+
+            var $v = $validator;
+            var eid = larr[larr.length - 1];
+            if (!$v.$IsNum(eid)) {
+                rel(0);
+                return false;
+            }
+            var an = alertNormal;
+            an.id = 'myalert';
+            an.parent = $('#alertmsg');
+            ct.btnTxt = ct.btn.html();
+            ct.mob.on('change keyup blur', function () {
+                if (!$v.$IsMob(ct.mob.val())) {
+                    ct.mob.val($v.$numOnly(ct.mob.val()));
+                }
+            });
+            ct.adhr.on('change keyup blur', function () {
+                if (!$v.$IsNum(ct.adhr.val())) {
+                    ct.adhr.val($v.$numOnly(ct.adhr.val()));
+                }
+            });
+            ct.pcd.on('change keyup blur', function () {
+                if (!$v.$IsNum(ct.pcd.val())) {
+                    ct.pcd.val($v.$numOnly(ct.pcd.val()));
+                }
+            });
+            ct.btn.click(function () {
+
+                if (ct.btnTxt !== ct.btn.html())
+                    return false;
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start(ct.btn, 'Requesting');
+                //var IsE = { nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100), namo: ($v.$IsNum(ct.namo.val()) || ct.namo.val().trim() == '' || ct.namo.val().length > 150), mob: (ct.mob.val().length !== 10 || !$v.$IsMob(ct.mob.val())), eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256), slb: (ct.slb.val() === null || ct.slb.prop('selectedIndex') < 1) }
+                var IsE = { nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100), namo: ($v.$IsNum(ct.namo.val()) || ct.namo.val().trim() == '' || ct.namo.val().length > 150), mob: (ct.mob.val().length !== 10 || !$v.$IsMob(ct.mob.val())), eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256), slb: (ct.slb.val() === null || ct.slb.prop('selectedIndex') < 1), CL: ct.txtCustomLogin.length ? ct.txtCustomLogin.val() == '' : false, }
+                $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+                $v.showErrorFor(ct.namo, 'Outletname is non-numeric mandatory field and length is not more than 150', IsE.namo);
+                $v.showErrorFor(ct.mob, 'Mobile number is mandatory field and length should be 10', IsE.mob);
+                $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+                $v.showErrorFor(ct.slb, 'Slab is required, select slab from list! (<i>In case of list is empty add slab first</i>)', IsE.slb);
+                $v.showErrorFor(ct.txtCustomLogin, 'Custom Login Name is required', IsE.CL);
+                IsE.err = (IsE.nam || IsE.namo || IsE.mob || IsE.eml || IsE.state);
+                if (IsE.err) {
+                    btnLdr.Stop(ct.btn);
+                    return false;
+                }
+                if (ct.ddlDMRModel.val() != undefined) {
+                    IsE.err = parseInt(ct.ddlDMRModel.val()) == 0;
+                    $v.showErrorFor(ct.ddlDMRModel, "Choose DDLModel", IsE.err);
+                    if (IsE.err) {
+                        btnLdr.Stop(ct.btn);
+                        return false;
+                    }
+                }
+                var UserData = { Name: ct.nam.val(), OutletName: ct.namo.val(), MobileNo: ct.mob.val(), EmailID: ct.eml.val(), WhatsAppNumber: ct.txtWhatsappNo.val(), SlabID: ct.slb.val(), GSTIN: ct.gstn.val(), PAN: ct.pan.val(), AADHAR: ct.adhr.val(), Address: ct.adrs.val(), SlabID: ct.state.val(), Pincode: ct.pcd.val(), IsGSTApplicable: ct.gaplcbl.is(':checked'), IsTDSApplicable: ct.tdaplcbl.is(':checked'), UserID: $('#hidId').val(), CommRate: ct.Comm.val(), DMRModelID: ct.ddlDMRModel.val(), DOB: ct.txtDOB.val(), ShopType: ct.ddlShopType.val(), AlternateMobile: ct.txtAlternateMobile.val(), Landmark: ct.txtLandmark.val(), LocationType: ct.ddlLocationType.val(), Poupulation: ct.ddlPoupulation.val(), Qualification: ct.ddlQualification.val(), GSTIN: ct.gstn.val(), BankName: ct.ddlBank.val(), IFSC: ct.txtifsc.val(), AccountNumber: ct.txtAccountNumber.val(), AccountName: ct.txtAccountName.val(), WebsiteName: ct.wnam.val(), IsWebsite: ct.isweb.is(':checked'), WID: ct.Wid.val(), BranchName: ct.txtBranch.val(), CustomLoginID: ct.txtCustomLogin.val() }
+
+                an.autoClose = 5;
+                $.ajax({
+                    type: 'POST',
+                    url: '/EditUser',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(UserData),
+                    success: function (result) {
+                        if (result.statuscode == an.type.failed) {
+                            an.title = "Oops";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }
+                        else if (result.statuscode == an.type.success) {
+                            an.title = "Well done";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops";
+                        an.content = result;
+                        an.alert(an.type.failed);
+                        if (result === 'parsererror') {
+                            reload();
+                        }
+                    },
+                    complete: function () {
+                        btnLdr.Stop(ct.btn);
+                    }
+                });
+            });
+        });
+
+        var pincoded = function (m) {
+            preloader.load();
+            $.post('/PinCodeDetail', { Pincode: m }, function (result) {
+                if (result.statuscode == an.type.failed) {
+                    an.title = "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }
+                else if (result.statuscode == an.type.success) {
+                    $('#txtState').html(result.statename);
+                    $('#hddStateID').val(result.stateID);
+                    $('#txtCity').html(result.districtname);
+                }
+
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var UpdateKYC = function (val) {
+            var ct = {
+                nam: $('#txtName'), namo: $('#txtOutletName'), eml: $('#txtEmail'), txtWhatsappNo: $('#txtWhatsappNo'), adrs: $('#txtAddress'), cty: $('#txtCity'), pcd: $('#txtPinCode'), gstn: $('#txtGSTIN'), pan: $('#txtPAN'), adhr: $('#txtAADHAR'), btn: $('#btnUpdateKYC'), state: $('#hddStateID'), UserID: $('#hidId').val(), txtAlternateMobile: $('#txtAlternateMobile'), txtDOB: $('#txtDOB'), ddlShopType: $('#ddlShopType'), ddlQualification: $('#ddlQualification'), ddlPoupulation: $('#ddlPoupulation'), ddlLocationType: $('#ddlLocationType'), txtLandmark: $('#txtLandmark'), ddlBank: $('#ddlBank'), txtifsc: $("#txtifsc"), txtAccountNumber: $("#txtAccountNumber"), txtAccountName: $("#txtAccountName")
+            };
+
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start(ct.btn, 'Requesting');
+            var IsE = { nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100), namo: ($v.$IsNum(ct.namo.val()) || ct.namo.val().trim() == '' || ct.namo.val().length > 150), eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256), state: (ct.state.val() === null || ct.state.val() === 0), adrs: ct.adrs.val() == '', pan: ct.pan.val().length !== 10, adhr: ct.adhr.val().length !== 12, txtAlternateMobile: (ct.txtAlternateMobile.val() === '' || ct.txtAlternateMobile.val().length !== 10), txtDOB: (ct.txtDOB.val() === '' || ct.txtDOB.val().length !== 11), ddlShopType: (ct.ddlShopType.val() === ''), ddlQualification: (ct.ddlQualification.val() === ''), ddlPoupulation: ct.ddlPoupulation.val() === '', ddlLocationType: ct.ddlLocationType.val() == '', txtLandmark: ct.txtLandmark.val() === '', ddlBank: ct.ddlBank.val() == '', ifsc: (ct.txtifsc.val() == '' || ct.txtifsc.val().length !== 11), AccountNumber: ct.txtAccountNumber.val() == '', AccountName: (ct.txtAccountName.val() == '' || $v.$IsNum(ct.txtAccountName.val())) }
+
+            $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(ct.namo, 'Outletname is non-numeric mandatory field and length is not more than 150', IsE.namo);
+
+            $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(ct.slb, 'Slab is required, select slab from list! (<i>In case of list is empty add slab first</i>)', IsE.slb);
+            $v.showErrorFor(ct.state, 'State is required, select State from list! (<i>In case of list is empty add State first</i>)', IsE.state);
+            $v.showErrorFor(ct.adrs, 'Address is required to complete profile', IsE.adrs);
+            $v.showErrorFor(ct.pan, 'PAN is required to complete profile and should be valid', IsE.pan);
+            $v.showErrorFor(ct.adhr, 'AADHAR No is required to complete profile and should be valid', IsE.adhr);
+            $v.showErrorFor(ct.txtAlternateMobile, 'Alternate mobile no is required !', IsE.txtAlternateMobile);
+            $v.showErrorFor(ct.txtDOB, 'Invalid DOB.', IsE.txtDOB);
+            $v.showErrorFor(ct.ddlShopType, 'Select ShopType !', IsE.ddlShopType);
+            $v.showErrorFor(ct.ddlQualification, 'Select Qualification !', IsE.ddlQualification);
+            $v.showErrorFor(ct.ddlPoupulation, 'Select Poupulation !', IsE.ddlPoupulation);
+            $v.showErrorFor(ct.ddlLocationType, 'Select LocationType !', IsE.ddlLocationType);
+            $v.showErrorFor(ct.txtLandmark, 'Select Landmark !', IsE.txtLandmark);
+            $v.showErrorFor(ct.ddlBank, 'Please select Bank', IsE.ddlBank);
+            $v.showErrorFor(ct.txtifsc, 'Please Enter Ifsc', IsE.ifsc);
+            $v.showErrorFor(ct.txtAccountNumber, 'Please Enter Account Number', IsE.AccountNumber);
+            $v.showErrorFor(ct.txtAccountName, 'Please Enter Account Name', IsE.AccountName);
+
+            IsE.err = (IsE.nam || IsE.namo || IsE.eml || IsE.state || IsE.adrs || IsE.pan || IsE.adhr || IsE.txtAlternateMobile || IsE.txtDOB || IsE.ddlShopType || IsE.ddlQualification || IsE.ddlPoupulation || IsE.ddlLocationType || IsE.txtLandmark || IsE.ddlLocationType || IsE.txtLandmark || IsE.ddlBank || IsE.ifsc || IsE.AccountName || IsE.AccountNumber);
+            if (IsE.err) {
+                btnLdr.Stop(ct.btn);
+                return false;
+            }
+            an.autoClose = 5;
+            preloader.load();
+            $.post('/KYC/DocumentDetails', { uid: ct.UserID }, function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                });
+                $('[data-toggle="tooltip"]').tooltip();
+                $("[id^=dimageUpload_]").change(function () {
+                    var id = $(this).attr("id").split('_')[1];
+                    //var file = ShowImagePreview(this, id);
+                    var did = $(this).closest("tr").data().docId;
+                    var formData = new FormData();
+                    formData.append('dtype', did);
+                    formData.append('file', $('#dimageUpload_' + id)[0].files[0]);
+                    formData.append('uid', $('#hidId').val());
+                    $.ajax({
+                        type: 'POST',
+                        url: '/KYC/Upload-File',
+                        processData: false,
+                        contentType: false,
+                        data: formData,
+                        success: function (result) {
+                            if (result.statuscode === -1) {
+                                an.title = 'Oops';
+                                an.content = result.msg;
+                                an.alert(an.type.failed);
+                            } else {
+                                an.title = 'Success';
+                                an.content = result.msg;
+                                an.alert(an.type.success);
+                                mdlA.anim(100);
+                                UpdateKYC(1);
+                            }
+                        },
+                        statusCode: {
+                            500: function () {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            },
+                            0: function () {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        },
+                        error: function (result) {
+                            checkError(result);
+                            an.title = 'Oops';
+                            an.content = 'An error occured!';
+                            an.alert(an.type.failed);
+                        },
+                        complete: function () {
+                            preloader.remove();
+                        }
+                    });
+                });
+
+                if (val == 1) {
+                    an.title = 'Success';
+                    an.content = "Upload Successfull!";
+                    an.alert(an.type.success);
+                }
+                $('.ddddd').click(function () {
+                    $.post("/DownloadKYC", { path: $(this).attr("name") }, function (result) {
+                        reload();
+                    }).fail(function (xhr) {
+                        if (xhr.status === 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status === 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    }).always(function () {
+                        preloader.remove();
+                    });
+
+                });
+                $('#btnApplyKYC').click(function () {
+                    KYCStatus();
+                });
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                btnLdr.Stop(ct.btn);
+                preloader.remove();
+            });
+
+
+        };
+
+        var KYCStatus = function () {
+            var outletid = $('#hidOutletID').val();
+            preloader.load();
+            $.post('/KYC/updatekycsts', { outletid: outletid, sts: 2 }, function (result) {
+                resultReload(result);
+                an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == 1)
+                    UpdateKYC();
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var _switch = function (sender) {
+            var param = {
+                UserID : @Model.UserID,
+                IsGSTApplicable: $('#chbISGSTAPPLICABLE').is(':checked'),
+                IsTDSApplicable: $('#chbISTDSAPPLICABLE').is(':checked'),
+                DMRModelID: $('#ddlDMRModel').val(),
+                IsWebsite: $('#chbIsWebsite').is(':checked'),
+                WebsiteName: $('#txtWebsite').val(),
+                WID: $('#hidWID_').val()
+            };
+            var _id = $(sender).attr('id');
+            if (_id == "chbIsWebsite") {
+                if ($('#chbIsWebsite').is(':checked') == true) {
+                    $('#txtWebsite').removeAttr('disabled').on('change', function () {
+                        param.IsWebsite = $('#chbIsWebsite').is(':checked');
+                        param.WebsiteName = $('#txtWebsite').val();
+                        if (param.WebsiteName != '') {
+                            _partialUpdate(param);
+                        }
+                    })
+                }
+                else {
+                    $('#txtWebsite').val('').attr('disabled', 'disabled').unbind('change');
+                    param.IsWebsite = false;
+                    param.WebsiteName = '';
+                }
+            }
+
+            if (_id != undefined && _id != "chbIsWebsite") {
+                _partialUpdate(param);
+            }
+        }
+
+        var _partialUpdate = function (param) {
+            $.post('/_partialUpdate', param = param)
+                .done(function (result) {
+                    an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                });
+        }
+
+
+
+        $('#txtCommRate').on('change', function () {
+            if ($(this).val() != '' && $(this).val() != undefined) {
+                $.post('/UpdateFlatComm', { comm: $(this).val(), UserID:@Model.UserID })
+                    .done(function (result) {
+                        an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    })
+            }
+        });
+    </script>
+}

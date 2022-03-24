@@ -1,0 +1,27 @@
+﻿<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Enter Vendor Name" id="txtVendorName"/>
+        </div>
+        <div class="form-group text-right">
+            <button class="btn btn-outline-dark" id="btnSaveVendor">SAVE</button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#btnSaveVendor').click(() => {
+        $.post('/SaveVendor', { vendorsName: $('#txtVendorName').val(), IsActive: true })
+            .done(result => {
+                an.title = result.statuscode == 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == 1) {
+                    mdlA.dispose();
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    });
+</script>

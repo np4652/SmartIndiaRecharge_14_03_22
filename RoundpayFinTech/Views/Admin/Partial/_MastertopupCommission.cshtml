@@ -1,0 +1,118 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@*//@model IEnumerable<RoundpayFinTech.AppCode.Model.Master_Topup_Commission>;*@
+@model RoundpayFinTech.AppCode.Model.MasterTopupCommissionViewModel;
+
+@{
+
+    int count = 1;
+}
+@if (@Model.Master_Topup_Commission != null && @Model.Master_Topup_Commission.Count() > 0 && ApplicationSetting.IsReferral == true)
+{
+    int datacount = Model.Master_Topup_Commission.Count();
+    @foreach (var mdl in Model.Master_Topup_Commission)
+    {
+
+        <tr data-item-id="@mdl.ID">
+            <td>
+                @count
+            </td>
+            <td>
+                @mdl.TopUpName
+            </td>
+            <td>
+                <input name="edit_IsGreaterThan" onchange="editData(@mdl.ID,this)" value=@mdl.IsGreaterThan>
+
+            </td>
+            <td>
+                <input name="edit_Comm" onchange="editData(@mdl.ID,this)" value=@mdl.Comm>
+
+            </td>
+            <td>
+                <div class="input-group-append">
+                    <span class="input-group-text switch switch-sm bg-white align">
+                        <input type="checkbox" name="edit_IsActive" class="switch" onchange="editData(@mdl.ID,this)" id="activeMaster@(count+1)" @Html.Raw(@mdl.IsActive ? "checked='checked'" : "")>
+                        <label for="activeMaster@(count+1)" class="font-weight-bold lbl"></label>
+                    </span>
+                </div>
+            </td>
+        </tr>
+        count++;
+        if (count == datacount + 1)
+        {
+            if (@Model.ReferralCommission != null && ApplicationSetting.IsReferral == true)
+            {
+                
+                    <tr data-item-id="@Model.ReferralCommission.ID">
+                        <td>
+                            @count
+                        </td>
+                        <td>
+                            Referral Commission SignUp
+                        </td>
+                        <td>
+                        </td>
+                        <td>
+                            <input name="edit_CommOnReg" onchange="editreferalData(@Model.ReferralCommission.ID,this)" value=@Model.ReferralCommission.CommOnReg>
+                        </td>
+                        <td>
+                        </td>
+                    </tr>
+                
+            }
+        }
+    }
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="20"><center>This Service is Not Activated in Your Portal. To Activate this  Service Please Get in Touch With Your Roundpay'S Account Manager.</center></td>
+    </tr>
+}
+
+
+<script>
+    function editData(id, a) {
+        debugger
+
+        var row = $(a).parents('tr');
+        var data = {
+            ID: id,
+            IsGreaterThan: row.find('[name="edit_IsGreaterThan"]').val(),
+            Comm: row.find('[name="edit_Comm"]').val(),
+            IsActive: row.find('[name="edit_IsActive"]').is(":checked"),
+
+        }
+        console.log(data);
+
+        $.post('/MastertopupCommissionUpdate/', data).done(function (result) {
+            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            load()
+        }).fail(function (xhr) {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+
+    }
+    function editreferalData(id, a) {
+        debugger
+        var row = $(a).parents('tr');
+        var data = {
+            ID: id,
+            CommOnReg: row.find('[name="edit_CommOnReg"]').val()
+        }
+        console.log(data);
+        $.post('/ReferralCommissionUpdate/', data).done(function (result) {
+            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            loadReferal();
+        }).fail(function (xhr) {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    }
+</script>

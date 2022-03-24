@@ -1,0 +1,120 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ErrorCodeDetail>
+@{
+    var i = 1;
+    int AdminOrAPIUser = ViewBag.AdminOrAPIUser;
+}
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.EID">
+        <th style="width:1em;" scope="row">@i</th>
+        @if (AdminOrAPIUser == 1 && ApplicationSetting.IsErrorCodeEditable)
+        {
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item">Edit</a>
+                    </div>
+                </div>
+            </td>
+        }
+    <td style="width:30em;">
+        @if (AdminOrAPIUser == 1)
+        {
+            @Html.Raw(@item.Error)
+        }
+        else
+        {
+
+            @if (@item.Error.Contains("REPLACE"))
+            {
+                @Html.Raw(@item.Error.Replace("{REPLACE}", "Complete details of the error"))
+            }
+            else
+            {
+                @Html.Raw(@item.Error)
+            }
+
+        }
+
+
+
+
+
+
+        <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">@item._ErrType [@item.Code]</small>
+    </td>
+        @if (AdminOrAPIUser == 1 && ApplicationSetting.IsErrorCodeEditable)
+        {
+            <td>
+                <div class="form-inline">
+                    @Html.TextBoxFor(modelItem => item.Code, new { @id = "txtCode" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:6em", @aria_describedby = "helpOPID_" + i })
+                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                    @Html.HiddenFor(modelItem => item.Code, new { @id = "hidCode" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+                </div>
+                <small id="helpOPID_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+            </td>
+        }
+        else
+        {
+            <td>
+                @item.Code
+            </td>
+        }
+        <td>
+            @{
+                var cls = "text-info";
+                if (item.Status == RechargeRespType.FAILED)
+                {
+                    cls = "text-danger";
+                }
+                if (item.Status == RechargeRespType.SUCCESS)
+                {
+                    cls = "text-success";
+                }
+            }
+            <span class="@cls">
+                @(RechargeRespType.GetRechargeStatusText(item.Status))
+            </span>
+        </td>
+        @if (AdminOrAPIUser == 1)
+        {
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch IsDown" id="IsDown_@i" checked="@item.IsDown">
+                    <label for="IsDown_@i"></label>
+                </span>
+
+            </td>
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch isResend" id="isResend_@i" checked="@item.IsResend">
+                    <label for="isResend_@i"></label>
+                </span>
+            </td>
+        }
+    </tr>
+    i++;
+}
+<script>
+    (() => {
+        $('.IsDown,.isResend').click(e => {
+            let element = $(e.currentTarget).closest('tr');
+            let param = {
+                EID: element.data().itemId,
+                IsDown: element.find('.IsDown').is(':checked'),
+                IsResend: element.find('.isResend').is(':checked')
+            };
+            $.post('/Error-update', param)
+                .done(result => {
+                    an.title= result.statuscode == 1 ? 'Well done : ' : 'Oops!! : ';
+                    an.content= result.msg;
+                    an.alert(result.statuscode);
+                }).always(() => { });
+        })
+    })();
+</script>
+
+

@@ -1,0 +1,180 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "GST Summary List";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i>@ViewData["Title"]
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row">
+                            @if (Model)
+                            {
+                                <div class="col-md-2 col-sm-4 col-xs-6">
+                                    <div class="form-group">
+                                        <label class="lbl" for="txtTrID">Mobile No.</label>
+                                        <input aria-describedby="txtddTrID" class="form-control" id="txtMobile" name="txtddTrID" placeholder="Enter Mobile No." tabindex="1" type="text" value="">
+                                        <small id="txtddTrID" class="form-text text-muted d-none"></small>
+                                        <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-4 col-xs-6">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">GST Month</label>
+                                    <input aria-describedby="dtsFromDate" class="form-control" id="dtFromDate" tabindex="2" type="text" readonly="readonly">
+                                    <small id="dtsFromDate" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlSummaryType">Billing Model</label>
+                                    <select id="ddlSummaryType" tabindex="3" class="form-control">
+                                        <option value="P2P">P2P</option>
+                                        <option value="P2A">P2A</option>
+                                        <option value="SUR">Surcharge</option>
+                                        <option value="RCM">RCM</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @if (Model)
+                            {
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="form-group">
+                                        <label class="lbl" for="ddlGSTVerified">GST VerifyType</label>
+                                        <select id="ddlGSTVerified" tabindex="3" class="form-control">
+                                            <option value="0">All</option>
+                                            <option value="1">Verified</option>
+                                            <option value="2">Unverified</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-4 col-xs-6">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <button id="btnSearch" tabindex="5" class="btn btn-outline-dark mt-4">Search</button>
+                                        <div class="input-group-append">
+                                            <button id="btnExport" tabindex="5" class="btn btn-outline-success mt-4">
+                                                <i class="fa fa-file-excel"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive table-sm table-mh">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblGSTSummary">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%">#</th>
+                                        <th scope="col">#Invoice</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Outlet</th>
+                                        <th scope="col">State</th>
+                                        <th scope="col">PAN</th>
+                                        <th scope="col">GSTIN</th>
+                                        <th scope="col">IsVerified</th>
+                                        <th scope="col" class="text-right text-nowrap">Requested(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">Debited(<i class="fas fa-rupee-sign"></i>)</th>
+                                        @*<th scope="col" class="text-right text-nowrap">GSTTax(<i class="fas fa-rupee-sign"></i>)</th>*@
+                                        <th scope="col" class="text-right text-nowrap">Disc(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">Net(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">SGST(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">CGST(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">IGST(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th scope="col" class="text-right text-nowrap">Total(<i class="fas fa-rupee-sign"></i>)</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        var discHtml = 'Disc(<i class="fas fa-rupee-sign"></i>)';
+        var surHtml = 'Sur(<i class="fas fa-rupee-sign"></i>)';
+        $(document).ready(function () {
+            $('.body-content').removeClass('container').addClass('container-fluid');
+            var d = new Date();
+            var d1 = new Date(d.getFullYear(), d.getMonth(), null)
+            var FDate = MPicker($('#dtFromDate'), d1.toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+            });
+            search();
+            $("#btnSearch").click(function () {
+                search();
+            });
+
+            $('#btnExport').click(() => exportExcel());
+        });
+        var search = function () {
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($("#btnSearch"), 'Requesting');
+            preloader.load();
+            $.post('/GST-Summary', { M: $('#txtMobile').val() == undefined ? '' : $('#txtMobile').val(), D: $('#dtFromDate').val(), IA: $('#ddlGSTVerified').val(), bModel: $('#ddlSummaryType').val() })
+                .done(function (result) {
+                    resultReload(result);
+                    $($('#tblGSTSummary thead th')[10]).html(discHtml);
+                    $('#tblGSTSummary tbody').html(result);
+                    if ($('#ddlSummaryType').val() == 'SUR') {
+                        $($('#tblGSTSummary thead th')[10]).html(surHtml);
+                    }
+
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                    btnLdr.Stop($('#btnSearch'));
+                });
+        };
+
+        var exportExcel = () => window.location = "/GST-Summary-Excel?" + $.param({ M: $('#txtMobile').val() == undefined ? '' : $('#txtMobile').val(), D: $('#dtFromDate').val(), IA: $('#ddlGSTVerified').val(), bModel: $('#ddlSummaryType').val()  });
+
+    </script>
+
+
+}
+

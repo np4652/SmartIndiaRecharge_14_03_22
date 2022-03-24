@@ -1,0 +1,47 @@
+﻿@using Fintech.AppCode.StaticModel
+@model RoundpayFinTech.AppCode.Model.ROffer.RNPDTHCustInfo
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 style="text-align:center;">DTH Consumer Info</h3>
+        <hr />
+    </div>
+    @if (Model.StatusCode == ErrorCodes.One)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="scroll-content">
+                <div class="container">
+                    <table style="margin: auto;">
+                        <thead>
+                        </thead>
+                        <tbody style="font-size: 16px;">
+                            @foreach (var item in Model.Data)
+                            {
+                                if (!string.IsNullOrEmpty(item.Value.ToString()))
+                                {
+                                    <tr>
+                                        <td>@item.Key.ToString()</td>
+                                        <td style="position:relative; left: 20px;">:</td>
+                                        <td style=" position: relative; left:50px;">@item.Value.ToString()</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    }
+    else if (Model.StatusCode == ErrorCodes.Minus1)
+    {
+        <h2 class="text-danger">Oops! Customer Not Found</h2>
+    }
+    else
+    {
+        <h2 class="text-danger">Oops! Customer information not availble</h2>
+    }
+</div>

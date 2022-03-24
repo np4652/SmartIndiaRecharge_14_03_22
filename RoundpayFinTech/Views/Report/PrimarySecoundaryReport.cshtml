@@ -1,0 +1,247 @@
+﻿@model SalesSummaryModel;
+@{
+    ViewData["Title"] = "Primary Secoundary Report";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-1">
+                                    <label class="lbl" for="txtMobile">Mobile No</label>
+
+                                    <div class="input-group">
+                                        <input type="text" id="txtMobile" tabindex="7" class="form-control" placeholder="Enter Mobile No" value="@Model.UserMobile" />
+                                        <div class="input-group-append">
+                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                <input type="checkbox" class="switch" id="chbIsSelf" tabindex="8" checked="checked">
+                                                <label for="chbIsSelf">IsSelf</label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="hidID" value="@Model.UserID" />
+                            <div class="col-md-2 col-sm-2 col-xs-2" id="dvDDLRole">
+                                <div class="mb-1">
+                                    <label class="lbl" for="ddlRole">Choose Role</label>
+                                    <select id="ddlRole" tabindex="8" class="form-control"></select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-1">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-4 col-sm-3 col-xs-4">
+                                <div class="mb-1" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString("dd MMM yyyy")">
+                                        <small id="Small4" class="form-text text-muted d-none"></small>
+                                        <div class="input-group-append">
+                                                <button id="btnSearch" tabindex="9" class="btn btn-sm btn-outline-dark">Search</button>
+                                                <button class="btn btn-sm btn-outline-success far fa-file-excel pt-2" id="btnExport"></button> 
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive vh-2" id="partialTable">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+
+            GetRole();
+            $('#chbIsSelf,#txtMobile').change(() => GetRole());
+            $('#btnSearch').click();
+        });
+        var search = function (sender) {
+            var filter =
+            {
+                FromDate: $("#dtFromDate").val(),
+                ToDate: $("#dtToDate").val(),
+                RoleID: $('#chbIsSelf').is(':checked') == true ? 0 : $('#ddlRole option:selected').val(),
+                MobileNo: $('#txtMobile').val()
+            };
+            if (sender.id.indexOf('Export') > -1 || parseInt(filter.TopRows) > 4000) {
+                window.location = "/get-PrimarySecoundary-Excel?" + $.param(filter);
+            }
+            else {
+                preloader.load();
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.ajax({
+                    type: 'POST',
+                    url: '/Primary-Secoundary-Report',
+                    contentType: 'application/json',
+                    data: JSON.stringify(filter),
+                    success: function (result) {
+                        $('#partialTable').html(result);
+                    },
+                    error: function (xhr, result) {
+                        an.title = "Oops";
+                        an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                        an.alert(an.type.failed);
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    },
+                    complete: function () {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();   
+                    }
+                });
+            }
+        };
+
+        var GetRole = function () {
+            var mob = $('#txtMobile').val();
+            preloader.load();
+            $.post('/UserInfo', { MobileNo: mob })
+                .done(function (result) {
+                    resultReload(result);
+                    $('#hidID').val(result.id);
+                    $('#dvDDLRole').addClass('d-none')
+                    if (result.id > 0 && $('#chbIsSelf').is(':checked') === false) {
+                        $('#dvDDLRole').removeClass('d-none')
+                        $.post('/ChildRole', { r: result.roleID })
+                            .done(function (result) {
+                                resultReload(result);
+                                $('#ddlRole option').each(function () {
+                                    $(this).remove();
+                                });
+                                $.each(result, function (s, role) {
+                                    $('#ddlRole').append(
+                                        $('<option></option>').val(role.id).html(role.role)
+                                    );
+                                });
+                            })
+                            .catch(function (xhr, e, m) {
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    }
+                })
+                .catch(function (xhr, e, m) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+
+}
+

@@ -1,0 +1,30 @@
+﻿@using System.Globalization;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.ProcRechargeReportResponse>
+@{
+    var couter = 1;
+    var mdl = Model;
+    var cls = "bg-primary";
+}
+
+@foreach (var item in mdl)
+{
+    if (item._Type == 3)
+    {
+        cls = "live-failed";
+    }
+    var dt = DateTime.ParseExact(item.EntryDate, "dd MMM yyyy hh:mm:ss:fff tt", CultureInfo.InvariantCulture);
+    <tr data-item-id="@item.TID" class="@cls live-font">
+        <td>@couter</td>
+        <td>@item.TID</td>
+        <td class="text-nowrap">@item.Outlet</td>
+        <td><span class="badge badge-dark">@item.Account</span></td>
+        <td><span class="badge badge-light text-uppercase">@item.Operator</span></td>
+        <td class="text-nowrap">@item.EntryDate</td>
+        <td class="text-nowrap">@(DateTime.Now - dt)</td>
+        <td class="text-right"><span class="badge badge-pill">@item.RequestedAmount</span></td>
+        <td><span class="badge badge-light text-uppercase">@item.API</span></td>
+        <td>@item.VendorID</td>
+        <td>@item.LiveID</td>
+    </tr>
+    couter = couter + 1;
+}

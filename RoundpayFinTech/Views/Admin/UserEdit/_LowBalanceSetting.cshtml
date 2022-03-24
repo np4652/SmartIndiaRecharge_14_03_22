@@ -1,0 +1,137 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.LowBalanceSetting
+<div class="row">
+    <div class="col-md-12">
+        <div class="form-group">
+            @*<label>Alert Balance</label>
+            <input type="text" class="form-control" id="txtAlertBalance" value="@Model.AlertBalance" />*@
+
+
+            @Html.Label("txtAlertBalance", "Alert Balance", new { @class = "lbl" })
+            @Html.TextBox("txtAlertBalance", Model.AlertBalance, new { @class = "form-control", @placeholder = "Enter Balance", @aria_describedby = "BalanceHelp", @tabindex = 1 })
+           
+        </div>
+        <div class="form-group">
+            @*<label>Mobile Nos</label> <small class="text-info"> (comma seprated)</small>*@
+            @*<input type="text" class="form-control" id="textMobilNos" value="@Model.MobileNos" />*@
+
+
+
+            @Html.Label("textMobilNos", "Mobile Nos (comma seprated)", new { @class = "lbl" })
+            @Html.TextBox("textMobilNos", Model.MobileNos, new { @class = "form-control", @placeholder = "Enter Mobile Number", @aria_describedby = "mobilesHelps", @tabindex = 3 })
+            <small id="mobilesHelps" class="form-text text-muted d-none">Enter Correct Mobile Numbers</small>
+        </div>
+        <div class="form-group">
+            @*<label>E-Mails</label><small class="text-info"> (comma seprated)</small>
+            <input type="text" class="form-control" id="txtEmails" value="@Model.Emails" />*@
+
+
+            @Html.Label("txtEmails", "E-Mails (comma seprated)", new { @class = "lbl" })
+            @Html.TextBox("txtEmails", Model.Emails, new { @class = "form-control text-lowercase", @placeholder = "Enter Email ID", @aria_describedby = "emailHelp", @tabindex = 4 })
+            <small id="emailHelp" class="form-text text-muted d-none"> Enter Correct E-mails</small>
+        </div>
+        <div class="form-group">
+            @*<label>WhatsApp Number</label><small class="text-info"></small>
+            <input type="text" class="form-control" id="txtWhatsappNo" value="@(string.IsNullOrEmpty(Model.WhatsappNo)?Model.MobileNo:Model.WhatsappNo)" />*@
+
+
+
+            @Html.Label("txtWhatsappNo", "WhatsApp Number", new { @class = "lbl" })
+            @Html.TextBox("txtWhatsappNo", string.IsNullOrEmpty(Model.WhatsappNo)?Model.MobileNo:Model.WhatsappNo, new { @class = "form-control", @placeholder = "Enter WhatsappNo", @aria_describedby = "mobileHelp", @tabindex = 3 })
+        <small id="mobileHelp" class="form-text text-muted d-none">Enter Correct Mobile Number</small>
+        </div>
+        <div class="form-group">
+            @*<label>Telegram Number</label>
+            <input type="text" class="form-control" id="txtTelegramNo" value="@(string.IsNullOrEmpty(Model.TelegramNo)?Model.MobileNo:Model.TelegramNo)" />*@
+
+
+            @Html.Label("txtTelegramNo", "Telegram Number", new { @class = "lbl" })
+            @Html.TextBox("txtTelegramNo", string.IsNullOrEmpty(Model.TelegramNo)?Model.MobileNo:Model.TelegramNo, new { @class = "form-control", @placeholder = "Enter Telegram Number", @aria_describedby = "mobileHelp", @tabindex = 3 })
+        <small id="mobileHelp" class="form-text text-muted d-none">Enter Correct TelegramNo</small>
+        </div>
+        <div class="form-group">
+            @*<label>Hangout Id</label>
+            <input type="text" class="form-control" id="txtHangoutId" value="@(string.IsNullOrEmpty(Model.HangoutId)?Model.EmailID:Model.HangoutId)" />*@
+
+
+
+            @Html.Label("txtHangoutId", "Hangout ID", new { @class = "lbl" })
+            @Html.TextBox("txtHangoutId", string.IsNullOrEmpty(Model.HangoutId)?Model.EmailID:Model.HangoutId, new { @class = "form-control text-lowercase", @placeholder = "Enter Email ID", @aria_describedby = "hangoutHelp", @tabindex = 4 })
+            <small id="hangoutHelp" class="form-text text-muted d-none">Enter Correct Hangout ID</small>
+        </div>
+        <div class="form-group text-right">
+            <button class="btn btn-outline-success" id="btnSave">SAVE</button>
+        </div>
+    </div>
+</div>
+
+
+<script>
+
+   
+    var ct = {
+            abal: $('#txtAlertBalance'), mobiles: $('#textMobilNos'), emails: $('#txtEmails'),  txtWhatsappNo: $('#txtWhatsappNo'), tele: $('#txtTelegramNo'), hangout: $('#txtHangoutId'), btn: $('#btnCreate') };
+
+
+
+    $('#btnSave').click(() => {
+
+        debugger;
+        var smail= /^\w+@@[a-zA-Z_]+\.[com]{2,4}$/;
+       var emailReg = new RegExp(/^(\w+@@[a-zA-Z_]+\.[com]{2,4})*([,;][\s]*(\w+@@[a-zA-Z_]+\.[com]{2,4}))*$/i);
+        var MobileReg = new RegExp(/^([6-9]{1}[0-9]{9})*([,;][\s]*([6-9]{1}[0-9]{9}))*$/i);
+        var $v = $validator;
+
+        var emailText = $('#txtEmails').val();
+        var MobileText = $('#textMobilNos').val();
+        var hangoutText = $('#txtHangoutId').val();
+        
+         if (ct.btnTxt !== ct.btn.html())
+                    return false;
+                btnLdr.addClass = 'btn-dark';
+                btnLdr.removeClass = 'btn-outline-dark';
+        btnLdr.Start(ct.btn, 'Requesting');
+        var IsE = false;
+       
+        var IsE = { mobiles: (!MobileReg.test(MobileText)) ,  emails: (!emailReg.test(emailText))}
+
+        if (emailText != "") { 
+            $v.showErrorFor(ct.emails, 'Please Enter Valid Emails ', IsE.emails);
+        }
+        if (MobileText != "") {
+            
+            $v.showErrorFor(ct.mobiles, 'Please Enter Valid Mobile Numbers', IsE.mobiles);
+        }
+
+        
+        else
+        {
+            IsE.err = false;
+        }
+        IsE.err = (IsE.emails || IsE.mobiles);
+        
+                if (IsE.err) {
+                    btnLdr.Stop(ct.btn);
+                    return false;
+                }
+
+        let param = {
+            AlertBalance: $('#txtAlertBalance').val(),
+            MobileNos: $('#textMobilNos').val(),
+            Emails: $('#txtEmails').val(),
+            WhatsappNo: $('#txtWhatsappNo').val(),
+            TelegramNo: $('#txtTelegramNo').val(),
+            HangoutId: $('#txtHangoutId').val()
+        };
+        $.post('/_Save-LowBalance-Setting', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    mdlA.dispose();
+                    _loadGrid();
+                }
+            })
+    });
+</script>

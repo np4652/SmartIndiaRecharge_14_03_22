@@ -1,0 +1,115 @@
+﻿@model int;
+@{
+    ViewData["Title"] = "Employee Target Report";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <div class="row">
+                            <div class="col-sm-9">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="input-group">
+                                    <input class="form-control" id="dtFromDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString("dd MMM yyyy")">
+                                    <div class="input-group-append">
+                                        <button id="btnSearch" tabindex="9" class="btn btn-sm btn-outline-light"><i class="fa fa-search"></i></button>
+                                        <button class="btn btn-sm btn-outline-light far fa-file-excel pt-2" id="btnExport"></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive" id="partialTable">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+
+            $("#btnSearch,#btnExport").click(e => search(e.currentTarget));
+
+            $('#btnSearch').click();
+        });
+        var search = function (sender) {
+            let filter =
+            {
+                CommonStr: $("#dtFromDate").val()
+            };
+            if (sender.id.indexOf('Export') > -1 || parseInt(filter.TopRows) > 4000) {
+                window.open("/Employee/TertiaryReport-Excel?" + $.param(filter), '_blank');
+            }
+            else {
+                preloader.load();
+                btnLdr.addClass = 'btn-light';
+                btnLdr.removeClass = 'btn-outline-light';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.post('/Employee/_EmpTargetReport', filter)
+                    .done(result => $('#partialTable').html(result))
+                    .fail(xhr => {
+                        an.id = 'alertModal';
+                        an.title = 'Oops';
+                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    });
+            }
+        };
+    </script>
+}
+

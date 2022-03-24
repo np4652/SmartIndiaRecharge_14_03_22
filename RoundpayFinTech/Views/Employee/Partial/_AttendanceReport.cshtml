@@ -1,0 +1,82 @@
+﻿@model RoundpayFinTech.AppCode.Model.Employee.AttendanceReportModel
+
+
+@if (Model.dtReport != null && Model.dtReport.Rows.Count > 0)
+{
+
+    <table class="table table-bordered">
+        <thead class="bg-tableth">
+            <tr>
+                @foreach (System.Data.DataColumn col in Model.dtReport.Columns)
+                {
+                    if (col.ColumnName == "EmpName")
+                    {
+                        <th>Employee</th>
+                    }
+                    else
+                    {
+                        <th>@col.ColumnName.Substring(1)</th>
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                for (int i = 0; i < Model.dtReport.Rows.Count; i++)
+                {
+                    <tr>
+                        @for (int j = 0; j < Model.dtReport.Columns.Count; j++)
+                        {
+                            <td>@Model.dtReport.Rows[i][j].ToString()</td>
+                        }
+                    </tr>
+                    //TotalDebit += item.TotalTravel;
+                    //TotalCredit += item.TotalExpense;
+                    //TotalMeeting += item.MeetingCount;
+                    //counter += 1;
+                }
+                @*<tr class="text-right text-white bg-blue">
+                        <td colspan="3"> Total</td>
+                        <td>@TotalDebit</td>
+                        <td>@TotalCredit</td>
+                        <td>@TotalMeeting</td>
+                        <td colspan="2"></td>
+                    </tr>*@
+
+            }
+        </tbody>
+    </table>
+}
+
+
+
+else
+{
+    <div class="col-sm-12 text-danger text-monospace">No Data Found</div>
+}
+<script>
+    $('table').fixTableHeader();
+
+    var callDetail = function (sender) {
+        let ele = $(sender).closest('tr');
+        let id = ele.data().id;
+        console.log(id);
+        let _lnk1 = ele.find('.lnkDetail');
+        console.log(_lnk1);
+        let ListReq =
+        {
+            CommonInt: ele.data().id
+        };
+        $.post('/Employee/_MeetingDetailReport', ListReq).done(result => {
+            console.log(result);
+            if (result.length > 0) {
+                ele.after('<tr class="rowDetail"><td colspan="8"><table class="tblDetail table table-bordered"></table></td></tr>')
+                $('.tblDetail').empty().append('<thead class="bg-tableth cus-headsec"><tr class="rowTblDetail cus-headsec2"><th>Name</th><th>OutletName</th><th>Mobile</th><th>Area</th><th>Purpose</th><th>Consumption</th><th>IsUsedOtherBrand</th><th>Other Brand Name</th><th>Recharge Consumption</th><th>Bill Payment Consumption</th><th>Money Transfer Consumption</th><th>AEPS Consumption</th><th>Mini ATM Consumption</th><th>Insurance Consumption</th><th>Hotel/Flight Booking Consumption</th><th>Pan Consumption</th><th>Vehicle Insurance Consumption</th><th>Reason</th><th>Remark</th></tr></thead><tbody class="cus-tbody">')
+                $('.tblDetail').append(result.map(x => `<tr><td>${x.name}</td><td>${x.outletName}</td><td>${x.mobile}</td><td>${x.area}</td><td>${x.purpose}</td><td>${x.consumption}</td><td>${x.isUsedOtherBrand}</td><td>${x.brandName}</td><td>${x.rechargeConsumption}</td><td>${x.billPaymentConsumption}</td><td>${x.moneyTransferConsumption}</td><td>${x.aepsConsumption}</td><td>${x.miniATMConsumption}</td><td>${x.insuranceConsumption}</td><td>${x.hotelConsumption}</td><td>${x.panConsumption}</td><td>${x.vehicleConsumption}</td><td>${x.reason}</td><td>${x.remark}</td></tr>`));
+                $('.tblDetail').append('</tbody>');
+                ele.find('.lnkDetail').replaceWith('<a href="javascript:void(0)" onclick="remDetail(this)" class="lnkRemoveDetail"><i class="fa fa-minus-circle" aria-hidden="true"></i></a>');
+            }
+        });
+    };
+
+</script>

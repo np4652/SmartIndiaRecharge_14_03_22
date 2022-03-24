@@ -1,0 +1,230 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.SlabCommissionSetting
+@{
+    ViewData["Title"] = "SlabCommissionSetting";
+}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet">
+<style>
+    .select2-container--default .select2-selection--single {
+        height: 38px;
+        border-radius: 0px;
+        border: 1px solid #ced4da;
+    }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            font-weight: 300;
+            line-height: 34px;
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 37px;
+        }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-5 text-monospace">
+                                <i class="fas fa-link"></i> Slab Master
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body pt-2">
+                        <div class="row filters">
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    @{
+                                        var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                                        var OPTypeID = OPTypes.Prepaid;
+                                        var Opretaors = new SelectList(Model.Operators, "OID", "Name");
+                                        var OID = 1;
+                                    }
+                                    <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID" required="required">
+                                        <option value="0">:: Select Operator ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <select id="ddlOperator" class="form-control" asp-items="@Opretaors" asp-for="@OID" required="required">
+                                        <option value="0">:: Select Operator ::</option>
+                                        <option value="-1">All</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    <select id="ddlAction" class="form-control" required="required">
+                                        <option value="0">:: Action ::</option>
+                                        <option value="I">Increase</option>
+                                        <option value="D">Decrease</option>
+                                        <option value="O">Overwrite</option>
+                                        @*<option value="inc">Increase</option>
+                                            <option value="dec">Decrease</option>
+                                            <option value="ove">Overwrite</option>*@
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    <select id="ddlMode" class="form-control" required="required">
+                                        <option value="0">:: Mode ::</option>
+                                        <option value="P">Percentage</option>
+                                        <option value="F">Fixed</option>
+                                        @*<option value="per">Percentage</option>
+                                            <option value="fix">Fixed</option>*@
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    <select id="ddlType" class="form-control">
+                                        <option value="G">Genral</option>
+                                        <option value="R">Real</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <select id="ddlCommissionType" class="form-control">
+                                        <option value="0">Commission Type</option>
+                                        <option value="C" selected>Commission</option>
+                                        <option value="S">Surcharge</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    <select id="ddlAmountType" class="form-control">
+                                        <option value="0">Amount Type</option>
+                                        <option value="P">Percent</option>
+                                        <option value="F">Fix</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <input type="text" id="txtCommValue" class="form-control text-right" placeholder="0.00" required="required" />
+                                        <div class="input-group-append">
+                                            <span class="btn btn-outline-dark" id="btnSave">Save</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive" id="tblCommDetail">
+                            <slabGrid></slabGrid>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    <script>
+        $('#txtCommValue').numeric({
+            numericType: 'decimal',
+            maxLength: 6
+        });
+
+        $('#ddlOType,#ddlOperator').select2();
+
+        $('#ddlOType').change(e => {
+            preloader.load();
+            $.post('loadOperator', { OPID: $(e.currentTarget).val() })
+                .done(result => {
+                    $('#ddlOperator').empty()
+                        .append(`<option value="0">:: Select Opertaor::</option>`)
+                        .append(`<option value="-1">All</option>`)
+                        .append(result.map(m => `<option value="${m.oid}">${m.name}</option>`));
+                }).fail(xhr => {
+
+                }).always(() => preloader.remove());
+        });
+
+        var _loadPartial = () => {
+            preloader.load();
+            $.post('_SlabCommissionSetting', { OID: $('#ddlOperator').val() })
+                .done(result => $('slabGrid').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        (() => {
+            _loadPartial();
+            $('#ddlAction').change(() => {
+                if ($('#ddlAction').val() === 'ove') {
+                    $('#ddlMode')[0].selectedIndex = 2;
+                    $('#ddlMode').attr('disabled', 'disabled')
+                }
+                else {
+                    $('#ddlMode')[0].selectedIndex = 0;
+                    $('#ddlMode').removeAttr('disabled');
+                }
+            });
+
+            $('#ddlOperator').change(() => _loadPartial());
+            $('#btnSave').click(() => {
+                let _selector = $('input.chkSelect:checked');
+                let trCount = _selector.length;
+                if (trCount == undefined || trCount <= 0) {
+                    an.title = 'Alert';
+                    an.content = 'Please select at leaste 1 slab';
+                    an.alert(an.type.failed);
+                    return false;
+                }
+                if ($.FormValidation.IsFormValid()) {
+                    _selector.each(function (i) {
+                        let row = $(this).closest('tr');
+                        let param = {
+                            OPID: $('#ddlOType').val(),
+                            OID: row.data().operatorId,
+                            SlabID: row.data().slabId,
+                            Action: $('#ddlAction').val(),
+                            Mode: $('#ddlMode').val(),
+                            IsGenralOrReal: $('#ddlType').val(),
+                            Amount: $('#txtCommValue').val(),
+                            CommissionType: $('#ddlCommissionType').val() === 'S' ? true : false,
+                            AmountType: $('#ddlAmountType').val() === 'F' ? true : false,
+                        }
+                        $.post('/UpdateBulkSlabDetail', param).done(result => {
+                            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            if (i + 1 === trCount) {
+                                $('#chkSelectAll').prop('checked', false);
+                                _loadPartial();
+                            }
+                        }).fail(xhr => {
+                            an.title = "Oops! Error";
+                            an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                            an.alert(an.type.failed);
+                        })
+                    })
+                }
+            });
+        })();
+    </script>
+}

@@ -1,0 +1,155 @@
+﻿@model List<RoundpayFinTech.Models.ThemeWithColor>
+@using RoundpayFinTech.AppCode.StaticModel
+@{
+    var t1ColorID = Model.Any() ? Model.Where(x => x.ThemeID == Themes.t1).FirstOrDefault().ColorID : 0;
+    var t2ColorID = Model.Any() ? Model.Where(x => x.ThemeID == Themes.t2).FirstOrDefault().ColorID : 0;
+    var t3ColorID = Model.Any() ? Model.Where(x => x.ThemeID == Themes.t3).FirstOrDefault().ColorID : 0;
+    var t4ColorID = Model.Any() ? Model.Where(x => x.ThemeID == Themes.t4).FirstOrDefault().ColorID : 0;
+}
+
+<div class="row mt-3">
+    <div class="col-sm-12 table-responsive">
+        <table id="tblThemeWithColor" class="table table-bordered table-striped table-responsive-sm">
+            <tr>
+                <td colspan="3">
+                    <h5>Theme with Color Setting</h5>
+                </td>
+            </tr>
+            <tr data-themeid="@Themes.t1">
+                <td>1. </td>
+                <td>Theme 1</td>
+                <td>
+                    <div class="row">
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t1_@ColorSets.DefaultColorSet" value="@ColorSets.DefaultColorSet" name="@Themes.t1" @(ColorSets.DefaultColorSet == t1ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t1_@ColorSets.DefaultColorSet">Default</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t1_@ColorSets.ColorSet2" value="@ColorSets.ColorSet2" name="@Themes.t1" @(ColorSets.ColorSet2 == t1ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t1_@ColorSets.ColorSet2">Color Set 2</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t1_@ColorSets.ColorSet3" value="@ColorSets.ColorSet3" name="@Themes.t1" @(ColorSets.ColorSet3 == t1ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t1_@ColorSets.ColorSet3">Color Set 3</label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-themeid="@Themes.t2">
+                <td>2. </td>
+                <td>Theme 2</td>
+                <td>
+                    <div class="row">
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t2_@ColorSets.DefaultColorSet" value="@ColorSets.DefaultColorSet" name="@Themes.t2" @(ColorSets.DefaultColorSet == t2ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t2_@ColorSets.DefaultColorSet">Default</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t2_@ColorSets.ColorSet2" value="@ColorSets.ColorSet2" name="@Themes.t2" @(ColorSets.ColorSet2 == t2ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t2_@ColorSets.ColorSet2">Color Set 2</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t2_@ColorSets.ColorSet3" value="@ColorSets.ColorSet3" name="@Themes.t2" @(ColorSets.ColorSet3 == t2ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t2_@ColorSets.ColorSet3">Color Set 3</label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-themeid="@Themes.t3">
+                <td>3. </td>
+                <td>Theme 3</td>
+                <td>
+                    <div class="row">
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t3_@ColorSets.DefaultColorSet" value="@ColorSets.DefaultColorSet" name="@Themes.t3" @(ColorSets.DefaultColorSet == t3ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t3_@ColorSets.DefaultColorSet">Default</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t3_@ColorSets.ColorSet2" value="@ColorSets.ColorSet2" name="@Themes.t3" @(ColorSets.ColorSet2 == t3ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t3_@ColorSets.ColorSet2">Color Set 2</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t3_@ColorSets.ColorSet3" value="@ColorSets.ColorSet3" name="@Themes.t3" @(ColorSets.ColorSet3 == t3ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t3_@ColorSets.ColorSet3">Color Set 3</label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            <tr data-themeid="@Themes.t4">
+                <td>4. </td>
+                <td>Theme 4</td>
+                <td>
+                    <div class="row">
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t4_@ColorSets.DefaultColorSet" value="@ColorSets.DefaultColorSet" name="@Themes.t4" @(ColorSets.DefaultColorSet == t4ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t4_@ColorSets.DefaultColorSet">Default</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t4_@ColorSets.ColorSet2" value="@ColorSets.ColorSet2" name="@Themes.t4" @(ColorSets.ColorSet2 == t4ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t4_@ColorSets.ColorSet2">Color Set 2</label>
+                        </div>
+
+                        <div class="custom-radio col-sm-2">
+                            <input class="form-check-input" type="radio" id="t4_@ColorSets.ColorSet3" value="@ColorSets.ColorSet3" name="@Themes.t4" @(ColorSets.ColorSet3 == t4ColorID ? "checked" : "") />
+                            <label class="form-check-label" for="t4_@ColorSets.ColorSet3">Color Set 3</label>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<script>
+    $("#tblThemeWithColor").on("change", "input[type=radio]", function () {
+        var arrData = [];
+        $("#tblThemeWithColor").find("tr").each(function () {
+            let ThemeID = $(this).attr("data-themeid"),
+                _thisTR = $(this),
+                ColorSetID = 0;
+
+            if (_thisTR.find("input[type=radio]:checked").length > 0) {
+                ColorSetID = _thisTR.find("input[type=radio]:checked").val();
+            }
+
+            arrData.push({
+                ThemeID: parseInt(ThemeID),
+                ColorID: parseInt(ColorSetID)
+            });
+        })
+        var jsonData = JSON.stringify(arrData);
+        preloader.load();
+        $.post('/theme-colorsets', { json: jsonData })
+            .done(function (result) {
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .catch(function (xhr, e, m) {
+                console.log(xhr);
+            })
+            .fail(function (xhr) {
+                $(this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    })
+</script>

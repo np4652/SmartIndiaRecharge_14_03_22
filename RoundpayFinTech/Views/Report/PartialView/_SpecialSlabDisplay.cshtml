@@ -1,0 +1,77 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.CircleWithDomination>
+<style>
+    .demonPadding {
+        padding: 3px 0px 3px 3px;
+    }
+</style>
+<div class="col-sm-12 pl-0">
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+        <thead class="bg-cyan text-white">
+            <tr>
+                <th>#</th>
+                <th>Circle</th>
+                <th width="42%">Denomination / Domination Range </th>
+                <th>Commission</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                var distinctCircleList = Model.GroupBy(x => new { x.CircleID, x.DominationType, x.Comm, x.AmtType }).Select(g => g.First());
+
+                for (int i = 0; i < distinctCircleList.Count(); i++)
+                {
+                    var itemAtIndex = distinctCircleList.ElementAt(i);
+                    var _thisDenomList = Model.Where(x => x.CircleID == itemAtIndex.CircleID && x.DominationType == itemAtIndex.DominationType && x.Comm == itemAtIndex.Comm && x.AmtType == itemAtIndex.AmtType);
+
+                    <tr data-item-id="@itemAtIndex.CircleID">
+                        <td style="width:1em;" scope="row" class="align-middle">
+                            @(i+1)
+                        </td>
+
+                        <td class="align-middle" style="width:20%">
+                            @itemAtIndex.CircleName
+                        </td>
+
+                        <td class="align-middle denomTD">
+                            @foreach (var item in _thisDenomList)
+                            {
+                                var denID = item.DominationType == 1 ? item.DenomID : item.DenomRangeID;
+                                <div class="box box-info denom demonPadding">
+                                    <!--<span class="">-->
+                                        <!--switch switch-sm-->
+                                        <!--<input readonly="readonly" data-id="@item.ID" data-item-isdenom="@(item.DominationType==1?1:0)" data-item-id="@denID" checked type="checkbox" class="switch isactive" id="isactive_den_@(i.ToString()+denID.ToString())">
+                                        <label for="isactive_den_@(i.ToString()+denID.ToString())"></label>
+                                    </span>-->
+                                    <label data-item-id="@denID" class="pl-2 pr-2 denomLabel">@item.Amount</label>
+                                </div>
+                            }
+                        </td>
+
+                        <td>
+                            <div class="input-group">
+                                <div class="form-inline">
+                                    <input type="text" style="border:none" readonly="readonly" class="form-control-sm RDtxtcomm" id="txt_@itemAtIndex.CircleID" value="@itemAtIndex.Comm" />
+                                    &nbsp;&nbsp;
+
+                                </div>
+
+                                <div class="btn-group btn-toggle commType" id="btnGroupCommType_@Html.Raw(i+"_"+itemAtIndex.CircleID)">
+                                    <button class="btn btn-sm @Html.Raw(itemAtIndex.CommType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">C</button>
+                                    <button class="btn btn-sm @Html.Raw(itemAtIndex.CommType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">S</button>
+                                </div>
+
+                                <div class="btn-group btn-toggle amtType" id="btnGroupAmtType_@Html.Raw(i+"_"+itemAtIndex.CircleID)">
+                                    <button class="btn btn-sm @Html.Raw(itemAtIndex.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                                    <button class="btn btn-sm @Html.Raw(itemAtIndex.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                                </div>
+
+                                
+                            </div>
+                        </td>
+
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>

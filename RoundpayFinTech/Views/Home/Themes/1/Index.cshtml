@@ -1,0 +1,600 @@
+﻿@model RoundpayFinTech.Models.HomeDisplay
+@{
+    Layout = "~/Views/Shared/Theme/" + ViewData["Theme"] + "/_LayoutHome.cshtml";
+}
+
+<!-- Banner Section -->
+<section class="banner-section banner-one">
+    <div id="demo" class="carousel slide" data-ride="carousel">
+        <!-- Indicators -->
+        <ul class="carousel-indicators">
+            <li data-target="#demo" data-slide-to="0" class="active"></li>
+            <li data-target="#demo" data-slide-to="1"></li>
+            <li data-target="#demo" data-slide-to="2"></li>
+            <li data-target="#demo" data-slide-to="3"></li>
+        </ul>
+        <!-- The slideshow -->
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/AvailableThemes/@ViewData["Theme"]/images/main-slider/3.jpg" alt="Los Angeles">
+            </div>
+            <div class="carousel-item">
+                <img src="/AvailableThemes/@ViewData["Theme"]/images/main-slider/4.jpg" alt="Chicago">
+            </div>
+            <div class="carousel-item">
+                <img src="/AvailableThemes/@ViewData["Theme"]/images/main-slider/1.jpg" alt="New York">
+            </div>
+        </div>
+        <div class="carousel-item">
+            <img src="/AvailableThemes/@ViewData["Theme"]/images/main-slider/2.jpg" alt="New York">
+        </div>
+    </div>
+    <!-- Left and right controls -->
+    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+        <span class="carousel-control-prev-icon"></span>
+    </a>
+    <a class="carousel-control-next" href="#demo" data-slide="next">
+        <span class="carousel-control-next-icon"></span>
+    </a>
+
+</section>
+<!--End Banner Section -->
+@if (!string.IsNullOrEmpty(Model.FullPage))
+{
+    <div class="page-content">
+        @Html.Raw(Model.FullPage)
+    </div>
+}
+else
+{
+
+    <!--About Section-->
+    <section class="destinations-two">
+        <div class="map-layer" style="background-image: url('/AvailableThemes/@ViewData["Theme"]/images/background/map-image.png');"></div>
+        <div class="auto-container">
+            <div class="sec-title centered">
+                <h2>Our <strong>Services</strong></h2>
+                <div class="lower-text">Mobile Recharge, Travel & Bulk SMS API Made Easy!</div>
+            </div>
+            <!--Packages-->
+            <div class="popular-packages">
+                <div class="packages-box">
+                    <div class="row clearfix">
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/1.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">MicroATM</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/2.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Gas Booking</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/3.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Hotel Booking</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/4.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">FasTag</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/5.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Insurance</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/6.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Travel API</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/7.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Recharge Api</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--Package Block-->
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/14.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Bill Payment</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/9.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">PAN Card Center</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/11.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Data Recharge</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/12.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Domestic Money Transfer</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/13.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">DTH Recharge</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/10.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Aadhaar Enabled Payment System (AEPS)</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="package-block col-lg-3 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                            <div class="inner-box clearfix">
+                                <div class="image-box">
+                                    <img src="~/AvailableThemes/@ViewData["Theme"]/images/img/8.jpg" alt="" title="">
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                                <div class="content-box">
+                                    <div class="content">
+                                        <div class="package-title"><a href="services.html">Bharat Bill Payment System (BBPS)</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Services Section-->
+    <!--Features Section-->
+    <section class="features-section">
+        <div class="auto-container">
+            <div class="row clearfix">
+                <!--Feature-->
+                <div class="feature-block col-lg-4 col-md-6 col-sm-12">
+                    <div class="inner-box">
+                        <div class="icon-box">
+                            <div class="octagonWrap">
+                                <div class="octagon"></div>
+                            </div>
+                            <span class="icon flaticon-electric-light-bulb"></span>
+                        </div>
+                        <div class="content">
+                            <h4>PAN Card  <br>Center</h4>
+                            <div class="text">Start your Online/Authorized PAN Card Centre of Unit Trust of India (UTIITSL) and apply for PAN Card of your customer.</div>
+                            <div class="link-box">
+                                <a href="services.html" class="default-link">
+                                    <span class="icon flaticon-logout"></span> <span class="link-text">More About</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Feature-->
+                <div class="feature-block col-lg-4 col-md-6 col-sm-12">
+                    <div class="inner-box">
+                        <div class="icon-box">
+                            <div class="octagonWrap">
+                                <div class="octagon"></div>
+                            </div>
+                            <span class="icon flaticon-telephone"></span>
+                        </div>
+                        <div class="content">
+                            <h4>Recharges  <br>Mobile|DTH|Data Card</h4>
+                            <div class="text">Rupay one offers prepaid mobiles recharge services, DTH recharge services, and data cards recharge services.</div>
+                            <div class="link-box">
+                                <a href="services.html" class="default-link">
+                                    <span class="icon flaticon-logout"></span> <span class="link-text">More About</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Feature-->
+                <div class="feature-block col-lg-4 col-md-12 col-sm-12">
+                    <div class="inner-box">
+                        <div class="icon-box">
+                            <div class="octagonWrap">
+                                <div class="octagon"></div>
+                            </div>
+                            <span class="icon flaticon-ship"></span>
+                        </div>
+                        <div class="content">
+                            <h4>Travel & <br> Stay</h4>
+                            <div class="text">For all those Retailers who want to start their own Travel Agency Rupay one brings Online Travel Portal.</div>
+                            <div class="link-box">
+                                <a href="services.html" class="default-link">
+                                    <span class="icon flaticon-logout"></span> <span class="link-text">More About</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Pricing Section-->
+    <section class="top-destinations">
+        <div class="auto-container">
+            <div class="row clearfix">
+                <!--Attraction Block-->
+                <div class="attraction-block col-lg-6 col-md-12 col-sm-12 wow fadeInLeft" data-wow-delay="0ms" data-wow-duration="1500ms">
+                    <div class="inner-box">
+                        <div class="image-box">
+                            <figure class="image">
+                                <a href="yacht-tour-1.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/resource/featured-image-23.jpg" alt="" title=""></a>
+                            </figure>
+                        </div>
+                        <div class="lower-box">
+                            <div class="sec-title">
+                                <div class="title-text">Welcome at Rupay one to join a life long business opportunity with us Recharge is stands among best Online Mobile Recharge Service Provider including all major mobile operators and DTH recharge. Become a part of this giant in a really small investment. Start today for a better future. Start your own mobile recharge business with us. Establishment of higher marketing standard is a key of global market structure. Every financial standard and life standard of people is always depends on marketing strategy. Impost Money brings you a standard and all new marketing plan in network marketing.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Attraction Block-->
+                <div class="destinations-box col-lg-6 col-md-12 col-sm-12">
+                    <div class="destinations">
+                        <div class="row clearfix">
+                            <!--Destination Block-->
+                            <div class="destination-block-three col-lg-6 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                                <div class="inner-box">
+                                    <div class="image-box">
+                                        <figure class="image">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/resource/1.jpg" alt="" title=""></a>
+                                        </figure>
+                                    </div>
+                                    <div class="caption-box">
+                                        <div class="inner">
+                                            <div class="title"><a href="yacht-tour-single.html">Recharge Api</a></div>
+                                        </div>
+                                    </div>
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Destination Block-->
+                            <div class="destination-block-three col-lg-6 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="300ms" data-wow-duration="1500ms">
+                                <div class="inner-box">
+                                    <div class="image-box">
+                                        <figure class="image">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/resource/2.jpg" alt="" title=""></a>
+                                        </figure>
+                                    </div>
+                                    <div class="caption-box">
+                                        <div class="inner">
+                                            <div class="title"><a href="yacht-tour-single.html">Travel API</a></div>
+                                        </div>
+                                    </div>
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Destination Block-->
+                            <div class="destination-block-three col-lg-6 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="0ms" data-wow-duration="1500ms">
+                                <div class="inner-box">
+                                    <div class="image-box">
+                                        <figure class="image">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/resource/3.jpg" alt="" title=""></a>
+                                        </figure>
+                                    </div>
+                                    <div class="caption-box">
+                                        <div class="inner">
+                                            <div class="title"><a href="yacht-tour-single.html">General Insurance</a></div>
+                                        </div>
+                                    </div>
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                            </div>
+                            <!--Destination Block-->
+                            <div class="destination-block-three col-lg-6 col-md-6 col-sm-12 wow fadeInUp" data-wow-delay="300ms" data-wow-duration="1500ms">
+                                <div class="inner-box">
+                                    <div class="image-box">
+                                        <figure class="image">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/resource/4.jpg" alt="" title=""></a>
+                                        </figure>
+                                    </div>
+                                    <div class="caption-box">
+                                        <div class="inner">
+                                            <div class="title"><a href="yacht-tour-single.html">MicroATM</a></div>
+                                        </div>
+                                    </div>
+                                    <div class="hover-box">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--Testimonials Section-->
+    <section class="services-section-three pb-0" data-Section-Id="aboutUs">
+        @Html.Raw(Model.AboutUs)
+    </section>
+    <!--News Section-->
+    <section class="yacht-tours-container">
+        <div class="auto-container">
+            <div class="main-title">
+                <h3>Find Your Services</h3>
+            </div>
+            <div class="content-container">
+                <div class="row clearfix">
+                    <!--Content Side-->
+                    <div class="content-side col-lg-12 col-md-12 col-sm-12">
+                        <div class="content-inner">
+                            <div class="results-row">
+                                <!--Activity Block-->
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/1.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">FasTag</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>
+                                                            FasTag is a device that employs Radio Frequency Identification (RFID) technology for making toll payments directly from a prepaid account linked to it. Now issue and recharge FasTag through Rupay one portal.
+                                                            Save your time and fuel as you do not stop to pay cash or receive cash change and zip through the toll plazas on the national and select state highways. FASTag, an electronic toll collection service, makes toll payment cashless as the toll charges are automatically deducted from the FASTag account as your vehicle passes the toll plazas.
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Activity Block-->
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="#yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/2.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">Gas Booking</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>Rupay one provides you to easy gas booking service.Booking an LPG cylinder can now be done from the comfort of your home at the click of a button.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Activity Block-->
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/3.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">Aadhaar Enabled Payment System (AEPS)</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>
+                                                            Aadhaar Enabled Payment System (AEPS) is a sort of installment framework that depends on the Unique Identification Number and permits Aadhaar card holders to consistently make money related exchanges through Aadhaar-based confirmation. The AEPS framework plans to enable all areas of the general public by making budgetary and saving money administrations accessible to all through Aadhaar. This is a straightforward, secure and easy to understand .
+                                                            AEPS is only an Aadhaar-empowered installment framework through which you can exchange reserves, influence installments, to store money, influence withdrawals, to make enquiry about bank adjust, and so forth. AEPS enables clients to make installments utilizing their Aadhaar number and by giving Aadhaar confirmation at purpose of Sale (PoS) or smaller scale ATMs
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Activity Block-->
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/4.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">Bharat Bill Payment System (BBPS)</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>
+                                                            Bharat Bill Payment System facilitates the installment of bills and enhances the security and speed of bill pay. The administration is accessible in different installment modes, on the web and through a system of specialists. A moment affirmation is produced for the bill installments. The BBPS will change the general public from money to electronic installment framework making it less reliant on money .Currently you can pay charge for Utility (Gas, power, water, DTH) .
+                                                            Bharat Bill Payment System is a stage for a wide range of bill installments. National Payments Corporation of India has created it to make charge installments less demanding.It is an incorporated and interoperable bill installment benefit for clients crosswise over geologies. It offers unwavering quality and wellbeing of the exchanges. You can pay your bills utilizing BBPS from anyplace whenever. Additionally, it enables you to pay charges through systems of operators or on the web.
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Activity Block-->
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/5.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">PAN Card Center</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>Start your Online/Authorized PAN Card Centre of Unit Trust of India (UTIITSL) and apply for PAN Card of your customer.</li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--Activity Block-->
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/6.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">Hotel Booking</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>
+                                                            Search & Book Hotels Worldwide. Quick, Easy Booking. Great Rates. Register Online. Mobile Friendly Website. Flash Deals. 24/7 Customer Support. 63,000 Cities Worldwide.Book cheap, budget and luxury hotels at great prices on best hotel booking site.
+                                                            Compare from 1L+ hotels in India with upto 50% off. We provide best deals on Cheap, Budget & Luxury hotels in India.
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="activity-block-three">
+                                    <div class="inner-box clearfix">
+                                        <div class="image-box">
+                                            <a href="yacht-tour-single.html"><img src="~/AvailableThemes/@ViewData["Theme"]/images/img2/7.jpg" alt="" title=""></a>
+                                        </div>
+                                        <div class="content-box">
+                                            <div class="content">
+                                                <h4><a href="yacht-tour-single.html">DTH | Data Recharge</a></h4>
+                                                <div class="info">
+                                                    <ul class="clearfix">
+                                                        <li>
+                                                            Now, your DTH and Data recharge is just a few clicks away with Rupay one. We are one of the most reliable websites for online DTH recharge for millions of users across the country. Amidst hectic schedules and busy routines, it happens many times that you miss out your due date resulting in late fee charges and disrupted DTH services. Now, worry no more! With Rupay one, you enjoy the ease & handiness of recharging anytime and from anywhere without spending much of your time & energy.
+                                                            Rupay one provides you with smart and flexible payment methods so that you can choose the payment method of your convenience. You can pay through a debit card, credit card, Paytm wallet and UPI
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--Widgets Side-->
+                </div>
+            </div>
+        </div>
+    </section>
+}

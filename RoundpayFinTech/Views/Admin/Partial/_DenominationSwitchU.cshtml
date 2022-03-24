@@ -1,0 +1,90 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DSRDesign>
+@{
+
+}
+<style>
+    .pd-2 .card-body {
+        padding: 2px;
+    }
+
+        .pd-2 .card-body hr {
+            margin: 0px;
+        }
+</style>
+@if (Model != null)
+{
+    int i = 1;
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+        <thead class="bg-tableth">
+            <tr>
+                <th style="width:5%">#</th>
+                <th>User</th>
+                <th style="width:15%">Operator</th>
+                <th>Circle</th>
+                <th style="width:43%">APIs And Denomination</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td style="vertical-align: middle;">@i</td>
+                    <td style="vertical-align: middle;">@item.OutletName <span class="text-monospace">[@(item.MobileNo + "/" + item.Prefix + item.UserID+"/"+item.Role)]</td>
+                    <td style="vertical-align: middle;">@item.Operator</td>
+                    <td style="vertical-align: middle;">@item.CircleName</td>
+                    <td>
+                        <div class="container">
+                            <div class="row">
+                                @foreach (var list in item.DSList)
+                                {
+                                    if (list.Denoms != string.Empty || list.DenomR != string.Empty)
+                                    {
+                                        <div class="col-md-4 mb-2">
+                                            <div class="card">
+                                                <div class="card-header text-white text-uppercase @Html.Raw(list.APIID==-1?"bg-danger":"bg-info")">
+                                                    <span class="card-title">@list.API</span>
+                                                </div>
+                                                @if (list.Denoms != string.Empty)
+                                                {
+                                                    var _D = list.Denoms.Split(",");
+                                                    <div class="card-body bg-dark">
+                                                        @foreach (var denom in _D)
+                                                        {
+                                                            var valIDArr = denom.Split(':');
+                                                            <span class="badge badge-pill badge-light denValue" data-item-id="@valIDArr[1]" style="cursor:pointer">
+                                                                @valIDArr[0]
+                                                            </span>
+                                                        }
+
+                                                    </div>
+                                                }
+                                                @if (list.DenomR != string.Empty)
+                                                {
+                                                    var _DR = list.DenomR.Split(",");
+                                                    <div class="card-body bg-secondary">
+                                                        @foreach (var denomR in _DR)
+                                                        {
+                                                            var valIDArr = denomR.Split(':');
+                                                            <span class="badge badge-pill badge-light denValue" data-item-id="@valIDArr[1]" style="cursor:pointer">
+                                                                @valIDArr[0]
+                                                            </span>
+                                                        }
+
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+                i += 1;
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,123 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@model IEnumerable<BankHoliday>
+@{
+    int i = 1;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h3 class="align-self-center">Holiday List</h3>
+    @if (Model != null)
+    {
+        <div class="table-responsive">
+            <table class="table" id="tbl_UplineComm">
+                <thead class="shadow">
+                    <tr>
+                        <th>#</th>
+                        <th>Holiday Date</th>
+                        <th>Remark</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var data in Model)
+                    {
+                    <tr data-item-id="@data.ID">
+                        <th>
+                            @i
+                        </th>
+                        <th>
+                            @data.Date
+                            <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @data.ModifyDate" data-original-title=""></i>
+                        </th>
+                        <th class="form">
+                            <input type="text" id="txtRemark_@data.ID" data-id="@data.ID" data-dtH="@data.Date" value="@data.Remark" placeholder="Enter Remark...." />
+                        </th>
+                        <th class="form">
+                            <input type="button" id="btnDelete_@data.ID" data-dtH="@data.Date" Data-id="@data.ID" value="Delete" />
+                        </th>
+
+                    </tr>
+                        i++;
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <p>No Data Found!</p>
+    }
+</div>
+
+
+
+<script>
+
+    $(document).ready(function () {
+        $('input[id^="dtHolidayDate_"]').datetimepicker(
+            {
+                format: 'DD MMM YYYY'
+            });
+    });
+    $('input[id^="txtRemark_"]').on('change', function () {
+
+        var id = $(this).data().id;
+        var Date = $(this).data().dth;
+        var Rrk = $(this).val();
+          var IsDeleted = 0;
+        saveHoliday(id, Date, Rrk,IsDeleted );
+    })
+
+          $('input[id^="btnDelete_"]').click(function () {
+          var id = $(this).data().id;
+          var Date = $(this).data().dth;
+              var Rrk = $(this).val();
+              var IsDeleted = true;
+             saveHoliday(id, Date, Rrk, IsDeleted);
+            });
+
+   
+    var saveHoliday = function (ID, Date, Rrk, IsDeleted) {
+        preloader.load();
+        $.post('/SaveHoliday', { ID: ID, holidayDate: Date, Remark: Rrk,IsDeleted: IsDeleted  })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.id = "mymodel";
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('[data-toggle="tooltip"]').tooltip();
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                mdlA.dispose();
+                $('button.close span,#mdlCancel').unbind().click(function () {
+
+                });
+
+            })
+            .catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+            })
+            .fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    };
+
+</script>

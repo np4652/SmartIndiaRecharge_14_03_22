@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "/Views/Shared/_LayoutShopping.cshtml";
+}
+<div id="divBanners"></div>
+<main id="maincontent" class="page-main container lala">
+    <div class="columns">
+        <div class="column main">
+            <div>
+                <div class="velaServicesInner">
+                    <div class="velaContent">
+                        <div class="rowFlex rowFlexMargin flexJustifyCenter">
+                            <div class="col-xs-6 col-sm-3 col-2">
+                                <div class="boxService d-flex flexJustifyCenter">
+                                    <div class="boxServiceImage boxServiceImage1"><i class="fa fa-truck"></i></div>
+                                    <div class="boxServiceContent">
+                                        <h4 class="boxServiceTitle">Free Delivery</h4>
+                                        <div class="boxServiceDesc">For all orders over $120</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-3 col-2">
+                                <div class="boxService d-flex flexJustifyCenter">
+                                    <div class="boxServiceImage boxServiceImage1"><i class="fa fa-money"></i></div>
+                                    <div class="boxServiceContent">
+                                        <h4 class="boxServiceTitle">Safe Payment</h4>
+                                        <div class="boxServiceDesc">100% secure payment</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-3 col-2">
+                                <div class="boxService d-flex flexJustifyCenter">
+                                    <div class="boxServiceImage boxServiceImage1"><i class="fa fa-shopping-basket"></i></div>
+                                    <div class="boxServiceContent">
+                                        <h4 class="boxServiceTitle">Shop With Confidence</h4>
+                                        <div class="boxServiceDesc">If goods have problems</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-3 col-2">
+                                <div class="boxService d-flex flexJustifyCenter">
+                                    <div class="boxServiceImage boxServiceImage1"><i class="fa fa-comments"></i></div>
+                                    <div class="boxServiceContent">
+                                        <h4 class="boxServiceTitle">24/7 Help Center</h4>
+                                        <div class="boxServiceDesc">Dedicated 24/7 support</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-xs-6 col-sm-3 col-2">
+                                <div class="boxService d-flex flexJustifyCenter">
+                                    <div class="boxServiceImage boxServiceImage1"><i class="fa fa-thumbs-up"></i></div>
+                                    <div class="boxServiceContent">
+                                        <h4 class="boxServiceTitle">Friendly Services</h4>
+                                        <div class="boxServiceDesc">30 day satisfaction guarantee</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div id="trendingGrid">
+                </div>
+            </div>
+            <div>
+                <div id="categoryGrid">
+                </div>
+            </div>
+            <div>
+                <div id="catGrid">
+                </div>
+            </div>
+            <div>
+                <div id="catNew">
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+
+<script>
+    (() => {
+        BindBanners();
+        BindCategoriesForIndex();
+        getProductNewArrivalGrid(0, 0, 0);
+        getProductTrendingGrid(0, 0, 0);
+    })();
+</script>

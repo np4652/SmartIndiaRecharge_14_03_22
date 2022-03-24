@@ -1,0 +1,37 @@
+﻿@model bool
+<div class="col-md-12">
+    @if (!Model)
+    {
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    }
+    <h3><small class="text-muted">Change Pin Password</small></h3>
+
+    <div class="form-group">
+        <label class="lbl" for="txtOldPassword"> Enter Password</label>
+        <input aria-describedby="amountHelp" class="form-control" id="txtOldPassword" name="txtOldPassword" placeholder="Enter Password" tabindex="1" type="password" value="">
+        <small id="amountHelp" class="form-text text-muted d-none"></small>
+    </div>
+    <div class="form-group">
+        <label class="lbl" for="txtNewPassword">Enter New Pin</label>
+        <input aria-describedby="remHelp" class="form-control" id="txtNewPassword" name="txtNewPassword" placeholder="Enter New Pin" tabindex="3" type="password" value="">
+        <small id="remHelp" class="form-text text-muted d-none"></small>
+    </div>
+    <div class="form-group">
+        <label class="lbl" for="txtConfirmPassword">Enter Confirm Pin</label>
+        <input aria-describedby="remConfirm" class="form-control" id="txtConfirmPassword" name="txtConfirmPassword" placeholder="Enter Confirm Pin" tabindex="3" type="password" value="">
+        <small id="remConfirm" class="form-text text-muted d-none"></small>
+    </div>
+    @*<div class="form-group">
+            <label class="lbl" for="txtPinPassword">Enter Pin Password</label>
+            <input aria-describedby="txtpin" class="form-control" id="txtPinPassword" name="txtConfirmPassword" placeholder="Enter Pin Password" tabindex="3" type="password" value="">
+            <small id="txtpin" class="form-text text-muted d-none"></small>
+        </div>*@
+    <button class="btn btn-outline-dark" id="btnChangePass">Change Pin</button>
+    @if (!Model)
+    {
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    }
+</div>
+

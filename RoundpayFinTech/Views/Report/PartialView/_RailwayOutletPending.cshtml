@@ -1,0 +1,31 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.GetEditUser>
+@{
+    var c = 1;
+}
+@if (Model.Any())
+{
+    @foreach (var mdl in Model)
+    {
+        <tr data-item-id="@mdl.UserID" data-outlet-id="@mdl.OutletID">
+            <th scope="row">@c</th>
+            <td>@mdl.OutletID</td>
+            <td><span class="text-nowrap">@mdl.PartnerName</span></td>
+            <td><span class="text-nowrap">@mdl.Name </span></td>
+            <td><span class="text-nowrap">@mdl.OutletName</span></td>
+            <td><span class="text-nowrap">@mdl.DOB</span></td>
+            <td>@mdl.PAN</td>
+            <td>@mdl.AADHAR</td>
+            <td>@mdl.DisplayName</td>
+            <td class="text-nowrap">
+                <input type="text" id="txtIRCTCID_@c" class="form-control-sm CommRate" value="@mdl.DisplayID" @Html.Raw(string.IsNullOrEmpty(@mdl.DisplayID) ? "" : "readonly")  />
+            </td>
+
+            <td class="text-nowrap text-center">
+                <span class="btn btn-sm btn-outline-info" id="Activate_@c"><i class="fa fa-thumbs-up"></i> Activate</span>
+                <span class="btn btn-sm btn-outline-danger" id="Reject_@c"><i class="fas fa-thumbs-down"></i> Reject</span>
+            </td>
+        </tr>
+        c++;
+    }
+}

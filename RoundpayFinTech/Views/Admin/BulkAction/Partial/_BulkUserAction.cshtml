@@ -1,0 +1,43 @@
+﻿@model List<RoundpayFinTech.AppCode.Model.ProcModel.UserReportBulk>
+
+@for (int i = 0; i < Model.Count; i++)
+{
+    <tr data-item-id="@Model[i].ID">
+        <th scope="row">@(i + 1)</th>
+        <td><input id="Checkbox_@i" type="checkbox" onchange="UnCheckedAll(this)" /></td>
+        <td>@Model[i].OutletName <small class="font-weight-bold text-monospace"> [@(Model[i].Prefix + Model[i].ID)]</small></td>
+        <td>@Model[i].MobileNo</td>
+        <td>@Model[i].WhatsAppNumber</td>
+        <td>@Model[i].EMail</td>
+        <td>@Model[i].EmailVerifiedStatus</td>
+        <td>@Model[i].Role</td>
+        <td class="text-right">@Model[i].Balance</td>
+        <td class="text-right">@Model[i].UBalance</td>
+        <td class="text-right">@Model[i].BBalance</td>
+        <td class="text-right">@Model[i].PacakgeBalance</td>
+        <td class="text-right">
+            <button class="btn btn-outline-success btn-sm" onclick="ChildBalance(this)">Show</button>
+        </td>
+        <td>@Model[i].Slab</td>
+
+        <td>
+            @(Model[i].Status ? "Active" : "Deactive")
+        </td>
+        <td>
+            @(Model[i].IsOTP ? "Active" : "Deactive")
+        </td>
+        <td>@Model[i].KYCStatus</td>
+        <td class="text-nowrap">@Model[i].PackageName</td>
+        <td class="text-nowrap">@Model[i].RentalStatus</td>
+        @if (ApplicationSetting.IsAutoBilling)
+        {
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch" id="IsAutoBilling_@i" checked="@Model[i].IsAutoBilling">
+                    <label for="IsAutoBilling_@i"></label>
+                </span>
+            </td>
+        }
+    </tr>
+}
+

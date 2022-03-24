@@ -1,0 +1,91 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model FundRequestPageModel
+@{
+    int i = 1;
+    var userSmartDetail_Razorpay = new RoundpayFinTech.AppCode.Model.UserSmartDetail();
+    if (Model.userSmartDetail != null)
+    {
+        if (Model.userSmartDetail.Count > 0)
+        {
+            if (Model.userSmartDetail.Where(w => w.SmartCollectTypeID == SmartCollectType.RazorPaySmartCollect).Count() > 0)
+            {
+                userSmartDetail_Razorpay = Model.userSmartDetail.Where(w => w.SmartCollectTypeID == SmartCollectType.RazorPaySmartCollect).ToList()[0];
+            }
+        }
+    }
+}
+@foreach (var item in Model.bankList)
+{
+    var bankLogo = "~/image/BankLogo/" + item.BankID + ".png";
+    var QRLogo = item.ISQRENABLE && !string.IsNullOrEmpty(item.QRPath) && item.QRPath.Contains(".") ? "~/image/BankQR/" + item.QRPath : "~/image/BankQR/NOQR.png";
+    <tr data-item-id="@item.ID">
+        <th>@i</th>
+        <td>@item.BankName</td>
+        <td>@item.BranchName</td>
+        <td>@item.AccountHolder</td>
+        <td>
+            @if (ApplicationSetting.IsBankAccountNoReplaceWithSmartCollect)
+            {
+                @if (userSmartDetail_Razorpay.SmartCollectTypeID > 0)
+                {
+                    if (item.AccountNo.Contains(SmartCollectType.AccountReplacement))
+                    {
+                        if (userSmartDetail_Razorpay.SmartAccountNo != "")
+                        {
+                            <b>@userSmartDetail_Razorpay.SmartAccountNo</b>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-primary btn-sm" id="btnUpdateAccount_@item.ID" data-smartid="@userSmartDetail_Razorpay.SmartCollectTypeID">UpdateAccount</button>
+                        }
+                    }
+                    else
+                    {
+                        <b>@item.AccountNo</b>
+                    }
+                }
+                else
+                {
+                    <b>@item.AccountNo</b>
+                }
+            }
+            else
+            {
+                <b>@item.AccountNo</b>
+            }
+        </td>
+        <td>@item.IFSCCode</td>
+        <td>@item.Remark</td>
+        <td class="text-right">@item.Charge</td>
+        <td>
+            <img data-item-id="@QRLogo" id="img_QRLogo_@i" src="@QRLogo" style="width:75px;cursor:pointer" alt="No Image" asp-append-version="true" />
+        </td>
+        <td><img src="@bankLogo" style="width:75px;" alt="No Image" asp-append-version="true" /></td>
+    </tr>
+    i++;
+}
+@if (ApplicationSetting.IsBankAccountNoReplaceWithSmartCollect)
+{
+    <script>
+        $('[id^="btnUpdateAccount_"]').click(function () {
+            var smartid = $(this).data().smartid;
+            if (smartid > 0) {
+                preloader.load();
+                $.post('/Update-SmartCollect', {}, function (result) {
+                    an.title = result.statuscode = an.success ? 'Wow' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.satuscode);
+                    if (result.satuscode == 1) {
+                        setTimeout(function () {
+                            reload();
+                        }, 500);
+                    }
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+            }
+        });
+    </script>
+}

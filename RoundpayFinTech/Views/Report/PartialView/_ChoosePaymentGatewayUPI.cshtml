@@ -1,0 +1,64 @@
+﻿@using RoundpayFinTech.AppCode.Model.Paymentgateway
+@model PGDisplayModel
+<style>
+    .modal-body {
+        padding: 0;
+    }
+</style>
+<div class="card text-center">
+    @*<div class="card-header">
+        Payment Gateway Selection
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>*@
+    @if (Model.OID > 0 && Model.Amount > 0 && Model.WalletID > 0)
+    {
+        <div class="card-body" id="dv_pgparent" data-oid="@Model.OID" data-amount="@Model.Amount" data-wallet="@Model.WalletID" data-vpa="@Model.VPA">
+            @if (Model.PGs.Any() && ApplicationSetting.IsAddMoneyEnable && ApplicationSetting.IsUPI)
+            {
+                foreach (var item in Model.PGs)
+                {
+                    <div class="mode-box mb-2 btn btn-outline-info" data-upgid="@item.ID" data-pgid="@item.PGType">
+                        <img src="/Image/PG/@(item.PGType+".png")" alt="@item.PG" class="rounded-0" style="width: 217px;height: 52px;">
+                    </div>
+                }
+                <input type="hidden" value="@(Model.PGs.Count()==1?"true":"false")" id="hidOnly" />
+            }
+            else
+            {
+                <span class="text-danger">Currently this service is down! Contact to customer care</span>
+            }
+        </div>
+    }
+    else
+    {
+        <span class="text-danger">Invalid parameter selection</span>
+    }
+    <div class="card-footer text-muted">
+        <button class="btn btn-sm btn-danger" id="mdlCancel">Close</button>
+    </div>
+</div>
+<script>
+    var CallPaymentGatewayUPI = function (upgid, oid, amount, wallet, vpa) {
+        $("#btnUPIPay").html("Proceed To Add");
+        $("#btnUPIPay").removeClass();
+        $("#btnUPIPay").addClass('btn btn-outline-primary');
+        mdlA.dispose();
+        window.open("/redirect-upi?id=" + oid + "&a=" + amount + "&w=" + wallet + "&pg=" + upgid + "&vpa=" + vpa, "_blank", "toolbar=0,width=900,height=650,left=0,top=0");
+    };
+
+    $('#dv_pgparent .mode-box').click(function () {
+        var upgid = $(this).data().upgid;
+        let _selector = $('#dv_pgparent').data();
+        var oid = _selector.oid;
+        var amount = _selector.amount;
+        var wallet = _selector.wallet;
+        /*var pgid = $(this).data().pgid;*/
+        btnLdr.addClass = 'btn-dark';
+        btnLdr.removeClass = 'btn-outline-dark';
+        btnLdr.Start($("#btnUPIPay"), 'Requesting');
+        let vpa = $('input[name="txtUPIID"]').val();
+        CallPaymentGatewayUPI(upgid, oid, amount, wallet, vpa);
+    });
+</script>

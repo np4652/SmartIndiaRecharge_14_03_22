@@ -1,0 +1,60 @@
+﻿@using  Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ProcModel.FundRequestShow
+
+@{ var couter = 1; }
+
+@if (Model.FundRequests.Any())
+{
+    foreach (var item in Model.FundRequests)
+    {
+        <tr>
+            <td>@couter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@couter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@couter">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item dropdowntransfer" name="@item.PaymentId">Transfer Fund</a>
+                        <a href="#" class="dropdown-item dropdownreject" name="@item.PaymentId">Reject Request</a>
+                    </div>
+                </div>
+            </td>
+            <td class="@Html.Raw(item.KYCStatus == 3 ? "text-success" : "text-danger")"   >@item.UserName <small class="font-weight-bold text-monospace"> [@item.UserMobile]</small></td>
+            @if (Model.UserRoleID == Role.Admin)
+            {
+                <td>@item.RoleName</td>
+            }
+            <td>@item.Bank</td>
+            <td>@item.AccountHolder  <small class="font-weight-bold text-monospace"> [@item.AccountNo]</small></td>
+            <td>@item.MODE</td>
+            <td>@item.TransactionId</td>
+            <td>
+                @item.MobileNo
+                <input type="hidden" value="@item.CommRate" id="hid_@couter" />
+            </td>
+            <td>@item.ChequeNo</td>
+            <td>@item.CardNumber</td>
+            <td>@item.EntryDate</td>
+            <td class="text-right">@item.Amount</td>
+            @if (Model.UserRoleID != Role.Admin)
+            {
+                <td>@item.Status</td>
+            }
+            <td class="text-center">
+                @if (!string.IsNullOrEmpty(item.ReceiptURL))
+                {
+                    <button class="btn btn-outline-info showReceipt" data-item-Url="@item.ReceiptURL"><span class="fa fa-eye-slash"></span> Show</button>
+                }
+            </td>
+        </tr>
+        couter = couter + 1;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="13" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}

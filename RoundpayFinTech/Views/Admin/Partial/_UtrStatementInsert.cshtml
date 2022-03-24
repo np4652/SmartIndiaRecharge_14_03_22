@@ -1,0 +1,353 @@
+﻿@model RoundpayFinTech.Models.SattlementAccountModels
+
+<style>
+    .select2-container--default.select2-container--focus .select2-selection--multiple {
+        border: 1px solid #ced4da !important;
+        outline: 0;
+        border-radius: 2px;
+    }
+    .select2-container--default .select2-selection--multiple .select2-selection__choice {
+        background-color: #e4e4e4;
+        border-radius: 2px;
+        border: 1px solid #ced4da !important;
+        box-sizing: border-box;
+        display: inline-block;
+        margin-left: 0px;
+        margin-top: 0px;
+        padding: 0;
+        padding-left: 20px;
+        position: relative;
+        max-width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        vertical-align: bottom;
+        white-space: nowrap;
+        line-height: 1.5;
+    }
+    .select2-container--default .select2-selection--multiple {
+        background-color: white;
+        border: 1px solid #ced4da !important;
+        border-radius: 2px;
+        cursor: text;
+        padding: 7px 5px;
+        position: relative;
+        line-height: 1.1;
+        color: #495057;
+    }
+        .select2-container--default .select2-selection--multiple .select2-selection__clear {
+            cursor: pointer;
+            font-weight: bold;
+            height: 20px;
+            margin-right: 10px;
+            margin-top: 0px;
+            position: absolute;
+            right: 0;
+            padding: 1px;
+        }
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+            cursor: default;
+            padding-left: 2px;
+            padding-right: 5px;
+            font-size: 13px;
+            font-weight: 400;
+        }
+</style>
+<div class="conatiner">
+    <div class="row">
+
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                @Html.Label("ddlBank", "Select Bank", new { @class = "lbl" })
+
+                <select class="form-control ddlBank12"  id="_bank" name="bank" aria-describedby="BankHelp1" asp-items="@Model.Bankselect">
+                    <option value=-1>:: Choose Bank ::</option>
+                </select>
+                <small id="BankHelp1" class="form-text text-muted d-none"></small>
+            </div>
+
+
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-group">
+                <label>&nbsp; </label>
+                <input class="form-control" type="file" id="input" accept=".xls,.xlsx">
+            </div>
+        </div>
+        <div class="col-md-2">
+            <div class="form-group">
+
+                <button class="btn btn-primary mt-4" onclick="SubmitData()" id="button1">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Transaction Date : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <select class="form-control keys" name="transactionDate"><option value="-1"> Choose One </option></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Description : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <select class="form-control keys" name="description"><option value="-1"> Choose One </option></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>UTR : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+
+                <select class="form-control keys" name="utr" multiple="multiple" style="width:100%"><option> Choose One </option></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Cr/Dr : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <select class="form-control keys" name="cr_dr"><option value="-1"> Choose One </option></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Transaction Amount : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <select class="form-control keys" name="transactionAmount"><option value="-1"> Choose One </option></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="form-group">
+                <label>Closing Amount : </label>
+            </div>
+        </div>
+        <div class="col-sm-6">
+            <div class="form-group">
+                <select class="form-control keys" name="closingAmount"><option value="-1"> Choose One </option></select>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="form-group">
+                <div id="jsondata">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover "></table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.2/xlsx.full.min.js"></script>
+<script>
+
+    @{
+        var jsonObject1=ViewBag.jsonData;
+              }
+    var jsonObject= @Html.Raw(jsonObject1);
+
+        var selectedFile;
+        var excelData;
+    var responeData = [];
+    var accountNo = null;
+      //  $('#input').change(e => selectedFile = event.currentTarget.files[0])
+
+       var data = [{
+
+        }]
+
+        $('#input').change(() => {
+            selectedFile = event.currentTarget.files[0]
+            XLSX.utils.json_to_sheet(data, 'out.xlsx');
+            if (selectedFile) {
+                let fileReader = new FileReader();
+                fileReader.readAsBinaryString(selectedFile);
+                fileReader.onload = (event) => {
+                    let data = event.target.result;
+                    let workbook = XLSX.read(data, { type: "binary" });
+                    workbook.SheetNames.forEach(sheet => {
+                        let rowObject = XLSX.utils.sheet_to_row_object_array(workbook.Sheets[sheet]);
+                        excelData = rowObject;
+                        let keys = Object.keys(rowObject[0]);
+                        $('.keys').empty().append('<option value="-1"> Choose One </option>').append(keys.map((item) => `<option value="${item}">${item}</option>`));
+                    });
+                }
+            }
+        })
+
+    var genrateJson = () => {
+     
+       
+         $('#jsondata').find('table').empty();
+        let _config = $.grep(jsonObject, function (n, i) {
+
+                return n.bankID == $('[name="bank"]').val();
+               // return n.bank.toLowerCase() === $('[name="bank"] option:selected').text().toLowerCase();
+            });
+            if (_config.length <= 0) {
+                //alert('no config found');
+                an.title = 'Oops';
+                an.content = 'No config found.Please Contact Admin.';
+                an.alert(an.type.failed);
+                return false;
+            }
+            if ($('[name="bank"]').val() == -1) {
+                //alert('Please choose bank first');
+                an.title = 'Oops';
+                an.content = 'Please choose bank first';
+                an.alert(an.type.failed);
+                return false;
+            }
+            let keys = {
+                transactionDate: $('[name="transactionDate"]').val(),
+                description: $('[name="description"]').val(),
+                utr: $('[name="utr"]').val(),
+                cr_dr: $('[name="cr_dr"]').val(),
+                transactionAmount: $('[name="transactionAmount"]').val(),
+                closingAmount: $('[name="closingAmount"]').val(),
+            };
+        var respone = [];
+       
+        respone.push(excelData.map(function (item, i) {
+
+                let _description = item[keys.description];
+                let utr = '';
+                $.grep(_config, function (n) {
+                    if (item[keys.description] !== undefined && item[keys.description] !== '' && isNaN(item[keys.description])) {
+                        if (item[keys.description].indexOf(n.identifier) > -1) {
+                            utr = _description.split(n.startWith)[1];
+                            if (utr !== undefined && utr !== null && utr !== '') {
+                                utr = utr.substring(0, utr.indexOf(n.endWith));
+                            }
+                        }
+                    }
+                });
+                if (i === 0) {
+                    $('#jsondata').find('table').empty().append(`<thead>
+                                            <tr>
+                                                <th>TransactionDate</th>
+                                                <th>description</th>
+                                                <th>UTR</th>
+                                                <th>cr/dr</th>
+                                                <th>transactionAmount</th>
+                                                <th>closingAmount</th>
+                                            </tr>
+                                        </thead>`);
+                }
+                $('#jsondata').find('table').append(`<tr>
+                                            <td>${item[keys.transactionDate]}</td>
+                                            <td>${item[keys.description]}</td>
+                                            <td>${utr}</td>
+                                            <td>${item[keys.cr_dr]}</td>
+                                            <td>${item[keys.transactionAmount]}</td>
+                                            <td>${item[keys.closingAmount]}</td>
+                                        </tr>`);
+                let _finaldata = {
+                    transactionDate: item[keys.transactionDate],
+                    description: item[keys.description],
+                    utr: utr ,
+                    cr_dr: item[keys.cr_dr],
+                    transactionAmount: item[keys.transactionAmount],
+                    closingAmount: item[keys.closingAmount],
+                };
+                responeData.push(_finaldata);
+              
+                return _finaldata;
+            }));
+      
+        }
+
+    $('.keys').unbind().change(function () {
+            $('.keys').each(function (i) {
+                debugger
+                let ele = $(this);
+                let isValid = ele.val() == '' || ele.val() == '-1' ? false : true;
+                if (isValid && i == ($('.keys').length - 1)) {
+                    genrateJson()
+                }
+               
+            })
+        })
+        function SubmitData() {
+            debugger
+            if (responeData.length==0) {
+                an.title =  'Oops';
+                an.content = "Please Select File.";
+                an.alert(-1);
+                return false;
+            }
+            accountNo = $('[name="bank"] option:selected').text().toLowerCase().split('~')[1];
+            bankID = $('#_bank').val();
+            preloader.load()
+            $.ajax({
+                type: 'POST',
+                url: `/UploadUtrStatement/${accountNo}/${bankID}`,
+                data: JSON.stringify(responeData),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    resultReload(result);
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    
+                    loadPartial1()
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.failed);
+                   
+                },
+                complete: () => preloader.remove()
+            });
+            preloader.remove()
+        }
+
+        $('[name="utr"]').select2({
+            closeOnSelect: false,
+            placeholder: "Choose atleast one",
+            allowHtml: true,
+            allowClear: true,
+            tags: true // создает новые опции на лету
+        });
+
+    $('[name="bank"]').select2({ dropdownParent: "#1mymodal" });
+</script>
+
+
+@*<script src="~/UTRconfig.json"></script>*@
+

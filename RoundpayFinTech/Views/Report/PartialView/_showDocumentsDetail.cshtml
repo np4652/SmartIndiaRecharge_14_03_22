@@ -1,0 +1,39 @@
+﻿
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DocTypeMaster>
+@{
+    var counter = 1;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-center">Documents Detail</h5><hr />
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered table-striped table-responsive-sm">
+                    <thead class="bg-tableth">
+                        <tr>
+                            <th>#</th>
+                            <th>Document</th>
+                            <th>Status</th>
+                            <th>Remark</th>
+                        </tr>
+                    </thead>
+                    @foreach (var item in Model)
+                    {
+                        <tbody>
+                            <tr>
+                                <th>@counter</th>
+                                <td>@item.DocName</td>
+                                <td>@item.DRemark</td>
+                                <td>@item.Remark</td>
+                            </tr>
+                        </tbody>
+                        counter = counter + 1;
+                    }
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,246 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ProcModel.TransactionDetail
+
+<style>
+    .main-body {
+        margin: 20px auto;
+        width: 100%;
+    }
+
+    .address-detail p {
+        font-size: 12px;
+        margin-bottom: 0;
+    }
+
+    .com-logo {
+        padding-left: 20px;
+        padding: 0;
+        vertical-align: top;
+    }
+
+    .bg-g {
+        background: #e6e6e6;
+    }
+
+    .table td, .table th {
+        padding: 5px;
+        font-size: 14px;
+    }
+</style>
+<button type="button" class="close cus_modal_close_btn" aria-label="Close" style="margin-right: 11px;">
+    <span aria-hidden="true">&times;</span>
+</button>
+@if (Model.IsError)
+{
+<h2 style="color: #dc3545">@Model.Status</h2>
+}
+else
+{
+    <div>
+        <header>
+            <table style="width:100%">
+                <tr>
+                    <td class="text-center" colspan="2">
+                        <img src="~/Image/iconMsg/1.png" style="width:50px;" />
+                        @if (Model.Statuscode == 1)
+                        {
+                            <h2>PENDING</h2>
+                        }
+                        else if (Model.Statuscode == 2)
+                        {
+                            <h2 class="text-success">SUCCESS</h2>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <td style="width:65%"><b>@Model.CompanyName</b></td>
+                    <td style="display: block; width:35%; text-align:right">
+                        <img src="~/Image/Website/@Model.WID.ToString()/logo.png" style="width: 150px;display: block;margin: auto;" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">                        
+                        <div class="address-detail">
+                            <p class="address">@Model.CompanyAddress</p>
+                            <p><b>Landline No. :</b> @Model.PhoneNoSupport</p>
+                            <p><b>Mobile No. :</b> @Model.MobileSupport</p>
+                            <p><b>Email :</b> @Model.SupportEmail</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </header>
+        @if (Model.IsBBPS)
+        {
+    <div class="container-fluid pl-0 pr-0">
+        <div class="row">
+            <div class="col-md-12 float-right">
+                <img class="lbl f-w-bold text-danger float-right" style="max-height: 65px;" src="/images/BeAssured.png">
+            </div>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblBiller", "Biller Name", new { @class = "lbl" })
+            </div>
+            <span id="lblBiller" class="col-md-8 text-right">@Model.OPName</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblBillerID", "Biller ID", new { @class = "lbl" })
+            </div>
+            <span id="lblBillerID" class="col-md-8 text-right">@Model.BillerID</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblCustomerName", "Customer Name", new { @class = "lbl" })
+            </div>
+            <span id="lblCustomerName" class="col-md-8 text-right">@Model.O15</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblCustomerName", "Customer Mobile", new { @class = "lbl" })
+            </div>
+            <span id="lblCustomerName" class="col-md-8 text-right">@Model.CustomerMobile</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblDueDate", "Approval Number", new { @class = "lbl" })
+            </div>
+            <span id="lblDueDate" class="col-md-8 text-right">@Model.LiveID</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblBillDate", Model.AccountNoKey, new { @class = "lbl" })
+            </div>
+            <span id="lblBillDate" class="col-md-8 text-right">@Model.Account</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblBillAmount", "Transaction ID", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-8 text-right">@Model.TransactionID</span>
+        </div>
+
+        <div class="row mb-1">
+            <div class="col-md-6">
+                @Html.Label("lblBiilCCF", "Bill Amount", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-6 text-right">@Model.RequestedAmount</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-6">
+                @Html.Label("lblBiilCCF", "Customer Convenience Fees", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-6 text-right">@Model.convenientFee</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-6">
+                @Html.Label("lblBiilCCF", "Total amount", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-6 text-right">@(Model.RequestedAmount + Model.convenientFee)</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-6">
+                @Html.Label("lblBiilCCF", "Transaction Date and Time", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-6 text-right">@Model.EntryDate.ToString("dd MMM yyyy hh:mm:ss tt")</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblBiilCCF", "Payment Mode", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-8 text-right">@Model.O16</span>
+        </div>
+        <div class="row mb-1">
+            <div class="col-md-4">
+                @Html.Label("lblBiilCCF", "Initiating Channel", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-8 text-right">@Model.O17</span>
+        </div>
+    </div>
+            @*<div class="row mb-1">
+                <div class="col-md-4">
+                    @Html.Label("lblBiilCCF", "Transaction Status", new { @class = "lbl" })
+                </div>
+                @if (Model.Statuscode == 1)
+                {
+                    <span id="lblBillAmount" class="col-md-8 text-right text-info">PENDING</span>
+                }
+                else if (Model.Statuscode == 2)
+                {
+                    <span id="lblBillAmount" class="col-md-8 text-right text-success">SUCCESS</span>
+                }
+
+            </div>*@
+        }
+        else
+        {
+            <table style="width: 100%;border:1px solid #dee2e6;" class="table">
+                <thead>
+                    <tr>
+                        <th colspan="2" style="text-align: center;border:0">
+                            <h5>TRANSACTION DETAIL</h5>
+                        </th>
+                    </tr>
+                    <tr colspan="2">
+                        <th class="com-logo" colspan="2">
+                            <img src="~/Image/operator/@(Model.OID+".png")" data-holder-rendered="true" style=" width:50px;float: left;" /> <span style="margin: 1.3em;float: left;">@Model.OPName</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><b>Account No :</b></td>
+                        <td>@Model.Account</td>
+                    </tr>
+                    <tr class="bg-g">
+                        <td><b>Amount :</b></td>
+                        <td>@Model.RequestedAmount</td>
+                    </tr>
+                    <tr>
+                        <td><b>Live Id :</b></td>
+                        <td>@Model.LiveID</td>
+                    </tr>
+                    <tr class="bg-g">
+                        <td><b>Transaction ID :</b></td>
+                        <td>@Model.TransactionID</td>
+                    </tr>
+                    <tr>
+                        <td><b>Transaction Status :</b></td>
+                        <td>@Model.Status</td>
+                    </tr>
+                    <tr class="bg-g">
+                        <td><b>Operator Name :</b></td>
+                        <td>@Model.OPName</td>
+                    </tr>
+                    <tr>
+                        <td><b>Transaction Date :</b></td>
+                        <td>@Model.EntryDate.ToString("dd-MMM-yyyy HH:mm:ss")</td>
+                    </tr>
+                    @if (@Model.convenientFee > 0)
+                    {
+                        <tr class="bg-g">
+                            <td><b>Convenience Fees :</b></td>
+                            <td>@Model.convenientFee</td>
+                        </tr>
+                    }
+                    <tr>
+                        <td><b>Total :</b></td>
+                        <td><b>@(Model.RequestedAmount+ Model.convenientFee) </b></td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        <div style="text-align:center">
+            <h5>Shop Detail</h5>
+            <p style="color: #636262;">Name : @Model.Name | Contact No. : @Model.MobileNo | <a href="mailto:@Model.Email" style="color: #636262;">@Model.Email</a></p>
+        </div>
+    </div>
+    <button class="btn btn-sm btn-danger" id="btnPrint" style="position: absolute;bottom:7px;right: 25px;">
+        Print
+    </button>
+}
+
+
+

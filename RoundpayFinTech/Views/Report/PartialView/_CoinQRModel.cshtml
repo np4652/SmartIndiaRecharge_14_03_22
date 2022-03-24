@@ -1,0 +1,85 @@
+﻿@model CoinQRViewModel;
+@{
+    var list = new SelectList(Model.opList, "OPID", "Name");
+    var IsDisplayOP = false;
+    if (Model.opList.Any())
+    {
+        if (Model.opList.ToList().Count > 1)
+        {
+            IsDisplayOP = true;
+        }
+    }
+}
+
+<input type="hidden" value="@Model.QRAddress" />
+<div class="text-center">
+    <div class="container form-group @(IsDisplayOP==false?"d-none":"")" id="opContainer">
+        <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose QR Coin Type</label>
+        <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlCoinOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+        </select>
+    </div>
+
+
+    <p id="QRImg"></p>
+    <span class="d-none" id="JsTimer">5:00</span>
+
+    <button class="btn btn-outline-primary w-75 mt-3 mb-2" id="mdlCancel">Close</button>
+</div>
+<script>
+    var qrAddress = $('input[type="hidden"]:last').val();
+    var showJsTimer = new ShowJsTimer(JsTimer, 5);
+    var CheckBalance = function (spkey, showJsTimer, t, f) {
+        $.post('/CoinBalanceStatus', { spkey }, function (result) {
+            if (t < 10) {
+                setTimeout(function () {
+                    t = t + 1;
+                    CheckBalance(spkey, showJsTimer, t, f);
+                }, 30 * 1000);
+            }
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    }
+    $('#ddlCoinOperator').change(function () {
+        $('#QRImg').html(`<img class="img-thumbnail" src="${$$host}/Report/CoinQRCode?spkey=${$(this).val()}" alt="QR Code" style="width:370px"/>
+ <br>
+<div class="row" style="margin-top:30px">
+<div class="input-group col-sm-2" ></div>
+ <div class="input-group col-sm-8" >
+            <input type="text" value='${qrAddress}' id="myInput" class="form-control">
+<div class="input-group-append">
+                                        <span class="input-group-text">
+                                            <a class="lbl f-w-bold m-b-6 text-danger float-right" id="Aplan" style="cursor:pointer" onclick="myFunction()">Copy Address</a>
+                                        </span>
+                                    </div>
+<div>
+<div class="input-group col-sm-2" ></div>
+</div>`);
+        if (showJsTimer._st != undefined) {
+            showJsTimer.stopTimer();
+        } else {
+            showJsTimer = new ShowJsTimer(JsTimer, 5);
+        }
+        showJsTimer.startTimer();
+        CheckBalance($(this).val(), showJsTimer, 0, function () { });
+    });
+    setTimeout(function () {
+        if ($('#ddlCoinOperator').val() == null) {
+            $('#opContainer').addClass('d-none');
+            $('#QRImg').html(`<h2 class="text-danger">This service is temporarily down!</h2>`);
+        } else {
+            $('#ddlCoinOperator').change();
+        }
+    }, 500);
+</script>
+
+<script>
+    function myFunction() {
+        var copyText = document.getElementById("myInput");
+        copyText.select();
+        copyText.setSelectionRange(0, 99999); /* For mobile devices */
+        navigator.clipboard.writeText(copyText.value);
+    }
+</script>

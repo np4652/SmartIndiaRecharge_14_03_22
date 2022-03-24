@@ -1,0 +1,73 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+@{
+
+}
+<style>
+    .item img {
+        height: 206px;
+    }
+</style>
+
+
+
+
+
+
+
+
+<div class="row">
+    <div class="col-12">
+        <label>@Model.FirstOrDefault().CategoryName</label><hr />
+    </div>
+</div>
+<div class="row">
+    @if (Model.Any())
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-sm-3 mb-1 item text-center item" data-Product-Id="@item.ProductID" data-productDetail-Id="@item.ProductDetailID">
+                <div class="cus-product-sec">
+                    <div class="product-inner">
+                        <img class="img-fluid" src="~/image/Products/@item.ProductID/@item.ImgUrl" />
+                    </div>
+                    <hr />
+                    <div class="product-detail-sec">
+                        <span class="pro-title">@item.ProductName</span><br />
+                        <span class="pro-price">Price : <i class="fa fa-rupee-sign"></i> @((item.MRP- (item.DiscountType?item.MRP*item.Discount*Convert.ToDecimal(0.01):item.Discount)).ToString("00.00"))</span>
+                        <span class="pro-discount">MRP :<del>  <i class="fa fa-rupee-sign"></i> @item.MRP</del></span><br />
+                    </div>
+                </div>
+            </div>
+        }
+        <div class="col-sm-12 text-center" data-Category-Id="@Model.FirstOrDefault().CategoryID">
+            <hr /><a class="text-danger text-center">View All</a><hr />
+        </div>
+    }
+    else
+    {
+        <div class="col-sm-12">
+            <h4 class="text-danger">No Product Found.Please Be Tunned</h4>
+        </div>
+    }
+</div>
+<script>
+    var ProductDetailForUser = e => {
+        preloader.load();
+        $.post('/ProductDetailForUser', { PID: $(e.currentTarget).data().productId, PdetailId: $(e.currentTarget).data().productdetailId })
+            .done(result => {
+                mdlA.id = "ProductDetailModal";
+                mdlA.title = "Detail";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.xxlarge);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? "Check your internet connection" : "Server Error";
+                an.alert(-1);
+            }).always(() => preloader.remove());
+    };
+
+    $('.item').unbind().click(e => {
+        ProductDetailForUser(e);
+    });
+</script>

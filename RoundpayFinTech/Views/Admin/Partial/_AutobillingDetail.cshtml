@@ -1,0 +1,91 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.AutoBillingModel
+
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-info">Auto Billing Setting</h5><hr />
+    <input type="hidden" id="hdnUserList" value="@ViewBag.UserList" />
+    <div class="row">
+        <div class="col-md-12 form-group">
+            <label class="lbl" for="txtDailyCount">Max Daily Count<small class="form-text text-muted">0 is Unlimited</small></label>
+            <input aria-describedby="CnameHelp" class="form-control " id="txtDailyCount" name="txtDailyCount" placeholder="Max Daily Count" tabindex="4" type="text" value="@Model.MaxBillingCountAB">
+        </div>
+        <div class="col-md-12 form-group">
+            <label class="lbl" for="txtAlertAmount">Alert Amount<small class="form-text text-muted">1000 is default</small></label>
+            <input aria-describedby="CnameHelp" class="form-control " id="txtAlertAmount" name="txtAlertAmount" placeholder="Max Alert Amount" tabindex="4" type="text" value="@(Model.AlertBalance == 0 ? 1000 : Model.AlertBalance)">
+        </div>
+        <div class="col-md-12 form-group">
+            <label class="lbl" for="txtAlertAmount">Max Amount Per Transaction<small class="form-text text-muted">1000 is default</small></label>
+            <input aria-describedby="CnameHelp" class="form-control " id="txtperTransaction" name="txtperTransaction" placeholder="Max Amount Per Transaction" tabindex="4" type="text" value="@(Model.BalanceForAB == 0 ? 1000 : Model.BalanceForAB)">
+        </div>
+        <div class="col-md-12 form-group">
+            <label class="lbl" for="txtTransferAmount">Max Transfer Amount<small class="form-text text-muted">5000 is default</small></label>
+            <input aria-describedby="CnameHelp" class="form-control " id="txtTransferAmount" name="txtTransferAmount" placeholder="Max Transfer Amount" tabindex="4" type="text" value="@(Model.MaxTransferLimitAB == 0 ? 5000 : Model.MaxTransferLimitAB)">
+        </div>
+        <div class="col-md-12 form-group">
+            <label class="lbl" for="txtCreditAmount">Max Credit Amount<small class="form-text text-muted">0 is Unlimited</small></label>
+            <input aria-describedby="CnameHelp" class="form-control " id="txtCreditAmount" name="txtCreditAmount" placeholder="Max Credit Amount" tabindex="4" type="text" value="@Model.MaxCreditLimitAB">
+        </div>
+        <div class="col-md-12 form-group">
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="chbIsFos" @(Model.FromFOSAB ? "checked='checked'" : "")>
+                <label for="chbIsFos" class="font-weight-bold lbl">IsTransferTroughFOS</label>
+            </span>
+        </div>
+    </div>
+    <button class="btn btn-dark" id="btnSubmit">Submit</button>
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>
+<script>
+    $('#btnSubmit').click(function () {
+        var id = @(Model.Id);
+        let param = {};
+        if (id != 0) {
+            param = {
+                Id: @Model.Id,
+                UserId: @Model.UserId,
+                MaxBillingCountAB: $('#txtDailyCount').val(),
+                AlertBalance: $('#txtAlertAmount').val(),
+                BalanceForAB: $('#txtperTransaction').val(),
+                FromFOSAB: $('#chbIsFos').prop("checked") == true ? true : false,
+                MaxCreditLimitAB: $('#txtTransferAmount').val(),
+                MaxTransferLimitAB: $('#txtCreditAmount').val()
+            }
+        }
+        else {
+            param = {
+                Id: @Model.Id,
+                UserIdBulk: $('#hdnUserList').val(),
+                IsAutoBilling: true,
+                MaxBillingCountAB: $('#txtDailyCount').val(),
+                AlertBalance: $('#txtAlertAmount').val(),
+                BalanceForAB: $('#txtperTransaction').val(),
+                FromFOSAB: $('#chbIsFos').prop("checked") == true ? true : false,
+                MaxCreditLimitAB: $('#txtTransferAmount').val(),
+                MaxTransferLimitAB: $('#txtCreditAmount').val()
+            }
+        }
+
+        preloader.load();
+        $.post('/UpdateAutoBilling', param)
+            .done(function (result) {
+                resultReload(result);
+                if (result.statuscode == 1) {
+                    mdlA.dispose();
+                    location.reload();
+                }
+                an.title = result.statuscode == an.type.success ? 'Wow' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                an.autoClose = 5;
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+</script>
+

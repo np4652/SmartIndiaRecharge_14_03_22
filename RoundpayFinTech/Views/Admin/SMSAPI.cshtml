@@ -1,0 +1,562 @@
+﻿@{
+    ViewData["Title"] = "SMS API";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API Management</li>
+            <li class="breadcrumb-item active">SMS API</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> SMS API List
+                        <div class="float-right"><button id="btnNew" class="btn btn-default btn-sm">New</button></div>
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Actions</th>
+                                        <th>Name</th>
+                                        <th>APIType</th>
+                                        <th>APIUrl</th>
+                                        <th style="width:15%">IsDefault</th>
+                                        <th style="width:15%">IsActive</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+<script>
+    $(document).ready(function () {
+       // $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+        $('body').on('click', 'button.close span,#mdlCancel', function () {
+            mdlA.dispose()
+        })
+        $('body').on('click', '.btndelwtsenderno', function () {
+            var wtparam = {
+                wtsenderid: $(this).closest('tr').data().itemId
+            };
+            $.post('/WtSenderno_Delete', wtparam).done(function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.failed ? "Oops" : "Success";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                var id = $('#wtapiid').val();
+                LoadSenderNo(id);
+            })
+        });
+        $('body').on('click', '#btnSaveWSiN', function () {
+            debugger;
+            var id = $('#wtapiid').val();
+            if (id == 0) {
+                an.title = 'Oops';
+                an.content = 'Invalid API';
+                an.alert(an.type.failed);
+            }
+            var mbl = $('#txtmobileno').val();
+            var ct= {
+                tmoblno: $('#txtmobileno')
+            }
+            debugger;
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            var IsE = {
+                mob: (ct.tmoblno.val().length !== 12 || !$v.$IsMob(ct.tmoblno.val().substr(2, 12)) || (ct.tmoblno.val().substr(0, 2)) != '91')
+            }
+            $v.showErrorFor(ct.tmoblno, 'Mobile number is mandatory field and start with country code (91)', IsE.mob);
+            IsE.err = (IsE.mob);
+            if (IsE.err) {
+                btnLdr.Stop(ct.btnSaveWSN);
+                return false;
+            }
+            an.autoClose = 5;
+            var wtnodetail =
+                           {
+                               Mobileno: ct.tmoblno.val(),
+                               APIID: id
+                           }
+            $.ajax({
+                type: 'POST',
+                url: '/Save_Senderno',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(wtnodetail),
+                success: function (result) {
+                    // resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        LoadSenderNo(id);
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    btnLdr.Stop(ct.btnSaveWSN);
+                }
+            });
+        })
+            preloader.load();
+            debugger;
+            an.autoClose = 5;
+            $.post('/SMSAPIs').
+                done(function (result) {
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('input[type="checkbox"].switch').click(function () {
+                        ChangeActiveStatus(this);
+                    })
+                }).catch(function (err) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+
+                    preloader.remove();
+                    $('tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['API Commission']) < 0) {
+                            return true;
+                        }
+                        var apiid = 0;
+                        apiid = $(this).closest('tr').data().itemId;
+                        GetAPICom(apiid);
+                    });
+
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        debugger;
+                        if ($.inArray($(this).text(), ['Edit', 'New', 'Whatsapp']) < 0) {
+                            return true;
+                        }
+
+                        preloader.load();
+                        var id = 0;
+                        var rt = "";
+
+                        if ($(this).text() === 'Whatsapp') {
+                            id = $(this).closest('tr').data().itemId;
+                            rt = "WhatsAppSenderNo";
+                        }
+                        else if ($(this).text() === 'Edit') {
+                            id = $(this).closest('tr').data().itemId;
+                            rt = "SMSAPI";
+                        }
+                        else if ($(this).text() === 'New') {
+                            rt = "SMSAPI";
+                        }
+
+                        $.post('/'+rt+'/' + id)
+                            .done(function (result) {
+                                resultReload(result);
+                                mdlA.id = 'mymodel';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                setTimeout(function () {
+                                    $('#txtName').focus();
+                                }, 500);
+                                var allowedCtrlForPaste = ['txtURL'];
+                                $('#hang').hide();
+
+                                var ct = {
+                                    tnam: $('#txtName'), apiType: $('#ddlApiType'), turl: $('#txtURL'), ddlTransType: $('#ddlTransType'),
+                                    dmeth: $('#ddlMethod'), dresp: $('#ddlResType'), btnSaveAPI: $('#btnSaveAPI'), hid: $('#hid'),
+                                    Default: $('#chkDefault'), IsWhatsApp: $('#chkWhatsApp'), IsHangout: $('#chkHangout'), IsTelegram: $('#chkTelegram'),IsWtnActive: $('.IsWtnActive'), hhid: $('#wtapiid')
+                                }
+                                ct.hhid.val(id);
+                                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+
+                                $('[data-toggle="tooltip"]').tooltip();
+                                var lastFocusCtrl = $('#txtName');
+                                $('textarea,input').focus(function () {
+                                    lastFocusCtrl = $(this);
+                                });
+                                $('span.cursor-pointer').click(function () {
+                                    var cText = $(this).attr('data-original-title');
+                                    copyToClipboard(cText);
+                                    an.title = 'Copied';
+                                    an.content = cText;
+                                    an.alert(an.type.info);
+                                    an.autoClose = 5;
+                                    if ($.inArray(lastFocusCtrl.attr('id'), allowedCtrlForPaste) > -1 && lastFocusCtrl.val().indexOf(cText) < 0) {
+                                        pasteAtControl(lastFocusCtrl, cText);
+                                    }
+                                });
+
+                 $("#ddlApiType").change(function () {
+
+                if ($('#ddlApiType').val() == 2)
+                {
+
+                    $('#hang').show();
+                } else
+                {
+                      $('#hang').hide();
+                 }
+                 });
+
+                 
+                 ct.IsWtnActive.click(function () {
+                     var wtparam = {
+                         wtsenderid: $(this).closest('tr').data().itemId,
+                         sapiid: id,
+                         IsActive: $(this).closest('tr').find('.IsWtnActive').is(':checked')
+                     };
+
+                     $.post('/WtSendernoStatus', wtparam).done(function (result) {
+                         an.title = result.statuscode == an.type.failed ? "Oops" : "Success";
+                         an.content = result.msg;
+                         an.alert(result.statuscode);
+                     })
+                 });
+
+                              ct.btnTxt = ct.btnSaveAPI.html();
+                              ct.btnSaveAPI.click(function () {
+                                    if (ct.btnTxt !== ct.btnSaveAPI.html())
+                                        return false;
+                                    btnLdr.addClass = 'btn-dark';
+                                    btnLdr.removeClass = 'btn-outline-dark';
+                                    btnLdr.Start(ct.btnSaveAPI, id == 0 ? 'Saving' : 'Updating');
+                                    var IsE = { nam: ($v.$IsNum(ct.tnam.val()) || ct.tnam.val().trim() == '' || ct.tnam.val().length > 50), url: ct.apiType.val() != 2 ? ($v.$IsNum(ct.turl.val()) || ct.turl.val().trim() == '') : false }
+                                    $v.showErrorFor(ct.tnam, 'API Name is non-numeric mandatory field and length should not more than 50', IsE.nam);
+                                    $v.showErrorFor(ct.turl, 'Invalid Url', IsE.url);
+                                    IsE.err = (IsE.nam || IsE.url);
+                                    if (IsE.err) {
+                                        btnLdr.Stop(ct.btnSaveAPI);
+                                        return false;
+                                    }
+                                    var APIDetail =
+                                    {
+                                        APIType: ct.apiType.val(),
+                                        Name: ct.tnam.val(),
+                                        Url: ct.turl.val(),
+                                        TransactionType: ct.ddlTransType.val(),
+                                        RequestMethod: ct.dmeth.val(),
+                                        ResponseTypeID: ct.dresp.val(),
+                                        ID: ct.hid.val(),
+                                        IsActive:true,
+                                        Default: ct.Default.is(':checked'),
+                                        IsWhatsApp: ct.IsWhatsApp.is(':checked'),
+                                        IsHangout: ct.IsHangout.is(':checked'),
+                                        IsTelegram: ct.IsTelegram.is(':checked')
+                                    }
+                                    an.autoClose = 5;
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/SMS-API',
+                                        dataType: 'json',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(APIDetail),
+                                        success: function (result) {
+                                            resultReload(result);
+                                            if (result.statuscode == an.type.failed) {
+                                                an.title = "Oops";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                            }
+                                            else if (result.statuscode == an.type.success) {
+                                                an.title = "Well done";
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                                rel(2);
+                                            }
+                                        },
+                                        statusCode: {
+                                            500: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Server error';
+                                                an.alert(an.type.failed);
+                                            },
+                                            0: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Internet Connection was broken';
+                                                an.alert(an.type.failed);
+                                            }
+                                        },
+                                        error: function (result) {
+                                            checkError(result);
+                                            an.title = 'Oops';
+                                            an.content = 'An error occured!';
+                                            an.alert(an.type.failed);
+                                        },
+                                        complete: function () {
+                                            btnLdr.Stop(ct.btnSaveAPI);
+                                        }
+                                    });
+                              });
+                            }).catch(function (xhr, ex, message) {
+                                an.title = 'Oops';
+                                an.content = message;
+                                an.alert(an.type.failed);
+                                an.autoClose = 2;
+                            }).fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                    });
+                });
+        });
+
+
+
+    var SaveWahatsappGroup = function (SenderNo, id) {
+        mdlA.dispose();
+        $.post('/SaveWhatsappGroup', { SenderNo: SenderNo.trim(), id: id })
+            .done(function (result) {
+            })
+    }
+    var LoadSenderNo = function (sender) {
+            rt = "WhatsAppSenderNo";
+
+    $.post('/'+rt+'/' + sender)
+            .done(function (result) {
+                resultReload(result);
+                mdlA.id = 'mymodel';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('#wtapiid').val(sender);
+              //  alert($('#wtapiid').val())
+            })
+    }
+
+        var ChangeActiveStatus = function (sender) {
+            var param = {
+                ID: $(sender).closest('tr').data().itemId,
+                IsActive: $(sender).closest('tr').find('.isActive').is(':checked'),
+                IsDefault: $(sender).closest('tr').find('.isDefault').is(':checked')
+            };
+            $.post('/SMS-API-Status', param).done(function (result) {
+                an.title = result.statuscode == an.type.failed ? "Oops" : "Success";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+        }
+        var GetAPICom = function (apiid) {
+            preloader.load();
+            $.post('/api-com', { APIID: apiid })
+                .done(function (result) {
+                    resultReload(result);
+                    mdlA.content = result;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.large);
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    GetAPIComm($('#ddlAPI').val());
+                    $('#ddlAPI').unbind().change(function () {
+                        if ($(this).val() == "0") {
+                            return true;
+                        }
+                        GetAPIComm($(this).val());
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var GetAPIComm = function (apiid) {
+            preloader.load();
+            $.post('/api-comm', { APIID: apiid })
+                .done(function (result) {
+                    resultReload(result);
+                    $('#tblAPIComm tbody').html(result);
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    setTimeout(function () {
+                        $('#txtSearch').focus();
+                        $("#txtSearch").on("keyup", function () {
+                            var value = $(this).val();
+                            value = value != undefined ? value.toLowerCase() : value;
+                            $('#tblAPIComm tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                        var optype = $('#hidType').val();
+                        $('#hidType').remove();
+                        $('#ddlOType').html(optype.split(',').join(''));
+                        $('#ddlOType').unbind().change(function () {
+                            var value = $(this).val();
+                            value = value != undefined ? value : '';
+                            $('#tblAPIComm tbody tr').filter(function () {
+                                $(this).toggle($($(this).find('td')[0]).find('small').text().toLowerCase().indexOf(value.toLowerCase()) > -1)
+                            });
+                        });
+                    }, 500);
+
+                    $('.btn-toggle').click(function () {
+                        $(this).find('.btn').toggleClass('active');
+                        if ($(this).find('.btn-dark').length > 0) {
+                            $(this).find('.btn').toggleClass('btn-dark');
+                        }
+                        if ($(this).find('.btn-outline-dark').length > 0) {
+                            $(this).find('.btn').toggleClass('btn-outline-dark');
+                        }
+                    });
+                    $('input[id^="txtComAmt"], div[id^="btnGroupComType"], div[id^="btnGroupAmtType"]').on('blur click', function () {
+                        var IstxtComAmt = false;
+                        if ($(this).is(':input[id^="txtComAmt"]')) {
+                            IstxtComAmt = true;
+                        }
+                        var oId = $(this).closest('tr').data().itemId;
+                        var apiID = $('#hid').val();
+                        var hidcomm = $('[data-item-id="' + oId + '"] input[id^="hidComAmt"]').val();
+                        var comm = $('[data-item-id="' + oId + '"] input[id^="txtComAmt"]').val();
+                        var commType = $('[data-item-id="' + oId + '"] div[id^="btnGroupComType"] button.active').text();
+                        var amtType = $('[data-item-id="' + oId + '"] div[id^="btnGroupAmtType"] button.active').text();
+                        var dotLen = comm.split('.').length - 1;
+                        var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+                        $v.showErrorFor($('[data-item-id="' + oId + '"] input[id^="txtComAmt"]'), 'Invalid amount.', IsE.comm);
+                        IsE.err = IsE.comm;
+                        if (IsE.err) {
+                            return false;
+                        }
+                        if (parseFloat(comm) === parseFloat(hidcomm) && IstxtComAmt) {
+                            return true;
+                        }
+                        var SlabCommission = { OID: parseInt(oId), SlabID: parseInt(apiID), Comm: parseFloat(comm), CommType: commType === 'SUR' ? 1 : 0, AmtType: amtType === 'FIX' ? 1 : 0 }
+                        preloader.load();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/api-comm-update',
+                            data: JSON.stringify(SlabCommission),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    $('[data-item-id="' + oId + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                                    $('[data-item-id="' + oId + '"] input[id^="hidComAmt"]').val(comm);
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (xhr, result) {
+                                an.title = 'Oops';
+                                an.content = 'An error occured!';
+                                an.alert(an.type.failed);
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+</script>
+}

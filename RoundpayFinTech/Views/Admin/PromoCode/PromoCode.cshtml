@@ -1,0 +1,345 @@
+﻿@{
+    ViewData["Title"] = "PromoCodeMaster";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Master</li>
+            <li class="breadcrumb-item active">Promo Code Master</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-7 line-height-34">
+                                <i class="fas fa-link"></i> Promo Code Master
+                            </div>
+                            <div class="col-md-5 col-sm-5 col-xs-5">
+                                <div class="input-group">
+                                    <input id="txtSearch" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="Search Promo Code" />
+                                    <small id="helpSearch" class="form-text text-danger d-none"></small>
+                                    <div class="input-group-append">
+                                        <button id="btnNew" class="btn btn-default font-bold btn-sm pl-3 pr-3">NEW</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped" id="tblPromoCodeMaster">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%;">#</th>
+                                        <th scope="col" style="width:4%;">Action</th>
+                                        <th scope="col" style="width:10%;">Promo Code</th>
+                                        <th scope="col" style="width:10%;">Description</th>
+                                        <th scope="col" style="width:10%;">Operator</th>
+                                        <th scope="col" style="width:5%;">OpType</th>
+                                        <th scope="col" style="width:5%;">CashBack</th>
+                                        <th scope="col" style="width:5%;">CashBack Max Cycle</th>
+                                        <th scope="col" style="width:5%;">CashBack Max Cycle Type</th>
+                                        <th scope="col" style="width:10%;">Valid From</th>
+                                        <th scope="col" style="width:10%;">Valid Till</th>
+                                        <th scope="col" style="width:10%;">Modified On</th>
+                                        <th scope="col" style="width:30%;">PromoCode Image</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script type="text/javascript" src="/lib/TinyMCE/tinymce.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            darkAnimBtn($('#btnNew'));
+            _load();
+          
+        });
+
+
+
+        var _load = function () {
+            // debugger;
+            preloader.load();
+            $.post('/promoCode-lst')
+                .done(function (result) {
+                    $('#tblPromoCodeMaster tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    setTimeout(function () {
+                        $('#txtSearch').focus();
+                        $(".dropdown-toggle").dropdown();
+                        //$("#txtSearch").on("keyup", function () {
+                        //    var value = $(this).val().toLowerCase();
+                        //    $('#tblPromoCodeMaster tbody tr').filter(function () {
+                        //        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        //    });
+                        //});
+                    }, 500);
+                    an.autoClose = 5;
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['Edit', 'NEW']) < 0) {
+                            return true;
+                        }
+                        var id = 0;
+                        if ($.inArray($(this).text(), ['Edit']) > -1) {
+                            id = $(this).closest('tr').data().itemId;
+                        }
+                        if ($.inArray($(this).text(), ['Edit', 'NEW']) > -1) {
+                            $.post('/pmc-cu', { ID: id })
+                                .done(function (result) {
+                                    mdlA.id = 'promocodemodel';
+                                    mdlA.content = result;
+                                    mdlA.alert(mdlA.size.large);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                    Q.initEditor();
+                                
+                                    var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                                        $('dp').addClass('d-none');
+                                        var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                                        var lastDay_f = new Date(fy, fm + 1, 0);
+
+                                        var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                                        if (fdate > tdate) {
+                                            $('#dtToDate').val($('#dtFromDate').val());
+                                        } else {
+                                            if (fy == ty) {
+                                                var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                                                if (cm == fm) {
+                                                    if (curDate == fdate && fdate != tdate) {
+                                                        $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                                                    } else if (fdate < curDate) {
+                                                        curDate = curDate.setDate(curDate.getDate() - 1)
+                                                        $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                                                    }
+                                                }
+                                                else if (tm > fm) {
+                                                    $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                                                }
+                                            } else if (fy < ty) {
+                                                $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                                            }
+                                        }
+                                    });
+                                    //var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                                    //    $('dp').addClass('d-none');
+                                    //    var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                                    //    var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                                    //    var firstDay_t = new Date(ty, tm, 1);
+                                    //    var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+                                    //    if (curDate.toString() == tdate.toString()) {
+                                    //        $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                                    //    }
+                                    //    else if (fdate > tdate) {
+                                    //        $('#dtFromDate').val($('#dtToDate').val());
+                                    //    }
+                                    //    else {
+                                    //        if (fy == ty) {
+                                    //            if (tm > fm) {
+                                    //                $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                                    //            }
+                                    //        } else if (fy < ty) {
+                                    //            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                                    //        }
+                                    //    }
+                                    //});
+                                    $('#dtToDate').datetimepicker(
+                                    {
+                                        format: 'DD MMM YYYY'
+                                    });
+
+                                    $('#IsFixed').click(function () {
+                                        $(this).find('.btn').toggleClass('active');
+                                        if ($(this).find('.btn-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-dark');
+                                        }
+                                        if ($(this).find('.btn-outline-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-outline-dark');
+                                        }
+                                    });
+                                    $('#IsGift').click(function () {
+                                        $(this).find('.btn').toggleClass('active');
+                                        if ($(this).find('.btn-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-dark');
+
+                                        }
+                                        if ($(this).find('.btn-outline-dark').length > 0) {
+                                            $(this).find('.btn').toggleClass('btn-outline-dark');
+
+                                        }
+                                    });
+                                    $("#ddlOpType").change(function (e) {
+                                        $.post('/GetOperatorsByOpType', { OpTypeID: $(e.currentTarget).val() })
+                                     .done(result=> {
+                                         $('#ddlOperator').empty();
+                                         $('#ddlOperator').append('<option value="0">:: Select Operator ::</option>')
+                                         for (i = 0; i <= result.operator.length; i++) {
+                                             $('#ddlOperator').append('<option value=' + result.operator[i].oid + '>' + result.operator [i].name  +   '</    option>')
+                                         }
+
+
+                                     })
+                                    .fail(xhr => {
+                                        an.title = 'Oops';
+                                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                                        an.alert(an.type.failed);
+                                    }).always(() => preloader.remove());
+                                    })
+                                    var ct = { btn: $('#btnSave'), opType: $('#ddlOpType'), operator: $("#ddlOperator"), promocode: $('#txtPromocode'), cashback: $('#txtCashback'), isFixed: $('#IsFixed'), description: $('#txtDescription'), cashBackMaxCycle: $('#txtCashbackMaxCycle'), cashbackCycleType: $('#ddlCashbackCycleType'), AfterTransNum: $('#txtAfterTransNum'), isGift: $('#IsGift'), fileUploadPromocode: $('#fileUploadPromocode'), dtFromDate: $('#dtFromDate'), dtToDate: $('#dtToDate'), offerDetail: $('#txtOfferDetail') }
+                                    an.autoClose = 5;
+                                    var btnTxt = ct.btn.html();
+                                    ct.btn.click(function () {
+                                        //debugger;
+                                        var IsE = {
+                                            opType: ct.opType.prop('selectedIndex') < 1, promocode: (ct.promocode.val().trim() == '' || ct.promocode.val().trim().length > 100), cashback: (ct.cashback.val().trim() == '' || $v.$decmalOnly(ct.cashback.val().trim()) != ct.cashback.val().trim() || ct.cashback.val() < 1.00), description: ct.description.val().trim() == '', cashBackMaxCycle: (ct.cashBackMaxCycle.val().trim() == '' || $v.$numOnly(ct.cashBackMaxCycle.val().trim()) != ct.cashBackMaxCycle.val().trim() || ct.cashBackMaxCycle.val() < 1), cashbackCycleType: $('#ddlCashbackCycleType option:selected').val() < 1, AfterTransNum: (ct.AfterTransNum.val().trim() == '' || $v.$numOnly(ct.AfterTransNum.val().trim()) != ct.AfterTransNum.val().trim() || ct.AfterTransNum.val() < 1), isGift: ct.isGift.prop('checked') < 0, offerDetail: tinyMCE.get('txtOfferDetail').getContent()== ''
+                                        }
+
+                                        $v.showErrorFor(ct.opType, "Please select OpType", IsE.opType);
+                                        $v.showErrorFor(ct.promocode, "Please enter valid promo code,length should be less than 100", IsE.promocode);
+                                        $v.showErrorFor(ct.cashback, "Please enter valid cashback value", IsE.cashback);
+                                        $v.showErrorFor(ct.description, "Please enter description", IsE.description);
+                                        $v.showErrorFor(ct.cashBackMaxCycle, "Please enter a valid cashback max cycle, value should be numeric", IsE.cashBackMaxCycle);
+                                        $v.showErrorFor(ct.cashbackCycleType, "Please select cashback cycle type", IsE.cashbackCycleType);
+                                        $v.showErrorFor(ct.AfterTransNum, "Please enter valid after transaction number, value should be numeric", IsE.AfterTransNum);
+                                        $v.showErrorFor(ct.isGift, "Please select isGift 'Yes' or 'No'", IsE.isGift);
+                                        $v.showErrorFor(ct.offerDetail, "Please enter offer detail", IsE.offerDetail);
+                                        IsE.err = (IsE.opType || IsE.promocode || IsE.cashback || IsE.description || IsE.cashBackMaxCycle || IsE.cashbackCycleType || IsE.AfterTransNum || IsE.isGift||IsE.offerDetail)
+                                        if (IsE.err) {
+                                            btnLdr.Stop(ct.btn);
+                                            return false;
+                                        }
+                                        formData = new FormData();
+                                        formData.append('PromoCodeImg', $('#fileUploadPromocode')[0].files[0]);
+                                        formData.append('ID', parseInt($('#hdPromoCodeId').val()));
+                                        formData.append('OpTypeID', parseInt($('#ddlOpType option:selected').val()));
+                                        formData.append('OID', parseInt($('#ddlOperator option:selected').val()));
+                                        formData.append('Promocode', ct.promocode.val());
+                                        formData.append('Description', ct.description.val());
+                                        formData.append('Cashback', parseFloat(ct.cashback.val()));
+
+                                        formData.append('IsFixed',  $('#IsFixed').find(".btn-dark").text() == "F" ? true : false);
+                                        formData.append('CashBackMaxCycle',  parseInt(ct.cashBackMaxCycle.val()));
+                                        formData.append('CashBackCycleType', parseInt($('#ddlCashbackCycleType option:selected').val()));
+                                        formData.append('AfterTransNumber', parseInt(ct.AfterTransNum.val()));
+                                        formData.append('IsGift', $("#IsGift").find(".btn-dark").text() == "Yes" ? true : false);
+                                        formData.append('ValidFrom', ct.dtFromDate.val());
+                                        formData.append('ValidTill', ct.dtToDate.val());
+                                        formData.append('OfferDetail', tinyMCE.get('txtOfferDetail').getContent());
+
+                                        preloader.load();
+                                        $.ajax({
+                                            type: 'POST',
+                                            url: '/SavePromocode',
+                                            processData: false,
+                                            contentType: false,
+                                            data: formData,
+                                            success: result => {
+                                                an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                                                an.content = result.msg;
+                                                an.alert(result.statuscode);
+                                                if(result.statuscode==1)
+                                                {
+                                                    mdlA.dispose();
+                                                    _load();
+
+                                                }
+                                                preloader.remove();
+                                            },
+                                            error: result => {
+                                                checkError(result);
+                                                an.title = 'Oops';
+                                                an.content = 'An error occured!';
+                                                an.alert(an.type.failed);
+                                                preloader.remove();
+                                            },
+
+                                        });
+
+                                    })
+
+
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+
+
+                        }
+
+
+
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+        function UploadImage(ID) {
+            //debugger;
+            formData = new FormData();
+            formData.append('ID',ID);
+            formData.append('PromoImage', $('#Upload_' + ID)[0].files[0]);
+            $.ajax({
+                type: 'POST',
+                url: '/Upload-PromoImage',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: result => {
+                    an.title = result.statuscode === 1 ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == 1) {
+                        mdlA.dispose();
+                        _load();
+
+                    }
+                    $("#Upload_" + ID).val("");
+                    preloader.remove();
+                },
+                error: result => {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                    preloader.remove();
+                },
+
+            });
+        }
+        var ShowPreview=function(ID)
+        {
+            preloader.load();
+            $.post('/ShowPreview', { ID: ID })
+            .done(result=> {
+                mdlA.id = 'preViewModel';
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+            })
+            preloader.remove();
+        }
+
+    </script>
+}

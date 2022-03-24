@@ -1,0 +1,249 @@
+﻿@{
+    ViewData["Title"] = "Move to Bank Request";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Fund Order</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-11">
+                                <i class="fas fa-link"></i> Fund Order
+                            </div>
+                            <div class="col-sm-1 text-right">
+                                <button type="button" id="btnupdateStatus" class="btn btn-sm btn-primary">Update</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive tblrecord">
+                            <table class="table table-bordered table-striped table-sm table-mh" id="tblFA">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th>
+                                            <input type="checkbox" id="headcheck" name="headcheck"> All
+                                        </th>
+                                        <th>Bank RRN</th>
+                                        <th>Outlet</th>
+                                        <th>Bank</th>
+                                        <th>AccountHolder</th>
+                                        <th class="text-nowrap">Transfer Mode</th>
+                                        <th class="text-right text-nowrap">Requested Amount(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th>Transaction Charges(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th>MiniBank Balance(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th>MiniBank Capping(<i class="fas fa-rupee-sign"></i>)</th>
+                                        <th>RequestDate</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            search();
+        });
+        var search = function () {
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/Wallet-Request-Approval',
+                data: {},
+                contentType: 'application/json',
+                success: function (result) {
+                    $('#tblFA tbody').html(result);
+
+                    $('#headcheck').click(function () {
+                        if ($(this).is(":checked")) {
+                            var table = $(event.target).closest('table');
+                            $('td input:checkbox[name=childcheck]', table).prop('checked', event.target.checked);
+                            var IDs = $('td input:checkbox[name=childcheck]', table)
+                                .map(function () {
+                                    if (this.checked == true) {
+                                        return this.id;
+                                    }
+                                })
+                                .get();
+                            return true;;
+                        }
+                    });
+
+                    $('#btnupdateStatus').click(function () {
+                        //preloader.load();
+                        var resultArray = [];
+                        var table = $('table');//$(event.target).closest('table');
+                        $('td input:checkbox[name=childcheck]', table)
+                            .map(function () {
+                                var SignleArray = { ID: 0, BankRRN: '' };
+                                if (this.checked == true)
+                                    SignleArray.ID = parseInt(this.id);
+                                SignleArray.BankRRN = $("#txtBankRRN_" + this.id).val();
+                                if (SignleArray.ID > 0)
+                                    resultArray.push(SignleArray);
+                                return parseInt(this.id);
+                            })
+                            .get();
+
+                        if (resultArray.length == 0 || (resultArray.length == 1 && resultArray[0].ID == 0)) {
+                            an.title = 'Oops';
+                            an.content = 'No row selected';
+                            an.alert(an.type.failed);
+                            return false;
+                        }
+                        $.post('/B-T').done(result => {
+                            mdlA.id = 'mymodalBT';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.options.keyboard = false;
+                            mdlA.alert(mdlA.size.default);
+                            $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                            an.autoClose = 5;
+                            $('#bT').click(function () {
+                                var ApprovalStatus = $('#ddlStatus').val();
+                                if (ApprovalStatus == "0") {
+                                    an.title = 'Oops';
+                                    an.content = 'Please Select Approval Status';
+                                    an.alert(an.type.failed);
+                                    return false;
+                                }
+                                var FundProcessReq = { Status: parseInt($("#ddlStatus").val()), Remark: $("#txtRemark").val(), PayIds: resultArray }
+                                preloader.load();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/BT',
+                                    datatype: 'json',
+                                    data: JSON.stringify(FundProcessReq),
+                                    contentType: 'application/json',
+                                    success: function (result) {
+                                        if (result.statuscode === -1) {
+                                            an.title = 'Oops';
+                                            an.content = result.msg;
+                                            an.alert(an.type.failed);
+                                        } else {
+                                            an.title = "Well done";
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            mdlA.dispose(function () {
+                                                search();
+                                            });
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+
+
+                        })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+
+                    $('[id^=spnReal_]').click(function () {
+                        var id = $(this).attr('id').split('_')[1];
+                        CallBankTransfer(id);
+                    });
+
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops";
+                    an.content = result;
+                    an.alert(an.type.failed);
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        };
+
+        var CallBankTransfer = function (id) {
+            preloader.load();
+            $.post('/wra-realtime', { id })
+                .done(function (result) {
+                    resultReload(result);
+                    if (result.statuscode !== undefined) {
+                        an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        if (result.statuscode = an.type.success) {
+                            search();
+                        }
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+    </script>
+}

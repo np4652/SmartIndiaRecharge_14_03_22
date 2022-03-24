@@ -1,0 +1,46 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.Brand>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead class="bg-tableth">
+            <tr>
+                <th>#</th>
+                <th>Action</th>
+                <th>Brand Name</th>
+                <th>Category</th>
+                <th>IsActive </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int counter = 1;
+                foreach (var item in Model)
+                {
+                    <tr data-brandId="@item.BrandId" data-categoryId="@item.CategoryID">
+                        <td>@counter</td>
+                        <td>
+                            <div class="btn-group dropup">
+                                <a href="#" id="act_@counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                <div class="dropdown-menu" aria-labelledby="act_@counter">
+                                    <h6 class="dropdown-header">Action Menu</h6>
+                                    <a href="#" class="dropdown-item btnEditBrand"><span class="fa fa-edit text-success"></span> Edit</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@item.BrandName</td>
+                        <td>@item.CategoryName</td>
+                        <td><input type="checkbox" disabled="disabled" @Html.Raw(item.IsActive ? "checked='checked'" : "") /></td>
+                    </tr>
+                    counter++;
+                }
+            }
+        </tbody>
+    </table>
+}
+
+<script>
+    $('.btnEditBrand').unbind().click(e => EditBrand($(e.currentTarget).closest('tr').data().brandid));
+    //$('.btnEditBrand').unbind().click(e => console.log($(e.currentTarget).closest('tr').data().brandid));
+    $('.dropdown-toggle').dropdown();
+</script>

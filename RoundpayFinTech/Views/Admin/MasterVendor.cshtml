@@ -1,0 +1,140 @@
+﻿@{
+    ViewData["Title"] = "Vendor Master";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Vendor Master</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-7 line-height-34">
+                                <i class="fas fa-link"></i> Vendor Master
+                            </div>
+                            <div class="col-md-5 col-sm-5 col-xs-5">
+                                <div class="input-group">
+                                    <input id="txtSearch" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="Search Vendor" />
+                                    <small id="helpSearch" class="form-text text-danger d-none"></small>
+                                    @*<div class="input-group-append">
+                                        <button id="btnNew" class="btn btn-default font-bold btn-sm pl-3 pr-3">NEW</button>
+                                    </div>*@
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped" id="tblVendorMaster">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%;">#</th>
+                                        <th scope="col" style="width:4%;">Action</th>
+                                        <th scope="col" style="width:30%;">Vendor Name</th>
+                                        <th scope="col" style="width:55%;">Remark</th>
+                                        <th scope="col" style="width:10%;">Active</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            //darkAnimBtn($('#btnNew'));
+            _load();
+        });
+        var _load = function () {
+            preloader.load();
+            $.post('/GetVendorList')
+                .done(function (result) {
+                    $('#tblVendorMaster tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    setTimeout(function () {
+                        $('#txtSearch').focus();
+                        $(".dropdown-toggle").dropdown();
+                        $("#txtSearch").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblVendorMaster tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    an.autoClose = 5;
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['Edit', 'NEW', 'Assign Operator']) < 0) {
+                            return true;
+                        }
+                        var id = 0;
+                        if ($.inArray($(this).text(), ['Edit', 'Assign Operator']) > -1) {
+                            id = $(this).closest('tr').data().itemId;
+                        }
+                        console.log(id);
+                        if ($.inArray($(this).text(), ['Edit', 'NEW']) > -1) {
+                            $.post('/MasterVendorCU', { ID: id })
+                                .done(function (result) {
+                                    mdlA.id = 'vendorModel';
+                                    mdlA.content = result;
+                                    mdlA.alert(mdlA.size.small);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                        if ($.inArray($(this).text(), ['Assign Operator']) > -1) {
+                            console.log($(this).text());
+                            $.post('/OperatorAllocationVendor', { ID: id })
+                                .done(function (result) {
+                                    mdlA.id = 'vendorOperator';
+                                    mdlA.content = result;
+                                    mdlA.alert(mdlA.size.large);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                        //else {
+                        //    $.post('/remove-vendor', { ID: id })
+                        //        .done(result => {
+                        //            an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                        //            an.content = result.msg;
+                        //            an.alert(result.statuscode);
+                        //            if (result.statuscode == an.type.success) {
+                        //                $('tr[data-item-id="' + id + '"]').remove();
+                        //            }
+                        //        }).fail(xhr => {
+                        //            an.title = 'Oops';
+                        //            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        //            an.alert(an.type.failed);
+                        //        }).always(() => preloader.remove());
+                        //}
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+    </script>
+}

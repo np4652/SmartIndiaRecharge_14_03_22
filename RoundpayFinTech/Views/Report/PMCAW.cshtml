@@ -1,0 +1,83 @@
+﻿@model Fintech.AppCode.Model.CommonReq
+@{
+    ViewData["Title"] = "Payment Collection Area wise";
+}
+@*<i class="fas fa-house-user"></i>*@
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fas fa-warehouse"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-warehouse"></i> Payment Collection
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row" id="dvArea">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    </div>
+</div>
+@section scripts{
+
+    <script>
+        $(document).ready(function () {
+            loadData();
+        });
+
+        var loadData = () => {
+            $.post('/gapc')
+                .done(function (result) {
+                    resultReload(result);
+                    if (result != null) {
+                        $.each(result, function (index, value) {
+                            $('#dvArea').append('<div class="col-md-2 col-sm-1 col-xs-1 mt-2 ml-4"><div class="icon-n" style="text-align:center;cursor: pointer;" id="ar_' + value.areaID + '" data-arid="' + value.areaID + '"><i class="fas fa-street-view fa-3x text-success"></i><label style="display:block !important; ">' + value.area + '</label>');
+                        });
+                    }
+                    else {
+                        $('#dvArea').append('<label class="text-center">No Area Found!</label>');
+                    }
+                    $('div[id^=ar_]').on('click', function () {
+                        var id = $(this).data().arid;
+                        window.location.replace('/ASC/' + id);
+                    });
+                }).catch(function (xhr, ex, message) {
+                    an.title = 'Oops';
+                    an.content = message;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+
+
+    </script>
+
+}
+

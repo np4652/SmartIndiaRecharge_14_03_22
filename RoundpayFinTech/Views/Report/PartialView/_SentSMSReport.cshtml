@@ -1,0 +1,62 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using Validators
+@model IEnumerable<SentSmsResponse>
+@{
+    var counter = 1;
+}
+@foreach (var item in Model)
+{
+    
+
+<tr>
+    <th>@counter</th>
+    <td>
+        @if (item.Status != 5)
+        {<input type="checkbox" class="chksendsms">}
+        </td>
+    <td>
+        @item.TransactionId
+
+        <span class="fa fa-info-circle text-info a_modal" style="cursor: pointer;" data-rq="@item.ReqURL" data-toggle="tooltip" data-original-title="Send SMS Request URL"></span>
+
+    </td>
+    <td>@item.MobileNo</td>
+    <td>@item.ServiceType</td>
+    <td>
+        @if (item.Message.ToLower().Contains("password") || item.Message.ToLower().Contains("otp"))
+        {
+            <span hidden>@item.Message</span>
+            @Html.Raw(Validate.O.MaskNumeric(item.Message, "X").Replace("redirectToLogin", ""))
+        }
+        else
+        {
+            @item.Message
+        }
+    </td>
+    <td>@item.Response</td>
+    <td>@item.EntryDate</td>
+    <td> 
+        @if (item.Status!=5)
+        {
+        <button id="btnRsend" onclick="ResendSms(this)" tabindex="6" class="btn btn-outline-dark">Resend</button>
+        }
+
+
+    </td>
+</tr>
+    counter = counter + 1;
+}
+
+<script>
+    $(".a_modal").click(function () {
+        var req = $(this).data().rq;
+        var html = '<div class="row"><div class="col-md-12"><button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button><h6 class="text-monospace">Request URL</h6><hr></div><div class="container-fluid"><div class="form-horizontal bv-form"><div class="form-group row"><div class="col-lg-12"><span> URL </span><textarea disabled="disabled" class="form-control" style="border-style:None;height: 100px;">' + req +'</textarea></div></div><hr class="mt-0 mb-0"></div><div class="float-right"><button class="btn btn-outline-danger btn-sm mt-2" id="mdlCancel">Cancel</button></div></div></div>';
+        mdlA.id = 'mymodalUSF';
+        mdlA.options.backdrop = 'static';
+        mdlA.content = html;
+        mdlA.alert(mdlA.size.default);
+        $('button.close span,#mdlCancel').unbind().click(function () {
+            mdlA.dispose();
+        });
+    });
+</script>

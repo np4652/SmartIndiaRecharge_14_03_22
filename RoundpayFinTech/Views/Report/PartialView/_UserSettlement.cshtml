@@ -1,0 +1,82 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.UserSettlement>
+@{
+    var i = 1;
+}
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="bg-tableth">
+            <tr>
+                <th>#</th>
+                <th>User</th>
+                <th>TransactionDate</th>
+                <th class="text-right text-nowrap">Opening(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">FundTransfered(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">FundRecevived(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Refund(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Commission(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">CCFComm(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">FundDeducted(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">FundCredited(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Surcharge(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SuccessPrepaid(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SuccessPostpaid(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SuccessDTH(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SuccessUtility(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SuccessDMT(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">SuccessDMTCharge(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">TotalSuccess(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">OtherCharge(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">CCFCommDebited(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Closing(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Expected(<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Difference(<i class="fas fa-rupee-sign"></i>)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+            <tr>
+                <th>@i</th>
+                <th>
+                    @item.UserName<br />
+                    <small>[@(item.Prefix + item.UserID.ToString() + "/" + item.MobileNo)]</small>
+                </th>
+                <td>@item.TransactionDate</td>
+                <td class="text-right">@item.Opening</td>
+                <td class="text-right">@item.FundTransfered</td>
+                <td class="text-right">@item.FundRecieved</td>
+                <td class="text-right">@item.Refund</td>
+                <td class="text-right">@item.Commission</td>
+                <td class="text-right">@item.CCFComm</td>
+                <td class="text-right">@item.FundDeducted</td>
+                <td class="text-right">@item.FundCredited</td>
+                <td class="text-right">@item.Surcharge</td>
+                <td class="text-right">@item.SuccessPrepaid</td>
+                <td class="text-right">@item.SuccessPostpaid</td>
+                <td class="text-right">@item.SuccessDTH</td>
+                <td class="text-right">@item.SuccessBill</td>
+                <td class="text-right">@item.SuccessDMT</td>
+                <td class="text-right">@item.SuccessDMTCharge</td>
+                <td class="text-right">@(item.SuccessPrepaid + item.SuccessPostpaid + item.SuccessDTH + item.SuccessBill + item.SuccessDMT + item.SuccessDMTCharge)</td>
+                <td class="text-right">@item.OtherCharge</td>
+                <td class="text-right">@item.CCFCommDebited</td>
+                <td class="text-right">@item.Closing</td>
+                <td class="text-right">@item.Expected</td>
+                <td class="text-right">@item.Difference</td>
+                @*<td class="text-right">@(item.Opening+item.FundRecieved+item.FundCredited+item.Commission+item.Refund-item.FundTransfered-item.FundDeducted-item.SuccessBill-item.SuccessDMT-item.SuccessDMTCharge-item.SuccessDTH-item.SuccessOther-item.SuccessPostpaid-item.SuccessPrepaid)</td>*@
+            </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td class="text-center">No Record Found !</td>
+        </tr>
+    </table>
+}

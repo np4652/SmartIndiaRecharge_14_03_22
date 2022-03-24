@@ -1,0 +1,458 @@
+﻿@model AepsInterfaceModel
+@{
+    var banklist = Model.BankList;
+    var bankDetail = Model.BankDetails;
+    if (bankDetail != null)
+    {
+        bankDetail = bankDetail.Count >= 10 ? bankDetail.Take(10).ToList() : bankDetail;
+    }
+    var i = 0;
+    var withdMin = 0;
+    var withdMax = 0;
+    var withdLen = 0;
+}
+<div class="row border border-secondary rounded ml-1 mr-1">
+    @foreach (var item in Model.Operators)
+    {
+        <div class="col-md-3 pl-2 pt-2 pb-2 pr-1">
+            <div class="custom-radio">
+                <input class="form-check-input" type="radio" name="rdoGroupOp" id="chbOp_@(item.Ind)_@item.OID" value="@item.OID" @(item.Ind == 1 ? "checked='checked'" : "") data-op='@Json.Serialize(item)'>
+                <label class="form-check-label text-uppercase" for="chbOp_@(item.Ind)_@item.OID">@item.Name</label>
+            </div>
+        </div>
+        if (item.Ind == 1)
+        {
+            withdMin = Convert.ToInt32(item.Min);
+            withdMax = Convert.ToInt32(item.Max);
+            withdLen = withdMax.ToString().Length;
+        }
+        i = i + 1;
+    }
+</div>
+<div class="row mt-1 mb-2 border border-secondary rounded ml-1 mr-1" id="recentBanks" data-recentbank='@Json.Serialize(bankDetail)'></div>
+<div class="form-group">
+    <label class="lbl f-w-bold m-b-6 float-left" for="txtBank">Choose Bank</label>
+    <div class="form-group">
+        <div class="input-group">
+            <input type="text" class="form-control inputtextstyle" id="txtBank" placeholder="Bank List" name="BankList" list="banks" style="border-right: none;" autocomplete="off" aria-describedby="bankHelp" />
+            <div class="input-group-append" style="height:43px">
+                <span class="input-group-text bg-white p-0">
+                    <img src="" style="width:43px;" id="imgDID" />
+                    <select class="form-control" id="ddl_Device" style=" background: #f2f2f2;border-left: none;">
+                        <option value="1" selected="selected">Mantra</option>
+                        <option value="2">Morpho</option>
+                        <option value="3">Tatvik</option>
+                        <option value="4">StarTek</option>
+                    </select>
+                </span>
+            </div>
+        </div>
+        <small id="bankHelp" class="form-text text-danger  d-none">Invalid Aadhar</small>
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.Label("txtAadhar", "Aadhar", new { @class = "lbl" })
+    <div class="input-group">
+        <input oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+               type="number" id="txtAadhar" name="txtAadhar" class="form-control inputtextstyle" placeholder="Enter Aadhar" aria-describedby="AadharHelp" tabindex="1" style="border-right: none;" maxlength="12" min="100000000000" autocomplete="off" />
+        <div class="input-group-append">
+            <span class="input-group-text bg-white p-0" style=" height: 43px;">
+                <button class="btn btn-info form-control" id="btnCheckBalance">CHECK BALANCE</button>
+            </span>
+        </div>
+    </div>
+    <small id="AadharHelp" class="form-text text-danger  d-none">Invalid Aadhar</small>
+</div>
+<div class="row">
+    <div class="col-md-3">
+        @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+        <input oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+               type="number" name="txtAmount" id="txtAmount" class="form-control inputtextstyle" placeholder="Enter Amount" aria-describedby="AmountHelp" tabindex="1" value="0" step="@withdMin" min="@withdMin" maxlength="@withdLen" max="@withdMax" autocomplete="off" />
+        <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+    </div>
+    <div class="col-md-9 mt-4" id="btnAmount">
+        <button class="btn btn-outline-primary mr-1" value="500">500</button>
+        <button class="btn btn-outline-primary mr-1" value="1000">1000</button>
+        <button class="btn btn-outline-primary mr-1" value="1500">1500</button>
+        <button class="btn btn-outline-primary mr-1" value="2000">2000</button>
+        <button class="btn btn-outline-primary mr-1" value="2500">2500</button>
+        <button class="btn btn-outline-primary mr-1" value="3000">3000</button>
+        <button class="btn btn-outline-primary mr-1" value="4000">4000</button>
+        <button class="btn btn-outline-primary mr-1" value="5000">5000</button>
+        <button class="btn btn-outline-primary" value="10000">10000</button>
+    </div>
+</div>
+
+<div class="form-group mt-3">
+    <button class="btn btn-lg btn-success w-100 font-weight-bold" id="btnPay">CASH WITHDRAWL</button>
+</div>
+<script>
+    var t = @(Model.AEPSInterfaceType);
+</script>
+<script src="~/js/rdservice.js?a=@(DateTime.Now.Millisecond)"></script>
+<script src="~/js/AEPS.js?a=@(DateTime.Now.Millisecond)"></script>
+<script>
+    var LocationUpdate = function () {
+        $('#hidIsLoc').val("-1");
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                $('#hidLat').val(position.coords.latitude.toFixed(4))
+                $('#hidLong').val(position.coords.longitude.toFixed(4))
+            }, function (err) {
+                $('#hidIsLoc').val(err.code);
+            });
+
+        }
+    }
+    LocationUpdate();
+    var rdH = new RDServiceHelper($('#ddl_Device').val());
+    $('#ddl_Device').change(function () {
+        rdH = new RDServiceHelper($('#ddl_Device').val());
+    });
+    $('#btnCheckBalance').click(function () {
+        LocationUpdate();
+        if (AllButtonDetail.GButton.html() !== AllButtonDetail.GButtonText)
+            return false;
+
+        let IsE = { txtBank: $('#txtBank').attr('data-item-iin') === undefined || $('#txtBank').attr('data-item-iin') === '', txtAadhar: !$v.$IsNum($('#txtAadhar').val()) || $('#txtAadhar').val().length !== 12 };
+
+        $v.showErrorFor($('#txtBank'), 'Bank is not selected', IsE.txtBank);
+        $v.showErrorFor($('#txtAadhar'), 'Invalid Aadhar Number', IsE.txtAadhar);
+        IsE.err = IsE.txtBank || IsE.txtAadhar;
+        if (IsE.err) {
+            return false;
+        }
+        rdH._deviceid = $('#ddl_Device').val();
+        var btnObj = { btn: AllButtonDetail.GButton, btnText: AllButtonDetail.GButtonText }
+        btnLdr.addClass = 'btn-info';
+        btnLdr.removeClass = 'btn-outline-info';
+        btnLdr.StartWithAnyText(AllButtonDetail.GButton, "Scanning Port");
+        rdH._preloader.load();
+        rdH.ScanPort(rdH._port, btnObj, function (updatedata) {
+            CheckBalance(updatedata);
+        });
+    });
+    var CheckBalance = function (updatedata) {
+        btnLdr.addClass = 'btn-info';
+        btnLdr.removeClass = 'btn-outline-info';
+        btnLdr.StartWithAnyText(AllButtonDetail.GButton, AllButtonDetail.GettingBalanceText);
+        var PidData = getXmlAsString(updatedata);
+        var param = { PidData, aadhar: $('#txtAadhar').val(), bank: $('#txtBank').attr('data-item-iin'), t, _lat:$('#hidLat').val(), _long:$('#hidLong').val() };
+        $.post('/getAepsBalance', param,
+            function (resultaeps) {
+                btnLdr.StopWithText(AllButtonDetail.GButton, AllButtonDetail.GButtonText);
+                rdH._preloader.remove();
+                var aepsResp = `<div class="row">
+            <div class="col-md-12">
+                <button type="button" class="close" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h5 class="text-info">Balance Info</h3>
+                <hr />
+            </div>
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group">
+                    <label class="${resultaeps.statuscode === -1 ? `text-danger h4` : `text-success d-none`}"><i class="fas fa-info-circle"></i> ${resultaeps.msg} </label>
+                </div>
+        ${resultaeps.statuscode === 1 ? `<div class="row form-group">
+                         <div class="col-sm-5">
+                             <label>Available Balance</label>
+                         </div>
+                         <div class="col-sm-7">
+                           <span style="font-size:17px"><i class="fas fa-rupee-sign text-success"></i> ${resultaeps.balance} </span>
+                         </div>
+                        </div>
+                        <div class="row form-group">
+                            <div class="col-sm-5">
+                                <label>Bank RRN</label>
+                            </div>
+                            <div class="col-sm-7">
+                                ${resultaeps.bankRRN === null ? '' : resultaeps.bankRRN}
+                            </div>
+                        </div>
+                      </div>
+                   </div>`: ``}`
+                mdlA.id = 'mdlMsgbx';
+                mdlA.content = aepsResp;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('button.close').click(function () {
+                    mdlA.dispose();
+                });
+            });
+    }
+    $('#btnPay').click(function () {
+        var radioindex = $('input[name="rdoGroupOp"]:checked').attr('id').split('_')[1];
+        let IsE = { txtBank: $('#txtBank').attr('data-item-iin') === undefined || $('#txtBank').attr('data-item-iin') === '', txtAadhar: !$v.$IsNum($('#txtAadhar').val()) || (radioindex !== '2' && $('#txtAadhar').val().length !== 12), txtAmount: $('#txtAmount').val() === '' || !$v.$numOnly($('#txtAmount').val()) || parseInt($('#txtAmount').val()) < 1 };
+
+
+        if (radioindex === '1') {
+            WithdrawClick(IsE);
+        }
+        else if (radioindex === '2') {
+            DepositClick(IsE);
+        }
+        else if (radioindex === '3') {
+            MiniStatementClick(IsE);
+        }
+        else if (radioindex === '4') {
+            AadharPayClick(IsE);
+        }
+    });
+    var WithdrawClick = function (IsE) {
+        $v.showErrorFor($('#txtAmount'), 'Amount is numeric mandatory field and should be positive', IsE.txtAmount);
+        $v.showErrorFor($('#txtBank'), 'Bank is not selected', IsE.txtBank);
+        $v.showErrorFor($('#txtAadhar'), 'Invalid Aadhar Number', IsE.txtAadhar);
+        IsE.err = IsE.txtBank || IsE.txtAmount || IsE.txtAadhar;
+        if (IsE.err) {
+            return false;
+        }
+        if (AllButtonDetail.PAYButton.html() !== AllButtonDetail[1])
+            return false;
+        rdH._deviceid = $('#ddl_Device').val();
+        var btnObj = { btn: AllButtonDetail.PAYButton, btnText: AllButtonDetail[1] }
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, "Scanning Port");
+        rdH._preloader.load();
+        rdH.ScanPort(rdH._port, btnObj, function (updatedata) {
+            CashWithdrawl(updatedata);
+        });
+    }
+    var DepositClick = function (IsE) {
+        $v.showErrorFor($('#txtAmount'), 'Amount is numeric mandatory field and should be positive', IsE.txtAmount);
+        $v.showErrorFor($('#txtBank'), 'Bank is not selected', IsE.txtBank);
+        $v.showErrorFor($('#txtAadhar'), 'Enter Bank Account Number', IsE.txtAadhar);
+        IsE.err = IsE.txtBank || IsE.txtAmount || IsE.txtAadhar;
+        if (IsE.err) {
+            return false;
+        }
+        if (AllButtonDetail.PAYButton.html() !== AllButtonDetail[2])
+            return false;
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, AllButtonDetail.DepositingText);
+        preloader.load();
+        var param = { Amount: $('#txtAmount').val(), account: $('#txtAadhar').val(), bank: $('#txtBank').val(), bankIIN: $('#txtBank').attr('data-item-iin'), t };
+        $.post('/Deposit-ot', param,
+            function (resultaeps) {
+                btnLdr.StopWithText(AllButtonDetail.PAYButton, AllButtonDetail[2]);
+                preloader.remove();
+                mdlA.id = 'mdlMsgbxMS';
+                mdlA.content = resultaeps;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('#mdlCancel, button.close').click(function () {
+                    mdlA.dispose();
+                });
+                $('#btnDepositOTP').click(function () {
+                    $v.showErrorFor($('#txtOTP'), 'Enter OTP then proceed', $('#txtOTP').val() === '');
+                    if ($('#txtOTP').val() === '')
+                        return false;
+                    VerifyOTPDeposit();
+                });
+            });
+    }
+    var MiniStatementClick = function (IsE) {
+
+        $v.showErrorFor($('#txtBank'), 'Bank is not selected', IsE.txtBank);
+        $v.showErrorFor($('#txtAadhar'), 'Invalid Aadhar Number', IsE.txtAadhar);
+        IsE.err = IsE.txtBank || IsE.txtAadhar;
+        if (IsE.err) {
+            return false;
+        }
+        if (AllButtonDetail.PAYButton.html() !== AllButtonDetail[3])
+            return false;
+        rdH._deviceid = $('#ddl_Device').val();
+        var btnObj = { btn: AllButtonDetail.PAYButton, btnText: AllButtonDetail[3] }
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, "Scanning Port");
+        rdH._preloader.load();
+        rdH.ScanPort(rdH._port, btnObj, function (updatedata) {
+            MiniStatement(updatedata);
+        });
+    }
+    var AadharPayClick = function (IsE) {
+        $v.showErrorFor($('#txtAmount'), 'Amount is numeric mandatory field and should be positive', IsE.txtAmount);
+        $v.showErrorFor($('#txtBank'), 'Bank is not selected', IsE.txtBank);
+        $v.showErrorFor($('#txtAadhar'), 'Invalid Aadhar Number', IsE.txtAadhar);
+        IsE.err = IsE.txtBank || IsE.txtAmount || IsE.txtAadhar;
+        if (IsE.err) {
+            return false;
+        }
+        if (AllButtonDetail.PAYButton.html() !== AllButtonDetail[4])
+            return false;
+        rdH._deviceid = $('#ddl_Device').val();
+        var btnObj = { btn: AllButtonDetail.PAYButton, btnText: AllButtonDetail[4] }
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, "Scanning Port");
+        rdH._preloader.load();
+        rdH.ScanPort(rdH._port, btnObj, function (updatedata) {
+            AadharPay(updatedata);
+        });
+    }
+    var CashWithdrawl = function (updatedata) {
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, AllButtonDetail.WithdrawingText);
+        var PidData = getXmlAsString(updatedata);
+        var param = { PidData, aadhar: $('#txtAadhar').val(), bank: $('#txtBank').attr('data-item-iin'), t, amount: $('#txtAmount').val(),_lat:$('#hidLat').val(), _long:$('#hidLong').val() };
+        $.post('/AepsWithdraw', param)
+            .done((resultaeps) => {
+                btnLdr.StopWithText(AllButtonDetail.PAYButton, AllButtonDetail[1]);
+                rdH._preloader.remove();
+                $('#txtAmount').val('');
+                var aepsResp = `<div class="row text-center">
+                    <div class="col-md-12">
+                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="text-info">Transaction Info</h5><hr />
+                    </div>
+                    <div class="col-md-12">
+                        <label class="${resultaeps.status === 3 || resultaeps.status === 0 ? `h5 text-danger` : `text-success`}">${getKeyByValue(AEPSStatusText, resultaeps.status)}</label >
+                        <div class="form-group">
+                            <label>${resultaeps.msg}</label>
+                        </div>
+                        ${resultaeps.statuscode === 1 ? `<div class="form-group">
+                                                            <label>Bank Balance : ${resultaeps.balance}</label>
+                                                         </div>
+                                                     <div class="form-group">
+                                                        <label>Transaction ID : ${resultaeps.transactionID}</label>
+                                                     </div>
+                                                     <div class="form-group">
+                                                        <label>Live ID : ${resultaeps.liveID}</label>
+                                                     </div>
+                                                     <div class="form-group">
+                                                        <label>Amount : ${$('#txtAmount').val()}</label>
+                                                     </div>`: ``}
+                    </div>
+                </div>`;
+                setTimeout(function () {
+                    mdlA.id = 'mdlMsgbx';
+                    mdlA.content = aepsResp;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close').click(() => mdlA.dispose());
+                }, 500);
+
+            });
+    }
+    var VerifyOTPDeposit = function () {
+        var param = { Amount: $('#txtAmount').val(), account: $('#txtAadhar').val(), bank: $('#txtBank').val(), bankIIN: $('#txtBank').attr('data-item-iin'), t, ref1: $('#hidReffNo').data().reffid.reff1, ref2: $('#hidReffNo').data().reffid.reff2, ref3: $('#hidReffNo').data().reffid.reff3, otp: $('#txtOTP').val() };
+        btnLdr.StartWithAnyText($('#btnDepositOTP'), "Verifying");
+        preloader.load();
+        $.post('/Deposit-Verify', param,
+            function (resultaeps) {
+                if (typeof resultaeps === "object") {
+                    $v.showErrorFor($('#txtOTP'), resultaeps.msg, true);
+                    an.id = 'showDepositError';
+                    an.title = 'Oops';
+                    an.content = resultaeps.msg;
+                    an.alert(an.type.failed);
+                } else {
+                    mdlA.dispose();
+                    setTimeout(function () {
+                        mdlA.id = 'mdlMsgbxD';
+                        mdlA.content = resultaeps;
+                        mdlA.options.backdrop = 'static';
+                        mdlA.alert(mdlA.size.default);
+                        $('#spnBank').html(param.bank);
+                        $('#spnAcc').html(param.account);
+                        $('#spnAmt').html(param.Amount);
+                        $('button.close').click(() => mdlA.dispose());
+                        $('#btnDepositNow').click(function () {
+                            depositAfterVerify(param);
+                        });
+                    }, 1000);
+                }
+            }).always(function () {
+                btnLdr.StopWithText($('#btnDepositOTP'), "Verify");
+                preloader.remove();
+            });
+    }
+    var depositAfterVerify = function (param) {
+        btnLdr.StartWithAnyText($('#btnDepositNow'), "Despositing Now");
+        preloader.load();
+        $.post('/Deposit-Now', param,
+            function (resultaeps) {
+                mdlA.dispose();
+                setTimeout(function () {
+                    var aepsResp = `<div class="row text-center">
+                    <div class="col-md-12">
+                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="text-info">Transaction Info</h5><hr />
+                    </div>
+                    <div class="col-md-12">
+                        <label class="${resultaeps.status === 3 || resultaeps.status === 0 ? `h5 text-danger` : `text-success`}">${getKeyByValue(AEPSStatusText, resultaeps.status)}</label >
+                        <div class="form-group">
+                            <label>${resultaeps.msg}</label>
+                        </div>
+                        ${resultaeps.statuscode === 1 ? `
+                                                     <div class="form-group">
+                                                        <label>Transaction ID : ${resultaeps.transactionID}</label>
+                                                     </div>
+                                                     <div class="form-group">
+                                                        <label>Live ID : ${resultaeps.liveID}</label>
+                                                     </div>`: ``}
+                    </div>
+                </div>`;
+                    mdlA.id = 'mdlMsgbx';
+                    mdlA.content = aepsResp;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close').click(() => mdlA.dispose());
+                }, 1000);
+
+            }).always(function () {
+                btnLdr.StopWithText($('#btnDepositNow'), 'Deposit Now?')
+                preloader.remove();
+            });
+    }
+    var MiniStatement = function (updatedata) {
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, AllButtonDetail.MinstatementText);
+        var PidData = getXmlAsString(updatedata);
+        var param = { PidData, aadhar: $('#txtAadhar').val(), bank: $('#txtBank').val(), bankIIN: $('#txtBank').attr('data-item-iin'), t,_lat:$('#hidLat').val(), _long:$('#hidLong').val() };
+        $.post('/Aeps-MiniStatement', param,
+            function (resultaeps) {
+                btnLdr.StopWithText(AllButtonDetail.PAYButton, AllButtonDetail[3]);
+                rdH._preloader.remove();
+                mdlA.id = 'mdlMsgbxMS';
+                mdlA.content = resultaeps;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close').click(function () {
+                    mdlA.dispose();
+                });
+            })
+    }
+    var AadharPay = function (updatedata) {
+        btnLdr.StartWithAnyText(AllButtonDetail.PAYButton, AllButtonDetail.AadharPayText);
+        var PidData = getXmlAsString(updatedata);
+        var param = { PidData, aadhar: $('#txtAadhar').val(), bank: $('#txtBank').attr('data-item-iin'), t, amount: $('#txtAmount').val(),_lat:$('#hidLat').val(), _long:$('#hidLong').val() };
+        $.post('/Aadharpay', param)
+            .done((resultaeps) => {
+                btnLdr.StopWithText(AllButtonDetail.PAYButton, AllButtonDetail[4]);
+                rdH._preloader.remove();
+                $('#txtAmount').val('');
+                var aepsResp = `<div class="row text-center">
+                    <div class="col-md-12">
+                        <button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h5 class="text-info">Transaction Info</h5><hr />
+                    </div>
+                    <div class="col-md-12">
+                        <label class="${resultaeps.status === 3 || resultaeps.status === 0 ? `h5 text-danger` : `text-success`}">${getKeyByValue(AEPSStatusText, resultaeps.status)}</label >
+                        <div class="form-group">
+                            <label>${resultaeps.msg}</label>
+                        </div>
+                        ${resultaeps.statuscode === 1 ? `<div class="form-group">
+                                                            <label>Bank Balance : ${resultaeps.balance}</label>
+                                                         </div>
+                                                     <div class="form-group">
+                                                        <label>Transaction ID : ${resultaeps.transactionID}</label>
+                                                     </div>
+                                                     <div class="form-group">
+                                                        <label>Live ID : ${resultaeps.liveID}</label>
+                                                     </div>`: ``}
+                    </div>
+                </div>`;
+                setTimeout(function () {
+                    mdlA.id = 'mdlMsgbx';
+                    mdlA.content = aepsResp;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close').click(() => mdlA.dispose());
+                }, 500);
+
+            });
+    }
+</script>

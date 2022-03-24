@@ -1,0 +1,32 @@
+[
+  {
+    "TemplateId": 0,
+    "TemplateName": "Template 1",
+    "DemoPath": "/siteconfig/Templates/1/home.html",
+    "DemoImage": "/SiteConfig/Templates/1/Img/template-1.png",
+    "Assets": [
+      "<link href='/siteconfig/Templates/1/css/theme-1.css' rel='stylesheet' />"
+    ]
+  },
+  {
+    "TemplateId": 1,
+    "TemplateName": "Template 1",
+    "DemoPath": "/siteconfig/Templates/1/home.html",
+    "DemoImage": "/SiteConfig/Templates/1/Img/template-1.png",
+    "Assets": [
+      "<link href='/siteconfig/Templates/1/css/theme-1.css' rel='stylesheet' />"
+    ]
+  },
+  {
+    "TemplateId": 2,
+    "TemplateName": "Template 2",
+    "DemoPath": "/siteconfig/Templates/2/home.html",
+    "DemoImage": "/SiteConfig/Templates/2/Img/template-2.png",
+    "Assets": [
+      "<link href='/siteconfig/Templates/2/css/theme-2.css' rel='stylesheet' />",
+      "<link rel='stylesheet' href='/siteconfig/Templates/2/assets/owl.carousel.min.css'>",
+      "<link rel='stylesheet' href='/siteconfig/Templates/2/assets/owl.theme.default.min.css'>",
+      "<script src='/siteconfig/Templates/2/assets/owl.carousel.js''></script>"
+    ]
+  }
+]

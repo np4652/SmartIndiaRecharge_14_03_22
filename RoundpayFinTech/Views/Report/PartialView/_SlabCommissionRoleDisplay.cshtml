@@ -1,0 +1,257 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Configuration;
+@model SlabDetailDisplayModel
+
+@{
+    var couter = 1;
+}
+
+@if (Model.slbModel.Any())
+{
+    foreach (var item in Model.slbModel)
+    {
+        <tr data-Item-OID="@item.OID">
+            <td>@couter</td>
+            <td>
+                @item.Operator<small class="form-text text-muted mt-0">@item.OpType</small>
+                @if (Model.Optionals != null)
+                {
+                    var p = Model.Optionals.Where(x => x.OID == item.OID).FirstOrDefault();
+                    if (p != null && !string.IsNullOrEmpty(p.Optionals))
+                    {
+                        <a href="javascript:showOptionals('@Html.Raw(p.Optionals)','@item.OID')" class="text-info">Optionals</a>
+                    }
+                }
+            </td>
+            <td>@item.SPKey</td>
+            <td>@item.IsBilling</td>
+            <td>@item.BusinessModel</td>
+            <td class="text-center">
+                <div class="row">
+                    @if (item.SCode.In("DTHS", "AFS")) //(item.ServiceID.In(35, 36))
+                    {
+                        <div class="col-md text-left">
+                            <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMore" Data-item-Type="@item.SCode">View Detail</a>
+                        </div>
+                    }
+                    else
+                    {
+                        if (item.IsSpecialOp)
+                        {
+                            var commText = string.Empty;
+                            @foreach (var roleComm in item.RoleCommission)
+                            {
+                                commText = commText + roleComm.Comm + (roleComm.CommType == 1 ? "SUR " : "COM ") + (roleComm.AmtType == 1 ? " " : "% ");
+                            }
+                            <div class="col-md text-left">
+                                <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMoreSOps" data-comtext="@commText">View Detail</a>
+                            </div>
+                        }
+                        else if (item.CommSettingType < 2)
+                        {
+                            @foreach (var roleComm in item.RoleCommission)
+                            {
+                                <div class="col-md text-left">
+                                    @if (roleComm.AmtType == 0)
+                                    {
+                                        <span class="text-monospace text-nowrap lapuText"> @(roleComm.CommType == 1 ? "SUR " : "COM ") @roleComm.Comm % </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-monospace text-nowrap lapuText"> @(roleComm.CommType == 1 ? "SUR " : "COM ") @roleComm.Comm <i class='fas fa-rupee-sign'></i></span>
+                                    }
+
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-md text-left">
+                                <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMore">View Detail</a>
+                            </div>
+                        }
+                    }
+
+                </div>
+            </td>
+
+            <td class="text-center">
+                <div class="row">
+                    @if (item.ServiceID.In(35, 36))
+                    {
+                        <div class="col-md text-left">
+                            <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMore" Data-item-Type="DTHSubscription">View Detail</a>
+                        </div>
+                    }
+                    else
+                    {
+
+                        if (item.IsSpecialOp)
+                        {
+                            var commText = string.Empty;
+                            @foreach (var roleComm in item.RoleCommission)
+                            {
+                                commText = commText + roleComm.Comm + (roleComm.CommType == 1 ? "SUR " : "COM ") + (roleComm.AmtType == 1 ? " " : "% ");
+                            }
+                            <div class="col-md text-left">
+                                <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMoreSOps" data-comtext="@commText">View Detail</a>
+                            </div>
+                        }
+                        else if (item.CommSettingType < 2)
+                        {
+                            @foreach (var roleComm in item.RoleCommission)
+                            {
+                                <div class="col-md text-left">
+                                    <span class="text-monospace text-nowrap"> @((roleComm.RCommType == 1 ? "SUR " : "COM ") + roleComm.RComm + (roleComm.RAmtType == 0 ? "%" : ""))</span>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-md text-left">
+                                <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMore">View Detail</a>
+                            </div>
+                        }
+                    }
+                </div>
+            </td>
+            <td>
+                @if (item.CommSettingType < 2)
+                {
+                    @(item.Min.ToString() + "-" + item.Max.ToString())
+                }
+                else
+                {
+                    <div class="col-md text-left">
+                        <a href="javascript:void(0)" class="btn btn-outline-info btn-sm text-info viewMore">View Detail</a>
+                    </div>
+                }
+            </td>
+            <td>
+                @if (item.OpType == nameof(OPTypes.Prepaid) || item.OpType == nameof(OPTypes.DTHSR))
+                {
+                    <button class="btn btn-sm btn-outline-info ExtraComm">Extra</button>
+                    @if (ApplicationSetting.IsCircleSlabShow && Model.IsAPIUser && Model.IsCircleSlabAllowed) //
+                    {
+                        @*<button class="btn btn-sm btn-outline-info CircleComm">Circle</button>*@
+                        <button class="btn btn-sm btn-outline-info SpecialComm">Special Comm.</button>
+                    }
+                }
+            </td>
+            @if (Model.IsAPIUser)
+            {
+                <td>@item.AllowChannel</td>
+            }
+        </tr>
+        couter = couter + 1;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="8"></td>
+
+    </tr>
+    <tr>
+        <td colspan="8">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+<script>
+    (() => {
+        $('.viewMore').unbind().click((e) => {
+            preloader.load();
+            let _url = '/rslab-detail-Range';
+            let SCode = $(e.currentTarget).data().itemType;
+            if (SCode == 'DTHS') {
+                _url = '/R-DTH-slab-detail';
+            }
+            if (SCode == 'AFS') {
+                _url = '/AFslab-detail';
+            }
+
+            $.post(_url, { OID: $(e.currentTarget).closest('tr').data().itemOid })
+                .done((result) => {
+                    mdlA.id = "divMore";
+                    mdlA.title = SCode == "DTHS" ? "DTH subscription slab detail" : "Commission";
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.large);
+                })
+                .always(() => preloader.remove())
+        });
+        $('.viewMoreSOps').unbind().click((e) => {
+            var copytxt = $(e.currentTarget).data().comtext;
+            preloader.load();
+            $.post('/sops-comm-detail', { OID: $(e.currentTarget).closest('tr').data().itemOid })
+                .done((result) => {
+                    mdlA.id = "divMore";
+                    mdlA.title = "Special Commission Circle Wise";
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.large);
+                    $('.comTextDisplay h6').html(`*In case of below comercials for denomination not found then <I>${copytxt}</I> will be used`);
+                })
+                .always(() => preloader.remove())
+        });
+        $('.ExtraComm').unbind().click(e => {
+            preloader.load();
+            $.post('/DenomCommissionDetail', { OID: $(e.currentTarget).closest('tr').data().itemOid })
+                .done((result) => {
+                    mdlA.id = "divMore";
+                    mdlA.title = "Denomination Commission";
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.xlarge);
+                })
+                .always(() => preloader.remove())
+        });
+        $('.CircleComm').unbind().click(e => {
+            preloader.load();
+            $.post('/CircleSlab-Display', { OID: $(e.currentTarget).closest('tr').data().itemOid })
+                .done((result) => {
+                    mdlA.id = "divCircle";
+                    mdlA.title = "Circlewise Commission";
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.xlarge);
+                })
+                .always(() => preloader.remove())
+        });
+
+        $('.SpecialComm').unbind().click(e => {
+            preloader.load();
+            let LAPU;
+            try {
+                LAPU = $(e.currentTarget).closest('tr').find('.lapuText').text();
+            } catch (ex) {
+                //error
+                console.log(ex);
+            }
+
+            $.post('/SpecialSlab-Display', { OID: $(e.currentTarget).closest('tr').data().itemOid })
+                .done((result) => {
+                    mdlA.id = "divSpecial";
+                    mdlA.title = "Special Commission";
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.xlarge);
+
+                    $("#divSpecial").find(".modal-body").append("<div class='col-sm-12'><i> Note: Commission Rate <b>" + LAPU + "</b> will be applicable for all others denominations and circles which are not in above list.</i></div>");
+                })
+                .always(() => preloader.remove())
+        });
+    })();
+
+    function showOptionals(e, i) {
+        debugger;
+        $.post('/GetoperatorParam', { OID: i })
+            .done(function (result) {
+                resultReload(result);
+                mdlA.id = "mymodel";
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xlarge);
+                $('[data-toggle="tooltip"]').tooltip();
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            })
+    }
+</script>

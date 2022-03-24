@@ -1,0 +1,331 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model BulkSmsEmail
+
+@{
+    ViewData["Title"] = "Bulk Socail Alert";
+}
+<style>
+    .form-group {
+        margin-bottom: 5px !important;
+    }
+
+    .bootstrap-select div.dropdown-menu {
+        width: 100%;
+    }
+    .bootstrap-select {
+        width:100%!important;
+    }
+</style>
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Send Message
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>Select AlertType</label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <input type="radio" name="AlertType" id="chkWhatsapp" value="1">
+                                            </div>
+                                        </div>
+                                        <label class="form-control" for="chkWhatsapp">Whatsapp</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <input type="radio" name="AlertType" id="chkTelegram" value="2">
+                                            </div>
+                                        </div>
+                                        <label class="form-control" for="chkTelegram">Telegram</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <input type="radio" name="AlertType" id="chkHangout" value="3">
+                                            </div>
+                                        </div>
+                                        <label class="form-control" for="chkHangout">Hangout</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+                            <div class="form-group col-sm-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="txtActiveDay" placeholder="Active Days" onchange="GetUser()" />
+                                </div>
+                            </div>
+                            <div class=" col-sm-6">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="txtParentNo" placeholder="Enter Mobile No" onchange="GetUser()" />
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <hr />
+                            </div>
+
+                            <div class="form-group col-sm-4">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" onchange="GetUser()" id="chkIsDirect" checked="checked">
+                                        </div>
+                                    </div>
+                                    <label class="form-control" for="chkIsDirect">Is Direct</label>
+                                </div>
+                            </div>
+                            <div class=" col-sm-4">
+                                <div class="form-group">
+                                    <div class="input-group mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <input type="checkbox" onchange="GetUser()" id="chkIsSelf" checked="checked">
+                                            </div>
+                                        </div>
+                                        <label class="form-control" for="chkIsSelf">Is Self Website</label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            
+                            <div class=" col-md-4">
+                                <div class="form-group">
+                                    <select class="selectpicker" multiple data-live-search="true" id="ddlSmsAPI" aria-describedby="nameApi">
+                                        @if (Model.smsApi != null)
+                                        {
+                                            @foreach (var item in Model.smsApi)
+                                            {
+                                                <option value="@item.ID">@item.Name</option>
+                                            }
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    @if (Model.Roles != null)
+                                    {
+                                        <div class="row">
+                                            @foreach (var item in Model.Roles)
+                                            {
+                                                <div class="col-md-4">
+                                                    <div class="input-group mb-2">
+                                                        <div class="input-group-prepend">
+                                                            <div class="input-group-text">
+                                                                <input type="checkbox" name="Role" onchange="GetUser()" value="@item.ID" id="chbCircle_@item.ID">
+                                                            </div>
+                                                        </div>
+                                                        <label class="form-control" for="chbCircle_@item.ID">@item.Role</label>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    }
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtMobiles", "Mobile'S Number", new { @class = "lbl" })
+                                    <textarea id="txtMobiles" class="form-control" rows="4" cols="20" db aria-describedby="nameMobiles"></textarea>
+                                    <small id="nameMobiles" class="form-text text-muted d-none">Mobile is mandatory</small>
+
+                                </div>
+                                <div class="form-group">
+                                    @Html.Label("txtMessage", "Message", new { @class = "lbl" })
+                                    <textarea id="txtMessage" class="form-control" rows="4" cols="20" db aria-describedby="nameMessage"></textarea>
+                                    <small id="nameMessage" class="form-text text-muted d-none">Message is mandatory</small>
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-dark" id="btnSendMessgae" tabindex="16"> Send</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-5 pl-0">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Message
+                    </div>
+                    <div class="card-body" id="div_opMsg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            an.autoClose = 5;
+            BindOpertorMessage();
+        });
+
+        function GetUser() {
+            var role = '';
+            $("input[name='Role']").each(function () {
+                if (this.checked) {
+                    role += $(this).val() + ','
+                }
+            });
+            if (role == '' && $('#txtParentNo').val() === '') {
+                $('#txtMobiles').val('');
+                return;
+            }
+            preloader.load();
+            let param = {
+                RoleID: role,
+                IsEmail: false,
+                parentMobile: $('#txtParentNo').val(),
+                IsSelf: $('#chkIsSelf').is(':checked'),
+                IsSocial: true,
+                SocialType: $('input[name="AlertType"]:checked').val(),
+                IsDirect: $('#chkIsDirect').is(':checked'),
+                ActiveDays: $('#txtActiveDay').val()
+            };
+            $.post('/BulkUsers', param)
+                .done(result => {
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        $('#txtMobiles').val(result.commonStr);
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+        function BindOpertorMessage() {
+            preloader.load();
+            $.post('/BulkOpertorMessage')
+                .done(result => {
+                    resultReload(result);
+                    $('#div_opMsg').html(result);
+                    $('.selectpicker').selectpicker('refresh');
+                })
+                .catch((xhr, e, msg) => {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                    console.log(xhr);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+        function GetMessage(ctr) {
+            preloader.load();
+            $.post('/GetMessageFormat', { FormatID: $(ctr).val() })
+                .done(result => {
+                    resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        $('#txtTempMessage').val(result.template);
+                    }
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+        function ReplaceValue(sender) {
+            var currenttxt = $('#' + $(sender).attr('id') + ' option:selected').map(function () {
+                return $(this).text();
+            }).get().join(', ');
+            $('#txtMessage').val($('#txtTempMessage').val().replace('{Operator}', currenttxt).replace('{OperatorName}', currenttxt));
+        }
+
+
+        $('#btnSendMessgae').click(() => {
+            var apis = $('#ddlSmsAPI option:selected');
+            var APIIDs = [];
+            $(apis).each(function () {
+                APIIDs.push($(this).val());
+            });
+            let param = {
+                APIIDs: APIIDs,
+                SocialIDs: $('#txtMobiles').val(),
+                Message: $('#txtMessage').val(),
+                SocialAlertType: $('input[name="AlertType"]:checked').val()
+            };
+            console.log(param);
+            preloader.load();
+            $.post('/SendBulkSocial', param)
+                .done(result => {
+                    resultReload(result);
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                })
+                .catch((xhr, e, msg) => {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                    console.log(xhr);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        });
+    </script>
+}

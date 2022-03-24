@@ -1,0 +1,37 @@
+﻿<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Create Sender</h3>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-6">
+                @Html.Label("txtName", "First Name", new { @class = "lbl" })
+                @Html.TextBox("txtName", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Name", @aria_describedby = "CustomerHelp", @tabindex = 1 })
+                <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Name</small>
+            </div>
+            <div class="col-md-6">
+                @Html.Label("txtLName", "Last Name", new { @class = "lbl" })
+                @Html.TextBox("txtLName", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Last Name", @aria_describedby = "CustomerHelp", @tabindex = 1 })
+                <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Last Name</small>
+            </div>
+        </div>
+        </div>
+        <div class="form-group">
+            @Html.Label("txtAdd", "Customer Address", new { @class = "lbl" })
+            @Html.TextBox("txtAdd", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Address", @aria_describedby = "CustomerAddHelp", @tabindex = 2 })
+            <small id="CustomerAddHelp" class="form-text text-danger  d-none">Invalid Customer</small>
+        </div>
+        <div class="form-group">
+            @Html.Label("txtDob", "Customer Date Of Brith", new { @class = "lbl" })
+            <input aria-describedby="hdtFromDate" class="form-control" id="txtDob" tabindex="3" type="text" placeholder="Enter Date Of Brith" readonly="readonly" value="@DateTime.Now.ToString("dd MMM yyyy")" />
+            <small id="hdtFromDate" class="form-text text-danger  d-none">Invalid Date Of Brith</small>
+        </div>
+        <div class="form-group">
+            @Html.Label("txtPinCode", "Pin Code", new { @class = "lbl" })
+            @Html.TextBox("txtPinCode", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Pin Code", @aria_describedby = "PinCodeHelp", @tabindex = 4 })
+            <small id="PinCodeHelp" class="form-text text-danger  d-none">Invalid Pin Code</small>
+        </div>
+        <button class="btn btn-outline-dark" onclick="CreateSender()" id="btnChange">Create</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>

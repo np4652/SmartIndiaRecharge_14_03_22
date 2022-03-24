@@ -1,0 +1,65 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Configuration;
+@*@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.MAtmModel>;*@
+@model RoundpayFinTech.AppCode.Model.ProcModel.MAtmModelResp;
+@{
+    var couter = 1;
+}
+@if (Model.MAtmModelR.Any())
+{
+    foreach (var item in Model.MAtmModelR)
+    {
+    <tr data-item-Id="@item.ID">
+        <td>@couter</td>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act_@couter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+
+                    @if (Model.IsAdmin)
+                    {
+                        @if (item.mAtamStatus == 1)
+                        {
+                            <a href="#" class="dropdown-item text-success btnAccept" id="accept_@couter">
+                                <span class="fa fa-edit text-success"></span> Approve m-ATM
+                            </a>
+                        }
+                        <a href="#" class="dropdown-item btnReject" id="reject_@couter">
+                            <span class="fas fa-times-circle text-danger"></span> REJECT m-ATM
+                        </a>
+                    }
+                </div>
+            </div>
+        </td>
+        <td>@item.ID</td>
+        <td>@item.UserID</td>
+        <td>@item.RoleName [<small>@item.RoleID</small>]</td>
+        <td>@item.PartnerName</td>
+        <td>@item.OutletName</td>
+        <td>@item.Company</td>
+        <td>@item.MobileNo</td>
+        <td>@item.EmailId</td>
+        <td>@item.mAtamSerialNo</td>
+        <td>
+            @if (item.mAtamStatus == 0)
+            {
+                <span class="badge badge-warning">NOT APPLIED</span>
+            }
+            @if (item.mAtamStatus == 1)
+            {
+                <span class="badge badge-secondary">APPLIED</span>
+            }
+            @if (item.mAtamStatus == 2)
+            {
+                <span class="badge badge-success">COMPLETED</span>
+            }
+            @if (item.mAtamStatus == 3)
+            {
+                <span class="badge badge-danger">REJECTED</span>
+            }
+        </td>
+    </tr>
+        couter = couter + 1;
+    }
+}

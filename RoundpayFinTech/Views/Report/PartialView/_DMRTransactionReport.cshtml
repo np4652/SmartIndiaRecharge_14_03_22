@@ -1,0 +1,170 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model DMRReportModel
+
+@{
+    var couter = 1;
+    decimal Opening = 0;
+    decimal TotalRequestedAmount = 0;
+    decimal TotalAmount = 0;
+    decimal TotalCCF = 0;
+    decimal TotalSurcharge = 0;
+    decimal TotalRefundGST = 0;
+    decimal TotalAmountWithTDS = 0;
+    decimal TotalCredited = 0;
+    decimal TotalDebited = 0;
+    decimal TotalCommission = 0;
+    decimal Closing = 0;
+    var colSpan = Model.IsAdmin == true ? 11 : 11;
+}
+
+@if (Model.Report.Any())
+{
+    foreach (var item in Model.Report)
+    {
+        if (couter == 1)
+        {
+            Opening = item.Opening;
+            Closing = item.Balance;
+
+        }
+        if (!Model.IsAdmin && item._Type == RechargeRespType.REQUESTSENT)
+        {
+            item.Type_ = RechargeRespType._PENDING;
+        }
+        if (item._Type != RechargeRespType.FAILED) {
+            TotalRequestedAmount += item.RequestedAmount;
+            TotalAmount += item.Amount;
+            TotalCCF += item.CCF;
+            TotalSurcharge += item.Surcharge;
+            TotalAmountWithTDS += item.TDSAmount;
+            TotalCredited += item.Credited_Amount;
+            TotalDebited += item.Amount;
+            TotalCommission += item.Commission;
+        }
+
+        <tr data-item-id="@item.TID" data-group-id="@item.GroupID">
+            <td>@couter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@couter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        @if (Model.CanSuccess && (item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT || item._Type == RechargeRespType.FAILED))
+                        {
+                            <a href="#" class="dropdown-item text-success" id="succcess_@couter"><i class="far fa-check-circle"></i> Success</a>
+                        }
+                        @if (Model.CanFail && (item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT))
+                        {
+                            <a href="#" class="dropdown-item text-danger" id="fail_@couter"><i class="far fa-times-circle"></i> Fail</a>
+                        }
+                        @if (Model.CanMarkDispute && (item._Type == RechargeRespType.SUCCESS && (item.RefundStatus == RefundType.DISPUTE || (Model.IsAdmin && item.RefundStatus == RefundType.REJECTED)) && !item.Operator.Contains("Verifi")))
+                        {
+                            <a href="#" class="dropdown-item" id="dispute_@couter"><i class="fas fa-gavel"></i> Complain </a>
+                        }
+                        @if (item._Type == RechargeRespType.SUCCESS)
+                        {
+                            <a href="#" class="dropdown-item" id="receipt_@couter"><i class="fas fa-receipt"></i> Receipt </a>
+                        }
+                    </div>
+                </div>
+            </td>
+            <td>
+                <input type="hidden" id="lbltid" value="@item.TransactionID" />
+                <input type="hidden" id="lblvid" value="@item.VendorID" />
+                <input type="hidden" id="lblapirqid" value="@item.ApiRequestID" />
+                <input type="hidden" id="lblmoddate" value="@item.ModifyDate" />
+                <input type="hidden" id="lbloption" value="@item.Optional1-@item.Optional2-@item.Optional3-@item.Optional4" />
+                <input type="hidden" id="hidCCName" value="@item.CCName" />
+                <input type="hidden" id="lblCCMobile" value="@item.CCMobile" />
+                <input type="hidden" id="hidTDate" value="@item.EntryDate" />
+                @if (Model.IsAdmin)
+                {
+                    <span class="fa fa-info-circle text-info a_modal" name="@item.TID" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"></span>@item.TID
+                }
+                else
+                {
+                    @item.TransactionID
+                }
+            </td>
+            @if (!Model.IsEndUser)
+            {
+                <td>@item.Outlet <small class="font-weight-bold text-monospace"> [@item.OutletNo]</small></td>
+            }
+            }
+            <td>@item.OutletUserCompany <small class="font-weight-bold text-monospace"> @item.Optional1</small></td>
+            <td>@item.Optional2</td>
+            <td>@item.Optional4</td>
+            <td>
+                @if (item._Type == RechargeRespType.PENDING || item._Type == RechargeRespType.REQUESTSENT)
+                {
+                    <span class="badge badge-secondary">@item.Type_</span>
+                }
+
+                @if (item._Type == RechargeRespType.FAILED)
+                {
+                    <span class="badge badge-danger">@item.Type_</span>
+                }
+                @if (item._Type == RechargeRespType.SUCCESS)
+                {
+                    <span class="badge badge-success">@item.Type_</span>
+                }
+                @if (item._Type == RechargeRespType.REFUND)
+                {
+                    <span class="badge badge-info">@item.Type_</span>
+                }
+            </td>
+            <td><span class="badge badge-dark">@item.Account</span></td>
+            <td><span class="badge badge-light">@item.Operator</span></td>
+            <td>@item.EntryDate</td>
+            <td class="text-right">@item.Opening</td>
+            <td class="text-right">@item.RequestedAmount</td>
+            <td class="text-right">@item.CCF</td>
+            <td class="text-right">@item.Surcharge</td>
+            <td class="text-right">@item.RefundGST</td>
+            <td class="text-right">@item.AmtWithTDS</td>
+            <td class="text-right">@item.Credited_Amount</td>
+            <td class="text-right">@item.Amount</td>
+            @*<td>@item.0</td>*@
+            <td class="text-right"><span class="btn btn-sm btn-outline-@Html.Raw(!item.CommType?"success ":"danger") aupComm " name="@item.TransactionID" id="@item.TID">@item.Commission</span></td>
+            <td class="text-right">@item.Balance</td>
+            @if (Model.IsAdmin)
+            {
+                <td><span class="badge badge-light">@item.API</span></td>
+            }
+
+            <td>@item.RefundStatus_</td>
+            <td>@item.LiveID</td>
+
+            @if (Model.IsAdmin || Model.IsAPIUser)
+            {
+                <td>@item.ApiRequestID</td>
+            }
+            <td>@item.RequestMode</td>
+        </tr>
+        couter = couter + 1;
+    }
+    <tr class="text-right bg-blue text-white text-monospace">
+        <td colspan="@colSpan" class="h5"><strong>Total</strong></td>
+        <td>@Opening</td>
+        <td>@TotalRequestedAmount</td>
+        <td>@TotalCCF</td>
+        <td>@TotalSurcharge</td>
+        <td>@TotalRefundGST</td>
+        <td>@TotalAmountWithTDS</td>
+        <td>@TotalCredited</td>
+        <td>@TotalDebited</td>
+        <td>@TotalCommission</td>
+        <td>@Closing</td>
+        <td colspan="5"></td>
+    </tr>
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="26">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+
+}
+

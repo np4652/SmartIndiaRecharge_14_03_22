@@ -1,0 +1,173 @@
+﻿@model bool
+@{
+    ViewData["Title"] = "Wrong2Right Request";
+}
+
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Request</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+        <div class="card-header bg-gradientorange text-white">
+            <i class="fas fa-link"></i> @ViewData["Title"]
+        </div>
+        <div class="card-body" style="">
+            <div class="row">
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                    <div class="form-group" id="dvAPI">
+                        @{
+                            var APIs = new SelectList(ViewBag.APIs, "ID", "Name");
+                        }
+                        <select id="ddlAPI" tabindex="7" class="form-control" asp-items="APIs">
+                            <option value="0">:: Select API :: </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                    <div class="form-group">
+                        @{
+                            var OPs = new SelectList(ViewBag.OPs, "OID", "Name");
+                        }
+                        <select id="ddlOperator" tabindex="7" class="form-control" asp-items="OPs">
+                            <option value="0">:: Select Operator :: </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-3 col-sm-3 col-xs-3">
+                    <button type="button" id="btnSearch" class="btn btn-outline-dark">Search</button>
+                </div>
+            </div>
+            <div id="rrs">
+                <div class="table-responsive table-sm table-mh">
+                    <table class="table table-bordered table-striped table-responsive-sm" id="tbl_W2RRequest">
+                        <thead class="bg-tableth">
+                            <tr>
+                                <th scope="col">#</th>
+                                <th>Actions</th>
+                                <th>TransactionIDs</th>
+                                <th scope="col">Outlet</th>
+                                <th scope="col">T-Date</th>
+                                <th scope="col">W2RR-Date</th>
+                                <th scope="col">AccountNo</th>
+                                <th scope="col">RightAccountNo</th>
+                                <th scope="col" class="text-right">Amount</th>
+                                <th scope="col">API</th>
+                                <th scope="col">VendorID</th>
+                                <th scope="col">Operator</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="12">
+                                    Searching...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+                    </div>
+                </div>
+            </div>
+    </div>
+
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+
+            an.autoClose = 5;
+            var rreqs = function () {
+                preloader.load();
+                $.post('/WTRRequest', { APIID: $('#ddlAPI').val(), OID: $('#ddlOperator').val() })
+                    .done(function (result) {
+                        resultReload(result);
+                        $('.__p #rrs').html(result);
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $('[id^=btnAccept],[id^=btnReject],[id^=btnUpdate]').click(function () {
+                            var status = this.id.toUpperCase()[3];
+                            var id = $(this).closest('tr').data().itemId;
+                            var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[0]).find('[id^=txtRemark]');
+                            var rem = txtRemark.val();
+                            preloader.load();
+                            $.post('/W2R-A-R', { Status: status, TID: id, TransactionID: '', Remark: rem })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    if (result.statuscode !== undefined) {
+                                        if (result.statuscode == an.type.failed) {
+                                            an.title = "Oops";
+                                            an.content = result.status;
+                                            an.alert(result.statuscode);
+                                        }
+                                        else if (result.statuscode == an.type.success) {
+                                            an.title = "Well done";
+                                            an.content = result.status;
+                                            an.alert(result.statuscode);
+                                            if (status != 'U')
+                                                $('[data-item-id="' + id + '"]').remove();
+                                        }
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+                                    an.title = 'Oops';
+                                    an.content = 'An error has been occured during request.Reload again!'
+                                    an.alert(an.type.failed);
+                                })
+                                .fail(function (xhr) {
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+                    })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            rreqs();
+            $('#btnSearch').click(function () {
+                rreqs();
+            });
+        });
+    </script>
+}

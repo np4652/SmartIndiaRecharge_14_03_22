@@ -1,0 +1,91 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.OutletbBiometricModel
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Verify Aadhar using Biometric device</h3>
+
+    <div class="form-group">
+        <div class="form-group">
+            <select class="form-control" id="ddl_Device" style=" background: #f2f2f2;border-left: none;">
+                <option value="1" selected="selected">Mantra</option>
+                <option value="2">Morpho</option>
+                <option value="3">Tatvik</option>
+                <option value="4">StarTek</option>
+            </select>
+            <small id="bankHelp" class="form-text text-danger  d-none">Choose </small>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <input type="checkbox" id="consentCheckbox" />
+        <label for="consentCheckbox"></label>
+        <button class="btn btn-info" id="btnBioMetric">Validate Biometric</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+        <input type="hidden" id="idOID" value="@Model.OID" />
+        <input type="hidden" id="idRFID" value="@Model.RefID" />
+    </div>
+</div>
+<script>
+    var BioAuthType =@Model.BioAuthType;
+</script>
+<script>
+    var t = 0;
+    $('label[for^="consentCheckbox"]').html(`I hear by declare my consent agreement for fetching my information via  ${CName}`);
+</script>
+
+<script src="~/js/rdservice.js?a=@(DateTime.Now.Millisecond)"></script>
+<script>
+    var btnBio = $('#btnBioMetric');
+    var btnText = $('#btnBioMetric').html();
+    var LocationUpdate = function () {
+        $('#hidIsLoc').val("-1");
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function (position) {
+                $('#hidLat').val(position.coords.latitude.toFixed(4))
+                $('#hidLong').val(position.coords.longitude.toFixed(4))
+            }, function (err) {
+                $('#hidIsLoc').val(err.code);
+            });
+
+        }
+    }
+    LocationUpdate();
+    var rdH = new RDServiceHelper($('#ddl_Device').val());
+    rdH._PIDOptions = BioAuthType == 2 ? $PIDOptionsLive[$('#ddl_Device').val()] : rdH._PIDOptions;
+    $('#ddl_Device').change(function () {
+        rdH = new RDServiceHelper($('#ddl_Device').val());
+        rdH._PIDOptions = BioAuthType == 2 ? $PIDOptionsLive[$('#ddl_Device').val()] : rdH._PIDOptions;
+    });
+    $('#btnBioMetric').click(function () {
+        LocationUpdate();
+        if (btnBio.html() !== btnText)
+            return false;
+        if ($('#consentCheckbox').is(':checked') == false) {
+            an.title = "Oops";
+            an.content = 'Select consent';
+            an.alert(an.type.failed);
+            return false;
+        }
+        rdH._deviceid = $('#ddl_Device').val();
+        var btnObj = { btn: btnBio, btnText: btnText }
+        btnLdr.addClass = 'btn-info';
+        btnLdr.removeClass = 'btn-outline-info';
+        btnLdr.StartWithAnyText(btnBio, "Scanning Port");
+        rdH._preloader.load();
+        rdH.ScanPort(rdH._port, btnObj, function (updatedata) {
+            ValidateBioMetric(updatedata);
+        });
+    });
+    var ValidateBioMetric = function (updatedata) {
+        btnLdr.addClass = 'btn-info';
+        btnLdr.removeClass = 'btn-outline-info';
+        btnLdr.StartWithAnyText(btnBio, "Verifying...");
+        var PidData = getXmlAsString(updatedata);
+        CallOnboarding($('#idOID').val(), '', $('#idRFID').val(), PidData, true, BioAuthType, function () {
+            $('button.close span,#mdlCancel').click();
+            reload();
+        });
+
+    }
+</script>

@@ -1,0 +1,23 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<UserWiseLimitResp>
+@{int i = 1; }
+
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.OID">
+        <th class="align-middle">@i</th>
+        <td class="align-middle">@item.OperatorName <small class="form-text text-muted mt-0">@item.OpType</small></td>
+        <td class="align-middle">
+            <input type="hidden" id="hidID" value="@ViewBag.UserID" />
+            <div class="row mr-0">
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="txtUsedLimit_@i" value="@item.UsedLimit" placeholder="Used Limit" data-usedLimit-id="@item.UserLimitID">
+                    </div>
+                </div>
+            </div>
+        </td>
+    </tr>
+    i++;
+}
+

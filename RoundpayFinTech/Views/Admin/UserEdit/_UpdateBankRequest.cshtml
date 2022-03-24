@@ -1,0 +1,55 @@
+﻿@using Fintech.AppCode.StaticModel
+@model RoundpayFinTech.AppCode.Model.ProcModel.GetEditUser
+@{
+
+}
+
+    <style>
+        @@media (min-width: 576px) {
+            .modal-sm {
+                max-width: 500px;
+            }
+        }
+    </style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Bank Update Details</h3>
+    </div>
+    <div class="col-md-12">
+        <div class="scroll-content">
+            <div class="container">
+                <div class="mb-1">
+                    @Html.Label("ddlRequestBank", "Bank", new { @class = "lbl" })
+                    <select class="form-control" id="ddlRequestBank" aria-describedby="BankHelp" tabindex="15" asp-for=@(Model.BankName) asp-items="@Model.Bankselect">
+                        <option value="">:: Choose Bank ::</option>
+                    </select>
+                    <small id="BankHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-1">
+                    <label class="lbl" for="txtbankaccount">Account Number</label>
+                    <input aria-describedby="bankaccountHelp" class="form-control" id="txtbankaccount"  tabindex="1" type="text" value="@Model.AccountNumber" >
+                    <small id="bankaccountHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-1">
+                    <label class="lbl" for="txtIFSCCode">IFSC Code</label>
+                    <input aria-describedby="bankIFSCtHelp" class="form-control" id="txtIFSCCode" tabindex="1" type="text" value="@Model.IFSC">
+                    <small id="bankIFSCtHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-1">
+                    <label class="lbl" for="txtbankName">Account Name</label>
+                    <input aria-describedby="bankaccountNameHelp" class="form-control" id="txtbankName" tabindex="1" type="text" value="@Model.AccountName">
+                    <small id="bankaccountNameHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-outline-dark" id="btnSave">Request</button>
+                    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

@@ -1,0 +1,82 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.DTHCustomerInfo
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Consumer Info</h3>
+        <hr />
+    </div>
+    @if (Model.DATA != null)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="scroll-content">
+                <div class="container">
+                    <table>
+                        <thead>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Plan Name</td>
+                                <td>:</td>
+                                <th>@Model.DATA.Plan</th>
+                            </tr>
+                            <tr>
+                                <td>Customer Name</td>
+                                <td>:</td>
+                                <th>@Model.DATA.Name</th>
+                            </tr>
+                            <tr>
+                                <td>Balance</td>
+                                <td>:</td>
+                                <th>@Model.DATA.Balance</th>
+                            </tr>
+
+                            <tr>
+                                <td>Next Recharge Date</td>
+                                <td>:</td>
+                                <th>@Model.DATA.NextRechDate</th>
+                            </tr>
+
+                            <tr>
+                                <td>Monthly Recharge</td>
+                                <td>:</td>
+                                <th>@Model.DATA.Monthly</th>
+                            </tr>
+                            <tr>
+                                <td>Address</td>
+                                <td>:</td>
+                                <th>@Model.DATA.Address</th>
+                            </tr>
+                            <tr>
+                                <td>City</td>
+                                <td>:</td>
+                                <th>@Model.DATA.City</th>
+                            </tr>
+                            <tr>
+                                <td>District</td>
+                                <td>:</td>
+                                <th>@Model.DATA.District</th>
+                            </tr>
+                            <tr>
+                                <td>State</td>
+                                <td>:</td>
+                                <th>@Model.DATA.State</th>
+                            </tr>
+                            <tr>
+                                <td>PIN Code</td>
+                                <td>:</td>
+                                <th>@Model.DATA.PinCode</th>
+                            </tr>
+                        </tbody>
+
+                    </table>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h2 class="text-danger">Oops! Customer information not availble</h2>
+    }
+</div>

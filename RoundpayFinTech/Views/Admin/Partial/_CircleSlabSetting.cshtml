@@ -1,0 +1,59 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<SlabCommission>
+<div class="col-sm-12 table-responsive">
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+        <thead class="bg-tableth">
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col" style="width:29%">Circle</th>
+                <th scope="col" style="width: 12%;">CommAmt</th>
+                <th scope="col">CommType</th>
+                <th scope="col">AmtType</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @{int i = 1; }
+            @foreach (var item in Model)
+            {
+                <tr data-item-id="@item.CircleID">
+                    <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                    <td style="width:25em;" class="align-middle">
+                        @if (i == 1)
+                        {
+                            <input type="hidden" id="hidSlabID" value="@item.SlabID" class="d-none" />
+                            <input type="hidden" id="hidOID" value="@item.OID" class="d-none" />
+                        }
+
+                        @Html.DisplayFor(modelItem => item.Circle)
+                        <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                            @Html.Raw(item.IsBBPS ? item.OperatorType + ", BBPS" : item.OperatorType)
+                        </small>
+                    </td>
+
+                    <td  style="width:20em;" >
+                        <div class="form-inline">
+                            @Html.TextBoxFor(modelItem => item.Comm, new { @id = "txtComAmt_" + i, @class = " text-right", @placeholder = "0.0", @style = "padding-right:2px;width:5em;", @aria_describedby = "helpComAmt_" + i })
+                            <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                            @Html.HiddenFor(modelItem => item.Comm, new { @id = "hidComAmt" + i, @class = " text-right", @placeholder = "0.0", @style = "padding-right:2px;width:5em;" })
+                        </div>
+                        <small id="helpComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm btn-toggle" id="btnGroupComType_@i">
+                            <button class="btn btn-sm @Html.Raw(item.CommType==0?"btn-dark active":"btn-outline-dark")">COM</button>
+                            <button class="btn btn-sm @Html.Raw(item.CommType==1?"btn-dark active":"btn-outline-dark")">SUR</button>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-group-sm btn-toggle" id="btnGroupAmtType_@i">
+                            <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                            <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                        </div>
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

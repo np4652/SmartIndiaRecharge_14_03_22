@@ -1,0 +1,307 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.Models;
+
+@model ReportModelCommon
+@{
+    ViewData["Title"] = "Wrong2Right Request History";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlStatus">Choose WTR Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="@RefundType.REQUESTED">@RefundType._REQUESTED </option>
+                                        <option value="@RefundType.REFUNDED">ACCEPTED </option>
+                                        <option value="@RefundType.REJECTED">@RefundType._REJECTED </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlDTType">Choose Date Type</label>
+                                    <select id="ddlDTType" tabindex="2" class="form-control">
+                                        <option value="1">AcceptRejectDate</option>
+                                        <option value="2">RechargeDate </option>
+                                        <option value="3">RequestDate</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            @if (Model.IsAdmin)
+                            {
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label class="lbl" for="ddlAPI">Choose API</label>
+                                        @{
+                                            var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                                        }
+                                        <select id="ddlAPI" tabindex="7" class="form-control" asp-items="@listAPI">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlOperator">Choose Operator</label>
+                                    @{
+                                        var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" tabindex="7" class="form-control" asp-items="@listOperator">
+                                        <option value="0">:: Select Operator :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="">:: Select Criteria :: </option>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <option value="MMNO">Outlet Mobile</option>
+                                            <option value="TID">TID</option>
+                                        }
+                                        <option value="ACNO">Account No.</option>
+                                        <option value="RACNO">RightAccount No.</option>
+                                        <option value="TRAN">Transaction ID</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @if (ViewBag.RoleID == Role.APIUser)
+                            {
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label class="lbl" for="txtSearch">Select Criteria</label>
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                    </div>
+                                </div>
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <div class="form-group">
+                                        <button id="btnSearch" tabindex="8" class="btn btn-outline-dark mt-4">Search</button>
+                                    </div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-md-3 col-sm-3 col-xs-3">
+                                    <div class="form-group">
+                                        <label class="lbl" for="txtSearch">Select Criteria</label>
+                                        <div class="input-group">
+                                            <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                            <div class="input-group-append"><button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button></div>
+
+                                        </div>
+                                        <small id="Small1" class="form-text text-muted d-none"></small>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="table-responsive table-sm table-mh">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tbl_WTRLog">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">TransactionID</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th scope="col">Outlet</th>
+                                        }
+                                        <th scope="col" class="text-nowrap">Recharge Date</th>
+                                        <th scope="col" class="text-nowrap">AcceptReject Date</th>
+                                        <th scope="col">AccountNo</th>
+                                        <th scope="col">RightAccountNo</th>
+                                        <th scope="col">Narration/Remark</th>
+                                        <th scope="col" class="text-right">Amount</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th scope="col">API</th>
+                                        }
+                                        <th scope="col">Operator</th>
+                                        <th scope="col" class="text-nowrap">WTR Status</th>
+                                        <th scope="col">Live ID</th>
+                                        <th scope="col" class="text-nowrap">Request Date</th>
+                                        <th scope="col">RequestMode</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('.body-content').removeClass('container').addClass('container-fluid');
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+            search();
+            $("#btnSearch").click(function () {
+                search();
+            });
+        });
+        var search = function () {
+            var RefundLogFilter = {
+                TopRows: parseInt($('#ddlTop').val()),
+                Status: parseInt($('#ddlStatus').val()),
+                OID: $('#ddlOperator').val() != undefined ? parseInt($('#ddlOperator').val()) : 0,
+                APIID: $('#ddlAPI').val() != undefined ? parseInt($('#ddlAPI').val()) : 0,
+                DateType: parseInt($('#ddlDTType').val()),
+                FromDate: $('#dtFromDate').val(),
+                ToDate: $('#dtToDate').val(),
+                Criteria: $('#ddlCriteria').val() >"0" ? parseInt($('#ddlCriteria').val()) : 0,
+                CriteriaText: $('#txtSearch').val(),
+            };
+            console.log(RefundLogFilter);
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($("#btnSearch"), 'Requesting');
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/WTR-History',
+                contentType: 'application/json',
+                data: JSON.stringify(RefundLogFilter),
+                success: function (result) {
+                    resultReload(result);
+                    $('.__p tbody').html(result);
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    checkError(result);
+                    an.title = "Oops";
+                    an.content = result;
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    btnLdr.Stop($("#btnSearch"));
+                    preloader.remove();
+                }
+            });
+        };
+    </script>
+}
+

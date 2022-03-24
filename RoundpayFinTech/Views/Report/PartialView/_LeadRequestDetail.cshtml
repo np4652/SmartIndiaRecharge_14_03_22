@@ -1,0 +1,261 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.LeadServiceRequest
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <button type="button" class="close" aria-label="Close">
+                <span aria-hidden="true">×</span>
+            </button>
+            <h6 class="text-monospace"><label class="text text-danger">@Model.Leadservicelst[0].OpType</label></h6>
+            <hr>
+        </div>
+        @if (Model.Leadservicelst[0].OpTypeID == 55)
+        {
+            <div class="container-fluid">
+                <div class="form-horizontal bv-form">
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-3">
+                            <span>Customer Name</span>
+                            <div>
+                                <span id="lblName" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Name</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Mobile</span>
+                            <div>
+                                <span id="lblMobile" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Mobile</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Email</span>
+                            <div>
+                                <span id="lblEmail" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Email</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>PAN</span>
+                            <div>
+                                <span id="lblCustNoShow" class="text-monospace text-capitalize">@Model.Leadservicelst[0].PAN</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-3">
+                            <span>Loan Type</span>
+                            <div>
+                                <span id="lblLonetype" class="text-monospace text-capitalize">@Model.Leadservicelst[0].LoanType</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Amount</span>
+                            <div>
+                                <span id="lblAmount" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Amount</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Type Of Customer</span>
+                            <div>
+                                <span id="lblCustomerType" class="text-monospace text-capitalize">@Model.Leadservicelst[0].CustomerType</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Comments</span>
+                            <div>
+                                <span id="lblComments" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Comments</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-0 mb-0">
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-6">
+                            <span>Request IP</span>
+                            <div>
+                                <span id="lblRequestIp" class="text-monospace text-capitalize">@Model.Leadservicelst[0].RequestIP</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Browser</span>
+                            <div>
+                                <span id="lblAmount" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Browser</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr class="mt-0 mb-0">
+
+                </div>
+                <div class="float-right">
+                    <button class="btn btn-outline-danger btn-sm" id="mdlCancel">Cancel</button>
+                </div>
+            </div>
+        }
+        else if (Model.Leadservicelst[0].OpTypeID == 56)
+        {
+            <div class="container-fluid">
+                <div class="form-horizontal bv-form">
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-3">
+                            <span>Customer Name</span>
+                            <div>
+                                <span id="lblName" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Name</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Mobile</span>
+                            <div>
+                                <span id="lblMobile" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Mobile</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Age</span>
+                            <div>
+                                <span id="lblAge" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Age</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Occupation Type</span>
+                            <div>
+                                <span id="lblOccupationType" class="text-monospace text-capitalize">@Model.Leadservicelst[0].OccupationType</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-4">
+                            <span>Monthly Income</span>
+                            <div>
+                                <span id="lblMonthlyIncome" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Amount</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <span>Pin Code</span>
+                            <div>
+                                <span id="lblPinCode" class="text-monospace text-capitalize">@Model.Leadservicelst[0].PinCode</span>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <span>Bank Name</span>
+                            <div>
+                                <span id="lblBankName" class="text-monospace text-capitalize">@Model.Leadservicelst[0].BankName</span>
+                            </div>
+                        </div>
+                    </div>
+                        <div class="form-group row gutter has-feedback">
+                          
+                            <div class="col-md-6">
+                                <span>Having Active Loans?</span>
+                                <div>
+                                    <span id="lblActiveLoan" class="text-monospace text-capitalize">@Model.Leadservicelst[0].ActiveLoan</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <span>Comments</span>
+                                <div>
+                                    <span id="lblComments" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Comments</span>
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mt-0 mb-0">
+                        <div class="form-group row gutter has-feedback">
+                            <div class="col-md-6">
+                                <span>Request IP</span>
+                                <div>
+                                    <span id="lblRequestIp" class="text-monospace text-capitalize">@Model.Leadservicelst[0].RequestIP</span>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <span>Browser</span>
+                                <div>
+                                    <span id="lblAmount" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Browser</span>
+                                </div>
+                            </div>
+
+                        </div>
+                        <hr class="mt-0 mb-0">
+
+                    </div>
+                    <div class="float-right">
+                        <button class="btn btn-outline-danger btn-sm" id="mdlCancel">Cancel</button>
+                    </div>
+                </div>
+        }
+        else if (Model.Leadservicelst[0].OpTypeID == 57)
+        {
+            <div class="container-fluid">
+                <div class="form-horizontal bv-form">
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-3">
+                            <span>Customer Name</span>
+                            <div>
+                                <span id="lblName" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Name</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Mobile</span>
+                            <div>
+                                <span id="lblMobile" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Mobile</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Age</span>
+                            <div>
+                                <span id="lblAge" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Age</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Insurance Type</span>
+                            <div>
+                                <span id="lblInsuranceType" class="text-monospace text-capitalize">@Model.Leadservicelst[0].InsuranceType</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-3">
+                            <span>Sum Insured</span>
+                            <div>
+                                <span id="lblSumInsured" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Amount</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Required For</span>
+                            <div>
+                                <span id="lblRequiredFor" class="text-monospace text-capitalize">@Model.Leadservicelst[0].RequiredFor</span>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <span>Comments</span>
+                            <div>
+                                <span id="lblComments" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Comments</span>
+                            </div>
+                        </div>
+                    </div>
+                    <hr class="mt-0 mb-0">
+                    <div class="form-group row gutter has-feedback">
+                        <div class="col-md-6">
+                            <span>Request IP</span>
+                            <div>
+                                <span id="lblRequestIp" class="text-monospace text-capitalize">@Model.Leadservicelst[0].RequestIP</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <span>Browser</span>
+                            <div>
+                                <span id="lblAmount" class="text-monospace text-capitalize">@Model.Leadservicelst[0].Browser</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    <hr class="mt-0 mb-0">
+
+                </div>
+                <div class="float-right">
+                    <button class="btn btn-outline-danger btn-sm" id="mdlCancel">Cancel</button>
+                </div>
+            </div>
+        }
+
+    </div>
+</div>@*
+
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}

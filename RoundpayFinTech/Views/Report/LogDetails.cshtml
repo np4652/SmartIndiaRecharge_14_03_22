@@ -1,0 +1,149 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Model;
+@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using RoundpayFinTech.AppCode;
+@{
+    ViewData["Title"] = "Log Details";
+}
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    var userML = new UserML(_lr);
+    var IsChannel = (_lr.RoleID == Role.Admin && _lr.LoginTypeID == LoginType.ApplicationUser || userML.IsCustomerCareAuthorised(ActionCodes.AddEditSLAB)) || !_lr.IsAdminDefined;
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Log Details</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row mb-2">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Select Service</label>
+                                    <select id="ddlLogType" tabindex="1" class="form-control">
+                                        @if (_lr.RoleID == Role.Admin)
+                                        {
+                                            <option value="@(LogType.ROFR)">ROffer</option>
+                                            <option value="@(LogType.BillFetch)">Bill Fetch</option>
+                                            <option value="@(LogType.HLR)">HLR</option>
+                                        }
+                                        <option value="@(LogType.APIURL)">API URL Hitting</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Select Criteria</label>
+                                    <select id="ddlCriteria" tabindex="1" class="form-control">
+                                        <option value="0">Select Criteria</option>
+                                        <option value="1">From Request</option>
+                                        <option value="2">From Response</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <label class="lbl" for="txtSearch">Search</label>
+                                <input type="text" class="form-control" id="txtSearch" placeholder="Enter Your Text Here" />
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                                <button id="btnSearch" tabindex="8" class="btn btn-outline-dark mt-4">Search</button>
+                            </div>
+                        </div>
+                            <div class="table-responsive table-sm" id="MyDiv">
+
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            GetData($('#ddlTop').val(), $('#ddlLogType').val(), $('#txtSearch').val());
+            $('#btnSearch').click(function () {
+                var criteria = $('#ddlCriteria').val();
+                if (criteria == 0 && $('#txtSearch').val() != '') {
+                    an.title = 'Oops';
+                    an.content = 'Please select criteria!'
+                    an.alert(an.type.failed);
+                    return;
+                }
+                GetData($('#ddlTop').val(), $('#ddlLogType').val(), $('#txtSearch').val(), criteria);
+            });
+        });
+        var GetData = function (t, s, search, criteria) {
+            $.post('/')
+            preloader.load();
+            $.post('/Log-Details', { CommonInt: parseInt(t), CommonStr: s, CommonStr2: search, CommonInt2: criteria})
+                .done(function (result) {
+                    resultReload(result);
+                    $('#MyDiv').html(result);
+                    setTimeout(function () {
+                        $('#txtSearch').unbind().focus();
+                        $("#txtSearch").unbind().on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('.__p tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    $('.__p tbody tr textarea').unbind().focus(function () {
+                        $(this).select();
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+
+
+}

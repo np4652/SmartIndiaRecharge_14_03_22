@@ -1,0 +1,25 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.Employee.EmployeeList
+
+@if (Model.Employees != null)
+{
+    
+    @for (int i = 0; i < Model.Employees.Count; i++)
+    {
+        <tr data-item-id="@Model.Employees[i].EmpID">
+            <td>@(i+1)</td>
+            <td><input id="Checkbox_@i" type="checkbox" /></td>
+            <td class="text-nowrap">
+                @Model.Employees[i].Name
+                <small class="text-monospace">[@Html.Raw(Model.Employees[i].Prefix + Model.Employees[i].EmpID)]</small>
+            </td>
+            <td>@Model.Employees[i].MobileNo</td>
+            <td>@Model.Employees[i].EmailID</td>
+            <td class="text-nowrap">@Model.Employees[i].EmpRole</td>
+            <td>@Model.Employees[i].ReportingToName</td>
+        </tr>
+    }
+
+}
+
+

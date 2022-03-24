@@ -1,0 +1,53 @@
+﻿.top-navbar {
+    border-bottom: 1px solid #585858;
+    background: #010C3A;
+}
+
+.nav-item.show {
+    background: #009dd9 !important;
+}
+.nav-item a:active {
+    background: #009dd9 !important;
+    border-radius: 0.25 rem;
+}
+
+.bg-greenhead {
+    background: linear-gradient(85deg, #00356c, #009dd9);
+}
+
+.main-wrapper .breadcrumb {
+    background: #fff !important;
+}
+
+.bg-purple {
+    background-color: #009dd9 !important;
+}
+
+
+.bg-gradientorange {
+    background: linear-gradient(85deg, #00356c, #009dd9);
+}
+
+.horizontal-main.hor-menu {
+    background: #fff !important;
+    border-bottom: 1px solid #d5d8e2;
+    border-top: 0;
+    z-index: 1;
+    margin-top: 0;
+    box-shadow: 0 1px 15px 1px #c0c0c7;
+}
+
+.bor-rad {
+    border-radius: 4px;
+}
+
+.bg-dark {
+    background-image: linear-gradient(to left,#6a7076,#343a40) !important;
+}
+
+footer {
+    background-color: #010C3A;
+}
+.dropdown-item:active {
+    background-color: #009dd9;
+}

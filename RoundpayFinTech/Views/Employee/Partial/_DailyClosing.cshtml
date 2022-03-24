@@ -1,0 +1,83 @@
+﻿<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Daily Attendance</h5>
+        <p class="text-muted">Daily Attendance is mandatory. Must be done after all meeting entries made. Closing can be done only once a day after which no new entry will be added for the day.</p>
+        <hr />
+        @*<input type="hidden" id="hfdID" value="@Model.Id" />*@
+    </div>
+    <div class="col-12">
+        <div class="row">
+            @*<div class="col-12">
+                
+            </div>*@
+            <div class="col-sm-6">
+                <div class="form-group">
+                    <label class="lbl" for="txtTravel">Total Travel</label>
+                    <input type="text" class="form-control text-capitalize" id="txtTravel" placeholder="Enter Total Travel" aria_describedby="nameHelp" required />
+                    <small id="nameHelp" class="form-text text-muted d-none">Total Travel is mandatory</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="lbl" for="txtExpense">Total Expense</label>
+                    <input type="text" class="form-control text-capitalize" id="txtExpense" placeholder="Enter Expense" aria_describedby="nameHelp" required />
+                    <small id="nameHelp" class="form-text text-muted d-none">Expense is mandatory</small>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-12 text-right">
+                    <button type="button" class="btn btn-success" id="btnCreate" value="CREATE">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    //Q.geoLoaction();
+    $('#btnCreate').click(function () {
+        dailyClosing()
+    });
+
+
+    $('#txtTravel').numeric({
+        numericType: 'decimal',
+        maxLength: 9
+    });
+
+    $('#txtExpense').numeric({
+        numericType: 'number',
+        maxLength: 5
+    });
+
+    var dailyClosing = function () {
+        var t = $('#txtTravel').val();
+        var e = $('#txtExpense').val();
+        if (!t.trim() || !e.trim()) {
+            an.id = "myAlert";
+            an.title = "Oops!";
+            an.content = "Fields cannot be left blank";
+            an.alert(an.type.error);
+        }
+        else {
+            let param = {
+                Travel: $('#txtTravel').val().trim(),
+                Expense: $('#txtExpense').val().trim()
+            };
+            $.post('/Employee/DailyClosing', param).done(result => {
+                an.id = "myAlert";
+                an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                mdlA.dispose();
+                _loadGrid();
+            }).fail(xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.error);
+            }).always(() => preloader.remove())
+        }
+    }
+</script>

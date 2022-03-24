@@ -1,0 +1,96 @@
+﻿
+@{
+    ViewData["Title"] = "OrderDetails";
+}
+<style>
+    .text-overflow-ellipsis {
+        display:inline-block;
+        white-space:nowrap;
+        max-width: 150px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2 mb-2">
+                    <div class="card-header bg-greenhead text-white">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    Top 
+                                    <select class="form-control" id="ddlTop">
+                                        <option>25</option>
+                                        <option>50</option>
+                                        <option>100</option>
+                                        <option>150</option>
+                                        <option>200</option>
+                                        <option>500</option>
+                                        <option>1000</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Status</label>
+                                <select class="form-control" id="ddlStatusList">
+                                    <option value="1"> Open </option>
+                                    <option value="2"> Close </option>
+                                    <option value="0"> All </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                Mobile No
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Enter Mobile No" id="txtMobile"/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-dark" id="btnSearch">Search</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" id="OrdersGrid">                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript">
+        var loadGrid = () => {
+            
+            preloader.load();
+            let param = {
+                TopRows: $('#ddlTop').val(),
+                Mobile: $('#txtMobile').val(),
+                StatusID: $('#ddlStatusList').val()
+            };
+            $.post('/_Orders', param).done(result => $('#OrdersGrid').html(result)).always(() => preloader.remove());
+        };
+
+        (() => {
+            loadGrid();
+            $('#btnSearch').click(() => loadGrid());
+        })();
+    </script>
+}

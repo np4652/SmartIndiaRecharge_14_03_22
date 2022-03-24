@@ -1,0 +1,65 @@
+﻿@model RoundpayFinTech.Models.HomeDisplay
+@{
+    var _template = string.Empty;
+    switch (Model.SectionID)
+    {
+        case 1:
+            _template = Model.Home;
+            break;
+        case 2:
+            _template = Model.AboutUs;
+            break;
+        case 3:
+            _template = Model.ContactUs;
+            break;
+        case 4:
+            _template = Model.Services;
+            break;
+        case 5:
+            _template = Model.Feature;
+            break;
+        case 6:
+            _template = Model.Testimonial;
+            break;
+        case 7:
+            _template = Model.Header;
+            break;
+        case 8:
+            _template = Model.Footer;
+            break;
+        case 9:
+            _template = Model.FullPage;
+            break;
+    }
+}
+<div class="col-sm-12">
+    <div class="form-group">
+        <textarea id="editor" class="form-control" asp-for="@_template"></textarea>
+    </div>
+</div>
+<div class="col-sm-12">
+    <div class="form-group text-right">
+        <button class="btn btn-outline-info" id="btnSaveTemplate">SAVE</button>
+    </div>
+</div>
+
+<script>
+    Q.initEditor();
+    $('#btnSaveTemplate').click(() => {
+        preloader.load();
+        let param = {
+            Template: tinyMCE.get('editor').getContent(),
+            ThemeID: $('#ddlTheme').val(),
+            SectionID: $('#ddlSection').val()
+        };
+        $.post('/UpdateTemplate', param).done(result => {
+            an.title = result.statuscode == 1 ? 'Success' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    });
+</script>

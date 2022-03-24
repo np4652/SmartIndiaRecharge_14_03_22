@@ -1,0 +1,58 @@
+[
+  {
+    "bank": "ICICI BANK LTD.",
+    "transactionType": "UPI",
+    "identifier": "UPI/",
+    "startWith": "UPI/",
+    "endWith": "/",
+    "bankID": "33"
+  },
+  {
+    "bank": "ICICI BANK LTD.",
+    "transactionType": "NEFT",
+    "identifier": "INF/INFT/",
+    "startWith": "INFT/",
+    "endWith": "/",
+    "bankID": "33"
+  },
+  {
+    "bank": "ICICI BANK LTD.",
+    "transactionType": "NEFT",
+    "identifier": "INF/NEFT/",
+    "startWith": "NEFT/",
+    "endWith": "/",
+    "bankID": "33"
+  },
+  {
+    "bank": "ICICI BANK LTD.",
+    "transactionType": "NEFT",
+    "identifier": "NEFT-",
+    "startWith": "NEFT-",
+    "endWith": "-",
+    "bankID": "33"
+  },
+  {
+    "bank": "ICICI BANK LTD.",
+    "transactionType": "IMPS",
+    "identifier": "MMT/IMPS/",
+    "startWith": "IMPS/",
+    "endWith": "/",
+    "bankID": "33"
+  },
+  {
+    "bank": "ICICI BANK LTD.",
+    "transactionType": "RTGS",
+    "identifier": "RTGS-",
+    "startWith": "RTGS-",
+    "endWith": "-",
+    "bankID": "33"
+  },
+  {
+    "bank": "AB BANK LIMITED",
+    "transactionType": "UPI",
+    "identifier": "UPI",
+    "startWith": "/",
+    "endWith": "UPI/",
+    "bankID": "1907"
+  }
+]

@@ -1,0 +1,48 @@
+﻿@using Fintech.AppCode.Model
+@model IEnumerable<UserInfo>
+@{
+    int i = 1;
+}
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h3>Upline Users</h3>
+        @if (Model != null)
+        {
+            <div class="table-responsive">
+                <table class="table" id="tbl_UplineComm">
+                    <thead class="shadow">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Role</th>
+                            <th scope="col">Name</th>
+                            <th scope="col">Outlet Name</th>
+                            <th scope="col">Mobile No</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var data in Model)
+                        {
+                            <tr>
+                                <th>@i</th>
+                                <th>@data.Role</th>
+                                <th>@data.Name</th>
+                                <th>@data.OutletName</th>
+                                <th>@data.MobileNo</th>
+                            </tr>
+                            i++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p>No Data Found!</p>
+        }
+        <button class="btn btn-outline-primary btn-sm" id="mdlCancel">It's Ok <i class="fas fa-smile text-warning"></i></button>
+    </div>
+
+
+

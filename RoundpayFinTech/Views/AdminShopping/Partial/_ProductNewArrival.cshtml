@@ -1,0 +1,88 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+@{
+
+}
+<style>
+    .item img {
+        height: 206px;
+    }
+</style>
+
+<div class="bbb_viewed">
+    <div class="bbb_main_container">
+        <div class="bbb_viewed_title_container">
+            <h3 class="bbb_viewed_title">New Arrival</h3>
+            <div class="bbb_viewed_nav_container">
+                <div class="bbb_viewed_nav bbb_viewed_prev" id="prevArrival"><i class="fas fa-chevron-left"></i></div>
+                <div class="bbb_viewed_nav bbb_viewed_next" id="nextArrival"><i class="fas fa-chevron-right"></i></div>
+            </div>
+        </div>
+        <div class="bbb_viewed_slider_container">
+            <div class="owl-carousel owl-theme bbb_viewed_slider" id="arrivalSlide">
+                @if (Model.Any())
+                {
+                    @foreach (var item in Model)
+                    {
+                        <div class="owl-item subCategoryId2  cus_pro_item" data-Product-Id="@item.ProductID" data-productDetail-Id="@item.ProductDetailID">
+                            <div class="bbb_viewed_item discount d-flex flex-column align-items-center justify-content-center text-center">
+                                <span class="pro_off_price">₹ @(item.DiscountType ? item.MRP * item.Discount * Convert.ToDecimal(0.01) : item.Discount) off</span>
+                                <a href="#" class="info_shopping_icon"><i class="fa fa-info" aria-hidden="true"></i></a>
+                                <div class="proItem" data-Product-Id="@item.ProductID" data-productDetail-Id="@item.ProductDetailID">
+                                    <div class="bbb_viewed_image"><img src="~/image/Products/@item.ProductID/@item.ImgUrl" alt=""></div>
+                                    <div class="bbb_viewed_content text-center">
+                                        <div class="bbb_viewed_price">₹ @((item.MRP- (item.DiscountType?item.MRP*item.Discount*Convert.ToDecimal(0.01):item.Discount)).ToString("00.00"))<span>₹ @item.MRP</span></div>
+                                        <div class="bbb_viewed_name"><a href="#">@item.ProductName</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('.proItem').unbind().click(e => {
+        ProductDetailForUser(e);
+    });
+
+    $(document).ready(function () {
+        if ($('#arrivalSlide').length) {
+            var viewedSlider2 = $('#arrivalSlide');
+            viewedSlider2.owlCarousel(
+                {
+                    loop: true,
+                    margin: 30,
+                    autoplay: true,
+                    autoplayTimeout: 6000,
+                    nav: false,
+                    dots: false,
+                    responsive:
+                    {
+                        0: { items: 1 },
+                        575: { items: 2 },
+                        768: { items: 3 },
+                        991: { items: 4 }
+                        //,
+                        //1199: { items: 5 }
+                    }
+                });
+
+            if ($('#prevArrival').length) {
+                var prev = $('#prevArrival');
+                prev.on('click', function () {
+                    viewedSlider2.trigger('prev.owl.carousel');
+                });
+            }
+
+            if ($('#nextArrival').length) {
+                var next = $('#nextArrival');
+                next.on('click', function () {
+                    viewedSlider2.trigger('next.owl.carousel');
+                });
+            }
+        }
+    });
+</script>

@@ -1,0 +1,26 @@
+﻿@model RoundpayFinTech.AppCode.Model.MasterPaymentGateway
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <label id="Name" class="d-block text-info h5">@Model.Name</label>
+        </div>
+        <div class="form-group">
+            <label for="URL">URL</label>
+            <input type="text" class="form-control" id="url" name="url" value="@Model.URL">
+        </div>
+        <div class="form-group">
+            <label for="StatusCheckURL">Status Check URL</label>
+            <input class="form-control" type="text" id="statuscheckurl" name="statuscheckurl" value="@Model.StatusCheckURL">
+        </div>
+        <div class="form-group">
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="chkIsLive" name="islive" @Html.Raw(Model.IsLive?"checked":"")>
+                <label for="chkIsLive">IsLive</label>
+            </span>
+        </div>
+        <div class="form-group text-right">
+            <button type="button" class="btn btn-dark" id="btnSave" tabindex="34">Save</button>
+            <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,37 @@
+﻿@model SelectAPIList
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>API Commission Detail</h5>
+    <div class="row mb-1">
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <select class="form-control-sm" asp-items="@Model.selectList" id="ddlAPI" aria-describedby="helpAPI" asp-for="@Model.APIID"></select>
+            
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <select id="ddlOType" class="form-control-sm">
+                <option value="">:: Operator Type ::</option>
+            </select>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <div class="float-right ">
+                <input class="form-control-sm" id="txtSearch" type="text" placeholder="Search" />
+            </div>
+        </div>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIComm">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Operator</th>
+                    <th scope="col">CommAmt</th>
+                    <th scope="col">CommType</th>
+                    <th scope="col">AmtType</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>

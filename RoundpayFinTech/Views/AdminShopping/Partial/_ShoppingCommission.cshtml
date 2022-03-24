@@ -1,0 +1,92 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ShoppingCommissionModel
+@{
+    var cList = new SelectList(Model.ShoppingCategories, "CategoryID", "CategoryName");
+}
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+
+<input type="hidden" value="@ApplicationSetting.ECommerceDistributionCommissionType" id="CommDistributionType" />
+<input type="hidden" value="@Model.SlabID" id="hfSlabID" />
+<input type="hidden" value="@Model.IsAdminDefined" id="hfIsAdminDefined" />
+<div class="row">
+    <div class="col-sm-12">
+        <label class="text-danger text-monospace">
+            <small>
+                <strong>
+                    <sup>*</sup>Note :   Commission Shareing : Commission will be calculated on selling Price | Revenue Shareing :  Commission will be calculated over admin Profit
+                </strong>
+            </small>
+        </label>
+        <div class="form-group table-responsive">
+            <table class="table" id="tblGrid">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <th style="width:8%">#</th>
+                        <th>Category</th>
+                        <th>Commission</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+     (() => {
+        preloader.load();
+         let param = {
+                SlabID: $('#hfSlabID').val(),
+                IsAdminDefined: '@Model.IsAdminDefined'
+        };
+         $.post('/_ShoppingCommissionDetail', param)
+             .done(result => {
+                 $('#tblGrid tbody')
+                     .empty()
+                     .append(result.commissionDetail.map((m, i) => `<tr data-Category-Id="${m.productID == 0 ? m.categoryID : m.productID}">
+                                                                        <td>${i + 1}</td>
+                                                                        <td>${m.categoryName}</td>
+                                                                        <td><div class="row">
+                                                                                <div class="col-sm-4">
+                                                                                    <div class="input-group">
+                                                                                        <input type="text" class="form-control txtComm" value="${m.commission}">
+                                                                                    </div>
+                                                                                </div>
+                                                                              </div></td>
+                                                                    </tr>`));
+                 $('.txtComm').numeric({
+                     numericType: 'decimal',
+                     maxLength: 5
+                 });
+                 $('.txtComm').change(e => UpdateComm($(e.currentTarget)));
+                 $('.btnCommType button').unbind().click(e => {
+                     $('.btnCommType button').removeClass('active btn-dark').addClass('btn-outline-dark');
+                     $(e.currentTarget).removeClass('btn-outline-dark').addClass('btn-dark active');
+                     UpdateComm($(e.currentTarget));
+                 });
+             })
+             .fail(xhr => {
+                 an.title = 'Oops';
+                 an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                 an.alert(an.type.failed);
+             }).always(() => preloader.remove());
+    })();
+
+    var UpdateComm = sender => {
+        let selectedDiv = sender.closest('div.input-group'),
+            param = {
+                SlabID: $('#hfSlabID').val(),
+                CategoryID: sender.closest('tr').data().categoryId,
+                Commission: selectedDiv.find('input.txtComm').val(),
+                RoleID: selectedDiv.data().roleId
+            };
+        $.post('/_UpdateShoppingComm', param)
+            .done(result => {
+                an.title = result.statuscode === 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    };
+</script>

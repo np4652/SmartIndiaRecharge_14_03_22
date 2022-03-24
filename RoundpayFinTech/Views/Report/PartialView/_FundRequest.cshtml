@@ -1,0 +1,190 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model Fintech.AppCode.Model.Reports.PaymentRequestModel
+<style>
+    @@media (min-width: 576px) {
+        .modal-sm {
+            max-width: 500px;
+        }
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Fund Request</h5><hr />
+    </div>
+    <div class="col-md-12">
+        <div class="scroll-content">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="text-danger">*Balance to virtual account can be added from validated source accounts only</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 mb-1">
+                        @{
+                            var list = new SelectList(Model.BankList, "CID", "BankName");
+                        }
+                        <label class="lbl" for="ddlBankName">* Choose Bank</label>
+                        <select aria-describedby="helpBL" class="form-control" id="ddlBankName" tabindex="1" asp-items="@list" asp-for="@Model.BankID">
+                            <option value="0"> :: Select Bank :: </option>
+                        </select>
+                        <small id="helpBL" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-sm-6 mb-1">
+                        <label class="lbl" for="txtbankaccount"> Deposit Account</label>
+                        <input aria-describedby="bankaccountHelp" class="form-control" id="txtbankaccount" name="txtbankaccount" tabindex="1" type="text" value="" disabled="disabled">
+                        <small id="bankaccountHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-12 mb-1">
+                        <label class="lbl" for="ddlPaymentMode">* Choose Payment Mode</label>
+                        <select aria-describedby="help1PM" class="form-control" id="ddlPaymentMode" tabindex="1">
+                            <option value="0"> :: Payment Mode :: </option>
+                        </select>
+                        <small id="help1PM" class="form-text text-muted d-none"></small>
+                        <small id="hdcharge" class="form-text text-muted"></small>
+                    </div>
+                </div>
+
+                <div class="mb-1" id="IsTransactionIdRequired" style="display:none">
+                    <label class="lbl" for="txtTransactionId">* UTR </label>
+                    <input aria-describedby="TIDHelp" class="form-control" id="txtTransactionId" name="txtTransactionId" tabindex="1" type="text" value="">
+                    <small id="TIDHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                <div class="mb-1 divother" id="IsUPIIdRequired" style="display:none">
+                    <label class="lbl" for="IsUPIIdRequired">* UPI ID </label>
+                    <input aria-describedby="TIDHelp" class="form-control" id="txtUPIID" name="txtUPIID" tabindex="1" type="text" value="">
+                    <small id="TIDHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                <div class="mb-1 divother" id="IsBranchRequired" style="display:none">
+                    <label class="lbl" for="IsBranchRequired">* Branch Name </label>
+                    <input aria-describedby="TIDHelp" class="form-control" id="txtBranch" name="txtBranch" tabindex="1" type="text" value="">
+                    <small id="TIDHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                <div class="mb-1 divother" id="IsMobileNoRequired" style="display:none">
+                    <label class="lbl" for="txtMobileNo">* Mobile No (in bank)</label>
+                    <input aria-describedby="MobileNoHelp" class="form-control" id="txtMobileNo" name="txtMobileNo" tabindex="1" type="text" value="">
+                    <small id="MobileNoHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-1 divother" id="IsAccountHolderRequired" style="display:none">
+                    <label class="lbl" for="txtAccountHolderName">* Account Holder Name</label>
+                    <input aria-describedby="AccountHolderNameHelp" class="form-control" id="txtAccountHolderName" name="txtAccountHolderName" tabindex="1" type="text" value="">
+                    <small id="AccountHolderNameHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-1 divother" id="IsCardNumberRequired" style="display:none">
+                    <label class="lbl" for="txtCardNo">* Card Number</label>
+                    <input aria-describedby="CardNoHelp" class="form-control" id="txtCardNo" name="txtCardNo" tabindex="1" type="text" value="">
+                    <small id="CardNoHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="mb-1 divother" id="IsChequeNoRequired" style="display:none">
+                    <label class="lbl" for="txtCheque">* Cheque Number</label>
+                    <input aria-describedby="ChequeHelp" class="form-control" id="txtCheque" name="txtCheque" tabindex="1" type="text" value="">
+                    <small id="ChequeHelp" class="form-text text-muted d-none"></small>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6 mb-1" id="divRequestedAmt">
+                        <label class="lbl" for="txtRequestedAmount">* Requested Amount</label>
+                        <input aria-describedby="RequestedAmountHelp" class="form-control" id="txtRequestedAmount" name="txtRequestedAmount" tabindex="1" type="text" value="">
+                        <small id="RequestedAmountHelp" class="form-text text-muted d-none"></small>
+                    </div>
+
+                    <div class="col-sm-6 mb-1">
+                        <label class="lbl" for="ddlWType">* Wallet Type</label>
+                        <select aria-describedby="helpddlWType" class="form-control" id="ddlWType">
+                            <option value="@Wallet.Prepaid"> @Wallet._Prepaid </option>
+                            @if (Model.userBalnace.IsUBalance && Model.userBalnace.IsUBalanceFund)
+                            {
+                                <option value="@Wallet.Utility"> @Wallet._Utility </option>
+                            }
+                            @if (Model.userBalnace.IsCBalance && Model.userBalnace.IsCBalanceFund)
+                            {
+                                <option value="@Wallet.Card"> @Wallet._Card </option>
+                            }
+                            @if (Model.userBalnace.IsIDBalance && Model.userBalnace.IsIDBalanceFund)
+                            {
+                                <option value="@Wallet.RegID"> @Wallet._RegID </option>
+                            }
+                            @if (Model.userBalnace.IsPacakgeBalance && Model.userBalnace.IsPacakgeBalance)
+                            {
+                                <option value="@Wallet.Package"> @Wallet._Package </option>
+                            }
+                        </select>
+                        <small id="helpddlWType" class="form-text text-muted"></small>
+                    </div>
+                </div>
+
+
+                <div class="mb-1">
+                    <label for="TransactionImg">Upload Image(Optional)</label>
+                    <input type="file" id="TransactionImg" class="form-control" />
+                </div>
+                <div class="mb-3">
+                    <button class="btn btn-outline-dark" id="btnSaveFR">Request</button>
+                    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.BonafideAccountList != null)
+{
+    @if (Model.BonafideAccountList.Count() > 0)
+    {
+
+        <div id="__p" class="main-temp-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mt-2">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-7 line-height-34">
+                                        <i class="fas fa-link"></i> Bonafide Account Detail
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <div class="">
+                                    <table class="table table-bordered table-striped" id="tblbonafide">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th scope="col">Sr. No.</th>
+                                                <th scope="col">Payee Name</th>
+                                                <th scope="col">AccountNo</th>
+                                                <th scope="col">IFSC</th>
+                                                <th scope="col">IsActive</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @{int i = 1; }
+                                            @foreach (var item in Model.BonafideAccountList)
+                                            {
+                                                <tr data-item-id="@item.ID">
+                                                    <td style="width:15em;">@(i++)</td>
+                                                    <td style="width:15em;">@item.PyeeName</td>
+                                                    <td style="width:15em;">@item.AccountNo</td>
+                                                    <td style="width:15em;">@item.IFSC</td>
+                                                    <td style="width:15em;" id="IsActive_@i" class='@Html.Raw(@item.IsActive ? "text-success" : "")'>@Html.Raw(@item.IsActive ? "Verified" : "Non-Verified") </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+

@@ -1,0 +1,88 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.MNPUserResp
+
+@{
+    var list = Model.list;
+    var i = 1;
+}
+@if (Model.RoleID != 1)
+{
+    <div class="text-right form-group"><a id="btnNew" href="/addnewpartner" class="btn btn-outline-dark btn-sm">New</a></div>
+}
+<table class="table table-sm table-hover" id="tblCCList">
+    <thead class="bg-tableth">
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Actions</th>
+            <th scope="col">Name</th>
+            <th scope="col">MobileNo</th>
+            <th scope="col">Date of Agent</th>
+            <th scope="col">Date of Activation</th>
+            <th scope="col">Demo</th>
+            <th scope="col">Retailor Register Mobile</th>
+            <th scope="col">MNP Cust No</th>
+            <th scope="col">MNP ReferenceNO</th>
+            <th scope="col">FRC Type</th>
+            <th scope="col">FRC Demo No</th>
+            <th scope="col">FRC Done Date</th>
+            <th scope="col">Claim Amount</th>
+            <th scope="col">Claim Amount Date</th>
+            <th scope="col">Operatorname</th>
+            <th scope="col">Remark</th>
+            <th scope="col">VerifyStatus</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+
+            foreach (var item in Model.list)
+            {
+                <tr data-item-id="1000">
+                    <th scope="row">@i</th>
+                    <td>
+                        <div class="btn-group dropup">
+                            <a href="#" id="act1" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                            <div class="dropdown-menu" aria-labelledby="act">
+                                <h6 class="dropdown-header">Action Menu</h6>
+                                <a href="#" class="dropdown-item" onclick="ViewData(@item.ID)">View</a>
+                            </div>
+                        </div>
+                    </td>
+                    <td>@item.Name <small class="font-weight-bold text-monospace"> [@item.ID]</small></td>
+                    <td>@item.MobileNo</td>
+                    <td>@item.RegistrationDate</td>
+                    <td>@item.FRCDate</td>
+                    <td>@item.DemoInput</td>
+                    <td>@item.MobileMNP</td>
+                    <td>@item.CutomerMObile</td>
+                    <td>@item.ReferenceID</td>
+                    <td>@item.FRCType</td>
+                    <td>@item.FRCDemoNumber</td>
+                    <td>@item.FRCDoneDate</td>
+                    <td>@item.Amount</td>
+                    <td>@item.ClaimAmountDate</td>
+                    <td>@item.Operatorname</td>
+                    <td>@item.Remark</td>
+                    <td>
+                        @if (item.VerifyStatus == 2)
+                        {
+                            <span class='text-success'>Approved</span>
+                        }
+                        else if (item.VerifyStatus == 3)
+                        {
+                            <span class='text-danger'>Rejected</span>
+                        }
+                        else
+                        {
+                            <span class='text-warning'>Pending</span>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        }
+
+
+    </tbody>
+</table>

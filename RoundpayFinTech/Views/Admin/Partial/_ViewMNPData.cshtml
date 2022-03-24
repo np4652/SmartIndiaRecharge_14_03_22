@@ -1,0 +1,118 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.MNPDetailsResp
+
+@{
+    var data = Model.data;
+}
+<div>
+    <div class="row partnerView">
+        <div class="col-12">
+            <h5>MNP User Details</h5>
+        </div>
+
+        <div class="col-6">
+            <ul>
+                <li>Name : <span>@data.Name</span></li>
+                <li>
+                    UserName:<span>
+                        <input aria-describedby="txtUserHelp" class="form-control " id="txtxusername" name="txtxusername" placeholder="Enter User Name" tabindex="3" type="text" value="@data.UserName">
+                        <small id="txtUserHelp" class="form-text text-muted d-none"></small>
+
+                    </span>
+                </li>
+                <li>
+                    Remark :<span>
+                        <input aria-describedby="slbRemarkHelp" class="form-control " id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text" value="@data.Remark">
+                        <small id="slbRemarkHelp" class="form-text text-muted d-none"></small>
+
+                    </span>
+                </li>
+
+            </ul>
+        </div>
+        <div class="col-6">
+            <ul>
+                <li>MobileNo: <span>@data.MobileNo</span></li>
+                <li>
+                    Password :<span>
+                        <input aria-describedby="txtPaswwordHelp" class="form-control " id="txtpassword" name="txtpassword" placeholder="Enter Password" tabindex="3" type="text" value="@data.Password">
+                        <small id="txtPaswwordHelp" class="form-text text-muted d-none"></small>
+                    </span>
+                </li>
+                <li>
+                    Demo Input :<span>
+                        <input aria-describedby="txtDemoHelp" class="form-control " id="txtDemo" name="txtDemo" placeholder="Enter Demo Input" tabindex="3" type="text" value="@data.DemoInput">
+                        <small id="txtDemoHelp" class="form-text text-muted d-none"></small>
+                    </span>
+                </li>
+            </ul>
+        </div>
+        <div class="col-12">
+            <div class="col-6">
+                @if (Model.RoleID == 1)
+                {
+                    if (Model.data.VerifyStatus == 2)
+                    {
+                        <div class="input-group-prepend"  style="position: relative; top: 40px;">
+                            <a href="#" class="btn btn-outline-danger" id="reject_1" onclick="UpdateStatus(3)">
+                                <i class="far fa-times-circle"></i>
+                            </a>
+                        </div>
+                    }
+                    if (Model.data.VerifyStatus == 1)
+                    {
+                        <div class="input-group-prepend" style="position: relative; top: 40px;">
+                            <a href="#" class="btn btn-outline-success" id="accept_1" onclick="UpdateStatus(2)">
+                                <i class="far fa-check-circle"></i>
+                            </a>
+                            <a href="#" class="btn btn-outline-danger" id="reject_1" onclick="UpdateStatus(3)">
+                                <i class="far fa-times-circle"></i>
+                            </a>
+                        </div>
+                    }
+                }
+            </div>
+            <div class="col-6" style="float:right">
+                <a id="btnClose" class="btn btn-dark" style="color:#fff;float:right">Close</a>
+
+            </div>
+        </div>
+        </div>
+</div>
+
+<style>
+    .partnerView {
+        font-weight: 400;
+    }
+
+        .partnerView .partnerdetail {
+            border: 1px solid #eee;
+            margin: 15px;
+            padding: 20px 0;
+        }
+
+        .partnerView ul {
+            list-style: none;
+        }
+
+            .partnerView ul li {
+                padding: 5px;
+            }
+
+                .partnerView ul li span {
+                    font-weight: 600;
+                    margin-left: 5px;
+                }
+
+        .partnerView h5 {
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .partnerView img {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #eee;
+            margin: 15px 0;
+        }
+</style>

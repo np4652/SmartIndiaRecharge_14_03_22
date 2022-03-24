@@ -1,0 +1,257 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Configuration;
+@model OutletUserListModel;
+@{
+    var couter = 1;
+    var mdl = Model.Report;
+}
+@if (mdl.Any())
+{
+    foreach (var item in mdl)
+    {
+        <tr data-item-Id="@item._ID" data-item-uId="@item._UserID">
+            <td>@couter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@couter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        @if (Model.IsAdmin)
+                        {
+                            if (item._KYCStatus == 3)
+                            {
+                                <a href="#" class="dropdown-item text-success rekyc" id="rekyc_@couter">
+                                    <span class="fa fa-edit text-success"></span> REKYC
+                                </a>
+                            }
+
+                            <a href="#" class="dropdown-item doc" id="doc_@couter">
+                                <span class="fa fa-eye text-warning"></span> SHOW KYC DOCUMENTS
+                            </a>
+                            <a href="#" class="dropdown-item btnReject" id="doc_@couter">
+                                <span class="fas fa-times-circle text-danger"></span> REJECT KYC
+                            </a>
+                        }
+                        else
+                        {
+                            <a href="#" class="dropdown-item showDocumentsDetail" id="docStatus_@couter">
+                                <span class="fa fa-eye text-warning"></span> SHOW DOCUMENTS STATUS
+                            </a>
+                        }
+                        @if (ApplicationSetting.IsAdditionalService && @item._RoleID.In(Role.APIUser, Role.Retailor_Seller))
+                        {
+                            <a href="#" class="dropdown-item btnAddonServ" id="doc_@couter">
+                                <span class="fas fa-user-cog text-info"></span> Activate Additional Service
+                            </a>
+                        }
+                    </div>
+                </div>
+            </td>
+            @if (Model.IsAdmin)
+            {
+                <td>@item.UserName [<small>@item.UserMobile/@item._Prefix@item._UserID</small>]</td>
+                <td>@item.Role</td>
+            }
+            <td>@item._Name <br /><span class="badge badge-dark"> @item._ID</span></td>
+            <td>@item._Company</td>
+            <td>@item._MobileNo</td>
+            <td>@item._EmailID</td>
+            <td>@item._Pincode</td>
+            <td>@item._Address</td>
+            <td>@item._PAN</td>
+            <td>@item._AADHAR</td>
+            <td>
+                @if (item._KYCStatus == 0 || item._KYCStatus == 1)
+                {
+                    <span class="badge badge-warning">NOT APPLIED</span>
+                }
+                @if (item._KYCStatus == 2)
+                {
+                    <span class="badge badge-secondary">APPLIED</span>
+                }
+                @if (item._KYCStatus == 3)
+                {
+                    <span class="badge badge-success">COMPLETED</span>
+                }
+                @if (item._KYCStatus == 4)
+                {
+                    <span class="badge badge-info">REKYC</span>
+                }
+                @if (item._KYCStatus == 5)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            <td>
+                @if (item._VerifyStatus == 1)
+                {
+                    <span class="badge badge-secondary">APPLED</span>
+                }
+                @if (item._VerifyStatus == 2)
+                {
+                    <span class="badge badge-success">VERIFIED</span>
+                }
+                @if (item._VerifyStatus == 3)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            <td class="text-right text-nowrap">@item._EntryDate</td>
+            <td class="text-right text-nowrap">@item._ModifyDate</td>
+            @if (Model.IsAdmin)
+            {
+                <td class="text-right">@Html.Raw(item._IsOutsider ? "YES" : "NO")</td>
+            }
+            <td>@item._State</td>
+            <td>@item._City</td>
+            @if (Model.IsAdmin)
+            {
+                <td class="text-nowrap">@item._DOB</td>
+                <td>@item._shopType</td>
+                <td>@item._Qualification</td>
+                <td class="text-right">@item._Poupulation</td>
+                <td>@item._LocationType</td>
+                <td>@item._Landmark</td>
+                <td>@item._AlternateMobile</td>
+                <td class="text-right">@item._latlong</td>
+                <td>@item._BankName</td>
+                <td>@item._IFSC</td>
+                <td>@item._AccountNumber</td>
+                <td>@item._AccountHolder</td>
+            }
+            @if (item.ApiId > 0)
+            {
+                <td class="api">@item.ApiName</td>
+                <td class="api">@item.ApiOutletId</td>
+            }
+            <td>
+                @if (item.BBPSStatus == 0)
+                {
+                    <span class="badge badge-warning">NOT APPLIED</span>
+                }
+                @if (item.BBPSStatus == 1)
+                {
+                    <span class="badge badge-secondary">APPLIED</span>
+                }
+                @if (item.BBPSStatus == 2)
+                {
+                    <span class="badge badge-success">COMPLETED</span>
+                }
+                @if (item.BBPSStatus == 3)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            <td>
+                @if (item.AEPSStatus == 0)
+                {
+                    <span class="badge badge-warning">NOT APPLIED</span>
+                }
+                @if (item.AEPSStatus == 1)
+                {
+                    <span class="badge badge-secondary">APPLIED</span>
+                }
+                @if (item.AEPSStatus == 2)
+                {
+                    <span class="badge badge-success">COMPLETED</span>
+                }
+                @if (item.AEPSStatus == 3)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            <td>
+                @if (item.PSAStatus == 0)
+                {
+                    <span class="badge badge-warning">NOT APPLIED</span>
+                }
+                @if (item.PSAStatus == 1)
+                {
+                    <span class="badge badge-secondary">APPLIED</span>
+                }
+                @if (item.PSAStatus == 2)
+                {
+                    <span class="badge badge-success">COMPLETED</span>
+                }
+                @if (item.PSAStatus == 3)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            <td class="text-right">
+                @if (item.DMTStatus == 0)
+                {
+                    <span class="badge badge-warning">NOT APPLIED</span>
+                }
+                @if (item.DMTStatus == 1)
+                {
+                    <span class="badge badge-secondary">APPLIED</span>
+                }
+                @if (item.DMTStatus == 2)
+                {
+                    <span class="badge badge-success">COMPLETED</span>
+                }
+                @if (item.DMTStatus == 3)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            <td class="text-right">
+                @if (item.IRCTCStaus == 0)
+                {
+                    <span class="badge badge-warning">NOT APPLIED</span>
+                }
+                @if (item.IRCTCStaus == 1)
+                {
+                    <span class="badge badge-secondary">APPLIED</span>
+                }
+                @if (item.IRCTCStaus == 2)
+                {
+                    <span class="badge badge-success">COMPLETED</span>
+                }
+                @if (item.IRCTCStaus == 3)
+                {
+                    <span class="badge badge-danger">REJECTED</span>
+                }
+            </td>
+            @if (Model.IsAdmin)
+            {
+                <td class="text-right">
+                    @if (item.MATMStatus == 0)
+                    {
+                        <span class="badge badge-warning">NOT APPLIED</span>
+                    }
+                    @if (item.MATMStatus == 1)
+                    {
+                        <span class="badge badge-secondary">APPLIED</span>
+                    }
+                    @if (item.MATMStatus == 2)
+                    {
+                        <span class="badge badge-success">COMPLETED</span>
+                    }
+                    @if (item.MATMStatus == 3)
+                    {
+                        <span class="badge badge-danger">REJECTED</span>
+                    }
+                </td>
+            }
+            <td>@item.IRCTCID</td>
+            <td>@item.IRCTCExpiry</td>
+            @if (item.MATMStatus == 3 || item.MATMStatus == 0)
+            {
+                <td>
+                    <a href="#" class="addMatm" id="matm_@couter">
+                        <span class="fa fa-eye text-warning"></span> Add M-ATM
+                    </a>
+                </td>
+            }
+            else
+            {
+                <td class="text-right">
+                    @item.DeviceId
+                </td>
+            }
+        </tr>
+        couter = couter + 1;
+    }
+}

@@ -1,0 +1,33 @@
+﻿@model RoundpayFinTech.AppCode.Model.Employee.EmployeeListU
+
+@if (Model != null && Model.EmpReports != null)
+{
+    @foreach (var item in Model.EmpReports)
+    {
+        var i = 0;
+    <tr data-item-id="@item.ID">
+        <td>@(i + 1)</td>
+        <td class="text-nowrap">
+            @item.Name
+            <small class="text-monospace">[@Html.Raw(@item.Prefix + @item.ID)]</small>
+        </td>
+        <td>@item.OutletName</td>
+        <td>@item.MobileNo</td>
+        <td>@item.Status</td>
+        <td class="text-nowrap">
+            @*<span class="fa fa fa-arrow-alt-circle-down" style="cursor:pointer" onclick="ChildPopUp(this,false)"></span>
+            <span class="fa fa fa-arrow-alt-circle-up" style="cursor:pointer" onclick="ChildPopUp(this,true)"></span>*@
+            @item.Role
+        </td>
+        <td>@item.Slab</td>
+        <td>@item.Balance</td>
+    </tr>
+    }
+}
+else
+{
+
+    <tr>
+        <td colspan="9">No Data Found</td>
+    </tr>
+}

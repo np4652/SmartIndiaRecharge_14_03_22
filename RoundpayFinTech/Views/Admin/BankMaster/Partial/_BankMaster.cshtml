@@ -1,0 +1,81 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.Bank>
+@{ int i = 1;}
+@foreach (var item in Model)
+{
+    var bankLogo = "~/image/BankLogo/" + item.BankID + ".png";
+
+    <tr data-item-id="@item.ID">
+        <th>@i</th>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act_@i">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#" class="dropdown-item">Edit</a>
+                    <a href="#" class="dropdown-item">Delete</a>
+                    @if (@item.AccParty == 0)
+                    {
+                        <a href="#" onclick="MarkAsParty(@item.BankID, this)" class="dropdown-item">Mark as Party</a>
+                    }
+                </div>
+            </div>
+        </td>
+        <td>@item.BankName</td>
+        <td>@item.BranchName</td>
+        <td>@item.AccountHolder</td>
+        <td>@item.AccountNo</td>
+        <td>@item.IFSCCode</td>
+        <td>@item.Remark</td>
+
+        <td class="align-middle text-center">
+            <img src="@bankLogo" style="width:75px;" alt="No Image" asp-append-version="true" />
+        </td>
+        <td class="align-middle text-center">
+            @{
+                var QRLogo = item.ISQRENABLE && !string.IsNullOrEmpty(item.QRPath) && item.QRPath.Contains(".") ? "~/image/BankQR/" + item.QRPath : "~/image/BankQR/NOQR.png";
+
+            }
+            <div class="row">
+                <div class="col-sm-12">
+                    <img src="@QRLogo" class="img-fluid" style="max-width:72%" alt="No" asp-append-version="true" />
+                </div>
+            </div>
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" onchange="ActiveInavtive(@item.ID, this)" class="switch SellerActivebox" id="isact_@i" @Html.Raw(item.IsShow ? "checked='checked'" : "")>
+                <label for="isact_@i"></label>
+            </span>
+        </td>
+    </tr>
+    i++;
+}
+<script>
+    function ActiveInavtive(ID, a) {
+        var Is = $(a).is(':checked');
+        $.post(`_BankShowtoggle/${ID}`, {}, function (result) {
+            an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+            if (result.statuscode == an.type.success)
+                result.statuscode = Is ? an.type.success : an.type.info;
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            _load();
+        }).fail(xhr => {
+            an.title = 'Oops';
+            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            an.alert(an.type.failed);
+        }).always(() => preloader.remove());
+    }
+    function MarkAsParty(BankID){
+        $.post(`InsertPartyDetail/${BankID}`).done(function(result){
+            an.title = "Success";
+            an.content = result.msg;
+            an.alert(an.type.success)
+            _load();
+        }).fail(function(xhr){
+            an.title = "Oops";
+            an.content = "Server Error";
+            an.alert(an.type.failed);
+        })
+    }
+</script>

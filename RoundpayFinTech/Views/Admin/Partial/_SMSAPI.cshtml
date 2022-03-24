@@ -1,0 +1,140 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model SMSAPIDetail
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+    </style>
+    <div class="col-4 ">
+        <div class="mb-1">
+            <h5 class="mb-0 mt-0">Replacement Values</h5>
+            <small class="text-uppercase text-monospace">Click on <i class="far fa-clone" data-toggle="tooltip" data-placement="top" title="COPY"></i> button to copy</small>
+        </div>
+        <div class="input-group cmb-0">
+            <span type="button" class="btn btn-cyan btn-sm form-control" aria-describedby="spnSender">TemplateID Replacement</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnSender" data-toggle="tooltip" data-placement="top" title="{SENDERID}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span type="button" class="btn btn-cyan btn-sm form-control" aria-describedby="spnMob">{TO}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnMob" data-toggle="tooltip" data-placement="top" title="{TO}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+        <div class="input-group cmb-0">
+            <span type="button" class="btn btn-cyan btn-sm form-control" aria-describedby="spnTxt">{MESSAGE}</span>
+            <div class="input-group-append">
+                <span class="input-group-text cursor-pointer" id="spnTxt" data-toggle="tooltip" data-placement="top" title="{MESSAGE}"><i class="far fa-clone"></i></span>
+            </div>
+        </div>
+    </div>
+    <div class="col-8">
+        <h3 class="mb-0 mt-0 bg-white rounded "> SMSAPI Form</h3>
+        <hr />
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    @Html.Label("txtName", "Name", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtName", Model.Name, new { @class = "form-control text-capitalize", @placeholder = "Enter Name", @aria_describedby = "nameHelp", @tabindex = 1 })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align" style="padding:0;">
+                                <select class="form-control-sm" id="ddlApiType" tabindex="2" style="border:0;">
+                                    <option value="1">General</option>
+                                    <option value="2">Lapu</option>
+                                </select>
+                            </span>
+                        </div>
+                    </div>
+                    <small id="nameHelp" class="form-text text-muted d-none">Name is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtURL", "API URL", new { @class = "lbl" })
+                    @Html.TextArea("txtURL", Model.URL, new { @class = "form-control", @placeholder = "Enter API URL", @aria_describedby = "urlHelp", @tabindex = 3 })
+                    <small id="urlHelp" class="form-text text-muted d-none">URL is mandatory</small>
+                </div>
+                <div class="form-row">
+                    <div class='col-md-4 form-group'>
+                        @Html.Label("ddlTransType", "Transaction Type", new { @class = "lbl" })
+                        <select id="ddlTransType" aria-describedby="methodHelp" tabindex="4" class="custom-select custom-select-md mb3" asp-for="@Model.TransactionType">
+                            <option value="1">All</option>
+                            <option value="3">OTP</option>
+                        </select>
+                        <small id="methodHelp" class="form-text text-muted d-none">Transaction Type is mandatory</small>
+                    </div>
+                    <div class="col-md-4 form-group">
+                        @Html.Label("ddlMethod", "Method Type", new { @class = "lbl" })
+                        <select id="ddlMethod" aria-describedby="methodHelp" tabindex="5" class="custom-select custom-select-md mb3" asp-for="@Model.APIMethod">
+                            <option value="GET">GET</option>
+                            <option value="POST">POST</option>
+                        </select>
+                        <small id="methodHelp" class="form-text text-muted d-none">Method is mandatory</small>
+                    </div>
+                    <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    <div class="col-md-4 form-group">
+                        @Html.Label("ddlResType", "Response Type", new { @class = "lbl" })
+
+                        <select id="ddlResType" aria-describedby="resHelp" tabindex="6" class="custom-select custom-select-md mb3" asp-for="@Model.ResType">
+                            <option value="1">JSON</option>
+                            <option value="2">XML</option>
+                            <option value="3">CSV</option>
+                            <option value="4">STRING</option>
+                            <option value="5">OTHER</option>
+                        </select>
+                        <small id="resHelp" class="form-text text-muted d-none">Response is mandatory</small>
+                    </div>
+
+                    <div class="col-md-4 form-group">
+                        @Html.Label("chkDefault", "Default", new { @class = "lbl" })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align">
+                                <input type="checkbox" class="switch" id="chkDefault" @Html.Raw(Model.Default ? "checked='checked'" : "")>
+                                <label for="chkDefault" class="font-weight-bold lbl"></label>
+                            </span>
+                        </div>
+                    </div>
+                    @if (ApplicationSetting.IsSocialAlert)
+                    {
+                        <div class="col-md-4 form-group">
+                            @Html.Label("chkWhatsApp", "WhatsApp", new { @class = "lbl" })
+                            <div class="input-group-append">
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chkWhatsApp" @Html.Raw(Model.IsWhatsApp ? "checked='checked'" : "")>
+                                    <label for="chkWhatsApp" class="font-weight-bold lbl"></label>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.Label("chkHangout", "Hangout", new { @class = "lbl" })
+                            <div class="input-group-append">
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chkHangout" @Html.Raw(Model.IsHangout ? "checked='checked'" : "")>
+                                    <label for="chkHangout" class="font-weight-bold lbl"></label>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-4 form-group">
+                            @Html.Label("chkTelegram", "Telegram", new { @class = "lbl" })
+                            <div class="input-group-append">
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chkTelegram" @Html.Raw(Model.IsTelegram ? "checked='checked'" : "")>
+                                    <label for="chkTelegram" class="font-weight-bold lbl"></label>
+                                </span>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+                <button type="button" class="btn btn-dark" id="btnSaveAPI" tabindex="7">Save SMS API</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

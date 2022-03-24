@@ -1,0 +1,227 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.BonafideAccount>
+@{
+    ViewData["Title"] = "BankMasterAdmin";
+}
+<style>
+    footer {
+        position: fixed;
+    }
+
+    .datepicker{
+    z-index: 1100 !important;
+}
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Master</li>
+            <li class="breadcrumb-item active">Bank Master Admin</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-4 line-height-34">
+                                <i class="fas fa-link"></i> Bonafide Account Detail
+                                @*<div class="float-right"><button id="btnHolidy" class="btn btn-default btn-sm" >Holiday</button></div>*@
+                            </div>
+
+                            <div class="col-md-1 col-xs-1">
+                                <select id="ddlTop" tabindex="1" class="form-control">
+                                    <option value="50">50</option>
+                                    <option value="100">100</option>
+                                    <option value="200">200</option>
+                                    <option value="500">500</option>
+                                    <option value="1000">1000</option>
+                                    <option value="1500">1500</option>
+                                    <option value="2000">2000</option>
+                                    <option value="2500">2500</option>
+                                    <option value="3000">3000</option>
+                                    <option value="4000">4000</option>
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-2 col-xs-2">
+                                <select id="ddlstatus" tabindex="1" class="form-control">
+                                    <option value="">Select Status</option>
+                                    <option value="1">Verified</option>
+                                    <option value="0">Not-Verified</option>
+
+                                </select>
+
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <div class="input-group">
+                                    <input id="txtAccount" class="form-control text-left" placeholder="Search Account" />
+                                    <input id="txtSearchbank" class="form-control text-left" placeholder="Search Mobile" />
+                                    <div class="input-group-append">
+                                        <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                        <span class="btn btn-outline-dark" id="btnExport">
+                                            <i class="text-success far fa-file-excel"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive vh-1">
+                            <table class="table table-bordered table-striped" id="tblBank">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">Sr. No.</th>
+                                        <th scope="col">Name </th>
+                                        <th scope="col">Outlet Name</th>
+                                        <th scope="col">MobileNo</th>
+                                        <th scope="col">PyeeName</th>
+                                        <th scope="col">AccountNo</th>
+                                        <th scope="col">IFSC</th>
+                                        <th scope="col">UPICount</th>
+                                        <th scope="col">DateTime</th>
+                                        <th scope="col">IsActive</th>
+                                        <th scope="col">Delete</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/lib/jquery/table2excel.js"></script>
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="/js/datepickerHelper.js"></script>
+    <script>
+
+        $(document).ready(function () {
+
+
+            _loadPartial($('#ddlTop').val(), '', '', '');
+        });
+        $("#btnSearch").click(function () {
+
+          
+            _loadPartial($('#ddlTop').val(), $('#txtSearchbank').val(), $('#ddlstatus').val(), $('#txtAccount').val());
+        });
+
+        var _loadPartial = function (top, search,status, account) {
+            preloader.load();
+            $.post('/Bonafide-Account', { TopRows: top, KeyWords: search, Status: status, Account: account })
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    $('#btnExport').unbind().click(function () {
+                        $("#__p").table2excel({
+                            exclude: ".table table-hover .table-responsive-sm .table-bordered .table-striped",
+                            name: "Worksheet Name",
+                            filename: "BonafideAccount.xls"
+                        });
+                    });
+                    $('#tblBank tr :checkbox').change(function () {
+                        var stsT = 1;
+                        var Is = $(this).is(':checked');
+                        var _this = this;
+                   
+                        if (stsT > 0) {
+                            if (stsT == 1) {
+                                preloader.load();
+                                $.post('/BonafideAccountUpdate', { ID: $(this).closest('tr').data().itemId, IsDeleted: false }, function (result) {
+                                    resultReload(result);
+                                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == an.type.success) {
+                                        mdlA.dispose();
+                                        _loadPartial($('#ddlTop').val(), '','' , '');
+                                    }
+                                }).catch(function () {
+                                    console.clear();
+                                }).fail(function (xhr) {
+                                    $(_this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                }).always(function () {
+                                    preloader.remove();
+                                });
+                            }
+                        }
+                    });
+
+                    $('[id^=Remove_]').click(function () {
+                         var _this = this;
+                        var itemID = $(this).closest('tr').data().itemId;
+
+                                $.post('/BonafideAccountUpdate', { ID: itemID , IsDeleted : true}, function (result) {
+                                    resultReload(result);
+                                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == an.type.success) {
+                                        mdlA.dispose();
+                                        _loadPartial($('#ddlTop').val(), '','' , '');
+                                    }
+                                }).catch(function () {
+                                    console.clear();
+                                }).fail(function (xhr) {
+                                    $(_this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                }).always(function () {
+                                    preloader.remove();
+                                });
+                    });
+                      
+                    preloader.remove();
+                })
+                .catch(function (xhr, e, msg) {
+                })
+                .fail(function () {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+
+                });
+        }
+    </script>
+}
+

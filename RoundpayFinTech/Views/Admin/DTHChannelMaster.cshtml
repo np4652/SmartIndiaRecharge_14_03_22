@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "DTH Channels";
+}
+
+<style>
+    td .dropdown-menu.show {
+        background: rgba(0,0,0,0.8) !important;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-7">
+                                <span><i class="fas fa-link"></i> @ViewData["Title"]</span>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="input-group">
+                                    <input id="txtSearch" class="form-control" placeholder="Search" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-sm btn-outline-light pl-2 pt-2 font-weight-bold" id="btnNew"><span class="fa fa-plus"></span> NEW</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblPackages">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:5%">#</th>
+                                        <th style="width:15%">Action Menu</th>
+                                        <th>Name</th>
+                                        <th>Category</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            _loadGrid();
+            $('#btnNew').click(() => _loadChannelById(0));
+            $('#txtSearch').focus();
+            $("#txtSearch").on("keyup", e => {
+                let value = $(e.currentTarget).val().toLowerCase();
+                $('#tblPackages tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        })
+
+        var _loadGrid = () => {
+            preloader.load();
+            $.post('/_DTHChannel', { id: 0 })
+                .done(result => {
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('.Edit').unbind().on('click', e => _loadChannelById($(e.currentTarget).closest('tr').data().channelId));
+                    $('.Delete').unbind().on('click', e => _deletePackage($(e.currentTarget).closest('tr').data().channelId));
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var _loadChannelById = _id => {
+            preloader.load();
+            $.post('/_DTHChannel-ByID', { id: _id })
+                .done(result => {
+                    mdlA.id = 'PackageModal';
+                    mdlA.content = result;
+                    mdlA.alert(mdlA.size.default);
+                    $('#Imgfile').change(() => previewImage('imgPreview'));
+                    $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                    $('#btnSave').on('click', () => _SaveChannel());
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var _SaveChannel = () => {
+            preloader.load();
+            let param = {
+                ID: $('#txtID').val(),
+                ChannelName: $('#txtChannelName').val(),
+                CategoryID: $('#ddlCategories').val()
+            },
+                formData = new FormData();
+            formData.append('file', $(`#Imgfile`)[0].files[0]);
+            formData.append('req', JSON.stringify(param));
+            $.ajax({
+                type: 'POST',
+                url: '/_Edit-DTHChannel',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: result => {
+                    an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode === an.type.success) {
+                        mdlA.dispose();
+                        _loadGrid();
+                    }
+                    preloader.remove();
+                },
+                error: xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.failed);
+                    preloader.remove();
+                }
+            });
+        };
+
+        var _deletePackage = _id => {
+            preloader.load();
+            let param = {
+                ID: _id,
+                Del: true
+            }
+            $.post('/_Edit-DTHChannel', param = param)
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    mdlA.dispose();
+                    _loadGrid();
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+    </script>
+}

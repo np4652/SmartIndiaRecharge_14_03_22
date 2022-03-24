@@ -1,0 +1,112 @@
+﻿@model Fintech.AppCode.Model.CommonReq
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+<div class="row">
+    <div class="col-12">
+        <input type="hidden" id="hdnRoleDCID" value="@Model.CommonInt"/>
+
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3 class="mb-0 mt-0 bg-white rounded text-info"> Bulk Debit Credit</h3>
+        <hr />
+
+        <div class="scroll-content">
+            <div class="container">
+                <div class="row mb-2">
+                    <div class="col-sm-3">
+                        <div class="btn-group btn-toggle" id="btnGroup">
+                            <button class="btn btn-sm btn-outline-info active">Credit</button>
+                            <button class="btn btn-sm btn-outline-info">Debit</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="lbl" for="txtAmtDC">Amount</label>
+                    <div class="input-group">
+                        <input aria-describedby="amtDCHelp" class="form-control" id="txtAmtDC" maxlength="10" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" placeholder="Enter Amount" tabindex="1" type="text" value="">
+                    </div>
+                    <small id="amtDCHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <div class="form-group">
+                    <label class="lbl" for="txtRemarkDC">Remark</label>
+                    <textarea aria-describedby="remarkDCHelp" class="form-control" id="txtRemarkDC" placeholder="Enter Remark" tabindex="3"></textarea>
+                    <small id="remarkDCHelp" class="form-text text-muted d-none"></small>
+                </div>
+                <button type="button" class="btn btn-dark" id="btnTransfer" tabindex="5">Credit</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#btnGroup').click(function () {
+        $(this).find('.btn').toggleClass('active');
+        if ($(this).find('.btn-dark').length > 0) {
+            $(this).find('.btn').toggleClass('btn-dark');
+        }
+        if ($(this).find('.btn-outline-dark').length > 0) {
+            $(this).find('.btn').toggleClass('btn-outline-dark');
+        }
+        if ($('#btnGroup.btn-toggle').find('.btn.active').text() === 'Credit') {
+            $('#btnTransfer').text('Credit');
+        } else {
+            $('#btnTransfer').text('Deduct');
+        }
+    });
+
+    $('#btnTransfer').on('click', function () {
+        
+        var ct = {
+            roleid: $('#hdnRoleDCID'),
+            collectionMode: $('#btnGroup.btn-toggle').find('.btn.active'),
+            amount: $('#txtAmtDC'),
+            remark: $('#txtRemarkDC')
+        }
+        var IsE = { amt: ct.amount.val() < 1, rmk: ct.remark.val() == '' }
+        IsE.err = IsE.amt || IsE.rmk ;
+        $v.showErrorFor(ct.amount, 'Invalid Amount', IsE.amt);
+        $v.showErrorFor(ct.remark, 'Please Enter Remark', IsE.rmk);
+        if (IsE.err)
+            return false;
+        preloader.load();
+        var type = ct.collectionMode.text() == 'Credit' ? false : true;
+        $.post('/badc', { CommonInt: ct.roleid.val(), CommonDecimal: ct.amount.val(), CommonBool: type, CommonStr: ct.remark.val() })
+            .done(function (result) {
+                resultReload(result);
+                if (result.statuscode === -1) {
+                    an.title = 'Oops';
+                    an.content = result.msg;
+                    an.alert(an.type.failed);
+                    an.autoClose = 2;
+                }
+                else {
+                    an.title = 'Welldone!';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                }
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+    });
+</script>

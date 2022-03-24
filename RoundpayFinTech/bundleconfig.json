@@ -1,0 +1,236 @@
+[
+  {
+    "outputFileName": "wwwroot/js/site.min.js",
+    "inputFiles": [
+      "wwwroot/js/site.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/reseller.min.css",
+    "inputFiles": [
+      "wwwroot/css/reseller.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/scrollbar.min.css",
+    "inputFiles": [
+      "wwwroot/css/scrollbar.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/signin.min.css",
+    "inputFiles": [
+      "wwwroot/css/signin.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/table-loader.min.css",
+    "inputFiles": [
+      "wwwroot/css/table-loader.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/login.min.js",
+    "inputFiles": [
+      "wwwroot/js/login.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/UserReg.min.js",
+    "inputFiles": [
+      "wwwroot/js/UserReg.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/validator.min.js",
+    "inputFiles": [
+      "wwwroot/js/validator.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/Sheeda.min.css",
+    "inputFiles": [
+      "wwwroot/css/Sheeda.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/Login.min.css",
+    "inputFiles": [
+      "wwwroot/css/Login.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/admin.min.js",
+    "inputFiles": [
+      "wwwroot/js/admin.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/new-custom-css/main.min.css",
+    "inputFiles": [
+      "wwwroot/css/new-custom-css/main.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/lib/bootstrap/dist/css/bootstrap.min.css",
+    "inputFiles": [
+      "wwwroot/lib/bootstrap/dist/css/bootstrap.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/AEPS.min.js",
+    "inputFiles": [
+      "wwwroot/js/AEPS.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/NmberToWord.min.js",
+    "inputFiles": [
+      "wwwroot/js/NmberToWord.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/AEPSInterface.min.js",
+    "inputFiles": [
+      "wwwroot/js/AEPSInterface.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/site_partner.min.js",
+    "inputFiles": [
+      "wwwroot/js/site_partner.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/print.min.js",
+    "inputFiles": [
+      "wwwroot/js/print.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/rdservice.min.js",
+    "inputFiles": [
+      "wwwroot/js/rdservice.js"
+    ]
+  },
+
+  {
+    "outputFileName": "wwwroot/js/main.min.js",
+    "inputFiles": [
+      "wwwroot/js/main.js"
+    ]
+  },
+
+  {
+    "outputFileName": "wwwroot/js/PartnerAEPS.min.js",
+    "inputFiles": [
+      "wwwroot/js/PartnerAEPS.js"
+    ]
+  },
+
+  {
+    "outputFileName": "wwwroot/js/EmpUtility.min.js",
+    "inputFiles": [
+      "wwwroot/js/EmpUtility.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/geoLocation.component.min.js",
+    "inputFiles": [
+      "wwwroot/js/geoLocation.component.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/bootstrap-multiselect.min.js",
+    "inputFiles": [
+      "wwwroot/js/bootstrap-multiselect.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/require.min.js",
+    "inputFiles": [
+      "wwwroot/js/require.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/chart/chart-utility.min.js",
+    "inputFiles": [
+      "wwwroot/js/chart/chart-utility.js"
+    ]
+  },
+
+  {
+    "outputFileName": "wwwroot/js/hotel/hotel-search.min.js",
+    "inputFiles": [
+      "wwwroot/js/hotel/hotel-search.js"
+    ]
+  },
+
+  {
+    "outputFileName": "wwwroot/js/jquery.mmenu.min.js",
+    "inputFiles": [
+      "wwwroot/js/jquery.mmenu.js"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/js/AppUtility.min.js",
+    "inputFiles": [
+      "wwwroot/js/AppUtility.js"
+    ]
+  },
+
+  {
+    "outputFileName": "wwwroot/css/applicationSetting.min.css",
+    "inputFiles": [
+      "wwwroot/css/applicationSetting.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/css/bootstrap-multiselect.min.css",
+    "inputFiles": [
+      "wwwroot/css/bootstrap-multiselect.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/AvailableThemes/1/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/AvailableThemes/1/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/AvailableThemes/2/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/AvailableThemes/2/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/AvailableThemes/3/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/AvailableThemes/3/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/AvailableThemes/4/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/AvailableThemes/4/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/AvailableThemes/5/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/AvailableThemes/5/css/site.css"
+    ]
+  },
+  {
+    "outputFileName": "wwwroot/AvailableThemes/6/css/site.min.css",
+    "inputFiles": [
+      "wwwroot/AvailableThemes/6/css/site.css"
+    ]
+  }
+]

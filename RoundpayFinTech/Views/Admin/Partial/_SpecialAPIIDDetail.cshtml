@@ -1,0 +1,311 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model DenominationDetailModal
+@{
+    var opList = Model.Operator;
+    var circleList = Model.CirlceList;
+}
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5>Special Denomination Commission Detail for API ID <i>[{APIID}]</i></h5>
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <select id="ddlCircle" class="form-control-sm">
+                <option value="0">Select</option>
+                @foreach (var item in circleList)
+                {
+                    <option value="@item.ID">@item.Circle</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-4">
+            <select id="ddlOptype" class="form-control-sm">
+                @foreach (var item in opList)
+                {
+                    <option value="@item.OID">@item.Name</option>
+                }
+            </select>
+        </div>
+
+    </div>
+    <div class="table-responsive" style="height:80vh;overflow:auto">
+        <input type="hidden" id="hsapiid" value="@Model.APIID" />
+        <section id="denomTable">
+            <!--Data will be bind here at runtime-->
+        </section>
+
+        <div class="col-sm-12 border">
+            <div class="row">
+                <div class="col-sm-2 border pl-2 pr-0 p-0 d-flex vh-100">
+                    <select id="ddlCircleChoice" class="form-control-sm align-self-center">
+                        @foreach (var item in circleList)
+                        {
+                            <option value="@item.ID">@item.Circle</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-sm-10 pl-0">
+                    <section id="savingPanelTable">
+                        <!--Data will be bind here at runtime-->
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+<script>
+
+    $(document).ready(function () {
+        refreshCallDenomFunc(this);
+        refreshUpdateSavingPanelFunc(this);
+    })
+
+    $("#ddlCircleChoice").on("change", function () {
+        var param = {
+            OID: $("#ddlOptype").val(),
+            APIID: $('#hsapiid').val(),
+            CircleID: $("#ddlCircleChoice").val()
+        }
+        UpdateSavingPanelFunc(param, this);
+    })
+
+    $("#ddlCircle,#ddlOptype").on("change", function () {
+        refreshCallDenomFunc(this);
+        refreshUpdateSavingPanelFunc(this);
+    })
+
+    function refreshCallDenomFunc(sender) {
+        var param = {
+            OID: $("#ddlOptype").val(),
+            APIID: $('#hsapiid').val(),
+            CircleID: $("#ddlCircle").val()
+        }
+        CallDenomFunc(param, sender);
+    }
+
+    function refreshUpdateSavingPanelFunc(sender) {
+        var param = {
+            OID: $("#ddlOptype").val(),
+            APIID: $('#hsapiid').val(),
+            CircleID: $("#ddlCircleChoice").val()
+        }
+        UpdateSavingPanelFunc(param, sender);
+    }
+
+    function CallDenomFunc(param, sender) {
+        preloader.load();
+        $.post("SpecialAPIIDDetailRole", { param: param })
+            .done(function (result) {
+                preloader.remove();
+                $("#denomTable").html(result);
+
+                $('#tblRNG .btn-toggle.commType').on('click', function () {
+                    debugger
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+
+                    UpdateGroupDomIDs(param, $(this));
+                })
+
+                $('#tblRNG .btn-toggle.amtType').on('click', function () {
+                    debugger
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+
+                    UpdateGroupDomIDs(param, $(this));
+                })
+
+                $("#tblRNG").on("change", "tbody tr .denomTD input[type=checkbox]", function () {
+                    let domID = $(this).data().itemId;
+                    let isdenom = $(this).data().itemIsdenom;
+                    if (!$(this).is(":checked")) {
+                        param.CircleID = $(this).parents("tr").data().itemId;
+                        param.OID = $("#ddlOptype").val();
+                        param.APIID = $('#hsapiid').val();
+                        param.ID = domID;
+                        param.IsDenom = isdenom;
+
+                        callUpdateDomID(param);
+                    }
+                })
+
+                $("#tblRNG").on("change", "tbody tr input[type=checkbox].isactive", function () {
+                    debugger 
+
+                    if ($(this).is(":checked")) $(this).prop("checked", true);
+                    else $(this).prop("checked", false);
+
+                    UpdateGroupDomIDs(param,$(this));
+                })
+
+                $("#tblRNG").on("blur", "tbody tr .RDtxtcomm", function () {
+                    UpdateGroupDomIDs(param,$(this));
+                })
+            });
+    }
+
+    function UpdateGroupDomIDs(param, sender) {
+        debugger
+        let denomIDs = [];
+        let isdenom = 0;
+        let isActive = $(sender).parents("tr").find(".isactivestatus").is(":checked") ? 1 : 0;
+
+        $(sender).parents("tr").find(".denomTD").find("input[type=checkbox]").each(function () {
+            let _id = $(this).data().id;
+            denomIDs.push(_id);
+            isdenom = $(this).data().itemIsdenom;
+        })
+
+        let denomOb = { ID: denomIDs }
+        if (isdenom == 1) {
+            param.DenomIDs = JSON.stringify({ root: denomOb });
+        }
+        else {
+            param.DenomRangeIDs = JSON.stringify({ root: denomOb });
+        }
+
+        param.CircleID = $(sender).parents("tr").data().itemId;
+        param.AmtType = $($(sender).parents("tr").find(".amtType .active")).text() == 'PER' ? 0 : 1;
+        param.Comm = $(sender).parents("tr").find(".RDtxtcomm").val();
+        param.CommType = $($(sender).parents("tr").find(".commType .active")).text() == 'C' ? 0 : 1;
+        param.OID = $("#ddlOptype").val();
+        param.APIID = $('#hsapiid').val();
+        param.IsDenom = isdenom;
+        param.IsActive = isActive;
+
+        callUpdateGroupDomID(param);
+    }
+
+    function UpdateSavingPanelFunc(param, sender) {
+        preloader.load();
+        $.post("SpecialAPIIDDetailSaving", { param: param })
+            .done(function (result) {
+                preloader.remove();
+                $("#savingPanelTable").html(result);
+
+                $('.btn-toggle').on('click', function () {
+                    $(this).find('.btn').toggleClass('active');
+                    if ($(this).find('.btn-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-dark');
+                    }
+                    if ($(this).find('.btn-outline-dark').length > 0) {
+                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                    }
+                })
+
+                $('.btnUpdateDemonSpecial').on('click', function () {
+                    param.IsDenom = 1;
+                    var denomIDs = [];
+                    $(this).parents("tr").find(".denom2TD").find("input[type=checkbox]").each(function () {
+                        if ($(this).is(":checked")) {
+                            let _id = $(this).data().itemId;
+                            denomIDs.push(_id);
+                        }
+                    })
+                    let denomOb = { DenomId: denomIDs }
+                    param.DenomIDs = JSON.stringify({ root: denomOb });
+
+                    param.Comm = $(this).parents("tr").find("._comm").val();
+                    param.AmtType = ($(this).parents("tr").find('.btn-toggle.amtType .active')).text() == 'PER' ? 0 : 1;
+                    param.CommType = ($(this).parents("tr").find('.btn-toggle.commType .active')).text() == 'C' ? 0 : 1;
+                    param.IsActive = ($(this).parents("tr").find('input[type=checkbox].isactive')).is(":checked") == true ? 1 : 0;
+                    param.CircleID = $("#ddlCircleChoice").val();
+                    param.OID = $("#ddlOptype").val();
+                    param.APIID = $('#hsapiid').val();
+                    callUpdate(param);
+                })
+
+                $('.btnUpdateDemonRangeSpecial').on('click', function () {
+                    param.IsDenom = 0;
+                    var denomIDs = [];
+                    $(this).parents("tr").find(".denomRange2TD").find("input[type=checkbox]").each(function () {
+                        if ($(this).is(":checked")) {
+                            let _id = $(this).data().itemId;
+                            denomIDs.push(_id);
+                        }
+                    })
+                    let denomOb = { DenomRangeId: denomIDs }
+                    param.DenomRangeIDs = JSON.stringify({ root: denomOb });
+
+                    param.Comm = $(this).parents("tr").find("._comm").val();
+                    param.AmtType = ($(this).parents("tr").find('.btn-toggle.amtType .active')).text() == 'PER' ? 0 : 1;
+                    param.CommType = ($(this).parents("tr").find('.btn-toggle.commType .active')).text() == 'C' ? 0 : 1;
+                    param.IsActive = ($(this).parents("tr").find('input[type=checkbox].isactive')).is(":checked") == true ? 1 : 0;
+                    param.CircleID = $("#ddlCircleChoice").val();
+                    param.OID = $("#ddlOptype").val();
+                    param.APIID = $('#hsapiid').val();
+                    debugger;
+                    callUpdate(param);
+                });
+            });
+    }
+    function callUpdate(param) {
+        preloader.load();
+        $.post('/Special-Incentive-Edit-APIID', { param: param })
+            .done(function (result) {
+                preloader.remove();
+
+                if (result.statuscode == 1) {
+                    an.title = result.statuscode == 1 ? 'Success' : 'Opps!';
+                    an.content = result.msg;
+                    an.alert(result.Statuscode);
+                    $('[data-role-id="' + param.RoleID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+
+                    refreshCallDenomFunc(this);
+                    refreshUpdateSavingPanelFunc(this);
+                }
+            });
+    }
+
+    function callUpdateDomID(param) {
+        preloader.load();
+        $.post('/Special-Domination-Update-APIID', { param: param })
+            .done(function (result) {
+                preloader.remove();
+
+                if (result.statuscode == 1) {
+                    an.title = result.statuscode == 1 ? 'Success' : 'Opps!';
+                    an.content = result.msg;
+                    an.alert(result.Statuscode);
+                    $('[data-role-id="' + param.RoleID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+
+                    refreshCallDenomFunc(this);
+                    refreshUpdateSavingPanelFunc(this);
+                }
+            });
+    }
+
+    function callUpdateGroupDomID(param) {
+        preloader.load();
+        $.post('/Special-Group-Domination-Update-APIID', { param: param })
+            .done(function (result) {
+                preloader.remove();
+
+                if (result.statuscode == 1) {
+                    an.title = result.statuscode == 1 ? 'Success' : 'Opps!';
+                    an.content = result.msg;
+                    an.alert(result.Statuscode);
+                    $('[data-role-id="' + param.RoleID + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+
+                    refreshCallDenomFunc(this);
+                    refreshUpdateSavingPanelFunc(this);
+                }
+            });
+    }
+</script>

@@ -1,0 +1,83 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.DTHChannelMap>
+@{
+
+}
+    <style>
+        .btn-maximize {
+            border: none;
+            background: none;
+        }
+
+        .fa-window-maximize, .fa-window-restore, .fa-rectangle-landscape {
+            float: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            line-height: 1;
+            height: 30px;
+            position: absolute;
+            top: 4px;
+            right: 37px;
+            color: gray;
+        }
+    </style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="mb-3 text-info">Package wise channels</h5>
+        <hr />
+    </div>
+    <div class="col-sm-12 table-responsive">
+        <table class="table table-bordered">
+            <thead class="bg-primary text-white">
+                <tr>
+                    <th>#</th>
+                    <th>Category</th>
+                    <th>Channels</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int i = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr data-Category-Id="@item.CategoryID" data-Package-Id="@item.PackageID">
+                            <td>@i</td>
+                            <td>@item.CategoryName</td>
+                            <td>
+                                <div class="row">
+                                    @foreach (var channels in item.Channels)
+                                    {
+                                        <div class="input-group-append float-left col-md mb-2">
+                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                <input type="checkbox" class="switch" id="chkChannel_@channels.ID" data-Channel-Id="@channels.ID" tabindex="2" @Html.Raw(channels.IsActive ? "checked=checked" : "")>
+                                                <label for="chkChannel_@channels.ID" class="font-weight-bold lbl">@channels.ChannelName</label>
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        i = i + 1;
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+      $('.btn-maximize').click(function () {
+        var _winCls = $(this).find('span').attr('class') == "fa fa-window-restore" ? "modal-lg" : "modal-xxl";
+        var _class = $(this).closest('.modal-dialog').attr('class').split(' ');
+        var _filterClass = _class[0] + " " + _class[1] + " " + _winCls;
+        $(this).closest('.modal-dialog').removeAttr('class').attr('class', _filterClass)
+        if (_winCls == "modal-xxl") {
+            $(this).find('span').removeAttr('class').attr('class', 'fa fa-window-restore');
+        }
+        else {
+            $(this).find('span').removeAttr('class').attr('class', 'fa fa-window-maximize');
+        }
+    })
+</script>

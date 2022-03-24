@@ -1,0 +1,151 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProductWithMaster
+@{
+    var master = Model.MasterProduct;
+    var detail = Model.ProductDetail;
+    int counter = 1;
+}
+
+@if (master.Any())
+{
+    foreach (var item in master)
+    {
+        <tr data-product-ID="@item.ProductID">
+            <td style="width:6%"><i class=" fa @Html.Raw(counter==1?"fa-times text-danger":"fa-plus text-success") pr-2 rowExpand @Html.Raw(counter==1? "IsExpendTrue":"IsExpendFalse")"></i>@counter</td>
+            <td><a class="btnEdit btn-link" href="javascript:void(0)">@item.ProductName</a></td>
+            <td class="rp-cust-text"><div>@Html.Raw(item.Description)</div></td>
+            <td>@item.WalletDeductionPerc</td>
+        </tr>
+        if (detail.Any() && counter == 1)
+        {
+            <tr class="expand bg-dark">
+                <td colspan="7">
+                    <div style="width:100%;max-height:210px;overflow:auto;">
+                        <table class="table table-bordered">
+                            <thead class="bg-purple text-white">
+                                <tr>
+                                    <th>#</th>
+                                    <th>ProductCode</th>
+                                    <th>Batch</th>
+                                    <th>Quantity</th>
+                                    <th>MRP</th>
+                                    <th>Discount</th>
+                                    <th>Commission</th>
+                                    <th>Description</th>
+                                    <th>Images</th>
+                                    <th>IsDeleted</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var d in detail)
+                                {
+                                    <tr data-productDetail-ID="@d.ProductDetailID" data-product-ID="@item.ProductID">
+                                        <td class="text-center align-middle">@d.VendorName</td>
+                                        <td class="text-center align-middle">@d.ProductCode</td>
+                                        <td class="text-center align-middle">@d.Batch</td>
+                                        <td class="text-center align-middle">@d.Quantity</td>
+                                        <td class="text-center align-middle">@d.MRP</td>
+                                        <td class="text-center align-middle">@d.Discount @Html.Raw(d.DiscountType ? "%" : "")</td>
+                                        <td class="text-center align-middle">@d.Commission @Html.Raw(d.CommissionType ? "%" : "")</td>
+                                        <td class="text-center align-middle">@Html.Raw(d.Description)</td>
+                                        <td class="text-center align-middle"><span class="text-info btnShowImage"><i class="fas fa-image"></i> Image</span></td>
+                                        <td class="text-center align-middle">
+                                            <span class="switch switch-sm">
+                                                <input type="checkbox" class="switch isDeleted" id="chbIsDeleted_@d.ProductDetailID" @Html.Raw(d.IsDeleted ? "checked=checked" : "") />
+                                                <label for="chbIsDeleted_@d.ProductDetailID" class="font-weight-bold lbl"></label>
+                                            </span>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        }
+        counter++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="5">No Data Found</td>
+    </tr>
+}
+<script>
+    $('.dropdown-toggle').dropdown();
+    $('table').fixTableHeader();
+    $('.rowExpand').unbind().click(e => {
+        let CollapsibleRow = $(e.target).closest('tr').next('tr.expand');
+        if ($(e.target).attr('class').indexOf("IsExpendTrue") > -1) {
+            $(e.target).removeClass('IsExpendTrue fa-times text-danger').addClass('IsExpendFalse fa-plus text-success')
+            CollapsibleRow.addClass('d-none');
+            return true
+        }
+        $('.rowExpand').removeClass('IsExpendTrue fa-times text-danger').addClass('IsExpendFalse fa-plus text-success');
+        $(e.target).removeClass('IsExpendFalse fa-plus text-success').addClass('IsExpendTrue fa-times text-danger');
+        $('tr.expand').addClass('d-none');
+        if (CollapsibleRow.attr('class') === undefined) {
+            preloader.load();
+            let ProductID = $(e.currentTarget).closest('tr').data().productId;
+            $.post('/_ProductDetail', { ProductID: ProductID })
+                .done(result => $(e.currentTarget).closest('tr').after(`<tr class="expand bg-dark"><td colspan="7">${result}</td></tr>`))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        CollapsibleRow.removeClass('d-none');
+    });
+
+    var showImages = (PID, PdetailId) => {
+        $.post('/ReadProductImages', { PID: PID, PdetailId: PdetailId }).done(result => {
+            let _html = `<div class="row">
+                            <div class="col-sm-12 text-center" style="height:380px">
+                              <div class="form-group"><img src="/Image/Products/${PID}/${result[0]}" class="img-fluid" id="imgLarge" style="width: 306px;"/>
+                        </div></div>`;
+            let _html1 = '';
+            for (let i = 0; i < result.length; i++) {
+                _html1 = _html1 + `<div class="col-sm-2 pr-0 pl-0 text-center"><img src="/Image/Products/${PID}/${result[i]}" class="img-fluid img-thumbnail btnImage" style="height:100px"/></div>`;
+            }
+            _html += _html1 + '</div>';
+            mdlA.id = "showImage";
+            mdlA.title = "Images";
+            mdlA.content = _html;
+            mdlA.modal(mdlA.size.large);
+            $('.btnImage').unbind().click(() => $('#imgLarge').attr('src', $(event.target).attr('src')));
+        })
+    };
+
+    $('.rowExpand:first').click();
+    $('.btnShowImage').unbind().click(() => {
+        let ele = $(event.target).closest('tr').data();
+        showImages(ele.productId, ele.productdetailId);
+    });
+
+    $('.switch.isDeleted').unbind().click(e => {
+        let _ele = $(e.currentTarget);
+        console.log(_ele.closest('tr').data())
+        let param = {
+            ProductDetailID: _ele.closest('tr').data().productdetailId,
+            IsDeleted: _ele.is(':checked')
+        };
+        $.post('/DeletedProductDetail', param)
+            .done(result => {
+                an.id = "alert1";
+                an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode)
+            });
+    });
+
+    $('.btnEdit').unbind().click(e => {
+        $.post('/Add-MasterProduct', { PID: $(e.currentTarget).closest('tr').data().productId }).done(result => {
+            mdlA.id = 'addProductWin';
+            mdlA.title = 'Master Product';
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.xlarge);
+        })
+    });
+
+</script>

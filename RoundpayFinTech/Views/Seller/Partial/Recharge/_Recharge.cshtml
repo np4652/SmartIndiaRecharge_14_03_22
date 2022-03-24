@@ -1,0 +1,1359 @@
+﻿@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using Fintech.AppCode.Model;
+@using RoundpayFinTech.AppCode.Model.ProcModel;
+@inject IHttpContextAccessor HttpContextAccessor
+@model RoundpayFinTech.AppCode.Model.ProcModel.ServicesPM
+@{
+    var list = new SelectList(Model.Detail, "OID", "Name");
+}
+@{
+    SellerDashboard sellerDashboard = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<SellerDashboard>
+
+    (SessionKeys.Service);
+    var _model = sellerDashboard.PackageCl;
+    var service_name = _model.Where(d => d.ServiceID == Model.OPType).Select(x => x.Name).ToList()[0];
+    var _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+
+}
+
+<style>
+    #opImg {
+        padding: 0.2rem 0.5rem !important;
+        background-color: #e9ecef !important;
+        border: 1px solid #ced4da !important;
+    }
+
+    .service-card .form-control {
+        height: 45px !important;
+    }
+
+    .input-group-text i {
+        font-size: 30px;
+        width: 26px;
+    }
+
+    #opImg img {
+        height: 35px !important;
+    }
+    .w-135{
+        width:135px!important;
+    }
+
+</style>
+<div class="col-md-12">
+    <div class="row">
+        <div class="@(Model.OPType == OPTypes.AEPS?"col-md-8":"col-md-6")">
+            <div class="card mt-1" id="usrContainer" style="margin-bottom:10px;min-height:300px;">
+                <div class="card-header mb-1" style="background:#fff;">
+                    <div class="row">
+                        <div class="col-lg-8 col-md-8 col-sm-8">
+                            <label class="text-bingo">@service_name</label><br>
+                            <small>Tell us your number and we will figure out the rest</small>
+                        </div>
+                        <div class="col-lg-4 col-md-4 col-sm-4">
+                            <div class="float-right">
+                                <input type="hidden" id="hidReferenceID" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                @if (@Model.OPType == OPTypes.Prepaid || @Model.OPType == OPTypes.FRCPrepaid)
+                {
+            <div class="card-body service-card">
+
+                <div>
+                    @Html.Label("txtMobileNo", "Mobile Number", new { @class = "lbl" })
+                    <div class="input-group mb-3">
+
+
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-mobile"></i></span>
+                        </div>
+
+                        @Html.TextBox("txtMobileNo", null, new { @type = "number", @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 1, @maxlength = "10", @oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" })
+                        <small id="MobileHelp" class="form-text text-danger d-none">Invalid Mobile Number</small>
+                    </div>
+
+                </div>
+                <div>
+                    @Html.Label("ddlOperator", "Choose Circle", new { @class = "lbl" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                        </div>
+
+                        <select aria-describedby="opHelp" class="form-control opSelect" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                            <option value="0"> :: Select Operator :: </option>
+                        </select>
+                        <small id="opHelp" class="form-text text-danger  d-none">Select Operator</small>
+                        @if (ApplicationSetting.IsRoffer)
+                        {<div class="input-group-append">
+                                <span class="input-group-text w-135">
+                                    <a class="lbl f-w-bold text-danger float-right w-100" id="roffer" style="cursor:pointer">Best Offer</a>
+                                </span>
+                            </div>}
+                    </div>
+                </div>
+                @*<div class="form-group">
+            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+            @if (ApplicationSetting.IsRoffer)
+            {
+                <a class="lbl f-w-bold m-b-6 text-danger float-right" id="roffer" style="cursor:pointer">Roffer</a>
+            }
+
+
+            <div class="input-group mb-1">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                </div>
+                <select aria-describedby="opHelp" class="form-control mt-1 ml-1 opSelect" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                    <option value="0"> :: Select Operator :: </option>
+                </select>
+            </div>
+            <small id="opHelp" class="form-text text-danger  d-none">Select Operator</small>
+        </div>*@
+                @{
+                    var circlelist = new SelectList(Model.Circles, "ID", "Circle");
+                    <div>
+                        @Html.Label("ddlCircle", "Choose Circle", new { @class = "lbl" })
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text"><i class="fas fa-globe"></i></span>
+                            </div>
+
+                            <select aria-describedby="circleHelp" class="form-control" id="ddlCircle" tabindex="1" asp-items="@circlelist">
+                                <option value="0"> :: Select Circle :: </option>
+                            </select>
+                            <small id="circleHelp" class="form-text text-danger d-none">Select Circle</small>
+                            <div class="input-group-append">
+                                <span class="input-group-text w-135">
+                                    <a class="lbl f-w-bold text-danger float-right w-100" id="Aplan" style="cursor:pointer">View Plan</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+
+                <div>
+                    @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                    <div class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                        </div>
+                        @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                        <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                        @if (ApplicationSetting.IsDenominationIncentive)
+                        {
+                            <div class="input-group-append">
+                                <span class="input-group-text">
+
+                                    <a class="lbl f-w-bold text-danger float-right" id="Cashback" style="cursor:pointer">View Cashback</a>
+
+
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @if (Model.IsDoubleFactor)
+                {
+                    <div class="">
+                        @Html.Label("txtSecKey", "Secure Key", new { @class = "lbl" })
+                        @Html.Password("txtSecKey", null, new { @class = "form-control", @placeholder = "Enter Security Key", @aria_describedby = "secureHelp", @tabindex = 1, @autocomplete = "new-password" })
+                        <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+                    </div>
+                }
+                <div class="form-group">
+                    <button class="btn btn-outline-dark" id="btnPay">Payment</button>
+                    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                </div>
+            </div>
+                }
+                else if (@Model.OPType == OPTypes.Postpaid && Model.ServiceID == ServiceType.Recharge)
+                {
+                    <div class="card-body service-card">
+                        <div>
+                            @Html.Label("txtMobileNo", "Mobile Number", new { @class = "lbl" })
+                            <div class="input-group mb-3">
+
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-mobile"></i></span>
+                                </div>
+
+                                @Html.TextBox("txtMobileNo", null, new { @type = "number", @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 1, @maxlength = "10", @oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" })
+                                <small id="MobileHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+
+                            </div>
+                            <small id="lblremark" class="form-text text-dark " style="margin-top:15PX ;margin-bottom:15px"></small>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+                            <img class="lbl f-w-bold m-b-6 text-danger float-right" id="imgIsBPPS" style="height:20px" src="/images/avatar/bharat-billpay.png" />
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                                </div>
+                                <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                                    <option value="0"> :: Select Operator :: </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("txtAmount", "Amount", new { @class = "lbl", @ID = "removelbl" })
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                </div>
+                                @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                                <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                            </div>
+                        </div>
+
+                        @if (Model.IsDoubleFactor)
+                        {
+                            <div class="form-group">
+                                @Html.Label("txtSecKey", "Secure Key", new { @class = "lbl" })
+                                @Html.Password("txtSecKey", null, new { @class = "form-control", @placeholder = "Enter Security Key", @aria_describedby = "secureHelp", @tabindex = 1, @autocomplete = "new-password" })
+                                <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <button class="btn btn-outline-dark" id="btnPay">Payment</button>
+                            <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                        </div>
+                    </div>
+                }
+                else if (@Model.OPType == OPTypes.DTH || @Model.OPType == OPTypes.DTHSR)
+                {
+                    <div class="card-body service-card">
+                        <div class="form-group">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" style="height: 37px;" /></span>
+                                </div>
+                                <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                                    <option value="0"> :: Select Operator :: </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("txtMobileNo", "Mobile Number", new { @class = "lbl" })
+                            @if (ApplicationSetting.IsHeavyRefresh)
+                            {
+                                <a class="lbl f-w-bold m-b-6 text-danger float-right" id="heavyRefresh" style="cursor:pointer">Heavy Refresh</a>
+                                <span class="lbl f-w-bold m-b-6 text-danger float-right">&nbsp; | &nbsp;</span>
+                            }
+                            @if (ApplicationSetting.IsDTHInfo)
+                            {
+                                <a class="lbl f-w-bold m-b-6 text-danger float-right" id="dthinfo" style="cursor: pointer">DTH Info</a>
+                            }
+                            <div class="input-group mb-3">
+
+
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fa fa-mobile"></i></span>
+                                </div>
+
+                                @Html.TextBox("txtMobileNo", null, new { @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 1, @maxlength = "20", @oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" })
+                                <small id="MobileHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+                            </div>
+
+                            <small id="lblremark" class="form-text text-dark " style="margin-top:15PX ;margin-bottom:15px"></small>
+                        </div>
+                        <div>
+                            @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                            <a class="lbl f-w-bold m-b-6 text-danger float-right" id="dthPlan" style="cursor:pointer"> View Plan</a>
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-rupee-sign"></i></span>
+                                </div>
+                                @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                                <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                                @if (ApplicationSetting.IsDenominationIncentive)
+                                {
+                                    <div class="input-group-append">
+                                        <span class="input-group-text">
+
+                                            <a class="lbl f-w-bold m-b-6 text-danger float-right" id="Cashback" style="cursor:pointer">View Cashback</a>
+
+
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+
+                        @if (Model.IsDoubleFactor)
+                        {
+                            <div class="form-group">
+                                @Html.Label("txtSecKey", "Secure Key", new { @class = "lbl" })
+                                @Html.Password("txtSecKey", null, new { @class = "form-control", @placeholder = "Enter Security Key", @aria_describedby = "secureHelp", @tabindex = 1, @autocomplete = "new-password" })
+                                <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <button class="btn btn-outline-dark" id="btnPay">Payment</button>
+                            <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                        </div>
+                    </div>
+                }
+                else if (@Model.OPType == OPTypes.PublicEServices)
+                {
+                    <div class="card-body service-card">
+                        <div class="form-group">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                                </div>
+                                <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlpes" tabindex="1" asp-items="@list">
+                                    <option value="0"> :: Select Operator :: </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="PESFields"></div>
+                    </div>
+                }
+                else if (Model.OPType == OPTypes.DMR && !ApplicationSetting.IsDMTWithPIPE)
+                {
+                    <div class="card-body service-card">
+                        <div class="form-horizonatl">
+                            <div class="form-group row">
+                                <label class="lbl custom-control-label text-right col-md-3 pt-2" for="txtSearch">Sender Number</label>
+                                <div class="col-md-7 mr-0">
+                                    <input aria-describedby="txtSearch" onkeyup="GetSender()" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+
+                                    @if (Model.Detail != null)
+                                    {
+                                        @if (Model.Detail.Any())
+                                        {
+                                            var e = Model.Detail.ElementAt(0);
+                                            if (e != null)
+                                            {
+                                                <small id="dmton_@e.OID" class="d-none"></small>
+                                            }
+                                        }
+                                    }
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                    <input type="hidden" id="hidSenderID" value="" class="d-none" />
+                                </div>
+                                <div class=" col-md-2 ml-0">
+                                    <span class="btn btn-danger d-none" id="btnKYC">DoKYC</span>
+                                </div>
+                            </div>
+                            <div id="DivCtDetail" class="row" style="display:none">
+                                <div class="col-md-10">
+                                    <div class="table-responsive-sm">
+                                        <table class="table table-bordered">
+                                            <thead class="cus_table_head">
+                                                <tr>
+                                                    <th>Sender Name</th>
+                                                    <th>Remaining Limit</th>
+                                                    <th>Total Limit</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="cus_table_body">
+                                                <tr>
+                                                    <td><span class="count_top" id="lblCtName"></span></td>
+                                                    <td><span class="count_top" id="lblCtWallet"></span></td>
+                                                    <td><span class="count_top" id="lblCtLimit"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <button id="btnNew" class="btn btn-primary btn-sm cus-add-btn" onclick="AddBene()">Add</button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive" id="DivbeniList">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (Model.OPType == OPTypes.DMR && ApplicationSetting.IsDMTWithPIPE)
+                {
+                    <div class="card-body service-card">
+                        <div class="form-horizonatl">
+                            <div class="form-row mb-3">
+                                @if (list.Count() == 1)
+                                {
+                                    <select aria-describedby="helpOp" class="form-control mt-1 ml-3 d-none pipedmt" id="ddlOperator" tabindex="1" asp-items="@list" data-isdmt="true" data-iscallOB="true">
+                                    </select>
+                                }
+                                else
+                                {
+                                    <div class="col">
+                                        <label for="inputEmail4">Select DMT Operator</label>
+                                        <label class="lbl f-w-bold m-b-6 float-left" for="ddlOperator"></label>
+                                        <div class="input-group">
+                                            <select aria-describedby="helpOp" class="form-control" id="ddlOperator" tabindex="1" asp-items="@list" data-isdmt="true" data-iscallOB="true">
+                                            </select>
+                                        </div>
+                                    </div>
+                                }
+                                <div class="col">
+                                    <label for="txtSearch">Sender Number</label>
+                                    <label for="txtSearch" class="cursor-pointer float-right text-info d-none" id="btnKYC" data-toggle="tooltip" data-placement="top" title="DO KYC">DO KYC</label>
+                                    <input aria-describedby="txtSearch" maxlength="10" onkeyup="GetSenderP()" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="number" oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" value="" />
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidRemain" value="0" />
+                                    <input type="hidden" id="hidTotal" value="0" />
+                                    <input type="hidden" id="hidIsNotchecked" value="0" />
+                                    <input type="hidden" id="hidTrID" value="" />
+                                    <input type="hidden" id="hidSenderID" value="" />
+                                    <input type="hidden" id="hidIsEKYC" value="false" />
+                                </div>
+                            </div>
+                            <div id="DivCtDetail" class="row" style="display:none">
+                                <div class="col-md-10">
+                                    <div class="table-responsive-sm">
+                                        <table class="custom table table-bordered">
+                                            <thead class="cus_table_head">
+                                                <tr>
+                                                    <th>Sender Name</th>
+                                                    <th>Remaining Limit</th>
+                                                    <th>Total Limit</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="cus_table_body">
+                                                <tr>
+                                                    <td><span class="count_top" id="lblCtName"></span></td>
+                                                    <td><span class="count_top" id="lblCtWallet"></span></td>
+                                                    <td><span class="count_top" id="lblCtLimit"></span></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <span id="btnNew" class="btn btn-primary btn-sm cus-add-btn" onclick="AddBeneP()">Add</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="table-responsive" id="DivbeniList">
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (@Model.OPType == OPTypes.AEPS)
+                {
+                    <div class="card-body service-card" id="aepsinterface">
+                        <span class="text-warning text-center h1">Welcome to AEPS service</span>
+                        <br />
+                        <br />
+                        @{
+                            var IsOp = false;
+                        }
+                        @if (Model.Detail != null)
+                        {
+                            @if (Model.Detail.Any())
+                            {
+                                var e = Model.Detail.ElementAt(0);
+                                if (e != null)
+                                {
+                                    IsOp = true;
+
+                                    <small id="aeps_@e.OID" class="text-warning">Keep patience we are verifying you...</small>
+                                }
+                            }
+                        }
+                        @if (!IsOp)
+                        {
+                            <small class="text-danger ">AEPS service is temporarily down</small>
+                        }
+                    </div>
+                }
+                else if (@Model.OPType == OPTypes.Train)
+                {
+                    <div class="card-body service-card" id="railinterface">
+                        <span class="text-warning text-center h1">Welcome to Railway service</span>
+                        <br />
+                        <br />
+                        @{
+                            var IsOp = false;
+                        }
+                        @if (Model.Detail != null)
+                        {
+                            @if (Model.Detail.Any())
+                            {
+                                var e = Model.Detail.ElementAt(0);
+                                if (e != null)
+                                {
+                                    IsOp = true;
+
+                                    <small id="aeps_@e.OID" class="text-warning">Keep patience we are verifying you...</small>
+                                }
+                            }
+                        }
+                        @if (!IsOp)
+                        {
+                            <small class="text-danger ">Railway service is temporarily down</small>
+                        }
+                    </div>
+                }
+                else if (@Model.OPType == OPTypes.PSA)
+                {
+                    <div class="card-body service-card" id="psaCard">
+                        <div class="row mb-1">
+                            <div class="col-md-7 col-sm-7 col-xs-7">
+                                <button type="button" id="btnPurchaseToken" class="btn btn-success">Purchage Token</button>
+                                <button type="button" id="ViewCrediential" class="btn btn-danger">View Crediential</button>
+                                @{
+                                    var IsOp = false;
+                                }
+                                @if (Model.Detail != null)
+                                {
+                                    @if (Model.Detail.Any())
+                                    {
+                                        var e = Model.Detail.ElementAt(0);
+                                        if (e != null)
+                                        {
+                                            IsOp = true;
+                                            <p>
+                                                <small id="pes_@e.OID">Keep patience we are verifying you...</small>
+                                            </p>
+                                            <input type="hidden" id="spHidden" data-psaid="" />
+                                        }
+                                    }
+                                }
+                                @if (!IsOp)
+                                {
+                                    <p>
+                                        <span class="text-danger h3">PSA service is temporarily down</span>
+                                    </p>
+                                }
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2 pull-right">
+                                <img src="/Image/icon/panimg.jpg" style="width:230px;">
+                            </div>
+                        </div>
+                        <div id="psaSubView"></div>
+                        <div class="row mb-1">
+                            <div class="col-md-12 col-sm-12 col-xs-12">
+                                <strong>Terms &amp; Conditions</strong><br>
+                                PSA shall take written approval from UTI before organizing any PAN Card camp.
+                                <ul class="anclnk">
+                                    <li>
+                                        PSA shall not charge any extra fees/convenience charges for PAN card application.
+                                    </li>
+
+                                    <li>
+                                        PSA Shall not issue any hand written/self-designed/created receipt to customer.
+                                    </li>
+                                    <li>
+                                        Proper process has to be followed while applying PAN card. (Refer manual)
+                                    </li>
+                                    <li>
+                                        PSA shall not be blacklisted by any bank, government, private organizations.
+                                    </li>
+                                    <li>
+                                        PSA should not have any criminal record.
+                                    </li>
+                                    <li>
+                                        PSA Is authorized to collect PAN applications at Rs.107 (inclusive of GST)
+                                        You may download any one of the following app (from google store) in your Smart Phone at your own discretion.
+                                        Cam Scanner
+                                        Smart Docs Scanner
+                                        Convert JPG to PDF &amp; Scanner
+                                    </li>
+                                    <li>
+                                        To merge Two or More .PDF pages use following links
+                                    </li>
+                                    <li>
+                                        <a href="https://www.pdfmerge.com">https://www.pdfmerge.com</a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.pdfjoiner.com">http://pdfjoiner.com</a>
+
+                                    </li>
+                                    <li>
+                                        Click the photo of following customer documents, using above app and send it to your own email in .PDF format
+                                        PAN Application form, signed by customer with his photograph
+                                        ID proof
+                                        Address Proof
+                                        Date of Birth document
+                                    </li>
+                                    <li>
+                                        Click photo of following documents in .JPEG/.JPG format with defined specification and send it to your email address
+                                        Photo Scanning 300 dpi,Colour,213 X 213 px (Size:less than 30 kb)
+                                        Signature scanning 600 dpi black and white (Size:less than 60 kb)
+                                    </li>
+                                    <li>
+                                        To convert the scanned image as per above specification you may use following links or any software like photoshop etc or link as per your wish
+                                    </li>
+                                    <li>
+                                        <a href="https://online-converting.com/image">https://online-converting.com/image</a>
+                                    </li>
+                                    <li>
+                                        <a href="https://www.imgonline.com.ua/eng/resize-image.php">https://www.imgonline.com.ua/eng/resize-image.php</a>
+                                    </li>
+                                    <li>Save all of the above documents in your computer and Upload on UTIISL website</li>
+                                </ul>
+                            </div>
+
+
+                        </div>
+                    </div>
+                }
+                else if (@Model.OPType == OPTypes.HDBOX || @Model.OPType == OPTypes.SDBOX)
+                {
+                    <div class="card-body service-card">
+                        <div class="form-group">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" style="height: 37px;" /></span>
+                                </div>
+                                <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlDTHOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                                    <option value="0"> :: Select Operator :: </option>
+                                </select>
+                            </div>
+                            <small id="helpOp" class="form-text text-danger  d-none">Invalid</small>
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlPackage">Choose Package</label>
+                            <label class="float-right d-none" id="bp">View </label>
+                            <label class="float-right d-none" id="pkgDetail"> Channels ||</label>
+                            <label class="float-right d-none" id="pkgDiscrip"> Discription  || </label>
+                            <select class="form-control" id="ddlPackage" aria-describedby="helpPackage">
+                                <option value="0"> :: Select Package :: </option>
+                            </select>
+                            <small id="helpPackage" class="form-text text-danger  d-none"></small>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label for="txtFullName"> Name</label>
+                                @Html.TextBox("txtFullName", null, new { @class = "form-control ", @placeholder = "Enter  Name", @aria_describedby = "FullNameHelp", @tabindex = 1 })
+                                <small id="FullNameHelp" class="form-text text-danger  d-none">Invalid</small>
+                                <small id="lblremark" class="form-text text-dark "></small>
+                            </div>
+                            <div class="col-sm-6">
+                                <label for="txtSurname">Surname</label>
+                                @Html.TextBox("txtSurname", null, new { @class = "form-control ", @placeholder = "Enter  Surname", @aria_describedby = "FullSurNameHelp", @tabindex = 1 })
+                                <small id="FullSurNameHelp" class="form-text text-danger  d-none">Invalid</small>
+                                <small id="lblremark" class="form-text text-dark "></small>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label for="txtMobileNo">Mobile Number</label>
+                                @Html.TextBox("txtMobileNo", null, new { @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 1 })
+                                <small id="MobileHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+                                <small id="lblremark" class="form-text text-dark "></small>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="lbl" for="ddlgender" id="Gder">Choose Gender</label>
+                                <select class="form-control" tabindex="2" id="ddlgender" aria-describedby="helpgender">
+                                    <option value="0"> :: Select Gender :: </option>
+                                    <option value="Male"> :: Male :: </option>
+                                    <option value="Female"> :: Female :: </option>
+                                </select>
+                                <small id="helpgender" class="form-text text-danger  d-none"></small>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <label for="txtPinCode">PIN Code</label>
+                                @Html.TextBox("txtPinCode", null, new { @class = "form-control ", @placeholder = "Enter PIN Code", @aria_describedby = "PINCodeHelp", @tabindex = 1 })
+                                <small id="PINCodeHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="lbl f-w-bold m-b-6 float-left" for="ddlpincodearea">Choose Pin Code Area</label>
+                                <select class="form-control" id="ddlpincodearea" aria-describedby="helparea">
+                                    <option value="0"> :: Select Area :: </option>
+                                </select>
+                                <small id="helparea" class="form-text text-danger  d-none"></small>
+
+                            </div>
+
+                        </div>
+                        <div class="form-group">
+                            <label class="lbl" for="txtAddress"> Installation Address</label>
+                            <textarea class="form-control" id="txtAddress" aria_describedby="helpaddress"></textarea>
+                            <small id="helpaddress" class="form-text text-danger  d-none">Invalid Adddress</small>
+                        </div>
+
+                        @if (Model.IsDoubleFactor)
+                        {
+                            <div class="form-group">
+                                @Html.Label("txtSecKey", "Secure Key", new { @class = "lbl" })
+                                @Html.Password("txtSecKey", null, new { @class = "form-control", @placeholder = "Enter Security Key", @aria_describedby = "secureHelp", @tabindex = 1, @autocomplete = "new-password" })
+                                <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+                            </div>
+                        }
+                        <div class="form-group">
+                            <button class="btn btn-outline-dark" id="btnPayDTH" onclick="DorechForDTH('Payment')">Payment</button>
+                            <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                        </div>
+                    </div>
+                }
+                else if (Model.OPType == OPTypes.BikeInsurance || Model.OPType == OPTypes.FourWheelerInsurance)
+                {
+                    <div class="card-body service-card">
+                        <span class="text-warning text-center h1">Welcome to General Insurance service</span>
+                        <br />
+                        <br />
+                        @{
+                            var IsOp = false;
+                        }
+                        @if (Model.Detail != null)
+                        {
+                            @if (Model.Detail.Any())
+                            {
+                                var e = Model.Detail.ElementAt(0);
+                                if (e != null)
+                                {
+                                    IsOp = true;
+
+                                    <small id="insur_@e.OID" class="text-warning">You will be redirecting soon...</small>
+                                }
+                            }
+                        }
+                        @if (!IsOp)
+                        {
+                            <small class="text-danger ">Service is temporarily down</small>
+                        }
+                    </div>
+                }
+                else if (Model.OPType == OPTypes.UPIPayment)
+                {
+                    <div class="card-body service-card">
+                        <div class="form-group">
+                            @Html.Label("txtVPA", "UPI ID", new { @class = "lbl" })
+                            @Html.TextBox("txtVPA", null, new { @type = "text", @class = "form-control ", @placeholder = "Enter UPI ID or VPA", @aria_describedby = "MobileHelp", @tabindex = 1 })
+                            <small id="MobileHelp" class="form-text text-danger  d-none">Invalid UPI ID</small>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("txtBeneName", "Beneficiary Name", new { @class = "lbl" })
+                            @Html.TextBox("txtBeneName", null, new { @type = "text", @class = "form-control ", @placeholder = "Enter Beneficary Name", @aria_describedby = "BeneHelp", @tabindex = 1 })
+                            <small id="BeneHelp" class="form-text text-danger d-none">Invalid BeneficaryName</small>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                            @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                            <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-outline-dark" id="btnUPIPay">Payment</button>
+                        </div>
+                    </div>
+                }
+                else if (Model.OPType == OPTypes.DTHConnection || Model.OPType == OPTypes.DTHComplain)
+                {
+                    <div class="container mt-3">
+                        <ul class="nav nav-tabs">
+                            <li class="nav-item">
+                                <a class="@(Model.OPType == OPTypes.DTHConnection ? "nav-link active" : "nav-link")" data-toggle="tab" href="#DTHConn" style="color:#17a2b8" id="Dthconn">DTH Connection</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="@(Model.OPType == OPTypes.DTHComplain ? "nav-link active" : "nav-link")" data-toggle="tab" href="#DTHComp" style="color:#17a2b8" id="Dthcomplain">DTH complain</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-toggle="tab" href="#DTHOffer" style="color:#17a2b8" id="DthOffer">Offer</a>
+                            </li>
+                        </ul>
+                        <!-- Tab panes -->
+
+
+                        <div class="tab-content card-body service-card">
+                            @if (Model.OPType == OPTypes.DTHConnection)
+                            {
+                                <div id="DTHConn" class="@(Model.OPType == OPTypes.DTHConnection ? "container tab-pane active" : "container tab-pane fade")">
+                                    <br>
+                                    <div class="input-group mb-1">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                                        </div>
+                                        <select aria-describedby="opHelp" class="form-control mt-1 ml-1 opSelect" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                                            <option value="0"> :: Select Operator :: </option>
+                                        </select>
+                                    </div>
+                                    <small id="opHelp" class="form-text text-danger  d-none">Select Operator</small>
+                                    <div class="form-group">
+                                        @Html.Label("txtname", "Name", new { @class = "lbl" })
+                                        @Html.TextBox("txtname", null, new { @type = "text", @class = "form-control ", @placeholder = "Enter Name", @aria_describedby = "NameHelp", @tabindex = 1 })
+                                        <small id="NameHelp" class="form-text text-danger  d-none">Please Enter Name</small>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.Label("txtmobile", "Mobile No", new { @class = "lbl" })
+                                        @Html.TextBox("txtmobile", null, new { @type = "number", @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 1, @maxlength = "10", @oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" })
+                                        <small id="MobileHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-outline-dark" id="btnDTHConn">DTH Connection</button>
+                                    </div>
+                                </div>
+                            }
+
+                            @if (Model.OPType == OPTypes.DTHComplain)
+                            {
+                                <div id="DTHComp" class="@(Model.OPType == OPTypes.DTHComplain ? "container tab-pane active" : "container tab-pane fade")">
+                                    <br>
+                                    <div class="input-group mb-1">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                                        </div>
+                                        <select aria-describedby="opHelp" class="form-control mt-1 ml-1 opSelect" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="false">
+                                            <option value="0"> :: Select Operator :: </option>
+                                        </select>
+                                    </div>
+                                    <small id="opHelp" class="form-text text-danger  d-none">Select Operator</small>
+                                    <div class="form-group">
+                                        @Html.Label("txtnameC", "Name", new { @class = "lbl" })
+                                        @Html.TextBox("txtnameC", null, new { @type = "text", @class = "form-control ", @placeholder = "Enter Name", @aria_describedby = "NameCHelp", @tabindex = 1 })
+                                        <small id="NameCHelp" class="form-text text-danger  d-none">Please Enter Name</small>
+                                    </div>
+                                    <div class="form-group">
+                                        @Html.Label("txtmobileC", "Mobile No", new { @class = "lbl" })
+                                        @Html.TextBox("txtmobileC", null, new { @type = "number", @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileCHelp", @tabindex = 1, @maxlength = "10", @oninput = "javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);" })
+                                        <small id="MobileCHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+                                    </div>
+
+                                    <div class="form-group">
+                                        @Html.Label("txtRemark", "Remark", new { @class = "lbl" })
+                                        @Html.TextBox("txtRemark", null, new { @class = "form-control ", @placeholder = "Enter Remark", @aria_describedby = "RemarkHelp", @tabindex = 1 })
+                                        <small id="RemarkHelp" class="form-text text-danger  d-none">Please Enter Remark</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <button class="btn btn-outline-dark" id="btnDTHComp">DTH Complain</button>
+                                    </div>
+                                </div>
+                            }
+
+                            <div id="DTHOffer" class="container tab-pane fade">
+                                <br>
+                                <div class="table-responsive-sm">
+                                    <table class="table table-bordered table-striped table-responsive-sm" id="__LOID">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th>#</th>
+                                                <th class="text-center">
+                                                    <input type='file' id="imgOperator" class="d-none UploadImage" />
+                                                    <label for="imgOperator" class="btn btn-secondary btn-sm">Operator Banner</label>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (Model.OPType == OPTypes.CouponVoucher)
+                {
+                    <div class="card-body service-card row">
+                        <div class="form-group col-md-12">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+                            <img class="lbl f-w-bold text-danger float-right" id="imgIsBPPS" style="max-height: 89px; margin-top: -81px; margin-right: -17px;" src="/images/avatar/bharat-billpay.png" />
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                                </div>
+                                <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlOperator_Voc" tabindex="1" asp-items="@list" data-iscallOB="true">
+                                    <option value="0"> :: Select Operator :: </option>
+                                </select>
+                                <small id="helpOp" class="form-text text-danger  d-none">Invalid Customer</small>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6" id="fg-txtAmount">
+                            @Html.Label("txtTo", "To", new { @class = "lbl" })
+                            @*<a class="lbl f-w-bold m-b-6 text-danger float-right" id="lnkSampleImg" target="_blank">View Sample Bill</a>*@
+                            @Html.TextBox("txtTo",_lr.EmailID, new { @class = "form-control ", @placeholder = "Enter Email.", @aria_describedby = "MobileHelp", @tabindex = 1 })
+                            <small id="MobileHelp" class="form-text text-danger  d-none"></small>
+                        </div>
+
+
+                        <div class="form-group  col-md-6">
+                            @Html.Label("txtFrom", "From", new { @class = "lbl" })
+                            @Html.TextBox("txtFrom",_lr.Name, new { @class = "form-control ", @placeholder = "Name", @aria_describedby = "CustomerHelp", @tabindex = 1 })
+                            <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Customer</small>
+                        </div>
+
+                        <div class="form-group  col-md-12">
+                            @Html.Label("message", "Message", new { @class = "lbl" })
+                            @Html.TextArea("message", null, new { @class = "form-control ", @placeholder = "Message", @aria_describedby = "CustomerHelp", @tabindex = 1, @maxlength = "200" })
+                            <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Customer</small>
+                        </div>
+
+                        <div id="DivCouponVocher" class="form-group col-md-12">
+
+                            @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                            @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                            <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+
+
+                        </div>
+                        <div class="form-group col-md-6">
+                            @Html.Label("lblQuantity", "Quantity", new { @class = "lbl" })
+                            @Html.TextBox("txtQuantity", null, new { @class = "form-control ", @value = 1, @placeholder = "Quantity", @aria_describedby = "CustomerHelp1", @tabindex = 1, onkeypress = "return isNumberwithoutdecimal(event)" })
+                            <small id="CustomerHelp1" class="form-text text-danger  d-none">Invalid Customer</small>
+                        </div>
+
+
+                        <div class="form-group col-md-12 mt-3">
+                            <button class="btn btn-outline-dark" id="btnPay_coupon">Submit</button>
+                            <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="card-body service-card">
+                        <div class="form-group">
+                            <label class="lbl f-w-bold m-b-6 float-left" for="ddlBankName">Choose Operator</label>
+                            <img class="lbl f-w-bold text-danger float-right" id="imgIsBPPS" style="max-height: 89px; margin-top: -81px; margin-right: -17px;" src="/images/avatar/bharat-billpay.png" />
+                            <div class="input-group mb-1">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text" id="opImg"><img src="/Image/operator/0.png" /></span>
+                                </div>
+                                <select aria-describedby="helpOp" class="form-control mt-1 ml-3" id="ddlOperator" tabindex="1" asp-items="@list" data-iscallOB="true">
+                                    <option value="0"> :: Select Operator :: </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="fg-txtAmount">
+                            @Html.Label("txtMobileNo", "Mobile Number", new { @class = "lbl" })
+                            <a class="lbl f-w-bold m-b-6 text-danger float-right" id="lnkSampleImg" target="_blank">View Sample Bill</a>
+                            @Html.TextBox("txtMobileNo", null, new { @class = "form-control ", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 1 })
+                            <small id="MobileHelp" class="form-text text-dark "></small>
+                        </div>
+                        <div id="DivOpOption"></div>
+                        <div id="divCust">
+                            <div class="form-group">
+                                @Html.Label("txtCust", "Customer Mobile Number", new { @class = "lbl" })
+                                @Html.TextBox("txtCust", null, new { @class = "form-control ", @placeholder = "Enter Customer Number", @aria_describedby = "CustomerHelp", @tabindex = 1 })
+                                <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Customer</small>
+                            </div>
+                        </div>
+
+                        <div class="card" id="billfetchdiv">
+                            <div class="PDAx d-none">
+                                <div class="_1sdE">
+                                    <a>Consumer Details<i class="icon-ArrowRight _3pMZ"></i></a>
+                                </div>
+                                <div class="_213c" style="font-size: larger;">
+                                    <div class="container d-none" id="dv_BillerID">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Biller ID</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+                                    <div class="container" id="dv_CName">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Name</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+                                    <div class="container" id="dv_DueDate">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Due Date</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+                                    <div class="container" id="dv_BillNo">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Bill Number</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+                                    <div class="container" id="dv_BillDate">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Bill Date</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+                                    <div class="container d-none" id="dv_BillPeriod">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Bill Period</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+                                    <div class="container d-none" id="dv_BillMonth">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">Bill Month</div>
+                                            <span class="col-md-8"></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="container d-none" id="dv_BPaymentMode">
+                                        <div class="row">
+                                            <div class="col-md-4" style="padding-left:0">PaymentMode</div>
+                                            <span class="col-md-8"><select class="form-control-sm" id="ddlBPayModes"></select></span>
+                                        </div>
+                                    </div>
+                                    <div class="container" id="dv_DateSelection" style=" background:white; margin-top: 2px;">
+
+                                    </div>
+                                    <div class="container" id="dv_AmountSelection" style=" background:white; margin-top: 2px;">
+                                    </div>
+                                    <div class="container" id="dv_AInfo" style=" background:white; margin-top: 6px;">
+                                    </div>
+                                </div>
+                            </div>
+                            <span id="showBillMsg" class="text-danger font-weight-bold"></span>
+                        </div>
+                        <div class="form-group">
+                            @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                            @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                            <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                        </div>
+                        @if (Model.IsDoubleFactor)
+                        {
+                            <div class="form-group">
+                                @Html.Label("txtSecKey", "Secure Key", new { @class = "lbl" })
+                                @Html.Password("txtSecKey", null, new { @class = "form-control", @placeholder = "Enter Security Key", @aria_describedby = "secureHelp", @tabindex = 1, @autocomplete = "new-password" })
+                                <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+                            </div>
+                        }
+                        <div class="form-group mt-3">
+                            <button class="btn btn-outline-dark" id="btnPay">Payment</button>
+                            <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="@(Model.OPType == OPTypes.AEPS?"col-md-4":"col-md-6")">
+            <div class="card mt-1 scroll_sec" id="DivTopFive" style="@(Model.OPType == OPTypes.AEPS?"height:81vh;":"height:75vh;")overflow-y: scroll;"></div>
+        </div>
+    </div>
+</div>
+<style>
+    .anclnk a {
+        color: #b30000
+    }
+    /* width */
+    .scroll_sec::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    /* Track */
+    .scroll_sec::-webkit-scrollbar-track {
+        box-shadow: inset 0 0 5px grey;
+        border-radius: 10px;
+    }
+
+    /* Handle */
+    .scroll_sec::-webkit-scrollbar-thumb {
+        background: #808080;
+        border-radius: 10px;
+    }
+
+        /* Handle on hover */
+        .scroll_sec::-webkit-scrollbar-thumb:hover {
+            background: #808080;
+        }
+</style>
+
+<script>
+        TopFive(@(Model.OPType));
+
+
+    $('#ddlDTHOperator').change(e => _bindDTHPackage($(e.currentTarget).val()));
+    $('#txtPinCode').on('keyup', function () {
+                                var val = $('#txtPinCode').val();
+                                if (val.length >= 6)
+                                    _PincodeArea($('#txtPinCode').val());
+                            });
+                            var _PincodeArea = function () {
+        $.post('/bind-PinCodeArea', { Pincode: $('#txtPinCode').val() })
+            .done(result => {
+             if (result.length > 0) {
+                    $('#ddlpincodearea').empty().append('<option value="0"> :: Select Area :: </option>');
+                 for (var i = 0; i < result.length; i++) {
+                        $('#ddlpincodearea').append(`<option data-Item-Detail="${result[i].area}" data-Item-Hours="${result[i].reachInHour}" value="${result[i].id}">${result[i].area} </option>`);
+
+
+                    }
+                    $('#ddlpincodearea').change(e => {
+                        $('.expectedTime').remove();
+                        $(e.currentTarget).after(`<div class="pl-2 text-monospace text-primary expectedTime"><strong>Expected  Installation  : ${$('#ddlpincodearea option:selected').data().itemHours} hours</strong></div>`)
+                    })
+                }
+            })
+    }
+    var _bindDTHPackage = OID => {
+        $.post('/bind-DTH-Package', { OID: OID })
+            .done(result => {
+             if (result.length > 0) {
+                    $('#ddlPackage').empty().append('<option value="0"> :: Select Package :: </option>');
+
+                 for (var i = 0; i < result.length; i++) {
+                        $('#ddlPackage').append(`<option data-Item-Detail="${result[i].packageMRP}|${result[i].bookingAmount}|${result[i].validity}" value="${result[i].id}">${result[i].packageName} <span class="text-info text-monospace pull-right">[MRP: Rs.${result[i].packageMRP} | Channels: ${result[i].channelCount}]</span></option>`);
+                    }
+                }
+            })
+    };
+                            var DorechForDTH = function () {
+
+        let secKey = '';
+                            let ct = {
+
+            name: $('#txtFullName'), surname: $('#txtSurname'), dthOp: $('#ddlDTHOperator'), pack: $('#ddlPackage'), btn: $('#btnPayDTH'), mob: $('#txtMobileNo'), gender: $('#ddlgender'), address:
+                $('#txtAddress'), pin: $('#txtPinCode'), pincodearea: $('#ddlpincodearea'), txtSecKey: $('#txtSecKey')
+        };
+
+                            btnLdr.Start(ct.btn, 'Requesting...');
+                            let len = 10, lenMax = 12;
+                            var isValidLength = ct.mob.val().length >= len && (ct.mob.val().length <= lenMax || lenMax == 0)
+        var IsE = {
+            mob: !isValidLength,
+            pin: (ct.pin.val() === null || !$v.$numOnly(ct.pin.val())),
+            pincodearea: ct.pincodearea.val() === null || ct.pincodearea.val() == 0,
+            dthOp: ct.dthOp.val() === null || ct.dthOp.val() == 0,
+            gender: ct.gender.val() === null || ct.gender.val() == 0,
+            pack: ct.pack.val() === null || ct.pack.val() == 0,
+            name: ct.name.val() === ct.name.val() == null || ct.name.val() == '' ? true : false,
+            surname: ct.surname.val() === ct.surname.val() == null || ct.surname.val() == '' ? true : false,
+            address: ct.address.val() === ct.address.val() == null || ct.address.val() == '' ? true : false,
+            txtSecKey: ct.txtSecKey.val() === undefined ? false : (ct.txtSecKey.val() == null || ct.txtSecKey.val() == '' ? true : false)
+        }
+        $v.showErrorFor(ct.dthOp, 'Operator is required, select Operator from list! (<i>In case of list is empty add Operator first</i>)', IsE.dthOp);
+        $v.showErrorFor(ct.pack, 'Package is required, select Package from list! (<i>In case of list is empty add Package first</i>)', IsE.pack);
+        $v.showErrorFor(ct.mob, 'Mobile number is mandatory field and length should be between ' + len + ' and ' + lenMax, IsE.mob);
+        $v.showErrorFor(ct.gender, 'Gender is required, select Gender from list!', IsE.gender);
+        $v.showErrorFor(ct.pincodearea, 'Pin code Area is required, select Area from list!', IsE.pincodearea);
+
+        $v.showErrorFor(ct.name, 'Name is  mandatory field', IsE.name);
+        $v.showErrorFor(ct.surname, 'Sur name is  mandatory field', IsE.surname);
+        $v.showErrorFor(ct.address, 'Address is   mandatory field', IsE.address);
+        $v.showErrorFor(ct.pin, 'Pin Code is  numeric mandatory field', IsE.pin);
+                            if (ct.txtSecKey.val() !== undefined) {
+            $v.showErrorFor(ct.txtSecKey, 'SecureKey is mandatory', IsE.txtSecKey);
+                                secKey = ct.txtSecKey.val();
+                            }
+                            IsE.err = (IsE.mob || IsE.pin || IsE.dthOp || IsE.pack || IsE.name || IsE.surname || IsE.address || IsE.txtSecKey);
+                            if (IsE.err) {
+                                btnLdr.Stop(ct.btn);
+                                return false;
+                            }
+                            let dTHConnectionServiceModel =
+                            {
+
+            OID: ct.dthOp.val(),
+            PID: ct.pack.val(),
+            CustomerNumber: ct.mob.val(),
+            Customer: ct.name.val(),
+            Customersurname: ct.surname.val(),
+            Gender: ct.gender.val(),
+            PinCode: ct.pin.val(),
+            AreaID: ct.pincodearea.val(),
+            Address: ct.address.val(),
+            Pincode: ct.pin.val(),
+            SecurityKey: secKey
+        };
+        $.post('/doDTH-subscription', dTHConnectionServiceModel)
+            .done(result => {
+            var sts = 'Pending';
+            var lblCol = result.statuscode;
+            if (result.statuscode == -1 || result.statuscode == 3) {
+                sts = 'Failed';
+                lblCol = 3;
+            }
+            else if (result.statuscode == 1) {
+                sts = 'Success';
+                lblCol = 2;
+            }
+            let msg = `<h4 class="alert-heading ${an.getTColor(lblCol)}"> ${sts} !</h4><p>${result.commonStr == null ? '' : result.commonStr}</p><hr><p class="mb-0 font-weight-bold">${result.msg} </p>`;
+                            let l = location.href.split('/');
+                            let s = l[l.length - 1];
+                            mdlA.content = msg;
+                            mdlA.callBack = TopFive(s);
+                            mdlA.modal();
+                            rech(s);
+            }).always(() => btnLdr.Stop(ct.btn));
+
+    };
+    $('#ddlPackage').change(e => {
+     if ($(e.currentTarget).val() == 0) {
+            $('#pkgDetail').addClass('d-none');
+                            }
+        else {
+            $('#pkgDetail').removeClass('d-none');
+                            }
+
+                            if ($(e.currentTarget).val() == 0) {
+            $('#pkgDiscrip').addClass('d-none');
+                            }
+        else {
+            $('#pkgDiscrip').removeClass('d-none');
+                            }
+                            if ($(e.currentTarget).val() == 0) {
+            $('#bp').addClass('d-none');
+                            }
+        else {
+            $('#bp').removeClass('d-none');
+                            }
+    });
+    $('#pkgDetail').click(() => {
+        $.post('/DTHChannelByPackage', { Pid: $('#ddlPackage').val() })
+            .done(result => {
+                mdlA.id = "pgdDetail"
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.large);
+                $('button.close').unbind().click(() => mdlA.dispose());
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove())
+    });
+    $('#pkgDiscrip').click(() => {
+        $.post('/DTHDiscription', { Pid: $('#ddlPackage').val() })
+            .done(result => {
+                mdlA.id = "pgdDetail"
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.large);
+                $('button.close').unbind().click(() => mdlA.dispose());
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove())
+    });
+    $('#bp').click(() => {
+        $.post('/BamountCommDetails', { Pid: $('#ddlPackage').val() })
+            .done(result => {
+                mdlA.id = "BamountCommDetails";
+                mdlA.title = 'Booking Amount';
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large);
+                // $('button.close').unbind().click(() => mdlA.dispose());
+            }).catch(ex => console.log(ex))
+            .fail(xhr => {
+                 an.title = 'Oops';
+                 an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                 an.alert(an.type.failed);
+             }).always(() => preloader.remove())
+    });
+        $('[data-toggle="tooltip"]').tooltip();
+        $('#ddlOperator_Voc').change(function ()
+        {
+            CouponVocherPatrial($(this).val())
+
+
+
+        });
+
+
+
+
+    $("#btnPay_coupon").click(function () {
+        var ct = {
+            OID: $("#ddlOperator_Voc"),
+            To: $("#txtTo"),
+            From: $("#txtFrom"),
+            Message: $("#message"),
+            Quantity: $("#txtQuantity"),
+            Amount: $("#txtAmount")
+        }
+        var IsE = {
+            OID: $("#ddlOperator_Voc").val()==0,
+            To: ct.To.val() == "",
+            From: ct.From.val() == "",
+            Amount: ct.Amount.val() == 0 || ct.Amount.val() == "",
+            Quantity: ct.Quantity.val() == 0 || ct.Quantity.val() == ""
+
+        }
+        $v.showErrorFor(ct.OID, 'Operator is required.)', IsE.OID);
+        $v.showErrorFor(ct.To, 'To is required.)', IsE.To);
+        $v.showErrorFor(ct.From, 'From is required.)', IsE.From);
+        $v.showErrorFor(ct.Amount, 'Amount is required.)', IsE.Amount);
+        $v.showErrorFor(ct.Quantity, 'Quantity is required.)', IsE.Quantity);
+        if (IsE.To || IsE.From || IsE.Amount || IsE.Quantity||IsE.OID)
+        {
+
+            return false;
+
+        }
+
+
+
+
+
+
+
+
+
+        let data = {
+                OID: ct.OID.val(),
+                 To: ct.To.val(),
+               From: ct.From.val(),
+            Message: ct.Message.val(),
+          Quantity : ct.Quantity.val(),
+             Amount: ct.Amount.val()
+        }
+
+            $.ajax({
+                type: 'POST',
+                url: '/SaveCouponVoucher',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                success: function (result) {
+
+
+
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                         ct.OID.val(0),
+                        ct.To.val(""),
+                        ct.From.val(""),
+                        ct.Message.val(""),
+                        ct.Quantity.val(""),
+                        ct.Amount.val(0)
+
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.failed);
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+                }
+            });
+
+
+
+
+    })
+
+    function isNumberwithoutdecimal(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+</script>

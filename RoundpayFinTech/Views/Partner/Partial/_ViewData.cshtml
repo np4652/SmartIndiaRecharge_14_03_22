@@ -1,0 +1,106 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.PartnerDetailsResp
+
+@{
+    var data = Model.data;
+}
+<div>
+    <div class="row partnerView">
+        <div class="col-12">
+            <h5>Partner Details</h5>
+        </div>
+        <div class="row partnerdetail">
+            <div class="col-4">
+                <ul>
+                    <li>Name : <span>@data.Name</span></li>
+                    <li>Outlet: <span>@data.OutletName</span></li>
+                    <li>Father Name :<span>@data.FatherName</span></li>
+                    <li>Mobile Number :<span>@data.MobileNo</span></li>
+                    <li>Email ID :<span>@data.EmailID</span></li>
+                    <li>Date Of Birth :<span>@data.DOB</span></li>
+                </ul>
+            </div>
+            <div class="col-4">
+                <ul>
+                    <li>PinCode : <span>@data.Pincode</span></li>
+                    <li>City : <span>@data.City</span></li>
+                    <li>District : <span>@data.District</span></li>
+                    <li>State : <span>@data.State</span></li>
+                    <li>Address : <span>@data.Address</span></li>
+                    <li>PAN : <span>@data.PAN</span></li>
+                </ul>
+
+            </div>
+            <div class="col-4">
+                <ul>
+                    <li>GSTIN : <span>@data.GSTIN</span></li>
+                    <li>AADHAR : <span>@data.AADHAR</span></li>
+                    <li>Auth Person Name : <span>@data.AuthPersonName</span></li>
+                    <li>Auth Person AADHAR : <span>@data.AuthPersonAADHAR</span></li>
+                    <li>Company PAN : <span>@data.CompanyPAN</span></li>
+                    <li>Current Account No : <span>@data.CurrentAccountNo</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-6">
+            <h5>Logo</h5>
+            <img src="@data.Logo" />
+        </div>
+        <div class="col-6">
+            <h5>Banner</h5>
+            <img src="@data.Banner" />
+        </div>
+        <div class="col-12">
+            @if (Model.RoleID == 1)
+            {
+                if (Model.data.Status == 2)
+                {
+                    <a class="btn btn-danger" onclick="UpdateStatus(3)">Reject</a>
+                }
+                if (Model.data.Status == 1)
+                {
+                    <a class="btn btn-success" onclick="UpdateStatus(2)">Approve</a>
+                    <a class="btn btn-danger" onclick="UpdateStatus(3)">Reject</a>
+                }
+            }
+            <a id="btnClose" class="btn btn-dark">Close</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .partnerView {
+        font-weight: 400;
+    }
+
+        .partnerView .partnerdetail {
+            border: 1px solid #eee;
+            margin: 15px;
+            padding: 20px 0;
+        }
+
+        .partnerView ul {
+            list-style: none;
+        }
+
+            .partnerView ul li {
+                padding: 5px;
+            }
+
+                .partnerView ul li span {
+                    font-weight: 600;
+                    margin-left: 5px;
+                }
+
+        .partnerView h5 {
+            font-size: 14px;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .partnerView img {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #eee;
+            margin: 15px 0;
+        }
+</style>

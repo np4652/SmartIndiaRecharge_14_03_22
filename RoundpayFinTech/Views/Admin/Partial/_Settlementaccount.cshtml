@@ -1,0 +1,144 @@
+﻿@model RoundpayFinTech.Models.SattlementAccountModels
+   
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+        
+    </style>
+
+    <div class="row" style="max-height:80vh;overflow-y:auto">
+        <div class="col-md-3 col-sm-3 col-xs-3 form-group">
+            @Html.Label("ddlBank", "Bank", new { @class = "lbl" })
+
+            <select class="form-control ddlBank12" onchange="SelectIfsc(this)" id="ddlBank1" aria-describedby="BankHelp1" asp-items="@Model.Bankselect">
+                <option value=0>:: Choose Bank ::</option>
+            </select>
+            <small id="BankHelp1" class="form-text text-muted d-none"></small>
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-3 form-group">
+            <label class="lbl" for="txtIfsc">IFSC</label>
+            <input aria-describedby="txtIfsc" maxlength="16" class="form-control" id="txtIFSC" placeholder="Enter IFSC Code" tabindex="2" type="text" value="">
+            <small id="txtIfsc" class="form-text text-muted d-none"></small>
+            <small class="form-text text-muted">(Verify Ifsc Code Before Save.) </small>
+
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-3 form-group">
+
+            <label class="lbl" for="txtTrID">Account Number </label>
+            <input aria-describedby="minAmt1" class="form-control" placeholder="Enter Account Number." id="txtAccountNumber1" name="Amt" tabindex="2" type="text">
+            <small id="minAmt1" class="form-text text-muted d-none"></small>
+
+
+        </div>
+        <div class="col-md-3 col-sm-3 col-xs-3 form-group">
+            <label class="lbl" for="txtTrID">Account Holder Name </label>
+            <div class="input-group">
+                <input aria-describedby="AccountHol" class="form-control" placeholder="Enter Account Name." id="AccountHolderName1" tabindex="2" type="text">
+                <div class="input-group-append">
+                    <button id="btnSaveAccount" tabindex="6" class="btn btn-outline-dark">Save</button>
+                </div>
+            </div>
+            <small id="AccountHol" class="form-text text-muted d-none"></small>
+        </div>
+        <p style="font-size: 12px; /* font-weight: bold; */ margin-left: 74px; background: #ebe2e2; color: #000; padding: 7px; border-radius: 5px;">
+            Bank Account Should Be With the Name of Company or Director or Proprietor, Third-party Account Will  Not Be Approved for Settlement.
+        </p>
+        <div class="col-sm-12 table-responsive form-group">
+            <gridView></gridView>
+
+        </div>
+        <p style="font-size: 12px; /* font-weight: bold; */ margin-left: 74px; background: #ebe2e2; color: #000; padding: 7px; border-radius: 5px;">
+            Payment Will Be Settled in Default Account.
+        </p>
+
+    </div>
+
+            <script type="text/javascript">
+                var partialGrid;
+
+                $(document).ready(function () {
+                    var id = $("#hidId").val()
+
+                    partialGrid = () => {
+                        $.post(`/SettlementaccountList/${id}`, {}).done(result => $('gridView').html(result)).fail(() => { })
+
+                    }
+                    partialGrid();
+
+                    $('#btnSaveAccount').click(function () {
+                        var ctCv = { ddlbank: $("#ddlBank1"), ifsc: $("#txtIFSC"), accnum: $("#txtAccountNumber1"), accname: $("#AccountHolderName1") }
+                        var IsE = {
+                            ddlbank: ctCv.ddlbank.val() == 0,
+                            ifsc: ctCv.ifsc.val() == "",
+                            accnum: ctCv.accnum.val() == "",
+                            accname: ctCv.accname.val() == ""
+                        }
+                        IsE.err = (IsE.ddlbank || IsE.ifsc || IsE.accnum || IsE.accname)
+                        $v.showErrorFor(ctCv.ddlbank, 'Please select Bank.', IsE.ddlbank);
+                        $v.showErrorFor(ctCv.ifsc, 'Please Fill IFSC.', IsE.ifsc);
+                        $v.showErrorFor(ctCv.accnum, 'Please Fill Account Number.', IsE.accnum);
+                        $v.showErrorFor(ctCv.accname, 'Please Fill Account Holder Name.', IsE.accname);
+                        if (IsE.err) {
+                            return false;
+                        }
+                        var dprt = {
+                            UserID: $("#hidId").val(),
+                            BankID: ctCv.ddlbank.val().split('~')[0],
+                            BankName: ctCv.ddlbank.find("option:selected").text(),
+                            IFSC: ctCv.ifsc.val().trim(),
+                            AccountNumber: ctCv.accnum.val().trim(),
+                            AccountHolder: ctCv.accname.val().trim()
+                        }
+                        preloader.load();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/SettlementaccountEdit',
+                            data: JSON.stringify(dprt),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    ctCv.ddlbank.val(0)
+                                    ctCv.ifsc.val("")
+                                    ctCv.accnum.val("")
+                                    ctCv.accname.val("")
+                                    partialGrid();
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (xhr, result, msg) {
+                                an.title = "Oops";
+                                an.content = msg;
+                                an.alert(an.type.failed);
+
+                                preloader.remove();
+                            },
+                            complete: function () {
+
+                                preloader.remove();
+                            }
+                        });
+                    })
+                })
+
+                function SelectIfsc(ifsc) {
+                    $("#txtIFSC").val($(ifsc).val().split('~')[1])
+                }
+
+
+            </script>

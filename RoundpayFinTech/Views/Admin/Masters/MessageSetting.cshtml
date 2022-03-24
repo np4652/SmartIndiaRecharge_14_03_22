@@ -1,0 +1,344 @@
+﻿@using Fintech.AppCode.StaticModel
+@model MessageTemplate
+
+@{
+    ViewData["Title"] = "Template Setting";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <div id="MappedkeyWords" style="overflow-y:auto;max-height:365px">
+                                        @if (Model.MessageTemp != null)
+                                        {
+                                            @foreach (var item in Model.MessageTemp)
+                                            {
+                                                <div class="input-group cmb-0">
+                                                    <span type="button" class="btn btn-cyan btn-sm form-control" aria-describedby="spnMob_@item.ID">@item.Name</span>
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text cursor-pointer" id="spnMob_@item.ID" data-toggle="tooltip" data-placement="top" title="@item.Keyword"><i class="far fa-clone"></i></span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-9">
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class=" col-md-4">
+                                            @Html.Label("ddlMessageType", "Message Type", new { @class = "lbl" })
+                                            <select class="form-control" id="ddlMessageType" aria-describedby="nameApi">
+                                                <option value="0">:: Choose Message Type ::</option>
+                                                @if (Model.MasterMessage != null)
+                                                {
+                                                    @foreach (var item in Model.MasterMessage)
+                                                    {
+                                                        <option value="@item.ID">@item.FormatType</option>
+                                                    }
+                                                }
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label>Select Template For</label>
+                                            <div class=" input-group">
+                                                <select class="form-control" id="ddlTemplateType">
+                                                    <option value="@MessageTemplateType.SMSTamplate">@nameof(MessageTemplateType.SMSTamplate)</option>
+                                                    <option value="@MessageTemplateType.EmailTamplate">@nameof(MessageTemplateType.EmailTamplate)</option>
+                                                    <option value="@MessageTemplateType.AlertTamplate">@nameof(MessageTemplateType.AlertTamplate)</option>
+                                                    @if (ApplicationSetting.IsRPOnly)
+                                                    {
+                                                        <option value="@MessageTemplateType.WebNotification">@nameof(MessageTemplateType.WebNotification)</option>
+                                                    }
+                                                    @if (ApplicationSetting.IsSocialAlert)
+                                                    {
+                                                        <option value="@MessageTemplateType.WhatsappAlert">@nameof(MessageTemplateType.WhatsappAlert)</option>
+                                                        <option value="@MessageTemplateType.HangoutAlert">@nameof(MessageTemplateType.HangoutAlert)</option>
+                                                        <option value="@MessageTemplateType.TelegramAlert">@nameof(MessageTemplateType.TelegramAlert)</option>
+                                                    }
+                                                </select>
+                                                <div class="input-group-append">
+                                                    <span class="switch switch-sm form-control">
+                                                        <input type="checkbox" class="switch" id="IsEnable">
+                                                        <label for="IsEnable">Is Enable</label>
+                                                    </span>
+                                                </div>
+
+                                            </div>
+                                        </div>
+
+                                        @if (ApplicationSetting.IsSocialAlert)
+                                        {
+                                            <div class="col-sm-2 d-none" id="divAPI">
+                                                Select API
+                                                <select id="ddlAPI" class="form-control"></select>
+                                            </div>
+                                        }
+
+                                        <div class="col-md-12 mt-2" id="sub">
+                                            <label>Subject</label>
+                                            <input type="text" id="txtSubject" class="form-control" value="@Model.Subject" />
+                                        </div>
+                                        <div class="col-md-12 mt-2" id="temp">
+                                            <label>TemplateID</label>
+                                            <input type="text" id="txtTemplateID" class="form-control" value="@Model.TemplateID" />
+                                        </div>
+                                        <div class="col-md-12 mt-2" id="whatstemp">
+                                            <label>Whats App TemplateID</label>
+                                      <input type="text" id="txtwhatsTemplateID" class="form-control" value="@Model.WhatsAppTemplateID" />
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="form-group">
+                                                @Html.Label("txtMessage", "Message", new { @class = "lbl" })
+                                                <textarea id="txtMessage" class="form-control" rows="10" cols="20" db aria-describedby="nameMessage"></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="btn btn-dark" onclick="UpdateMessage()" id="btnSave">Update</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script type="text/javascript" src="~/lib/TinyMCE/tinymce.min.js?a=1"></script>
+    <script>
+        var lastFocusCtrl = $('#ddlTemplateType').val() === 2 ? $('#tinymce') : $('#txtMessage');
+        $(document).ready(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+            $('span.cursor-pointer').click(e => _Copy($(e.currentTarget)));
+            $('#ddlMessageType,#ddlTemplateType').change(() => GetMessage());
+            $('textarea,input').focus(e => { lastFocusCtrl = $(e.currentTarget) });
+
+                   $('#sub').hide();
+                   $('#whatstemp').hide();
+
+              $('#ddlTemplateType').change(function () {
+                if ($('#ddlTemplateType :selected').val() == "1") {
+                    $('#sub').hide();
+                    $('#whatstemp').hide();
+                }
+                else {
+                    $('#sub').show();
+                  }
+                   if ($('#ddlTemplateType :selected').val() == "2") {
+                    $('#temp').hide();
+                    $('#whatstemp').hide();
+                  }
+                   else{
+                    $('#temp').show();
+                  }
+                   if ($('#ddlTemplateType :selected').val() == "7") {
+                       $('#whatstemp').show();
+                       $('#sub').hide();
+                         $('#temp').hide();
+                  }
+                   else{
+                       $('#whatstemp').hide();
+                  }
+                   if ($('#ddlTemplateType :selected').val() == "3" || $('#ddlTemplateType :selected').val() == "4" || $('#ddlTemplateType :selected').val() == "6" || $('#ddlTemplateType :selected').val() == "8" ) {
+                           $('#whatstemp').hide();
+                           $('#sub').hide();
+                           $('#temp').hide();
+                  }
+			});
+        });
+
+        function GetMessage() {
+            preloader.load();
+            GetKewords();
+            $('#txtMessage').val('');
+            if ($('#ddlTemplateType').val() === '2') {
+                tinymce.init({
+                    selector: '#txtMessage',//'textarea',
+                    forced_root_block: "",
+                    height: 150,
+                    theme: 'modern',
+                    plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                        'searchreplace wordcount visualblocks visualchars code fullscreen',
+                        'insertdatetime media nonbreaking save table contextmenu directionality',
+                        'emoticons template paste textcolor colorpicker textpattern '
+                    ],
+                    toolbar1: 'insertfile undo redo  | bold italic forecolor backcolor emoticons | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent table | preview',
+                    templates: [
+                        { title: 'Test template 1', content: 'Test 1' },
+                        { title: 'Test template 2', content: 'Test 2' }
+                    ],
+                    content_css: ['//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+                        '//www.tinymce.com/css/codepen.min.css'
+                    ],
+                    setup: function (ed) {
+                        ed.on('init', function () {
+                            $(ed.getBody()).on('focus', function (e) {
+                                lastFocusCtrl = $(e.currentTarget)
+                            });
+                        });
+                    }
+                });
+            }
+            else {
+                tinyMCE.remove();
+            }
+            let selectedAPI = 0;
+            $.post('/GetMessageFormat', { FormatID: $('#ddlMessageType').val() })
+                .done(function (result) {
+                    if (result.statuscode == an.type.success) {
+                        $('#txtSubject').val(result.subject);
+                        $('#txtTemplateID').val(result.templateID);
+                        $('#txtwhatsTemplateID').val(result.whatsAppTemplateID);
+                        $('#ddlAPI').val(result.whatsappAPIID)
+                        //$('#txtWID').val(result.wid);
+                        debugger;
+                        if ($('#ddlTemplateType').val() === '6') {
+                            selectedAPI = result.hangoutAPIID;
+                        }
+                         if ($('#ddlTemplateType').val() === '7') {
+                            selectedAPI = result.whatsappAPIID;
+                        }
+
+                        if ($('#ddlTemplateType').val() === '8') {
+                            selectedAPI = result.telegramAPIID;
+                        }
+
+                        switch ($('#ddlTemplateType').val()) {
+                            case "1":
+                                $('#IsEnable').prop('checked', result.isEnableSMS)
+                                $('#txtMessage').val(result.template);
+                                break;
+                            case "2":
+                                $('#IsEnable').prop('checked', result.isEnableEmail)
+                                $('#txtMessage').val(result.emailTemplate);
+                                tinyMCE.activeEditor.setContent(result.emailTemplate);
+                                break;
+                            case "3":
+                                $('#IsEnable').prop('checked', result.isEnableNotificaion)
+                                $('#txtMessage').val(result.alertTemplate);
+                                break;
+                            case "4":
+                                $('#IsEnable').prop('checked', result.isEnableWebNotification)
+                                $('#txtMessage').val(result.webNotificationTemplate);
+                                break;
+                            case "6":
+                                $('#IsEnable').prop('checked', result.isEnableHangout)
+                                $('#txtMessage').val(result.hangoutTemplate);
+                                break;
+                            case "7":
+                                $('#IsEnable').prop('checked', result.isEnableWhatsApp)
+                                $('#txtMessage').val(result.whatsAppTemplate);
+                                break;
+                            case "8":
+                                $('#IsEnable').prop('checked', result.isEnableTelegram)
+                                $('#txtMessage').val(result.telegramTemplate);
+                                break;
+                        }
+                    }
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+
+            if ($('#ddlTemplateType').val() === '6' || $('#ddlTemplateType').val() === '7' || $('#ddlTemplateType').val() === '8') {
+                $.post('/GetAPIsSocial', { FormatID: $('#ddlTemplateType').val() })
+                    .done(function (result) {
+                    $('#divAPI').removeClass('d-none')
+                    $('#ddlAPI').empty().append('<option> :: Select API ::</option>').append(result.map(m => `<option value="${m.id}" ${m.id === selectedAPI ? 'selected="true"' : ''}>${m.name}</option>`));
+                })
+            }
+            else {
+                $('#divAPI').addClass('d-none');
+            }
+        }
+        function UpdateMessage() {
+            preloader.load();
+            let param = {
+                FormatID: $('#ddlMessageType').val(),
+                TemplateType: $('#ddlTemplateType').val(),
+                Subject: $('#txtSubject').val(),
+                Template: $('#ddlTemplateType').val() === '2' ? tinyMCE.get('txtMessage').getContent() : $('#txtMessage').val(),
+                IsEnable: $('#IsEnable').is(':checked'),
+                APIID: $('#ddlAPI').val(),
+                TemplateID: $('#txtTemplateID').val(),
+                WhatsAppTemplateID: $('#txtwhatsTemplateID').val(),
+               // WID: $('#txtWID').val(),
+            };
+            $.post('/UpdateMessageFormat', param)
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+        function MessagePopUp() {
+            $.post('/MessagePopUp')
+                .done(result => {
+                    resultReload(result);
+                    mdlA.content = result;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+        var GetKewords = function () {
+            $.post('/Get-KeyWords', { FormatID: $('#ddlMessageType').val() })
+                .done(function (result) {
+                    $('#MappedkeyWords').html(result);
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('span.cursor-pointer').click(e => _Copy($(e.currentTarget)));
+                });
+        };
+
+        var _Copy = function (sender) {
+            let IsEditor = lastFocusCtrl.attr('id') === 'tinymce' ? true : false;
+            let allowedCtrlForPaste = ['txtMessage', 'txtSubject', 'tinymce'];
+            let cText = $(sender).attr('data-original-title');
+            copyToClipboard(cText);
+            an.title = 'Copied';
+            an.content = cText;
+            an.alert(an.type.info);
+            an.autoClose = 5;
+            if ($.inArray(lastFocusCtrl.attr('id'), allowedCtrlForPaste) > -1 && lastFocusCtrl.val().indexOf(cText) < 0) {
+                let caretPos = lastFocusCtrl[0].selectionStart;
+                let textAreaTxt = !IsEditor ? lastFocusCtrl.val() : tinyMCE.get('txtMessage').getContent();
+                !IsEditor ? lastFocusCtrl.val(textAreaTxt.substring(0, caretPos) + cText + textAreaTxt.substring(caretPos)) : tinyMCE.activeEditor.setContent(textAreaTxt.substring(0, caretPos) + cText);
+                lastFocusCtrl.focus();
+            }
+        }
+    </script>
+}

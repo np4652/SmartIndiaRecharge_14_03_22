@@ -1,0 +1,128 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProductModel
+@{
+    var cList = new SelectList(Model.MainCategory, "MainCategoryID", "Name");
+    var sList1 = Model.CategoryList != null ? new SelectList(Model.CategoryList, "SubCategoryId", "Name") : null;
+    var sList2 = Model.SubCategory != null ? new SelectList(Model.SubCategory, "SubCategoryId", "Name") : null;
+}
+<div class="row">
+    <div class="col-sm-4">
+        <div class="form-group">
+            Category
+            <select class="form-control" id="ddlCategory" asp-items="@cList" required="required" asp-for="@Model.MasterProductDetail.CategoryID">
+                <option value="0">:: Choose Maincategory ::</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            Levle-1
+            <select class="form-control" id="ddlLevel1" required="required" asp-items="@sList1" asp-for="@Model.MasterProductDetail.SubCategoryID1">
+                <option>:: Choose Category ::</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            Levle-2
+            <select class="form-control" id="ddlLevel2" required="required" asp-items="@sList2" asp-for="@Model.MasterProductDetail.SubCategoryID2">
+                <option>:: Choose Subcategory ::</option>
+            </select>
+        </div>
+
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            Product Name
+            <input type="text" class="form-control" id="txtProductName" placeholder="Product Name" required="required" value="@Model.MasterProductDetail.ProductName" />
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            Keyword
+            <input type="text" class="form-control" id="txtKeyword" placeholder="Keyword Name" required="required" value="@Model.MasterProductDetail.Keyword" />
+        </div>
+    </div>
+    <div class="col-sm-4">
+        <div class="form-group">
+            WalletDeductionPerc
+            <input class="form-control" id="txtDeductionPerc" required="required" placeholder="DeductionPercentage" value="@Model.MasterProductDetail.WalletDeductionPerc" />
+        </div>
+    </div>
+    <div class="col-sm-12">
+        <div class="form-group">
+            <textarea class="form-control" id="txtMDescription" maxlength="10000">@Model.MasterProductDetail.Description</textarea>
+        </div>
+        <div class="form-group text-right">
+            <button class="btn btn-outline-info" id="btnSubmit" data-Product-Id="@Model.MasterProductDetail.ProductID">
+                @Html.Raw(Model.MasterProductDetail.ProductID > 0 ? "UPDATE" : "SUBMIT")
+            </button>
+        </div>
+    </div>
+
+</div>
+<script>
+    Q.htmlEditor();
+    $('.modal #ddlCategory').change(e => {
+        preloader.load();
+        $.post('/List-Category', { cid: $(e.currentTarget).val() })
+            .done(result => {
+                $('.modal #ddlLevel1').empty().append(`<option value="0">:: Choose Level 1 ::</option>`);
+                for (let i = 0; i < result.length; i++) {
+                    $('.modal #ddlLevel1').append(`<option value="${result[i].subCategoryId}">${result[i].name}</option>`);
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+    $('.modal #ddlLevel1').change(e => {
+        preloader.load();
+        $.post('/List-SubCategoryNew', { sid: $(e.currentTarget).val() })
+            .done(result => {
+                $('.modal #ddlLevel2').empty().append(`<option value="0">:: Choose Level 2 ::</option>`);
+                for (let i = 0; i < result.length; i++) {
+                    console.log(result);
+                    $('.modal #ddlLevel2').append(`<option value="${result[i].subCategoryId}">${result[i].name}</option>`);
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+
+    $('#btnSubmit').click(e => {
+        if ($.FormValidation.IsFormValid(true)) {
+            preloader.load();
+            let param = {
+                ProductID: $(e.currentTarget).data().productId,
+                CategoryID: $('.modal #ddlCategory').val(),
+                SubCategoryID1: $('.modal #ddlLevel1').val(),
+                SubCategoryID2: $('.modal #ddlLevel2').val(),
+                ProductName: $('.modal #txtProductName').val(),
+                Keyword: $('.modal #txtKeyword').val(),
+                WalletDeductionPerc: $('.modal #txtDeductionPerc').val(),
+                Description: tinyMCE.get('txtMDescription').getContent()
+            };
+            $.post('/updateMasterProduct', param)
+                .done(result => {
+                    an.title = result.statuscode == 1 ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == 1) {
+                        $('button.close').click();
+                        $('#ddlLevel2')[0].selectedIndex = 0;
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        else {
+            console.log('form not valid');
+        }
+    });
+</script>

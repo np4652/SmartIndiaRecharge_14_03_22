@@ -1,0 +1,106 @@
+﻿@model RechargeReportModel
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-info">IMPORT EXCEL</h5>
+    <hr />
+    <form method="post" enctype="multipart/form-data">
+        <div class="row">            
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="form-group" id="dvAPI">
+                    @{
+                        var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                    }
+                    <label>Choose API</label>
+                    <select id="ddlAPI" tabindex="7" class="form-control" asp-items="listAPI">
+                        <option value="0">:: Select API :: </option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-12 col-md-12 col-xs-12">
+                <input type="file" id="fUpload" name="files" class="form-control" style="display:none" />
+                <label for="fUpload" class="btn btn-outline-success">
+                    <span class="fa fa-file-excel"></span> Import Excel
+                </label>
+                <a class="btn btn-outline-info" href="@Url.Action("OutletList-Tamplate", "Report")" target="_blank" )"><span class="fas fa-download"></span> Download Tamplate Excel</a>
+            </div>
+        </div>
+    </form>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#fUpload').on('change', function () {
+            if ($('#ddlAPI option:selected').val() == 0) {
+                an.title = 'Validation Warning';
+                an.content = "Please select API.";
+                an.alert(an.type.failed);
+                return false
+            }
+
+            if ($('#fUpload').val() != "" && $('#fUpload') != undefined) {
+            var fileExtension = ['xls', 'xlsx'];
+                var filename = $('#fUpload').val();
+                var extension = filename.replace(/^.*\./, '');
+                if ($.inArray(extension, fileExtension) == -1) {
+                    an.title = 'Validation Warning';
+                    an.content = "Please select only excel files.";
+                    an.alert(an.type.failed);
+                    $('#fUpload').val('');
+                    return false;
+                }
+                var formData = new FormData();
+                var id = 0;
+                id = $("#ddlAPI").val();
+                formData.append('file', $("#fUpload")[0].files[0]);
+                formData.append('id', id);
+                $.ajax({
+                    type: "POST",
+                    url: "/upload-OutletUserList",
+                    contentType: false,
+                    processData: false,
+                    data: formData,
+                    success: function (result) {
+                        if (result.statuscode === -1) {
+                            an.title = 'Oops';
+                            an.content = result.msg;
+                            an.alert(an.type.failed);
+                        } else {
+                            an.title = 'Success';
+                            an.content = result.msg;
+                            an.alert(an.type.success);
+                            $('#fUpload').val('');
+                            $('#ddlAPI').val('')
+                            mdlA.dispose();
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (result) {
+                        checkError(result);
+                        an.title = 'Oops';
+                        an.content = 'An error occured!';
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        preloader.remove();
+                    }
+                });
+            }
+        })
+        $('.close').on('click', function () {
+            mdlA.dispose();
+        })
+    });
+</script>

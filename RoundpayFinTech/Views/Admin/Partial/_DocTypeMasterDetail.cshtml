@@ -1,0 +1,65 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.DocTypeMaster>
+@{ 
+    var IsOutlet = ViewBag.IsOutlet;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>@Html.Raw(IsOutlet ? "Outlet KYC Document Settings" : "KYC Document Settings")</h5>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col" style="width:1%">#</th>
+                    <th scope="col">DocName</th>
+                    <th scope="col">IsOptional</th>
+                    <th scope="col">Remark </th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int i = 1; }
+                @foreach (var item in Model)
+                {
+                    <tr data-item-id="@item.ID">
+                        <th scope="row" class="align-middle">@i</th>
+                        <td class="align-middle">
+                            @Html.DisplayFor(modelItem => item.DocName)
+                        </td>
+                        <td class="align-middle">
+                            <div class="form-inline">
+                                <span class="switch switch-sm">
+                                    <input type="checkbox" class="switch" id="isactservice_@i" @Html.Raw(item.IsOptional ? "checked='checked'" : "")>
+                                    <label for="isactservice_@i"></label>
+                                </span>
+                                <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="right" title="Last Modified: @item.ModifyDate"></i>
+                            </div>
+                            <small id="helpComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                        </td>
+                        <td class="align-middle">
+                            @Html.TextAreaFor(modelItem => item.Remark, new { @id = "txtTaxRemark_" + i, @class = "form-control bg-transparent border-0", @aria_describedby = "helpComAmt_" + i, @readonly = "readonly", @cols = "70" })
+                        </td>
+                    </tr>
+                    i++;
+                }
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <th>
+                        <div class="offset-6 col-md-6">
+                            <span class="switch switch-sm" data-toggle="tooltip" title="Required Sign">
+                                <input type="checkbox" class="switch" id="isexReq">
+                                <label for="req" class="text-danger"> Required</label>
+                            </span>
+                            <span class="switch switch-sm" data-toggle="tooltip" title="Optional Sign">
+                                <input type="checkbox" class="switch" id="isexReq" checked="checked">
+                                <label for="op" class="text-info"> Optional </label>
+                            </span>
+                        </div>
+                    </th>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

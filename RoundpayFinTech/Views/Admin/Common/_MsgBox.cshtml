@@ -1,0 +1,61 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel
+@model MessageBoxModel
+
+@if (Model != null)
+{
+    @if (Model.IsOTP)
+    {
+        <div class="col-md-12" id="dvpopup">
+            <div class="form-group">
+                <label for="txtOTP"> @Model.Message</label>
+                <input type="text" id="txtOTP" class="form-control" data-refid="@Model.OTPRefID" placeholder="@Model.Title"/>
+                <span id="txtOTPHelp" class="text-danger"></span>
+            </div>
+            <button class="btn btn-outline-success mr-2" id="btnOTPSubmit">Submit</button>
+            <button class="btn btn-outline-danger" id="mdlCancel">Cancel</button>
+        </div>
+    }
+    else
+    {
+        <div class="col-md-12 text-center ">
+            @if (!string.IsNullOrEmpty(Model.Title))
+            {
+                <div class="h3">@Model.Title</div>
+                <hr />
+            }
+
+            @if (Model.MBType == MessageBoxType.SERVICEDOWN || Model.MBType == MessageBoxType.UNDERSCREENING || Model.MBType == MessageBoxType.UNAUTHORISED || Model.MBType == MessageBoxType.REJECT || Model.MBType == MessageBoxType.FAILED || Model.MBType == MessageBoxType.INCOMPLETE || Model.MBType == MessageBoxType.SUCCESS)
+            {
+                <img src="@(Model.H)/Image/iconMsg/@(Model.MBType).png" />
+                var cls = "text-info";
+                var btnCls = "btn-outline-info";
+                if (Model.MBType == MessageBoxType.SERVICEDOWN)
+                {
+                    cls = "text-warning";
+                    btnCls = "btn-outline-warning";
+                }
+                if (Model.MBType == MessageBoxType.UNAUTHORISED || Model.MBType == MessageBoxType.REJECT)
+                {
+                    cls = "text-danger";
+                    btnCls = "btn-outline-danger";
+                }
+                if (Model.MBType == MessageBoxType.SUCCESS)
+                {
+                    cls = "text-success";
+                    btnCls = "btn-outline-success";
+                }
+                <div class="@cls font-weight-bold h4">@Model.Message</div>
+                @if (!string.IsNullOrEmpty(Model.ButtonText))
+                {
+                    <button class="btn @btnCls btn-lg" id="@(string.IsNullOrEmpty(Model.ButtonID) ? "btnYes" : Model.ButtonID)">@Model.ButtonText</button>
+                }
+                @if (string.IsNullOrEmpty(Model.ButtonText) || Model.IsCancel)
+                {
+                    <button class="btn btn-dark btn-lg" id="@(string.IsNullOrEmpty(Model.CancelID) ? "btnCancel" : Model.CancelID)">@Model.CancelText</button>
+                }
+            }
+
+        </div>
+    }
+
+}

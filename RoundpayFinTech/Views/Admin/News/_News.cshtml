@@ -1,0 +1,22 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.UserNews
+@if (Model.ListNews != null)
+{
+	@for (int i = 0; i < Model.ListNews.Count; i++)
+	{
+		<tr data-item-id="@Model.ListNews[i].ID">
+			<td>
+				<div class="btn-group dropup">
+					<a href="#" id="" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+					<div class="dropdown-menu" aria-labelledby="act">
+						<h6 class="dropdown-header">Action Menu</h6>
+						<a href="javascript:void(0)" class="dropdown-item edit" id="ft_@i">Edit</a>
+						<a href="DeleteNews/@Model.ListNews[i].ID" class="dropdown-item" id="ft_@i">Delete</a>
+					</div>
+				</div>
+			</td>
+			<td>@Model.ListNews[i].Title</td>
+			<td>@Model.ListNews[i].NewsDetail</td>
+			<td>@Model.ListNews[i].CreateDate</td>
+		</tr>
+	}
+}

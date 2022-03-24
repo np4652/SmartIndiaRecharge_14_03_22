@@ -1,0 +1,70 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.BankMaster>
+@{
+    var list = new SelectList(Model, "IFSC", "BankName");
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Add Beneficiary</h3>
+    <div class="form-group">
+        @Html.Label("ddlBank", "Bank", new { @class = "lbl" })
+        <select id="ddlBank" onchange="ChangeBank()" class="form-control " data-live-search="true" aria-describedby="bankHelp" tabindex="1">
+            <option selected value="0" data-bank-id="0">:: SELECT BANK ::</option>
+            @foreach (var bank in Model)
+            {
+                <option value="@(bank.IFSC)" data-bank-id="@(bank.ID)">@(bank.BankName)</option>
+            }
+        </select>
+        <small id="bankHelp" class="form-text text-muted d-none">Bank is mandatory</small>
+    </div>
+    <div class="form-group">
+        @Html.Label("txtIFSC", "IFSC", new { @class = "lbl" })
+        @Html.TextBox("txtIFSC", null, new { @class = "form-control text-capitalize", @placeholder = "Enter IFSC", @aria_describedby = "IFSCHelp", @tabindex = 4 })
+        <small id="IFSCHelp" class="form-text text-danger  d-none">Invalid IFSC</small>
+    </div>
+    <div class="form-group">
+        @Html.Label("txtAccount", "Account Number", new { @class = "lbl" })
+        <div class="input-group">
+            @Html.TextBox("txtAccount", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Account", @aria_describedby = "AccountHelp", @tabindex = 3 })
+            <div class="input-group-append"><button id="btnDmtVerify" tabindex="8" onclick="DMTVerificationP()" class="btn btn-outline-dark">Verify</button></div>
+        </div>
+        <small id="AccountHelp" class="form-text text-danger  d-none">Invalid Account Number</small>
+    </div>
+
+    <div class="form-group">
+        @Html.Label("txtName", "Beneficiary Name", new { @class = "lbl" })
+        @Html.TextBox("txtName", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Name", @aria_describedby = "CustomerHelp", @tabindex = 1 })
+        <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Name</small>
+    </div>
+    <div class="form-group">
+        @Html.Label("txtMobileNo", "Mobile Number", new { @class = "lbl" })
+        @Html.TextBox("txtMobileNo", null, new { @class = "form-control text-capitalize", @placeholder = "Enter Mobile Number", @aria_describedby = "MobileHelp", @tabindex = 2 })
+        <small id="MobileHelp" class="form-text text-danger  d-none">Invalid Mobile Number</small>
+    </div>
+    <div class="form-group">
+        <div class="row">
+            <div class="col-md-2">
+                <div class="custom-radio">
+                    <input class="form-check-input rbtntype" type="radio" name="rdoType" id="rdoIMPS" checked="checked">
+                    <label class="form-check-label" for="rdoIMPS">
+                        IMPS
+                    </label>
+                </div>
+            </div>
+            <div class="col-md-2">
+                <div class="custom-radio">
+                    <input class="form-check-input rbtntype" type="radio" name="rdoType" id="rdoNEFT">
+                    <label class="form-check-label" for="rdoNEFT">
+                        NEFT
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+    <button class="btn btn-outline-dark" onclick="createBeniP()">Add Beneficiary</button>
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>
+<script>
+    $('#txtMobileNo').val($('#txtSearch').val());
+</script>

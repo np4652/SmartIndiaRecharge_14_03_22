@@ -1,0 +1,223 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model SellerDashboard
+@{
+    ViewData["Title"] = "Seller Dashboard";
+    string Upline = string.Empty;
+    string UplineContact = string.Empty;
+    string CCContact = string.Empty;
+    bool IsPaymentGatway = ApplicationSetting.IsAddMoneyEnable;
+    var ThemeID = ViewData["Theme"] == null ? 1 : Convert.ToInt32(ViewData["Theme"]);
+
+}
+<style>
+    .popover-list .btn {
+        margin: 0;
+        border-radius: unset;
+        border: none;
+    }
+
+    .popover-header {
+        color: #fff;
+        background-color: #373673;
+    }
+</style>
+<input type="hidden" id="hfdGatewayAllowed" value="@Html.Raw(IsPaymentGatway?"1":"0")" />
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-home"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div>
+</div>
+
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="bg-purple row mb-0">
+            <marquee behavior="scroll"><span id="divNews" class="text-white" style="font-size: 18px;"></span></marquee>
+        </div>
+        <div class="">
+            <div class="bg-purple row grid-margin" id="usrDSUM"></div>
+        </div>
+        <div class="br-pagebody mb-3">
+            <div class="row row-sm">
+                <div class="col-sm-6 col-xl-2 pl-0">
+                    <div class="widget bg-cyan">
+                        <a class="stats-left " href="/RechargeReport">
+                            <h5>Transaction</h5>
+                            <h4> History</h4>
+                        </a>
+                        <div class="stats-right border-cyan">
+                            <label> <i class="fas fa-file-alt tx-60 lh-0 txt-cyan op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-red">
+                        <a class="stats-left " href="/UserLedger">
+                            <h5>Account</h5>
+                            <h4> Ledger</h4>
+                        </a>
+                        <div class="stats-right border-red">
+                            <label> <i class="fas fa-chart-bar tx-60 lh-0 txt-red op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-yellow">
+                        <a class="stats-left " href="/FundReceiveStatement">
+                            <h5>Purchase</h5>
+                            <h4> History</h4>
+                        </a>
+                        <div class="stats-right border-yellow">
+                            <label> <i class="fas fa-shopping-basket tx-60 lh-0 txt-yellow op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-dark">
+                        <a class="stats-left " href="/USalesSummary">
+                            <h5>Sales</h5>
+                            <h4> Summary</h4>
+                        </a>
+                        <div class="stats-right border-dark">
+                            <label> <i class="fas fa-book-open tx-60 lh-0 txt-dark op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-6 col-xl-2">
+                    <div class="widget bg-green">
+                        <a class="stats-left " href="/UDaybook">
+                            <h5>Day</h5>
+                            <h4> Book</h4>
+                        </a>
+                        <div class="stats-right border-green">
+                            <label> <i class="fas fa-book tx-60 lh-0 txt-green op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-xl-2 pr-0">
+                    <div class="widget bg-blue">
+                        <a class="stats-left " href="/fund-request">
+                            <h5>Fund</h5>
+                            <h4> Request</h4>
+                        </a>
+                        <div class="stats-right border-blue">
+                            <label> <i class="fas fa-rupee-sign tx-60 lh-0 txt-blue op-7"></i></label>
+                        </div>
+                        <div class="clearfix"> </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-12 text-center"><span id="divOpDown" class="text-danger"></span></div>
+        <div class="row grid-margin mb-3 mt-2">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Services
+                    </div>
+                    <div class="card-body">
+                        <div class="shortcuts">
+                            @if (Model != null)
+                            {
+                                List<string> bindServices = new List<string>();
+                                for (int i = 0; i < Model.PackageCl.Count; i++)
+                                {
+                                    if (i == 0)
+                                    {
+                                        Upline = Model.PackageCl[i].Upline;
+                                        UplineContact = Model.PackageCl[i].UplineMobile;
+                                        CCContact = Model.PackageCl[i].CCContact;
+                                    }
+                                    bool IsAllowed = true;
+                                    if (Model.PackageCl[i].IsDisplayService)
+                                    {
+                                        if (!bindServices.Contains(Model.PackageCl[i].Service))
+                                        {
+                                            bindServices.Add(Model.PackageCl[i].Service);
+
+                                            if (Model.PackageCl[i].SCode == "ECOM" || Model.PackageCl[i].SCode == "SHP")
+                                            {
+                                                switch (Model.PackageCl[i].SCode)
+                                                {
+                                                    case "ECOM":
+                                                        IsAllowed = ApplicationSetting.IsECommerceAllowed;
+                                                        break;
+                                                    case "SHP":
+                                                        IsAllowed = ApplicationSetting.IsShopping;
+                                                        break;
+                                                }
+                                            }
+                                            if (IsAllowed)
+                                            {
+                                                <a href="javascript:void(0)" @Html.Raw(Model.PackageCl[i].IsServiceActive ? Model.PackageCl[i].IsActive ? "class='shortcut popover-modal service-link'" : "class='shortcut service-link'" : "class='shortcut' data-toggle='tooltip' data-original-title='Coming Soon!'") data-service-Id="@Model.PackageCl[i].ServiceID" data-Filter-List='@Json.Serialize(Model.PackageCl.Where(x=>x.ParentID==Model.PackageCl[i].ParentID && x.IsDisplayService==true))' data-toggle="popover" data-Is-Active="@Model.PackageCl[i].IsActive" data-Is-Addi="@Model.PackageCl[i].IsAdditionalServiceType" data-item-Object="@Model.PackageCl[i]">
+                                                    <img src="/Image/icon/@ThemeID/@Html.Raw("S"+Model.PackageCl[i].ParentID + ".png")?v=@DateTime.Now.Ticks" class="shortcut-icon img-fluid" />
+                                                    <span class="shortcut-label">@Model.PackageCl[i].Service</span>
+                                                </a>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        string _url = "/Service/" + Model.PackageCl[i].ServiceID;
+                                        string _target = "_self";
+                                        switch (Model.PackageCl[i].SCode)
+                                        {
+                                            case "AFS":
+                                                _url = "/AffilietedItems";
+                                                break;
+                                            case "ECOM":
+                                                IsAllowed = ApplicationSetting.IsECommerceAllowed;
+                                                _url = "/Shop";
+                                                break;
+                                            case "SHP":
+                                                IsAllowed = ApplicationSetting.IsShopping;
+                                                _url = "/Azora";
+                                                break;
+                                        }
+                                        if (Model.PackageCl[i].SCode == "ACCOP")
+                                        {
+                                            //AccountOpeningService
+                                            _url = "/GetAccountOpeningBanner/" + Model.PackageCl[i].ServiceID;
+                                            <a @Html.Raw(Model.PackageCl[i].IsServiceActive ? "href='" + _url + "' class='shortcut service-link' data-Is-Active='" + Model.PackageCl[i].IsActive + "' data-Is-Addi='" + Model.PackageCl[i].IsAdditionalServiceType + "' target='" + _target + "'" : "class='shortcut' data-toggle='tooltip' data-original-title='Coming Soon!'")>
+                                                <img src="/Image/icon/@Html.Raw(Model.PackageCl[i].ServiceID + ".png")" class="shortcut-icon img-fluid" />
+                                                <span class="shortcut-label">@Model.PackageCl[i].Name</span>
+                                            </a>
+                                        }
+                                        else if(IsAllowed)
+                                        {
+                                            <a @Html.Raw(Model.PackageCl[i].IsServiceActive ? "href='" + _url + "' class='shortcut service-link' data-Is-Active='" + Model.PackageCl[i].IsActive + "' data-Is-Addi='" + Model.PackageCl[i].IsAdditionalServiceType + "' target='" + _target + "'" : "class='shortcut' data-toggle='tooltip' data-original-title='Coming Soon!'") >
+
+                                                    <img src = "/Image/icon/@ThemeID/@Html.Raw(Model.PackageCl[i].ServiceID + ".png")?v=@DateTime.Now.Ticks" class="shortcut-icon img-fluid" />
+                                                <span class="shortcut-label">@Model.PackageCl[i].Name</span>
+                                            </a>
+                                        }
+}
+                                                }
+                                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script src="~/js/chart/armchart/core.js"></script>
+            <script src="~/js/chart/armchart/charts.js"></script>
+            <script src="~/js/chart/armchart/animated.js"></script>
+            <div class="col-xl-6">
+                <div id="chartdiv" style="height: 100%; max-width: 100%; margin: 2px auto;"></div>
+            </div>
+        </div>
+    </div>
+</div>

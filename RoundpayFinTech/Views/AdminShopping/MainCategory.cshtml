@@ -1,0 +1,250 @@
+﻿@{
+    ViewData["Title"] = "Main Category";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-sm btn-outline-light pl-2 pr-2 font-bold" data-Item-id="0" id="btnNew"><i class="fa fa-plus"></i> NEW</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-condensed" id="tblCategory">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Action</th>
+                                                <th style="width:60%">Main Category</th>
+                                                <th>IsNextLevelExists</th>
+                                                <th>IsActive</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        let newFileList = [];
+        var loadGrid = () => {
+            newFileList = [];
+            preloader.load();
+            $.post('/_MainCategory')
+                .done(result => {
+                    $.when($('#tblCategory tbody').html(result)).then(() => {
+                        $('.rowExpand').unbind().click(e => _loadSubCategoryLevel1(e));
+                    })
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var AddCategory = id => {
+           // console.log('in');
+            preloader.load();
+            newFileList = [];
+            $.post('/AddMainCategory', { id: id })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'AddMainCategoryWin';
+                    mdlA.title = 'Main Category';
+                    mdlA.modal(mdlA.size.large);
+                })
+                .fail(xhr => {
+                    an.id = "alertCategory";
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var loadSubGrid = (cid) => {
+            preloader.load();
+            $.post('/_Category', { cid: cid })
+                .done(result => {
+                    mdlA.id = "winSub";
+                    mdlA.content = result;
+                    mdlA.title = " ";
+                    mdlA.modal(mdlA.size.xlarge);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error123';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var AddSubCategoryLvl1 = (Cid, Sid) => {
+            preloader.load();
+            newFileList = [];
+            $.post('/AddCategoryNew', { id: Sid, cid: Cid })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'CategoryWin';
+                    mdlA.title = 'Category';
+                    mdlA.modal(mdlA.size.default);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var AddSubCategoryNew = (pid, Sid) => {
+            preloader.load();
+            newFileList = [];
+            $.post('/AddSubCategoryNew', { id: Sid, sid: pid })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'addsubcategoryWin';
+                    mdlA.title = 'Subcategory';
+                    mdlA.modal(mdlA.size.default);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        (() => {
+            $('#btnNew').click(e => AddCategory(0));
+            loadGrid();
+
+        })();
+
+        var previewImage = (e, divId = '') => {
+            if (newFileList.length > 3) {
+                alert(newFileList.length);
+                an.title = 'Oops';
+                an.content = 'Only Three image allowed';
+                an.alert(an.type.failed);
+                return;
+            }
+            try {
+                
+                let selectElement = $(e.currentTarget).attr('id'),
+                    count = $('#imagePreview img').length,
+                    totalFile = document.getElementById(selectElement).files.length;
+                    Alert("Hit");
+                    console.log(selectElement,count,totalFile);
+                for (var i = 0; i < totalFile; i++) {
+                    newFileList.push($(`#${selectElement}`)[0].files[i]);
+                    let _src = URL.createObjectURL(event.target.files[i]);
+                    if (divId === '') {
+                        $(`#${selectElement}`).parent('div').append(`<div class="previewImage float-left text-center">
+                                                                                <span class="setDefault">
+                                                                                    <input type="checkbox" ${count === 0 && i === 0 ? 'checked="checked"' : ''} class="chkDefaultImg" onclick="pro.setDefaultIcon($(this))" data-toggle="tooltip" data-placement="top" data-original-title="Set as defult icon"/>
+                                                                                </span>
+                                                                                <span class="close fa fa-times"></span>
+                                                                                <img src="${_src}" data-index-Id="${count === 0 ? i : count}" style="width: 150px!important;">
+                                                                             </div>`);
+                    }
+                    else {
+                        $(`#${divId}`).append(`<div class="previewImage float-left text-center">
+                                                         <span class="setDefault">
+                                                            <input type="checkbox" ${count === 0 && i === 0 ? 'checked="checked"' : ''} class="chkDefaultImg" onclick="pro.setDefaultIcon($(this))" data-toggle="tooltip" data-placement="top" data-original-title="Set as defult icon"/>
+                                                          </span>
+                                                         </span>
+                                                         <span class="close fa fa-times"></span>
+                                                         <img src="${_src}" data-index-Id="${count === 0 ? i : count}" style="width: 150px!important;">
+                                                       </div>`);
+                    }
+                    $('[data-toggle="tooltip"]').tooltip();
+                    deleteImage();
+                }
+                $(`#${selectElement}`).val('');
+            }
+            catch (xhr) {
+                console.log(xhr)
+            }
+        };
+
+        var deleteImage = () => {
+            $('.previewImage > span.close').unbind().click(e => {
+                let _this = $(e.currentTarget).parents('.previewImage');
+                let ImageURL = $(e.currentTarget).parents('.previewImage').find('img').attr('src');
+                if (ImageURL.indexOf('blob') > -1) {
+                    $(e.currentTarget).parent('div.previewImage').remove();
+                    this.newFileList.pop($(e.currentTarget).data().indexId);
+                    $('div.previewImage>img').each(function (i) {
+                        $(this).attr('data-index-id', i);
+                    });
+                }
+                else {
+                    $(_this).remove();
+                    newFileList = [];
+                    //preloader.load();
+                    //$.post('/deleteProductImage', { ImagePath: ImageURL }).done((result) => {
+                    //    if (result.statuscode === an.type.success) {
+                    //        $(_this).remove()
+                    //    }
+                    //    else {
+                    //        validateAlert(result.msg)
+                    //    }
+                    //}).fail(xhr => console.log(xhr)).always(() => preloader.remove());
+                }
+            });
+        }
+
+        var preloadedImages = (id, iconType) => {
+            $.post('/getIconImage', { id, iconType })
+                .done(result => {
+                    let files = [];
+                    for (let i = 0; i < result.length; i++) {
+                        files.push(result[i]);
+                        $('#imagePreview').append(`<div class="previewImage float-left text-center">
+                                                 <span class="setDefault">
+                                                    <input type="checkbox" ${result.length === 0 && i === 0 ? 'checked="checked"' : ''} class="chkDefaultImg" onclick="pro.setDefaultIcon($(this))" data-toggle="tooltip" data-placement="top" data-original-title="Set as defult icon"/>
+                                                  </span>
+                                                 </span>
+                                                 <span class="close fa fa-times"></span>
+                                                 <img src="/Image/icon/Shopping/${result[i]}" data-index-Id="${result.length === 0 ? i : result.length}">
+                                               </div>`);
+                    }
+                    newFileList = files;
+                    console.log(newFileList);
+                    deleteImage();
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+    </script>
+}

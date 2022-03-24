@@ -1,0 +1,124 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.MyPlanApiDthplan
+<style>
+    .clsBtn {
+        width: 115px;
+        margin: 5px 0;
+        font-size: small;
+    }
+    td {
+        font-size: 12px !important;
+    }
+    .fa-rupee-sign {
+        font-size: 0.69rem;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>DTH Plan</h3>
+        <hr />
+    </div>
+    @if (Model.status == true)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="pill" href="#contPLAN">PLAN</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="pill" href="#contAddOnPack">ADD ON PACK</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    <div id="contPLAN" class="table-responsive container tab-pane active">
+                        <table class="table table-bordered table-striped table-responsive-sm">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>Plan</th>
+                                    <th>Validity:Rs</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.result != null)
+                                {
+                                    foreach (var pln in Model.result.records.plan)
+                                    {
+
+                                        <tr>
+                                            <td>@pln.plan_name</td>
+                                            <td>
+                                                <spam>1 Month : </spam>@pln.rs._1months
+                                                <br />
+                                                <spam>3 Month : </spam>@pln.rs._3months
+                                                <br />
+                                                <spam>6 Month : </spam>@pln.rs._6months
+                                                <br />
+                                                <spam>1 Year : </spam>@pln.rs._1year
+                                            </td>
+                                            <td>@pln.desc</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found!</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <div id="contAddOnPack" class="table-responsive container tab-pane active">
+                        <table class="table table-bordered table-striped table-responsive-sm">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>Plan</th>
+                                    <th>Validity:Rs</th>
+                                    <th>Description</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.result.records.AddOnpack != null)
+                                {
+                                    foreach (var plns in Model.result.records.AddOnpack)
+                                    {
+
+                                        <tr>
+                                            <td>@plns.plan_name</td>
+                                            <td>
+                                                <spam>1 Month : </spam>@plns.rs._1months
+
+                                            </td>
+                                            <td>@plns.desc</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found!</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>
+

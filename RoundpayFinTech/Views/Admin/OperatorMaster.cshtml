@@ -1,0 +1,616 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OpTypeMaster>
+@{
+    ViewData["Title"] = "OperatorMaster";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Operator Management</li>
+            <li class="breadcrumb-item active">Operator Master</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <div class="row line-height-34">
+                            <div class="col-sm-5">
+                                <i class="fas fa-link"></i> Operator Master
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4 pr-0">
+                                <input id="txtSearchOp" class="form-control pt-2 pb-2 text-left" placeholder="Search Operator" />
+                            </div>
+                            <div class="col-sm-3 pl-1">
+                                <div class="input-group">
+                                    @{
+                                        var Oplist = new SelectList(Model, "ID", "OpType");
+                                        var OPTypeID = OPTypes.Prepaid;
+                                    }
+                                    <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID"></select>
+                                    <div class="input-group-append">
+                                        <button id="btnNew" class="btn btn-default btn-sm pl-3 pr-3">New</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive table-sm table-mh">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblOPD">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Actions</th>
+                                        <th>Name</th>
+                                        <th style="padding-right:95px">OPID</th>
+                                        @if (ApplicationSetting.IsPlanServiceUpdated)
+                                        {
+                                            <th>Plan Services</th>
+                                        }
+                                        <th>TollFree</th>
+                                        <th class="text-right">Min</th>
+                                        <th class="text-right">Max</th>
+                                        <th>HSNCode</th>
+                                        <th>Startwith</th>
+                                        <th>BusinessModel</th>
+                                        <th>CircleValidationType</th>
+                                        <th>ExactNess</th>
+                                        @if (ApplicationSetting.IsShowPDFPlan)
+                                        {
+                                            <th>UploadPlan</th>
+                                        }
+                                        @if (ApplicationSetting.IsBillerUpdate)
+                                        {
+                                            <th style="padding-right:150px"><i class="fas fa-sync text-danger pt-2 cursor-pointer input-group-text" data-toggle="tooltip" data-placement="top" title="Click To Update Biller Info for <b><i class='text-danger'> All Eligible Operator</i><b>" id="iBillerIDAll" data-html="true"> BillerID</i> </th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var _URL = window.URL || window.webkitURL;
+        $(document).ready(function () {
+            an.id = 'alretID';
+            an.autoClose = 5;
+            darkAnimBtn($('#btnNew'));
+            $("#txtSearchOp").focus().on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('#tblOPD tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+            _loadPartial();
+            $('#ddlOType').change(() => _loadPartial());
+        });
+
+        var _loadPartial = function () {
+            preloader.load();
+            $.post('/Operator-Master', { opTypeID: $('#ddlOType').val() })
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('[data-toggle="tooltip"]').tooltip();
+                    an.autoClose = 5;
+                    $('input[id^=txtOPID]').on('blur', function () {
+                        preloader.load();
+                        var id = $(this).closest('tr').data().itemId;
+                        var hidoprCode = $('[data-item-id="' + id + '"] input[id^="hidOPID"]').val();
+                        var oprCode = $('[data-item-id="' + id + '"] input[id^="txtOPID"]').val();
+                        var IsE = { orcode: oprCode.trim().length > 10 };
+                        $v.showErrorFor($('[data-item-id="' + id + '"] input[id^="txtOPID"]'), 'Invalid OP Code', IsE.orcode);
+                        IsE.err = IsE.orcode;
+                        if (IsE.err) {
+                            return false;
+                        }
+                        if (oprCode === hidoprCode) {
+                            preloader.remove();
+                            return true;
+                        }
+                        $.post('/OPID', { ID: id, OPID: oprCode })
+                            .done(function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    $('[data-item-id="' + id + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                                    $('[data-item-id="' + id + '"] input[id^="hidOPID"]').val(oprCode);
+                                }
+                            })
+                            .fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+                    });
+                    $('textarea[id^=txtTollFree]').on('blur', function () {
+                        preloader.load();
+                        var id = $(this).closest('tr').data().itemId;
+                        var hidtollFree = $('[data-item-id="' + id + '"] input[id^="hidTollFree"]').val();
+                        var tollFree = $('[data-item-id="' + id + '"] textarea[id^="txtTollFree"]').val();
+                        var IsE = { eTollFree: tollFree.trim().length > 100 };
+                        $v.showErrorFor($('[data-item-id="' + id + '"] textarea[id^="txtTollFree"]'), 'Invalid Number', IsE.eTollFree);
+                        IsE.err = IsE.orcode;
+                        if (IsE.err) {
+                            return false;
+                        }
+                        if (tollFree === hidtollFree) {
+                            preloader.remove();
+                            return true;
+                        }
+                        $.post('/TollFree', { ID: id, TollFree: tollFree })
+                            .done(function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    $('[data-item-id="' + id + '"] input[id^="hidTollFree"]').val(tollFree);
+                                }
+                            })
+                            .fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+
+                    });
+                    $('input[id^=opImageUpload_]').change(function () {
+                        let opid = $(this).closest('tr').data().itemId;
+                        let id = $(this).attr("id").split('_')[1];
+                        let formData = new FormData();
+                        formData.append('file', $('#opImageUpload_' + id)[0].files[0]);
+                        formData.append('oid', opid);
+                        console.log(formData);
+                        $.ajax({
+                            type: 'POST',
+                            url: '/upload-operator-pdf',
+                            processData: false,
+                            contentType: false,
+                            data: formData,
+                            success: function (result) {
+                                if (result.statuscode === -1) {
+                                    an.title = 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(an.type.failed);
+                                } else {
+                                    an.title = 'Success';
+                                    an.content = result.msg;
+                                    an.alert(an.type.success);
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (result) {
+                                checkError(result);
+                                an.title = 'Oops';
+                                an.content = 'An error occured!';
+                                an.alert(an.type.failed);
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+
+                    });
+                    $('.ddlCircleValidation').change(e => {
+                        let OID = $(e.currentTarget).closest('tr').data().itemId;
+                        let Type = $(e.currentTarget).val();
+                        changeValidationType(OID, Type);
+                    })
+
+
+                    $('input[id^=isAmtVldt_]').on('change', function () {
+                        preloader.load();
+                        var id = $(this).closest('tr').data().itemId;
+                        var status = $(this).is(':checked');
+                        $.post('/u-amt-valdt', { oid: id, sts: status })
+                            .done(function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                _loadPartial();
+                            })
+                            .fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+
+                    });
+                    $('span[id^=btnUpdatePlan_]').on('click', function () {
+                        preloader.load();
+                        var id = $(this).closest('tr').data().itemId;
+                        var optype = $(this).data().optype;
+
+                        $.post('/u-rech-plan', { oid: id, opType: optype })
+                            .done(function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            })
+                            .fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+
+                    });
+
+
+                    preloader.remove();
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error'
+                    an.alert(an.type.failed);
+                })
+                .always(() => _Edit());
+        }
+
+        function ChangeType(ctr) {
+            var id = $(ctr).val().split('__');
+            $('#txtdisplayname').val(id[1]);
+            $('#txtremark').val(id[2]);
+            if (id[0] > -1) {
+                $('#btnDelete').removeClass('d-none');
+            }
+            else {
+                $('#btnDelete').addClass('d-none');
+            }
+        }
+
+        function _Edit() {
+            $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                var id = 0;
+                if ($(this).text() === 'Edit' || $(this).text() === 'New') {
+                    if ($(this).text() === 'Edit') {
+                        id = $(this).closest('tr').data().itemId;
+                    }
+                    $.post('/Operator-Edit/' + id)
+                        .done(result => {
+                            resultReload(result);
+                            mdlA.content = result;
+                            mdlA.id = 'opModel';
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.xlarge);
+                            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                            var ctOpDet = { hid: $('#hid'), onam: $('#txtOperatorName'), opcode: $('#txtOperatorCode'), len: $('#txtLength'), lenMax: $('#txtLengthMax'), optype: $('#ddlOperatorType'), bmodel: $('#ddlBusinessModel'), min: $('#txtMinimum'), max: $('#txtMaximum'), hsn: $('#txtHSNCode'), startwith: $('#txtStartwith'), bbps: $('#chbIsBBPS'), cvType: $('#ddlCircleValidation'), hid: $('#hid'), btn: $('#btnOpDetails'), isbill: $('#chbIsBilling'), txtAcName: $('#txtAccountName'), txtAcRem: $('#txtAccountRemark'), IsPartial: $('#chbIsPartial'), InSlab: $('#chbInSlab'), IsTakeCustomerNum: $('#chbIsTakeCustomerNum'), ddlCommType: $('#ddlCommType'), isaccnumeric: $('#chbIsAccNumeric'),exactnessid : $('#ddlexactness') }
+                            ctOpDet.btnTxt = ctOpDet.btn.html();
+                            setTimeout(function () {
+                                ctOpDet.onam.focus();
+                            }, 500);
+                            $('#btnOpDetails').click(function () {
+                                if (ctOpDet.btnTxt !== ctOpDet.btn.html()) {
+                                    return false;
+                                }
+                                btnLdr.addClass = 'btn-dark';
+                                btnLdr.removeClass = 'btn-outline-dark';
+                                btnLdr.Start(ctOpDet.btn, 'Requesting');
+                                var IsE = {
+                                    onam: ctOpDet.onam.val().trim() == '', opcode: ctOpDet.opcode.val().trim() == '', hsn: (ctOpDet.bbps.is(':checked') && (ctOpDet.hsn.val().trim() === '' || ctOpDet.hsn.val().trim() === '0'))
+                                }
+                                IsE.err = (IsE.onam || IsE.opcode || IsE.hsn)
+                                $v.showErrorFor(ctOpDet.onam, 'Enter Operator Name.', IsE.onam);
+                                $v.showErrorFor(ctOpDet.opcode, 'Enter Operator Code.', IsE.opcode);
+                                $v.showErrorFor(ctOpDet.hsn, 'Enter HSN Code.', IsE.hsn);
+                                if (IsE.err) {
+                                    btnLdr.Stop(ctOpDet.btn);
+                                    return false;
+                                }
+                                debugger;
+                                var om = {
+                                    OID: ctOpDet.hid.val(), Name: ctOpDet.onam.val(), OPID: ctOpDet.opcode.val(), OpType: ctOpDet.optype.val(), Length: ctOpDet.len.val(), LengthMax: ctOpDet.lenMax.val(), Min: ctOpDet.min.val(), Max: ctOpDet.max.val(), HSNCode: (ctOpDet.hsn.val() === '' ? 0 : ctOpDet.hsn.val()), StartWith: ctOpDet.startwith.val(), BusinessModel: ctOpDet.bmodel.val(), IsBBPS: ctOpDet.bbps.is(':checked'), CircleValidationType: ctOpDet.cvType.val(), IsBilling: ctOpDet.isbill.is(':checked'), AccountName: ctOpDet.txtAcName.val(), AccountRemak: ctOpDet.txtAcRem.val(), IsPartial: ctOpDet.IsPartial.is(':checked'), InSlab: ctOpDet.InSlab.is(':checked'), CommSettingType: ctOpDet.ddlCommType.val(), IsTakeCustomerNum: ctOpDet.IsTakeCustomerNum.is(':checked'), AllowedChannel: $('#ddlAllowedChannel').val(),
+                                    IsAccountNumeric: ctOpDet.isaccnumeric.is(':checked'), exactnessid : ctOpDet.exactnessid.val()
+                                }
+                                preloader.load();
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/Operator-Edit',
+                                    data: JSON.stringify(om),
+                                    dataType: 'json',
+                                    contentType: 'application/json',
+                                    success: function (result) {
+                                        resultReload(result);
+                                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        btnLdr.Stop(ctOpDet.btn);
+                                        if (result.statuscode == an.type.success) {
+                                            mdlA.dispose();
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (xhr, result, msg) {
+                                        an.title = "Oops";
+                                        an.content = msg;
+                                        an.alert(an.type.failed);
+                                        if (result === 'parsererror') {
+                                            rel(1);
+                                        }
+                                    },
+                                    complete: function () {
+                                        btnLdr.Stop(ctOpDet.btn);
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+                        })
+                        .fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        })
+                        .always(function () {
+                            if (id === undefined || id < 1) {
+                                getMaxOpCode($('#ddlOperatorType').val());
+                                $('#ddlOperatorType').change(e => getMaxOpCode($(e.currentTarget).val()));
+                            }
+                            preloader.remove();
+                        });
+                }
+                else
+                    if ($(this).text() === 'Optional Parameter Setting') {
+                        var arr = $(this).attr("name").split('-');
+                        var opid = arr[0];
+                        var name = arr[1];
+
+                        $.post('/OptionaMaster', { ID: parseInt(opid) })
+                            .done(function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'myalert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.default);
+                                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                $("#LblOpName").html(name);
+                                $("#LblOpName").attr("name", opid);
+
+                                $("#btnSubmit").click(() => {
+                                    $v = $validator;
+                                    let cte = { OPId: $("#LblOpName"), Option: $("#ddloption"), name: $("#txtdisplayname"), remark: $("#txtremark"), islist: $("#IsList"), ismulti: $("#IsMulti") };
+                                    let IsE = { name: (cte.name.val().trim() == "") };
+                                    $.post('/OperatorOptional', { OPId: cte.OPId.attr("name"), ID: cte.Option.val().split('__')[0], name: cte.name.val(), remark: cte.remark.val(), islist: (cte.islist.prop("checked")), ismulti: (cte.ismulti.prop("checked")), OptionalType: cte.Option.val().split('__')[3] })
+                                        .done(result => {
+                                            an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                            an.content = result.msg;
+                                            an.alert(result.statuscode);
+                                            if (result.statuscode == an.type.success) {
+                                                mdlA.dispose();
+                                            }
+                                        })
+                                        .fail(xhr => {
+                                            an.title = 'Oops';
+                                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                            an.alert(an.type.failed);
+                                        }).always(() => preloader.remove());
+
+                                });
+                            }).fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+                    }
+                var btntrg = $(this);
+                if ($(this).text() === 'Account Opening Setting') {
+                    var arr = $(this).attr("name").split('-');
+                    var opid = arr[0];
+                    var name = arr[1];
+                    _reload()
+                }
+                if ($(this).text() === 'Map Operators') {
+                    var oid = $(this).data().oid;
+                    var opType = $(this).data().opt;
+                    var opName = $(this).data().opname;
+                    preloader.load();
+                    $.post('/map-rnp-op', { oid: oid, opType: opType, opName: opName })
+                        .done(function (result) {
+                            resultReload(result);
+                            $('#' + an.id).remove();
+                            mdlA.id = 'myalert';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.large);
+                            $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+                }
+                function _reload() {
+                    $.post('/AccountOpeningSetting', { ID: parseInt(opid) })
+                        .done(function (result) {
+                            resultReload(result);
+                            $('#' + an.id).remove();
+
+                            mdlA.id = 'myalert';
+                            mdlA.content = "";
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.large);
+                            $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                            $("#LblOpName").html(name);
+                            $("#LblOpName").attr("name", opid);
+
+                            $("#btnSubmitaos").click(() => {
+                                $v = $validator;
+                                let cte = { OPId: $("#LblOpName"), RedirectURL: $("#txtredirectURL"), Content: $("#txtcontent") };
+                                let IsE = { OPId: (cte.OPId.val().trim() == ""), URl: cte.RedirectURL.val().trim() == "", content: cte.Content.val().trim() == "" };
+
+                                // $v.showErrorFor(cte.OPId, "Enter Display Name", IsE.OPId
+                                $v.showErrorFor(cte.RedirectURL, "Enter Redirect URl Name", IsE.URl);
+                                $v.showErrorFor(cte.Content, "Enter Content", IsE.content);
+                                if (IsE.URl || IsE.content) {
+                                    return false;
+                                }
+
+                                $.post('/AccOpen_Setting_Edit', { OID: opid, URI: $("#txtredirectURL").val(), Content: $("#txtcontent").val() })
+                                    .done(result => {
+                                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        if (result.statuscode == an.type.success) {
+
+
+
+                                            setTimeout(function () {
+                                                _reload()
+                                            }, 100);
+
+                                        }
+                                    })
+                                    .fail(xhr => {
+                                        an.title = 'Oops';
+                                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                        an.alert(an.type.failed);
+                                    }).always(() => preloader.remove());
+
+                            });
+
+                            $("#bannerUpload").change(function () {
+
+                                if (!imagesize()) {
+                                    return false;
+                                }
+                                var formData = new FormData();
+                                formData.append('file', $("#bannerUpload")[0].files[0]);
+                                formData.append('OID', opid);
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/upload-BankBanner',
+                                    processData: false,
+                                    contentType: false,
+                                    data: formData,
+                                    success: function (result) {
+                                        if (result.statuscode === -1) {
+                                            an.title = 'Oops';
+                                            an.content = result.msg;
+                                            an.alert(an.type.failed);
+                                        } else {
+                                            an.title = 'Success';
+                                            an.content = result.msg;
+                                            an.alert(an.type.success);
+
+
+                                            setTimeout(function () {
+                                                _reload()
+                                            }, 100);
+
+                                        }
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        checkError(result);
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+
+
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+
+                }
+            });
+        };
+
+        function getMaxOpCode(OpType) {
+            $.post('/get-MaxOpCode', { OpType: OpType })
+                .done(result => {
+                    $('label[for="txtOPID"]').html('Operator Code <span class="text-danger text-monospace">[Max:' + result + ']</span>');
+                });
+        };
+
+        function changeValidationType(OID, Type) {
+            $.post('/changeValidationType', { OID: OID, CircleValidationType: Type })
+                .done(result => {
+                    an.title = result.statusCode == 1 ? 'Well done' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statusCode);
+                })
+        }
+        function imagesize() {
+            if ((file = $('#bannerUpload')[0].files[0])) {
+                var img = new Image();
+                var objectUrl = _URL.createObjectURL(file);
+                $(img).on('load', function () {
+                    if (this.width > 1400 || this.height > 800) {
+
+                        an.title = 'Opps';
+                        an.content = "Please select image of size 1366 by 786 ";
+                        an.alert(an.type.failed);
+                        return false;
+                    }
+                })
+
+                img.src = objectUrl;
+
+            }
+            return true
+        }
+
+
+
+    </script>
+}
+

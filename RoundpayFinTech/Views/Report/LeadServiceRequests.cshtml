@@ -1,0 +1,370 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ProcModel.LeadServiceRequest;
+@{
+    ViewData["Title"] = "Lead Service Request";
+}
+<style>
+    .leadStatuscls, .remarkcls {
+        width: 200px;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> Lead Service Request Report</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-3">
+                                <i class="fas fa-link"></i> Lead Service Request Report
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlOperator">Select Operator</label>
+                                    <select id="ddlOperator" tabindex="1" class="form-control text-uppercase">
+                                        <option value="0">:: Select  :: </option>
+                                        @foreach (var item in Model.Operatorlst)
+                                        {
+                                        <option value="@item.OID">@item.Name</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="2" type="text" readonly="readonly" value="@DateTime.Now.ToString("dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="3" type="text" readonly="readonly" value="@DateTime.Now.ToString("dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            @if (Model.IsAdmin)
+                            {
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlRMode">Choose RequestMode</label>
+                                        <select id="ddlRMode" tabindex="2" class="form-control">
+                                            <option value="0">:: Select RequestMode :: </option>
+                                            <option value="@RequestMode.PANEL">PANEL</option>
+                                            <option value="@RequestMode.APPS">APPS</option>
+                                            @if (Model.IsAdmin || Model.IsAPIUser)
+                                            {
+                                                <option value="@RequestMode.API">API</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                        <select id="ddlCriteria" tabindex="3" class="form-control">
+                                            <option value="0">:: Select Criteria :: </option>
+
+                                            <option value="@Criteria.UserID">UserID</option>
+                                            <option value="@Criteria.OutletMobile">Outlet Mobile</option>
+
+
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="txtSearch">Search Criteria</label>
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" tabindex="3" type="text">
+
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtMobile">Select Mobile No.</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtMobile" class="form-control" id="txtMobile" name="txtMobile" placeholder="Mobile No.." tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <span id="btnSearch" tabindex="5" class="btn btn-outline-dark"><i class="fa fa-search"></i></span>
+                                            <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+
+
+                        <div>
+                            <div class="table-responsive table-sm">
+
+                                <table class="table table-bordered table-striped table-responsive-sm" id="tblLeadServiceRequest">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th class="text-center">Outlet</th>
+                                            <th class="text-center">Customer Name</th>
+                                            <th class="text-center">Customer Mobile</th>
+                                            <th>Lead Type</th>
+                                            <th scope="col">Lead Sub Type</th>
+                                            <th scope="col">Entry DateTime</th>
+                                            @if (Model.IsAdmin)
+                                            {
+                                                <th scope="col">Remark</th>
+                                            }
+
+                                            <th scope="col">Updated Remark</th>
+                                            @if (Model.IsAdmin)
+                                            {
+                                                <th scope="col">Lead Status</th>
+                                            }
+
+                                            <th scope="col">Updated By</th>
+                                            <th scope="col">Updated DateTime</th>
+                                            <th scope="col">PinCode</th>
+                                            <th scope="col">Address</th>
+                                            <th scope="col">Complain Remark</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                       
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+    {
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function ()
+        {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            //debugger;
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+       
+            $("#btnSearch,#btnExport").click(
+                function () {
+                    search(this);
+                }
+                );
+            $("#btnSearch").click();
+        }
+        )
+
+    var search=function(sender) {
+            //debugger;
+            var LeadReq = {
+                ID: 0,
+                OID: $("#ddlOperator option:selected").val(),
+                FromDate: $("#dtFromDate").val(),
+                ToDate: $("#dtToDate").val(),
+                Mobile: $("#txtMobile").val() == "" ? null : $("#txtMobile").val(),
+                TopRows: $("#ddlTop").val(),
+                Criteria: $("#ddlCriteria").val(),
+                IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false,
+                CriteriaText: $("#txtSearch").val() == "" ? null : $("#txtSearch").val(),
+                RequestModeID: $("#ddlRMode option:selected").val(),
+            };
+            preloader.load();
+            if (LeadReq.IsExport) {
+                window.location = "/Lead-Report?" + $.param(LeadReq);
+            }
+            $.ajax({
+               
+                type:"POST",
+                url: "/LeadServiceRequest",
+                data:JSON.stringify(LeadReq),
+                contentType: "application/json",
+                success: function (result)
+                {
+                    resultReload(result);
+                    $("#tblLeadServiceRequest tbody").html(result);
+                }
+            }).always(function () {
+               preloader.remove();
+
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+        }
+
+        //Lead Service Edit
+        function LeadUpdateAction(ID)
+        {
+            debugger;
+        preloader.load();
+        var ID = ID;
+        var Remark = $("#txtRemark_" + ID).val();
+        var LeadStatus = parseInt($("#ddlLeadStatus_" + ID).val());
+
+        if (LeadStatus == null || LeadStatus ==0) {
+            an.title = "Failed",
+                     an.content = "Please Select Lead Status",
+                     an.alert(an.type.failed);
+            preloader.remove();
+            return false;
+        }
+        if (Remark == null || Remark == "") {
+            an.title = "Failed",
+                     an.content = "Please Enter Remark",
+                     an.alert(an.type.failed);
+            preloader.remove();
+            return false;
+        }
+            $.post("/UpdateLeadServiceRequest", { ID: ID, Remark: Remark, LeadStatus: LeadStatus }, function (result) {
+
+                if (result.statuscode == 1) {
+                    an.title = result.msg,
+                        an.content = "Record Updated Successfully",
+                        an.alert(an.type.success);
+                    $("#btnSearch").click();
+                }
+                else {
+                    an.title = "failed",
+                        an.content = result.msg,
+                        an.alert(an.type.failed);
+                }
+            })
+             .always(function () {
+                 preloader.remove();
+             }).fail(xhr => {
+                 an.title = 'Oops';
+                 an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                 an.alert(an.type.failed);
+             })
+
+        }
+       function SeeLeadDetail(ID)
+        {
+            preloader.load();
+           $.post("/GetLeadDetailById", { ID: ID})
+            .done(function (result) {
+                if (result != null) {
+                    resultReload(result);
+                    mdlA.id = 'mymodal1';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.options.keyboard = false;
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                }
+
+
+            }).always(function () {
+                preloader.remove();
+
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+        }
+    </script>
+
+}

@@ -1,0 +1,110 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.News
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Edit News</h5><hr />
+    </div>
+    <div class="col-sm-12">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row mr-0">
+                    <input type="hidden" id="hfid" value="@Model.ID" />
+                    @if ((Model.Roles ?? new List<Fintech.AppCode.Model.RoleMaster>()).Any())
+                    {
+                        @foreach (var _roles in Model.Roles)
+                        {<div class="col-md-4">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="@_roles.ID" value="@_roles.ID" name="role" @Html.Raw(_roles.IsActive ? "checked=checked" : "") />
+                                        </div>
+                                    </div>
+                                    <label class="form-control" for="@_roles.ID">@_roles.Role</label>
+                                </div>
+                            </div>
+                        }
+                    }
+                    <div class="col-md-4">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="checkbox" name="chkLogin" id="-1" value="-1" />
+                                </div>
+                            </div>
+                            <label class="form-control" for="-1">Login</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12">
+                @Html.Label("Title", "Title", new { @class = "lbl" })
+
+                @Html.TextBoxFor(x => x.Title, Model.Title, new { @class = "form-control", @placeholder = "Enter Title", @aria_describedby = "urlHelpTitle", @tabindex = 3 })
+                <small id="urlHelpTitle" class="form-text text-muted d-none">Title is mandatory</small>
+            </div>
+            <div class="col-md-12 mt-2">
+                @Html.Label("txtURL", "NEWS", new { @class = "lbl" })
+                @Html.TextArea("txtNewsDetail", Model.NewsDetail, new { @class = "form-control txtNewsDetail", @placeholder = "Enter API URL", @aria_describedby = "urlHelp", @tabindex = 6 })
+                <small id="urlHelp" class="form-text text-muted d-none">URL is mandatory</small>
+            </div>
+            <div class="col-md-12 mt-2">
+                <button type="button" class="btn btn-outline-dark" id="btnSaveNews" tabindex="20">Save News</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+        $('#btnSaveNews').click(function () {
+            var newsdata = tinyMCE.get('txtNewsDetail').getContent();
+            var list = new Array();
+            $('input[name="role"]:checked').each(function () {
+                list.push(this.value)
+            });
+
+            if ($('input[name="chkLogin"]').is(':checked')) {
+                list.push(-1)
+            }
+            
+            var UserData = { id: $('#hfid').val(), Title: $('#Title').val(), NewsDetail: newsdata, Role: list };
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/UpdateNews',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(UserData),
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops";
+                    an.content = result;
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+                },
+                complete: function () {
+                    preloader.remove();
+                    location.reload();
+                }
+            });
+        });
+    </script>
+
+

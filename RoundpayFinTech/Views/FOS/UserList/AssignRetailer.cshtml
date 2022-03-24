@@ -1,0 +1,242 @@
+﻿@using Fintech.AppCode.StaticModel
+@using RoundpayFinTech.AppCode.StaticModel
+@model UserListModel;
+@{
+    ViewData["Title"] = "Assign Retailer";
+
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="form-inline row sbxU" id="sbxU">
+                            <div class="input-group mb-2 col-md-3">
+                                <select class="form-control" asp-items="@Model.selectListItems" id="ddlFos" aria-describedby="roleHelp">
+                                    <option value="@MapStatus.Unassign">Unassign</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-2 col-md-3">
+                                <select class="form-control" id="ddlMapStatus" aria-describedby="roleHelp">
+                                    <option value="@MapStatus.All">All</option>
+                                    <option value="@MapStatus.Unassigned">Unassigned</option>
+                                    <option value="@MapStatus.Assigned">Assigned</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-2 col-md-4">
+                                <input type="text" id="txtSearch" class="form-control" aria-label="Text input with segmented dropdown button" placeholder="Search">
+                                <div class="input-group-append">
+                                    <button type="button" class="btn btn-outline-secondary" id="btnSearch">Search</button>
+                                    <span class="btn btn-outline-success pt-2" id="btnExport">
+                                        <i class="fa fa-file-excel"></i>
+                                    </span>
+                                </div>
+                            </div>
+
+
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblUserList">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">
+                                            <input type="button" id="btnupdateStatus" class="btn btn-primary" value="Update" /><br />
+                                            <input type="checkbox" id="headcheck" name="headcheck"> Select All
+                                        </th>
+
+                                        <th scope="col">OutletName</th>
+                                        <th scope="col">MobileNo</th>
+                                        <th scope="col">Role</th>
+                                        <th class="text-right">@Wallet._Prepaid</th>
+
+                                        @if (Model.userBalnace.IsUBalance)
+                                        {
+                                            <th class="text-right">@Wallet._Utility</th>
+
+                                        }
+
+                                        <th scope="col">Slab</th>
+                                        <th scope="col">JoinDate</th>
+                                        <th scope="col">JoinBy</th>
+                                        <th scope="col">KYC Status</th>
+                                        <th scope="col">FOS Name</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var statuscode = { SUCCESS: 1, ERROR: -1, INFO: 2 }
+        var $v = $validator;
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('#btnPrefDDL').click();
+            $('#btnPrefDDL').click();
+
+            $('#btnSearch, #btnExport').click(function () {
+                GetU(this);
+            });
+            $('#btnSearch').click();
+            $("#txtSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('#tblUserList tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+        var GetU = function (sender) {
+            var ms = parseInt($('#ddlMapStatus').val());
+            if (sender.id.indexOf('Export') > -1) {
+                $('#btnSearch').click();
+                console.log(sender.id.indexOf('Export'));
+                window.location = 'R_List?' + $.param({ MapStatus: ms, FOSID: parseInt($('#ddlFos').val()) })
+            }
+            else {
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/R_List',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ MapStatus: ms, FOSID: parseInt($('#ddlFos').val()) }),
+                    success: function (result) {
+                        if (result.length === 2) {
+                            an.title = 'Oops';
+                            an.content = 'No record found for this searching criteria!';
+                            an.alert(an.type.warning);
+                            an.autoClose = 5;
+                        }
+
+                        $('#__p tbody').html(result);
+                        $('#headcheck').click(function () {
+                            if ($(this).is(":checked")) {
+                                var table = $(event.target).closest('table');
+                                $('td input:checkbox[name=childcheck]', table).prop('checked', event.target.checked);
+                                var IDs = $('td input:checkbox[name=childcheck]', table)
+                                    .map(function () {
+                                        if (this.checked == true) {
+                                            return this.id;
+                                        }
+                                    })
+                                    .get();
+                                return true;;
+                            }
+                        });
+
+                        $('#btnupdateStatus').click(function () {
+                            //preloader.load();
+                            var table = $(event.target).closest('table');
+                            var IDs = $('td input:checkbox[name=childcheck]', table)
+                                .map(function () {
+                                    if (this.checked == true)
+                                        return parseInt(this.id);
+                                })
+                                .get();
+                            console.log(IDs);
+                            if (IDs.length < 1) {
+                                an.title = 'Oops';
+                                an.content = 'No row selected';
+                                an.alert(an.type.failed);
+                                return false;
+                            }
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Update_R_List',
+                                datatype: 'json',
+                                data: JSON.stringify({ FOSId: parseInt($('#ddlFos').val()), UserIds: IDs, MapStatus: parseInt($('#ddlFos').val()) }),
+                                contentType: 'application/json',
+                                success: function (result) {
+                                    if (result.statuscode === -1) {
+                                        an.title = 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(an.type.failed);
+                                    } else {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        GetU();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    btnLdr.Stop(btnT);
+                                    preloader.remove();
+                                }
+                            });
+
+
+                        });
+
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (result) {
+                        console.log(result);
+                    },
+                    complete: function () {
+                        preloader.remove();
+                    }
+                });
+            }
+        }
+
+
+        function ChildSearch(ctr) {
+            mdlA.dispose();
+            $('#txtSearch').val($(ctr).html());
+            $("#ddlCriteria option[value=1]").attr('selected', 'selected');
+            $('#btnSearch').click();
+        }
+
+    </script>
+}

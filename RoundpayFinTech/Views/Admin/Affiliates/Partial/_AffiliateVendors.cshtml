@@ -1,0 +1,107 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.AffiliateVendors>
+@{int i = 1; }
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.Id">
+        <th style="width:1em;" scope="row">@i</th>
+        <td>
+            <div class="input-group-text">
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@(i++)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item btnEdit">Edit</a>
+                        <a href="#" class="dropdown-item btncomm">Commission</a>
+                        <a href="#" class="dropdown-item btnAddItem">Add Item</a>
+                        <a href="#" class="dropdown-item btnAllItem">Show Item</a>
+                    </div>
+                </div>
+                @*<img src="/Image/operator/@(item.Id).png" alt="@(item.Id).png" style="height:37px;margin-left: 17px;">*@
+            </div>
+
+        </td>
+        <td style="width:15em;">
+            @Html.DisplayFor(modelItem => item.VendorName)
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                @Html.Raw(item.IsActive ? "Active" : "Deactive")
+            </span>
+        </td>
+    </tr>
+
+}
+<script>
+    function Reload() {
+        
+
+    }
+    $('.btnEdit').click(e => {
+        preloader.load();
+        $.post('/edit-AffiliateVendor', { id: $(e.currentTarget).closest('tr').data().itemId })
+            .done(result => {
+                mdlA.id = "editModel";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large);
+                $('button.close').click(() => mdlA.dispose());
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });
+
+    $('.btncomm').click(e => {
+        preloader.load();
+        $.post('/AffiliatedVendorCommission', { VendorId: $(e.currentTarget).closest('tr').data().itemId })
+            .done(result => {
+                mdlA.id = "myDialog";
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.large);
+                $('button.close').click(() => mdlA.dispose());
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });    
+
+    $('.btnAddItem').click(e => {
+        preloader.load();
+        $.post('/AffiliatedItem', { VendorId: $(e.currentTarget).closest('tr').data().itemId })
+            .done(result => {
+                mdlA.id = "AddItemWin";
+                mdlA.title = "Add Item";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });
+
+    $('.btnAllItem').click(e => {
+        preloader.load();
+        $.post('/GetAllAfItems', { VendorId: $(e.currentTarget).closest('tr').data().itemId })
+            .done(result => {
+                mdlA.id = "AddAllItemWin";
+                mdlA.title = "Listed Item";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.xlarge, () => location.reload(true))
+            })
+                    .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    })
+                    .always(() => preloader.remove());
+            });
+    
+</script>

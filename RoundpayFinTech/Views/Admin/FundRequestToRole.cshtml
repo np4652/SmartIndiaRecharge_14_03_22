@@ -1,0 +1,189 @@
+﻿@{
+    ViewData["Title"] = "Fund Request To Role Setting";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"] </li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">From Role</th>
+                                        <th scope="col">To Role</th>
+                                        <th scope="col">Is Upline</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            preloader.load();
+            an.autoClose = 5;
+
+            var GetData = function () {
+
+
+                $.post('/FundRequest-To-Role').
+                    done(function (result) {
+                        $('#__p tbody').html(result);
+                        $(".dropdown-toggle").dropdown();
+                    }).catch(function (err) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    }).fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    }).always(function () {
+                        preloader.remove();
+
+                        $('input[id^="isActive_"]').on('change', function () {
+                            var checkboxid = $(this).attr('id');
+                            var fromId = $(this).closest('tr').data().itemId;
+                           var ToId = '0';
+                            if (checkboxid) {
+                                ToId = checkboxid.split('_').length == 3 ? checkboxid.split('_')[2] : fromId
+                            }
+                            var IsActive = $("#isActive_" + fromId+"_" + ToId).is(':checked');
+                            var IsUpline = $("#isupline_" + fromId).is(':checked');
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/UpdateFundRequestToRole',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ ToId: parseInt(ToId), FromId: parseInt(fromId), IsUpline: IsUpline, IsActive: IsActive, Action:1 }),
+                                success: function (result) {
+                                    resultReload(result);
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        GetData();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    btnLdr.Stop(ct.btnSaveAPI);
+                                }
+                            });
+
+                        });
+
+                        $('input[id^="isupline_"]').on('change', function () {
+                            var checkboxid = $(this).attr('id');
+                            var fromId = $(this).closest('tr').data().itemId;
+                            var IsUpline = $("#isupline_" + fromId).is(':checked');
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/UpdateFundRequestToRole',
+                                dataType: 'json',
+                                contentType: 'application/json',
+                                data: JSON.stringify({FromId: parseInt(fromId), IsUpline: IsUpline, Action:2 }),
+                                success: function (result) {
+                                    resultReload(result);
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        GetData();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    btnLdr.Stop(ct.btnSaveAPI);
+                                }
+                            });
+
+                        });
+
+                    });
+            };
+
+            GetData();
+        });
+
+
+    </script>
+}

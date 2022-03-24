@@ -1,0 +1,29 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.CircleSwitch>
+
+@{var i = 1; }
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.OID">
+        <th class="align-middle">@i</th>
+        <td class="align-middle">@item.Operator <small class="form-text text-muted mt-0">@item.OpType</small></td>
+        <td class="align-middle">
+            <div class="row mr-0">
+                @foreach (var circle in item.Circles)
+                {
+                    var IsActive = item.CircleSwitched.Any(x => x.ID == circle.ID && x.IsActive == true);
+                    <div class="col-md-3">
+                        <div class="input-group mb-2">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <input type="checkbox" id="chbCircle_@Html.Raw(i+"_"+circle.ID)" @Html.Raw(IsActive ? "checked='checked'" : "")>
+                                </div>
+                            </div>
+                            <label class="form-control" for="chbCircle_@Html.Raw(i+"_"+circle.ID)">@circle.Name</label>
+                        </div>
+                    </div>
+                }
+            </div>
+        </td>
+    </tr>
+    i++;
+}

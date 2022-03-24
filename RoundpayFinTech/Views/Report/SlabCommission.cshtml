@@ -1,0 +1,157 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel
+@model Fintech.AppCode.Model.UserInfo
+@{
+    ViewData["Title"] = "Slab Detail";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-7 text-monospace">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="input-group">
+                                    <input type="text" id="txtSearch" class="form-control" placeholder="Search" />
+                                    @if ((Model.RoleID == Role.APIUser || Model.RoleID == Role.Retailor_Seller) && ApplicationSetting.IsRealAPIPerTransaction == false)
+                                    {
+                                        <div class="input-group-append">
+                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                <input type="checkbox" class="switch" id="chbIsSms" tabindex="2" @Html.Raw(Model.IsRealAPI ? "checked='checked'" : "")>
+                                                <label for="chbIsSms" class="font-weight-bold lbl lblstatus">
+                                                    @Html.Raw(Model.IsRealAPI ? "REAL API ENABLED" : "REAL API DISABLED")
+                                                </label>
+                                            </span>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive tblrecord" style="height:64vh;overflow:auto">
+                            <table class="table table-bordered table-striped" id="tblAdminLedgers">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Service Provider</th>
+                                        <th>SP Key</th>
+                                        <th>IsBilling</th>
+                                        <th>BusinessModel</th>
+                                        @if (ApplicationSetting.IsRoleCommissionDisplay)
+                                        {
+                                            <th>LAPU(Com)</th>
+                                            <th>Operator(Com)</th>
+                                        }
+                                        else
+                                        {
+                                            <th>Rate</th>
+                                            <th>Commission Type</th>
+                                            <th>Amount Type</th>
+                                        }
+                                        <th>Min To Max</th>
+                                        <th>More(Com)</th>
+                                        @if (Model.RoleID == Role.APIUser)
+                                        {
+                                            <th>AllowedChannel</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            search();
+            txtSearch()
+            $("#txtSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('#tblAdminLedgers tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+
+        var txtSearch = function () {
+            let queryString = getQueryString();
+            if (!$.isEmptyObject(queryString)) {
+                if (queryString.hasOwnProperty('commission')) {
+                    /*$('#ddlCriteria').find('option[value="23"]').prop('selected', true);*/
+                    $('#txtSearch').val(decodeURI(queryString.commission));
+
+                    setTimeout(function () { ($('#txtSearch').trigger('keyup')) }, 3000);
+                }
+            }
+        };
+        var search = function () {
+            var ct = {
+                statuscode: [{
+                    ERROR: -1,
+                    SUCCESS: 1,
+                    PENDING: 0
+                }]
+            };
+            $.ajax({
+                type: 'POST',
+                url: '/rslab-detail',
+                data: {},
+                contentType: 'application/json',
+                success: function (result) {
+                    resultReload(result);
+                    $('.__p .tblrecord tbody').html(result);
+                    $("#chbIsSms").change(function () {
+                        var param = {
+                            status: $('#chbIsSms').is(':checked')
+                        }
+                        $.post('/RealAPI-Status', param = param)
+                            .done(function (result) {
+                                an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode === an.type.failed) {
+                                    $('#chbIsSms').prop('checked', false);
+                                }
+                                else if (result.statuscode === an.type.success) {
+                                    $('[for="chbIsSms"]').text(param.status == true ? "REAL API ENABLED" : "REAL API DISABLED")
+                                }
+                                btnLdr.Stop($("#btnSearch"));
+                            })
+                    });
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops";
+                    an.content = result;
+                    an.alert(ct.statuscode.ERROR);
+                    btnLdr.Stop($("#btnSearch"));
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+
+                }
+            });
+        };
+    </script>
+}
+

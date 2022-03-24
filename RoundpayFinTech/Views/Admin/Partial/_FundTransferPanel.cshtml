@@ -1,0 +1,264 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@using Fintech.AppCode.StaticModel
+@model RoundpayFinTech.AppCode.Model.ProcModel.FundTransferModel
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-info">Fund Transfer/Deduction Form</h5><hr />
+    <div class="mb-2">
+        <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            @if (Model.fundRequetResp.PaymentId > 0)
+            {
+                @if (Model.fundRequetResp.WalletTypeID == Wallet.Prepaid)
+                {
+                    <label class="btn btn-sm btn-outline-info active" data-Wallet-Value="@Model.userBalnace.CommRate">
+                        <input type="radio" name="options" id="opBalance" autocomplete="off" data-btype="@Wallet.Prepaid" data-text="@Wallet._Prepaid" checked> @Wallet._Prepaid
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.Balance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsUBalance && Model.userBalnace.IsUBalanceFund && Model.fundRequetResp.WalletTypeID == Wallet.Utility)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opUtility" autocomplete="off" data-btype="@Wallet.Utility" data-text="@Wallet._Utility"> @Wallet._Utility
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.UBalance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsBBalance && Model.userBalnace.IsBBalanceFund && Model.fundRequetResp.WalletTypeID == Wallet.Bank)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opMiniBank" autocomplete="off" data-btype="@Wallet.Bank" data-text="@Wallet._Bank"> @Wallet._Bank
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.BBalance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsCBalance && Model.userBalnace.IsCBalanceFund && Model.fundRequetResp.WalletTypeID == Wallet.Card)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opPrepaidCard" autocomplete="off" data-btype="@Wallet.Card" data-text="@Wallet._Card"> @Wallet._Card
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.CBalance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsIDBalance && Model.userBalnace.IsIDBalanceFund && Model.fundRequetResp.WalletTypeID == Wallet.RegID)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opRegistrationID" autocomplete="off" data-btype="@Wallet.RegID" data-text="@Wallet._RegID"> @Wallet._RegID
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.IDBalnace</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsPacakgeBalance && Model.userBalnace.IsPacakgeBalanceFund && Model.fundRequetResp.WalletTypeID == Wallet.Package)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opPackage" autocomplete="off" data-btype="@Wallet.Package" data-text="@Wallet._Package"> @Wallet._Package
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.PacakgeBalance</span>
+                    </label>
+                }
+            }
+            else
+            {
+                <label class="btn btn-sm btn-outline-info active" data-Wallet-Value="@Model.userBalnace.CommRate">
+                    <input type="radio" name="options" id="opBalance" autocomplete="off" data-btype="@Wallet.Prepaid" data-text="@Wallet._Prepaid" checked> @Wallet._Prepaid
+                    <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.Balance</span>
+                </label>
+                @if (Model.userBalnace.IsUBalance && Model.userBalnace.IsUBalanceFund)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opUtility" autocomplete="off" data-btype="@Wallet.Utility" data-text="@Wallet._Utility"> @Wallet._Utility
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.UBalance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsBBalance && Model.userBalnace.IsBBalanceFund)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opMiniBank" autocomplete="off" data-btype="@Wallet.Bank" data-text="@Wallet._Bank"> @Wallet._Bank
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.BBalance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsCBalance && Model.userBalnace.IsCBalanceFund)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opPrepaidCard" autocomplete="off" data-btype="@Wallet.Card" data-text="@Wallet._Card"> @Wallet._Card
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.CBalance</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsIDBalance && Model.userBalnace.IsIDBalanceFund)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opRegistrationID" autocomplete="off" data-btype="@Wallet.RegID" data-text="@Wallet._RegID"> @Wallet._RegID
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.IDBalnace</span>
+                    </label>
+                }
+                @if (Model.userBalnace.IsPacakgeBalance && Model.userBalnace.IsPacakgeBalanceFund)
+                {
+                    <label class="btn btn-sm btn-outline-info">
+                        <input type="radio" name="options" id="opPackage" autocomplete="off" data-btype="@Wallet.Package" data-text="@Wallet._Package"> @Wallet._Package
+                        <span class="pl-1">: <i class="fas fa-rupee-sign"></i> @Model.userBalnace.PacakgeBalance</span>
+                    </label>
+                }
+            }
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            @if (Model.fundRequetResp.PaymentId > 0 || (!Model.IsAdmin && ApplicationSetting.IsDisableDebit))
+            {
+                <span class="btn btn-sm btn-outline-danger active">Credit</span>
+            }
+            else
+            {
+
+                <div class="btn-group btn-toggle" id="btnGroup">
+                    <button class="btn btn-sm btn-outline-danger active">Credit</button>
+                    @{
+                        var _candebit = ViewBag.CanDebit;
+                        if (_candebit)
+                        {
+                            <button class="btn btn-sm btn-outline-danger">Debit</button>
+                        }
+                    }
+                </div>
+            }
+        </div>
+        <div class="col-sm-9">
+            <div>
+                @if (Model.fundRequetResp.UserName != null)
+                {
+                    <label class="mb-1"><span id="spnNam" class="text-uppercase">@Model.fundRequetResp.UserName</span></label>
+                    <label class="d-block"><span id="spnMob" class="text-monospace">@Model.fundRequetResp.MobileNo</span></label>
+                    <span id="spnUserId" style="display:none">@Model.fundRequetResp.UserId</span>
+                }
+                else
+                {
+                    <label class="mb-0"><span id="spnNam" class="text-uppercase"></span></label>
+                    <label class="d-block"><span id="spnMob" class="text-monospace d-block"></span></label>
+                    <span id="spnUserId" style="display:none"></span>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-sm-3">
+            <div class="mb-2">
+                <label class="lbl" for="txtAmount">Amount</label>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="mb-2">
+                <input aria-describedby="amountHelp" class="form-control" id="txtAmount" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="@(Math.Round(Convert.ToDecimal(Model.fundRequetResp.Amount),0))" @Html.Raw(Model.fundRequetResp.Amount > 0 ? "disabled=''disabled'" : string.Empty)>
+                <small id="amountHelp" class="form-text text-muted d-none">Amount is mandatory</small>
+            </div>
+        </div>
+        <div class="col-sm-3">
+            <div class="mb-2">
+                <label class="lbl" for="txtCommission">Commission(%)</label>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="mb-2">
+                @if (ApplicationSetting.ActiveFlatType == FlatTypeMaster.ByAdminOnly && Model.userBalnace.IsFlatCommissionU)
+                {
+                    if (Model.IsAdmin)
+                    {
+                        <span class="form-control">@(Model.userBalnace.CommRate)</span>
+                    }
+                    else
+                    {
+                        <input aria-describedby="commHelp" class="form-control" id="txtCommission" name="txtCommission" tabindex="2" type="text" value="@(Model.userBalnace.CommRate)" disabled="disabled">
+                    }
+                }
+                else
+                {
+                    <input aria-describedby="commHelp" class="form-control @(ApplicationSetting.ActiveFlatType==FlatTypeMaster.DisableFlat?"d-none":"")" id="txtCommission" name="txtCommission" placeholder="Enter Commission" tabindex="2" type="text" value="@(ApplicationSetting.ActiveFlatType==FlatTypeMaster.DisableFlat ?0 : Model.userBalnace.CommRate)" disabled='disabled'>
+                    <small id="commHelp" class="form-text text-muted d-none">Commission is optional</small>
+                }
+            </div>
+        </div>
+        @if (Model.IsDoubleFactor)
+        {
+            <div class="col-sm-3">
+                <div class="mb-2">
+                    <label class="lbl" for="txtSecKey">Secure Key</label>
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="mb-2">
+                    <input type="password" class="form-control" id="txtSecKey" placeholder="Enter Security Key" aria-describedby="secureHelp" autocomplete="new-password" />
+                    <small id="secureHelp" class="form-text text-danger  d-none">Invalid SecureKey</small>
+                </div>
+            </div>
+        }
+        <div class="col-sm-3">
+            <div class="mb-2">
+                <label class="lbl" for="txtUTR">UTR No.</label>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="mb-2">
+                <input aria-describedby="UTRHelp" class="form-control" id="txtUTR" name="txtUTR" placeholder="Enter UTR" tabindex="3" type="text" value="@Model.fundRequetResp.TransactionId">
+                <small id="UTRHelp" class="form-text text-muted d-none">UTR Number is Mandatory</small>
+            </div>
+        </div>
+
+        <div class="col-sm-3">
+            <div class="mb-2">
+                <label class="lbl" for="txtRemark">Remark</label>
+            </div>
+        </div>
+        <div class="col-sm-9">
+            <div class="mb-2">
+                <input aria-describedby="remHelp" class="form-control" id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text" value="">
+                <small id="remHelp" class="form-text text-muted d-none">Remark optional</small>
+            </div>
+        </div>
+        @if (ApplicationSetting.IsAccountStatement)
+        {
+            <div class="col-sm-3">
+                <div class="mb-2">
+                    &nbsp;
+                </div>
+            </div>
+            <div class="col-sm-9">
+                <div class="mb-2">
+                    <span class="input-group-text switch switch-sm bg-white align">
+                        <input type="checkbox" class="switch" id="chbIsMarkCredit" tabindex="4" checked>
+                        <label for="chbIsMarkCredit" class="font-weight-bold lbl">Is Mark Credit</label>
+                    </span>
+                </div>
+            </div>
+        }
+        <div class="col-sm-12">
+            <div class="mb-2">
+                <label class="h6" id="lblAmount">
+                    <span id="spnT">Transferable</span> Amount is <i class="fas fa-rupee-sign"></i>&nbsp;<span id="spnRup" class="text-xl-right">@Model.fundRequetResp.Amount</span>
+                </label>
+            </div>
+        </div>
+        <div class="col-sm-12">
+            <div class="mb-2 text-right">
+                <input type="hidden" id="btnBType" value="@(Model.fundRequetResp.PaymentId>0? Model.fundRequetResp.WalletTypeID: Wallet.Prepaid)" data-isadminflat="false" />
+                <button class="btn btn-outline-dark" id="bT">Transfer</button>
+                <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $('#txtAmount,#txtCommission').keyup(function () {
+        let amount = parseFloat($('#txtAmount').val());
+        let commission = parseFloat($('#txtCommission').val());
+        let total = amount + amount * commission * 0.01;
+        $('#txtnumToword').remove();
+        var _word = Q.numberToWords(total);
+        if (!_word) return false;
+        if (_word.toLowerCase() != 'zero' && _word.toLowerCase() != 'false') {
+            $('#lblAmount').append(`<span id="txtnumToword" class="text-success d-block"> ${_word}</span>`);
+        }
+        else {
+            $('#txtnumToword').remove();
+        }
+    });
+    $('.btn-group-toggle label').unbind().click(e => {
+        let _v = $(e.currentTarget).text().trim() !== 'Prepaid' ? 0 : $(e.currentTarget).data().walletValue;
+        $('#txtCommission').val(_v);
+    });
+</script>

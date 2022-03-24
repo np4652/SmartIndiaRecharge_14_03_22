@@ -1,0 +1,1505 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.RoundpaySimplePlanResp
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Plans</h3>
+        <hr />
+    </div>
+    @if (Model.Records != null)
+    {
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    @if (Model.Records.talktime != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link active" data-toggle="pill" href="#conttalktime">TALKTIME</a>
+                        </li>
+                    }
+                    @if (Model.Records.smartrecharge != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contsmartrecharge">SMART RECHARGE</a>
+                        </li>
+                    }
+                    @if (Model.Records.ALL != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contall">ALL</a>
+                        </li>
+                    }
+                    @if (Model.Records.CricketPack != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contCricketPack">CRICKET PACK</a>
+                        </li>
+                    }
+                    @if (Model.Records.FRCNonPrime != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contFRCNonPrime">FRCNon Prime</a>
+                        </li>
+                    }
+                    @if (Model.Records.unlimited != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contunlimited">UNLIMITED</a>
+                        </li>
+                    }
+                    @if (Model.Records.frcsrc != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contfrcsrc">FRC SRC</a>
+                        </li>
+                    }
+                    @if (Model.Records.combo != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contcombo">COMBO</a>
+                        </li>
+                    }
+                    @if (Model.Records.frc != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contfrc">FRC</a>
+                        </li>
+                    }
+                    @if (Model.Records.isd != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contisd">ISD</a>
+                        </li>
+                    }
+                    @if (Model.Records.roaming != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#controaming">ROAMING</a>
+                        </li>
+                    }
+                    @if (Model.Records.stv != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contstv">STV</a>
+                        </li>
+                    }
+                    @if (Model.Records.sms != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contsms">SMS</a>
+                        </li>
+                    }
+                    @if (Model.Records.DATA != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contDATA">DATA</a>
+                        </li>
+                    }
+                    @if (Model.Records.internationalroaming != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#continternationalroaming">INTERNATIONAL ROAMING</a>
+                        </li>
+                    }
+                    @if (Model.Records.TwoG3G != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contTwoG3G">2G 3G DATA</a>
+                        </li>
+                    }
+                    @if (Model.Records.validityextension != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contvalidityextension">VALIDITY EXTENSION</a>
+                        </li>
+                    }
+                    @if (Model.Records.combovouchers != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contcombovouchers">COMBO VOUCHERS</a>
+                        </li>
+                    }
+                    @if (Model.Records.dataplans != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contdataplans">DATA PLANS</a>
+                        </li>
+                    }
+                    @if (Model.Records.unlimitedplans != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contunlimitedplans">UNLIMITED PLANS</a>
+                        </li>
+                    }
+                    @if (Model.Records.mblazeultra != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contmblazeultra">MBLAZE ULTRA</a>
+                        </li>
+                    }
+                    @if (Model.Records.wifiultrarecharges != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contwifiultrarecharges">WIFI ULTRA CHARGES</a>
+                        </li>
+                    }
+                    @if (Model.Records.IUCTopup != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contIUCTopup">IUC Topup</a>
+                        </li>
+                    }
+                    @if (Model.Records.AllinOne != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contAllinOne">ALL IN ONE</a>
+                        </li>
+                    }
+                    @if (Model.Records.NewAllinOne != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contNewAllinOne">NEW ALL IN ONE</a>
+                        </li>
+                    }
+                    @if (Model.Records.JioPhone != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contJioPhone">JIO PHONE</a>
+                        </li>
+                    }
+                    @if (Model.Records.JioPrime != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contJioPrime">JIO PRIME</a>
+                        </li>
+                    }
+                    @if (Model.Records.DATAPACK != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contDATAPACK">DATA PACK</a>
+                        </li>
+                    }
+                    @if (Model.Records.workfromhome != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contworkfromhome">Work From Home</a>
+                        </li>
+                    }
+                    @if (Model.Records.international != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#continternational">International</a>
+                        </li>
+                    }
+                    @if (Model.Records.TwoG != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contTwoG">2G</a>
+                        </li>
+                    }
+                    @if (Model.Records.ThreeG != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contThreeG">3G</a>
+                        </li>
+                    }
+                    @if (Model.Records.FourG != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contFourG">4G</a>
+                        </li>
+                    }
+                    @if (Model.Records.Local != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contLocal">Local</a>
+                        </li>
+                    }
+                    @if (Model.Records.Other != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contOther">Other</a>
+                        </li>
+                    }
+                    @if (Model.Records.VAS != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contVAS">VAS</a>
+                        </li>
+                    }
+                    @if (Model.Records.AllRounder != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contAllRounder">All Rounder</a>
+                        </li>
+                    }
+                    @if (Model.Records.HotStar != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contHotStar">HotStar</a>
+                        </li>
+                    }
+                    @if (Model.Records.Validity != null)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" data-toggle="pill" href="#contValidity">Validity</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    <div id="contValidity" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.Validity != null)
+                                {
+                                    foreach (var ftt in Model.Records.Validity)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for Validity</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contHotStar" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.HotStar != null)
+                                {
+                                    foreach (var ftt in Model.Records.HotStar)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for All Rounder</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contAllRounder" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.AllRounder != null)
+                                {
+                                    foreach (var ftt in Model.Records.AllRounder)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for All Rounder</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contVAS" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.VAS != null)
+                                {
+                                    foreach (var ftt in Model.Records.VAS)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for VAS</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="continternational" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.international != null)
+                                {
+                                    foreach (var ftt in Model.Records.international)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contworkfromhome" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.workfromhome != null)
+                                {
+                                    foreach (var ftt in Model.Records.workfromhome)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contNewAllinOne" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.NewAllinOne != null)
+                                {
+                                    foreach (var ftt in Model.Records.NewAllinOne)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contDATAPACK" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.DATAPACK != null)
+                                {
+                                    foreach (var ftt in Model.Records.DATAPACK)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for data pack</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contJioPrime" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.JioPrime != null)
+                                {
+                                    foreach (var ftt in Model.Records.JioPrime)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contJioPhone" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.JioPhone != null)
+                                {
+                                    foreach (var ftt in Model.Records.JioPhone)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contAllinOne" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.AllinOne != null)
+                                {
+                                    foreach (var ftt in Model.Records.AllinOne)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contIUCTopup" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.IUCTopup != null)
+                                {
+                                    foreach (var ftt in Model.Records.IUCTopup)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contFRCNonPrime" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.FRCNonPrime != null)
+                                {
+                                    foreach (var ftt in Model.Records.FRCNonPrime)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contCricketPack" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.CricketPack != null)
+                                {
+                                    foreach (var ftt in Model.Records.CricketPack)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contunlimited" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.unlimited != null)
+                                {
+                                    foreach (var ftt in Model.Records.unlimited)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contall" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.ALL != null)
+                                {
+                                    foreach (var ftt in Model.Records.ALL)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contfrcsrc" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.frcsrc != null)
+                                {
+                                    foreach (var ftt in Model.Records.frcsrc)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contsmartrecharge" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.smartrecharge != null)
+                                {
+                                    foreach (var ftt in Model.Records.smartrecharge)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contcombo" class="table-responsive container fade tab-pane">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.combo != null)
+                                {
+                                    foreach (var ftt in Model.Records.combo)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contfrc" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.frc != null)
+                                {
+                                    foreach (var ftt in Model.Records.frc)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+                                            <td>@ftt.validity</td>
+
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for full talktime</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contisd" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.isd != null)
+                                {
+                                    foreach (var ftt in Model.Records.isd)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="controaming" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.roaming != null)
+                                {
+                                    foreach (var ftt in Model.Records.roaming)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="conttalktime" class="table-responsive container tab-pane active">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.talktime != null)
+                                {
+                                    foreach (var ftt in Model.Records.talktime)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contstv" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.stv != null)
+                                {
+                                    foreach (var ftt in Model.Records.stv)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contsms" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.sms != null)
+                                {
+                                    foreach (var ftt in Model.Records.sms)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contDATA" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.DATA != null)
+                                {
+                                    foreach (var ftt in Model.Records.DATA)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="continternationalroaming" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.internationalroaming != null)
+                                {
+                                    foreach (var ftt in Model.Records.internationalroaming)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contTwoG3G" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.TwoG3G != null)
+                                {
+                                    foreach (var ftt in Model.Records.TwoG3G)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contvalidityextension" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.validityextension != null)
+                                {
+                                    foreach (var ftt in Model.Records.validityextension)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contcombovouchers" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.combovouchers != null)
+                                {
+                                    foreach (var ftt in Model.Records.combovouchers)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contdataplans" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.dataplans != null)
+                                {
+                                    foreach (var ftt in Model.Records.dataplans)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contunlimitedplans" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.unlimitedplans != null)
+                                {
+                                    foreach (var ftt in Model.Records.unlimitedplans)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contmblazeultra" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.mblazeultra != null)
+                                {
+                                    foreach (var ftt in Model.Records.mblazeultra)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contwifiultrarecharges" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.wifiultrarecharges != null)
+                                {
+                                    foreach (var ftt in Model.Records.wifiultrarecharges)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contTwoG" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.TwoG != null)
+                                {
+                                    foreach (var ftt in Model.Records.TwoG)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 2G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contThreeG" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.ThreeG != null)
+                                {
+                                    foreach (var ftt in Model.Records.ThreeG)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 3G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contFourG" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.FourG != null)
+                                {
+                                    foreach (var ftt in Model.Records.FourG)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for 4G</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contLocal" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.Local != null)
+                                {
+                                    foreach (var ftt in Model.Records.Local)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for Local</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="contOther" class="table-responsive container tab-pane fade">
+                        <table class="table table-striped">
+                            <thead class="bg-tableth">
+                                <tr>
+                                    <th>RS</th>
+                                    <th>Description</th>
+                                    <th>Validity</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Records.Other != null)
+                                {
+                                    foreach (var ftt in Model.Records.Other)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@ftt.rs">@ftt.rs</span></td>
+                                            <td>@ftt.desc</td>
+
+                                            <td>@ftt.validity</td>
+                                        </tr>
+
+                                    }
+                                }
+                                else
+                                {
+                                    <tr rowspan="2">
+                                        <td colspan="4"><center>No plan found for Other</center></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>

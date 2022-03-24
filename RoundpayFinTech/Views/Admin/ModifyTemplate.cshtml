@@ -1,0 +1,79 @@
+﻿@model RoundpayFinTech.AppCode.Model.ModifyTemplate
+
+@{
+    ViewData["Title"] = "Modiy Template";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <span><i class="fas fa-link"></i> @ViewData["Title"]</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <select class="form-control" id="ddlSection">
+                                    <option value="1">Home</option>
+                                    <option value="2">About</option>
+                                    <option value="3">Contact</option>
+                                    <option value="4">Service</option>
+                                    <option value="5">Feature</option>
+                                    <option value="6">Testimonial</option>
+                                    <option value="7">Header</option>
+                                    <option value="8">Footer</option>
+                                    <option value="9">FullPage</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-4">
+                                @if (Model != null && Model.Themes.Any())
+                                {
+                                    var Themes = new SelectList(Model.Themes, "Id", "ThemeName");
+                                    <select class="form-control" asp-items="@Themes" id="ddlTheme">
+                                    </select>
+                                }
+                            </div>
+                        </div>
+                        <div class="row mt-2" id="editorDiv">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{ 
+    <script type="text/javascript" src="//cdn.tinymce.com/4/tinymce.min.js"></script>
+<script>
+    var loadEditor = () => {
+        let param = {
+            ThemeID: $('#ddlTheme').val(),
+            SectionID: $('#ddlSection').val()
+        };
+        $.post('/Admin/_ModifyTemplate', param).done(result => $('#editorDiv').html(result));
+    };
+    (() => {
+        loadEditor();
+        $('#ddlTheme,#ddlSection').change(() => loadEditor());
+    })();
+</script>
+  
+}

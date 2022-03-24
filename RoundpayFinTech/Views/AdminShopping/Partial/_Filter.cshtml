@@ -1,0 +1,51 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.Filter>
+@if (Model.Any())
+{
+    int Counter = 1;
+    foreach (var item in Model)
+    {
+        <tr data-Filter-Id="@item.ID">
+            <td>@Counter</td>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@Counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@Counter">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        @if (item.IsEditable)
+                        {
+                            <a href="#" class="dropdown-item btnEdit"><span class="fa fa-edit text-success"></span> Edit</a>
+                        }
+                        <a href="#" class="dropdown-item btnOption"><span class="fa fa-edit text-success"></span> Option</a>
+                    </div>
+                </div>
+            </td>
+            <td>@item.FilterName</td>
+            <td><input type="checkbox" disabled @Html.Raw(item.IsActive ? "checked='checked'" : "") /></td>
+        </tr>
+        Counter++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="5">No Data Found</td>
+    </tr>
+}
+<script>
+    $('.btnEdit').unbind().click(e => AddFilter($(e.currentTarget).closest('tr').data().filterId));
+    $('.btnOption').unbind().click(e => {
+        $.post('/FilterOption', { FilterID: $(e.currentTarget).closest('tr').data().filterId })
+            .done(result => {
+                mdlA.id = "FilterOption";
+                mdlA.title = "Option";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+    });
+    $('.dropdown-toggle').dropdown();
+</script>

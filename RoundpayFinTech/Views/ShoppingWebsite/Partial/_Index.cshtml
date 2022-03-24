@@ -1,0 +1,58 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model List<MainCategoriesProduct>;
+<div class="row">
+
+    @if (Model != null)
+    {
+        @foreach (var item in Model)
+        {
+
+            <div class="col-lg-2 col-6 cus-padding-pro-sec">
+                <div class="product-single">
+                    <div class="product-thumb">
+                        <span class="off">&#8377; @item.Discount off</span>
+                        <a target="_blank" href="GetProductDetails/@item.POSId">
+                            <img alt="" src="@item.FrontImage">
+                        </a>
+                        <div class="product-quick-view  d-none d-sm-block">
+                            <a  href="javascript:void(0);" onclick="quickView('1',@item.POSId)">quick view  
+                                <img class="loadersmall@(item.POSId)" src="~/ShoppingWebsite/images/loader/loader_small.gif" style="height:
+25px;display:none" ></a>
+                        </div>
+                    </div>
+                    <div class="product-title">
+                        <small>
+                            <a tabindex="-1" href="/list/smart-phone/S/47">@item.SubCategoryName</a>
+                        </small>
+                        <h4>
+                            <a tabindex="-1" target="_blank" href="GetProductDetails/@item.POSId">@item.ProductName</a>
+                        </h4>
+                    </div>
+                    <div class="product-price-rating">
+                        <span>&#8377; @item.SellingPrice  /-</span>
+                        <del>&#8377; @item.MRP /-</del>
+                        <div class="pull-right">
+                            <div class="product-stock">
+                                <p>
+                                    <button class="btn btn-info cus-add-cart-btn d-md-none">Add To Cart</button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <farhan-affilate _nghost-gja-c17="">
+                    </farhan-affilate>
+                    <div class="product-action  d-none d-sm-block">
+                        <a class="add-to-cart" href="javascript:void(0);" tabindex="-1">Add to Cart</a>
+                        <a class="product-wishlist" href="javascript:void(0);" tabindex="-1">
+                            <i class="ti-heart"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+        }
+    }
+</div>
+@section script{
+
+}

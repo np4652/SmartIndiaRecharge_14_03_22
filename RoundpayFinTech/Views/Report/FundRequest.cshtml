@@ -1,0 +1,425 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.FundRequestToUser>
+@{
+    ViewData["Title"] = "Fund Request";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Fund Request</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-8">@ViewData["Title"]</div>
+                            <div class="col-sm-4">
+                                <div class="input-group">
+                                    <select aria-describedby="helpBL" class="form-control" id="ddlUserTo" tabindex="1">
+                                        @foreach (var item in Model.ToList())
+                                        {
+                                            <option value="@item.ParentID">@item.ParentName</option>
+                                        }
+                                    </select>
+                                    <div class="input-group-append">
+                                        <button id="fundrequest" class="btn btn-dark btn-sm">Fund Request</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblBankMaster">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%;">#</th>
+                                        <th scope="col" style="width:30%;">BankName</th>
+                                        <th scope="col" style="width:20%;">BranchName</th>
+                                        <th scope="col" style="width:15%;">AccountHolder</th>
+                                        <th scope="col" style="width:5%;">AccountNumber</th>
+                                        <th scope="col" style="width:5%;">IfscCode</th>
+                                        <th scope="col" style="width:5%;">Billing Info</th>
+                                        <th scope="col" style="width:15%;" class="text-right">Cash Deposit Charges</th>
+                                        <th scope="col" style="width:15%;">QR Logo</th>
+                                        <th scope="col" style="width:15%;">BankLogo</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/js/NmberToWord.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            $('#ddlUserTo').unbind().on('change', () => FundList());
+            $('#fundrequest').click(function () {
+                preloader.load();
+                $.post('/Fund-Request', { U: $('#ddlUserTo').val() }, function (result) {
+                    $('#' + an.id).remove();
+                    mdlA.id = 'myalertyh';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.large);
+                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                    $('#txtRequestedAmount').numeric({
+                        numericType: 'number',
+                        maxLength: 7
+                    });
+                    var ct1 = { ddlbank: $("#ddlBankName"), txtbact: $("#txtbankaccount") };
+                    if (ct1.ddlbank.val() != undefined) {
+                        ct1.txtbact.val(ct1.ddlbank.val().indexOf() > -1 ? ct1.ddlbank.val().split('_')[2] : '');
+                    }
+
+                    $("#ddlBankName").change(function () {
+                        var val = ct1.ddlbank.val().split('_');
+                        ct1.txtbact.val("");
+                        ct1.txtbact.val(val[2]);
+                        $.post('/Payment-Mode', { BankID: val[0] })
+                            .done(function (result) {
+                                var pList = result.paymentModeList
+                                if (pList != null && pList != undefined && pList.length > 0) {
+                                    $('#ddlPaymentMode').empty().append(' <option value="0"> :: Payment Mode :: </option>');
+                                    for (var i = 0; i < pList.length; i++) {
+                                        $('#ddlPaymentMode').append('<option value="' + pList[i].cid + '"> ' + pList[i].mode + ' </option>')
+                                    }
+                                }
+                            })
+                    });
+
+                    $("#ddlPaymentMode").change(function () {
+                        var ct = {
+                            statuscode: { SUCCESS: 1, ERROR: -1, INFO: 2 }
+                        };
+                        var ct2 = {
+                            divmob: $("#IsMobileNoRequired"),
+                            txtmob: $("#txtMobileNo"),
+                            divactholder: $("#IsAccountHolderRequired"),
+                            txtactname: $("#txtAccountHolderName"),
+                            divcard: $("#IsCardNumberRequired"),
+                            txtcard: $("#txtCardNo"),
+                            divcheque: $("#IsChequeNoRequired"),
+                            txtcheque: $("#txtCheque"),
+                            divtid: $("#IsTransactionIdRequired"),
+                            txttid: $("#txtTransactionId"),
+                            ddlbank: $("#ddlBankName"),
+                            ddlpaymentid: $("#ddlPaymentMode"),
+                            spancharge: $("#hdcharge"),
+                            divUPIID: $('#IsUPIIdRequired'),
+                            divBranch: $('#IsBranchRequired')
+                        };
+
+                        ct2.divmob.hide();
+                        ct2.txtmob.val("");
+                        ct2.divactholder.hide();
+                        ct2.txtactname.val("");
+                        ct2.divcard.hide();
+                        ct2.txtcard.val("");
+                        ct2.divcheque.hide();
+                        ct2.txtcheque.val("");
+                        ct2.divtid.hide();
+                        ct2.txttid.val("");
+                        ct2.divUPIID.hide();
+                        ct2.divBranch.hide();
+
+                        var str = $("#ddlPaymentMode").val().split('_');
+                        var p = {
+                            iid: str[0],
+                            isTransactionIdAuto: str[1],
+                            isAccountHolderRequired: str[2],
+                            isChequeNoRequired: str[3],
+                            isCardNumberRequired: str[4],
+                            isMobileNoRequired: str[5],
+                            isUpiRequired: str[6],
+                            isBranchRequired: str[7]
+                        };
+
+                        if (p.isMobileNoRequired == true) {
+                            ct2.divmob.show();
+                        }
+                        if (p.isAccountHolderRequired == true) {
+                            ct2.divactholder.show();
+                        }
+                        if (p.isCardNumberRequired == true) {
+                            ct2.divcard.show();
+                        }
+                        if (p.isChequeNoRequired == true) {
+                            ct2.divcheque.show();
+                        }
+                        if (p.isTransactionIdAuto == false) {
+                            ct2.divtid.show();
+                        }
+                        if (p.isUpiRequired == true) {
+                            ct2.divUPIID.show();
+                        }
+
+                        if (p.isBranchRequired == true) {
+                            ct2.divBranch.show();
+                        }
+
+                        if (ct2.ddlbank.prop('selectedIndex') > 0) {
+                            var ind = ct2.ddlpaymentid.val().split('_')[0];
+                            if (ind == "7") {
+                                ct2.spancharge.html('Cash Deposit Charge ' + ct2.ddlbank.val().split('_')[1]);
+                            }
+                            else {
+                                ct2.spancharge.html('');
+                            }
+                        }
+                        else {
+                            ct2.spancharge.html('');
+                        }
+                    });
+
+                    $("#btnSaveFR").click(function () {
+                        var $v = $validator;
+                        var ct = {
+                            BankId: $("#ddlBankName"),
+                            AccountNo: $("#txtbankaccount"),
+                            PaymentId: $("#ddlPaymentMode"),
+                            TransactionId: $("#txtTransactionId"),
+                            UPIID: $("#txtUPIID"),
+                            Branch: $("#txtBranch"),
+                            CardNO: $("#txtCardNo"),
+                            ChequeNo: $("#txtCheque"),
+                            AccountHolder: $("#txtAccountHolderName"),
+                            MobileNO: $("#txtMobileNo"),
+                            RequiredAmount: $("#txtRequestedAmount"),
+                            statuscode: [{
+                                ERROR: -1,
+                                SUCCESS: 1,
+                                PENDING: 0
+                            }]
+                        };
+                        var IsE = {
+                            BankId: (ct.BankId.val().trim() === '' || ct.BankId.val().trim() === '0'),
+                            AccountNo: (ct.AccountNo.val().trim() === ''),
+                            PaymentId: (ct.PaymentId.val().trim() === '' || ct.PaymentId.val().trim() === '0'),
+                            RequiredAmountEmpty: (ct.RequiredAmount.val().trim() === ''),
+                            RequiredAmountInvalid: (parseFloat(ct.RequiredAmount.val().trim()) === '0' || !$v.$IsNum(ct.RequiredAmount.val().trim())),
+                        }
+
+                        $v.showErrorFor(ct.BankId, 'Select BankId', IsE.BankId);
+                        $v.showErrorFor(ct.AccountNo, 'Invalid AccountNo', IsE.AccountNo);
+                        $v.showErrorFor(ct.PaymentId, 'Select PaymentId', IsE.PaymentId);
+
+
+                        var c = 0;
+                        $(".divother").each(function () {
+                            var dis = $(this).css("display");
+                            var ctr = $(this);
+                            if (dis != "none" || dis == "block") {
+                                var iid = $(ctr).find("input[type='text']");
+                                var val = $(ctr).find("input[type='text']").val().trim();
+                                if (val == "") {
+                                    c = 1;
+                                    var mssg = "";
+                                    switch ($(iid).attr("id")) {
+                                        case "txtTransactionId": mssg = "Enter Transaction Id"; break;
+                                        case "txtCardNo": mssg = "Enter Card Number"; break;
+                                        case "txtAccountHolderName": mssg = "Enter AccountHolder Name"; break;
+                                        case "txtMobileNo": mssg = "Enter Mobile Number"; break;
+                                        case "txtCheque": mssg = "Enter Cheque Number"; break;
+                                    }
+                                    $v.showErrorFor(iid, mssg, 1);
+                                }
+                                else {
+                                    $v.showErrorFor(iid, "", 0);
+                                }
+                            }
+                        });
+                        $v.showErrorFor(ct.RequiredAmount, 'Enter Required Amount', IsE.RequiredAmountEmpty);
+                        if (IsE.RequiredAmountEmpty == false) {
+                            $v.showErrorFor(ct.RequiredAmount, 'Invalid Required Amount', IsE.RequiredAmountInvalid);
+                        }
+                        if (parseFloat(ct.RequiredAmount.val()) <= 0) {
+                            $v.showErrorFor(ct.RequiredAmount, 'Invalid Required Amount', true);
+                        }
+                        if (IsE.BankId == true || IsE.AccountNo == true || IsE.PaymentId == true || IsE.RequiredAmountEmpty == true || IsE.RequiredAmountInvalid == true || c == 1)
+                            return false;
+                        var ct = {
+                            BankId: $("#ddlBankName"),
+                            AccountNo: $("#txtbankaccount"),
+                            PaymentId: $("#ddlPaymentMode"),
+                            TransactionId: $("#txtTransactionId"),
+                            UPIID: $("#txtUPIID"),
+                            CardNO: $("#txtCardNo"),
+                            ChequeNo: $("#txtCheque"),
+                            AccountHolder: $("#txtAccountHolderName"),
+                            MobileNO: $("#txtMobileNo"),
+                            RequiredAmount: $("#txtRequestedAmount"),
+                            Branch: $("#txtBranch"),
+                            statuscode: [{
+                                ERROR: -1,
+                                SUCCESS: 1,
+                                PENDING: 0
+                            }]
+                        };
+                        var fr = {
+                            LoginID: 0,
+                            BankId: ct.BankId.val().split('_')[0],
+                            PaymentId: ct.PaymentId.val().split('_')[0],
+                            Amount: parseFloat(ct.RequiredAmount.val()),
+                            TransactionId: ct.TransactionId.val(),
+                            MobileNo: ct.MobileNO.val(),
+                            AccountJolderName: ct.AccountHolder.val(),
+                            ChequeNo: ct.ChequeNo.val(),
+                            CardNo: ct.CardNO.val(),
+                            ToUserID: $("#ddlUserTo").val(),
+                            WalletTypeID: parseInt($('#ddlWType').val()),
+                            UPIID: ct.UPIID.val(),
+                            Branch: ct.Branch.val()
+                        };
+                        //Amit
+
+                        if ($('#TransactionImg').val() != "" && $('#TransactionImg').val() != undefined) {
+                            uploadReceipt(fr);
+                        }
+                        else {
+                            _Save(fr);
+                        }
+
+                        //End
+
+
+
+                    });
+
+                    $('#txtRequestedAmount').keyup(function () {
+
+                        if (isNaN($(this).val())) {
+                            an.title = "Warning";
+                            an.content = "No valid number";
+                            an.alert(-1);
+                            return false;
+                        }
+                        var _word = toWords($(this).val());
+                        if (_word != 'Zero') {
+                            $('#txtnumToword').remove();
+                            $('#divRequestedAmt').append(`<span id="txtnumToword" class="text-success text-nowrap"> ${_word}</span>`);
+                        }
+                        else {
+                            $('#txtnumToword').remove();
+                        }
+                    });
+
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+            });
+            FundList();
+        });
+
+        var FundList = function () {
+            preloader.load();
+            $.post('/fund-lst', { U: $('#ddlUserTo').val() }, function (result) {
+                $('#tblBankMaster tbody').html(result);
+                $('img[id^=img_QRLogo_]').click(function () {
+                    let path = $(this).attr('src');
+                    let html = `<div class="row"><div class="col-md-12 text-center"><img  class="img-fluid" src ="${path}" alt = "No Image" /></div></div>`;
+                    mdlA.id = 'qrLogo';
+                    mdlA.title = 'Scan and Pay';
+                    mdlA.content = html;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.modal(mdlA.size.default);
+                });
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        }
+
+        var uploadReceipt = function (fr) {
+            var formData = new FormData();
+            formData.append('file', $('#TransactionImg')[0].files[0]);
+            formData.append('BankID', fr.BankId);
+            $.ajax({
+                type: 'POST',
+                url: '/upload-Receipt',
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (result) {
+                    if (result.statuscode == 1) {
+                        fr.RImage = result.commonStr;
+                        _Save(fr)
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        };
+
+        var _Save = function (fr) {
+            $.ajax({
+                type: 'POST',
+                url: '/Fund-Request-Submit',
+                contentType: 'application/json',
+                data: JSON.stringify(fr),
+                success: function (result) {
+                    resultReload(result);
+                    if (result.statuscode == -1) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == 1) {
+                        //if (result.commonInt > 0 && $('#TransactionImg').val() != '') {
+                        //    uploadReceipt(result.commonInt);
+                        //}
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        $("#btnSaveFR").attr("disabled", "disabled");
+                        mdlA.dispose();
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    an.title = "Oops";
+                    an.content = result;
+                    an.alert(ct.statuscode.ERROR);
+                    if (result === 'parsererror') {
+                        reload();
+                    }
+                },
+                complete: function () { }
+            });
+        }
+
+    </script>
+}

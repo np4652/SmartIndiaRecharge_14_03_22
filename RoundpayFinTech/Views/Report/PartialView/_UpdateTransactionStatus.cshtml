@@ -1,0 +1,42 @@
+﻿@model char
+@{
+    var btnText = "Update ";
+    var placeholder = "";
+    if (Model == 'S')
+    {
+        btnText += " Success";
+        placeholder = "Enter Live ID";
+    }
+    else if (Model == 'F')
+    {
+        btnText += " Failed";
+        placeholder = "Enter Remark";
+    }
+    else if (Model == 'W')
+    {
+        btnText += " Right AccountNo";
+        placeholder = "Enter Right AccountNo";
+    }
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Update Transaction Form</h5>
+    @if (Model != 0)
+    {
+        <div class="form-group">
+
+            @Html.Label("txtRemark", placeholder, new { @class = "lbl" })
+            @Html.TextBox("txtRemark", "", new { @class = "form-control", @placeholder = placeholder, @aria_describedby = "helpRemark", @tabindex = 2 })
+            <small id="helpRemark" class="form-text text-muted d-none"></small>
+        </div>
+        <button class="btn btn-outline-dark" id="btnUpdateStatus">@btnText</button>
+    }
+    else
+    {
+        <h6>Invalid selection</h6>
+    }
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>
+       

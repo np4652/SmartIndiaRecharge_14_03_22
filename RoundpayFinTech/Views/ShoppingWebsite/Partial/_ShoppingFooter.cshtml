@@ -1,0 +1,66 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model WebSite;
+<footer class="footer-area mt-50">
+    @if (Model != null)
+    {
+
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 col-sm-12 text-center">
+                    <img src="@Model.Logo" class="footer-logo" alt="logo" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-sm-6 bor-rig">
+                    <div class="company-info text-center pb-0">
+                        <img src="~/ShoppingWebsite/images/footer/location.png" alt="" class="mb-3">
+                        <p class="address">@Model.Address</p>
+
+                    </div>
+
+                    @*<div class="payment-gateways">
+                        <img src="@viewModel.websiteSettings.Logo" height="25px" />
+
+                        <img src="~/ShoppingWebsite/images/icons/paytm.png" alt="" />
+                        <img src="~/ShoppingWebsite/images/icons/moneyfy.png" alt="" />
+                        </div>*@
+                </div>
+
+                <div class="col-lg-4 col-sm-6 bor-rig">
+                    <div class="company-info text-center pb-0">
+                        <img src="~/ShoppingWebsite/images/footer/telephone.png" alt="" class="mb-3">
+                        <p>Phone : @Model.MobileNo</p>
+
+                    </div>
+
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <div class="company-info text-center pb-0">
+                        <img src="~/ShoppingWebsite/images/footer/mail.png" alt="" class="mb-3">
+                        <p>Email :  @Model.EmailId</p>
+                    </div>
+
+
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="footer-copyright">
+                        <ul class="nav justify-content-center mb-3">
+                            <li class="nav-item"> <a class="nav-link active" href="javascript:void(0)">Payment</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="javascript:void(0)">Shipping</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="javascript:void(0)">Faq</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="/Refund">Cancellation & Refunds</a></li>
+                            <li class="nav-item"> <a class="nav-link" href="javascript:void(0)">Security</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="/Term">Terms of Use</a> </li>
+                            <li class="nav-item"> <a class="nav-link" href="/PrivacyPolicy">Privacy Policy</a> </li>
+                        </ul>
+
+                        <p class="copyright-text">Copyright 2019 &copy; <a href="#"> @Model.CopyRightText</a>. All rights reserved.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</footer>

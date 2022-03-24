@@ -1,0 +1,38 @@
+﻿<!--Vocab Master-->
+@model List<RoundpayFinTech.AppCode.Model.VocabMaster>
+
+<div class="table-sm table-responsive">
+    @if (Model != null && Model.Count > 0)
+    {
+        <table class="table table-bordered table-striped table-responsive-sm">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">Action</th>
+                    <th scope="col">Vocab Name</th>
+                    <th scope="col">Entry Date</th>
+                    <th scope="col">Display Order</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var r in Model.OrderBy(x => x._IND).ThenBy(p => p._Name))
+                {
+                    <tr>
+                        <td class="align-items-center text-center">
+                            <div class="btn-group dropup">
+                                <a href="#" id="act_@r._ID" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                <div class="dropdown-menu" aria-labelledby="act">
+                                    <a href="#" onclick="OpenOptionModal('@r._ID')" class="dropdown-item text-success" id="Prop_@r._ID"><i class="far fa-check-circle"></i> Options</a>
+
+                                    <a href="#" class="dropdown-item text-danger" onclick="OpenAddvocabModal('@r._ID','@r._Name','@r._IND')" id="Edit_@r._ID"><i class="far fa-times-circle"></i> Edit</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td>@r._Name</td>
+                        <td>@r._EntryDate</td>
+                        <td>@r._IND</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

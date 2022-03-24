@@ -1,0 +1,643 @@
+﻿@using RoundpayFinTech.AppCode.Configuration
+@model RoundpayFinTech.AppCode.Model.Shopping.ProductModel
+@{
+    ViewData["Title"] = "Add Product";
+    var cList = new SelectList(Model.MainCategory, "MainCategoryID", "Name");
+    var sList1 = Model.CategoryList != null ? new SelectList(Model.CategoryList, "SubCategoryId", "Name") : null;
+    var sList2 = Model.SubCategory != null ? new SelectList(Model.SubCategory, "SubCategoryId", "Name") : null;
+    var MasterProduct = Model.MasterProduct != null ? new SelectList(Model.MasterProduct, "ProductID", "ProductName") : null;
+    var Brands = Model.Brands != null ? new SelectList(Model.Brands, "BrandId", "BrandName") : null;
+    var Vendors = new SelectList(Model.Vendors, "vendorsID", "vendorsName");
+    int Role = Model.Role;
+}
+
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/css/select2.min.css" rel="stylesheet" />
+<link href="~/css/Shopping.css" rel="stylesheet" />
+<style>
+    .cus-control {
+        display: inherit !important;
+        width: inherit !important;
+        position: relative;
+        top: 3px;
+    }
+
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white line-height-34">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-sm btn-outline-light pl-2 pr-2 font-bold" data-Item-id="0" id="btnNew"><i class="fa fa-plus"></i> NEW</button>
+                                    <input type="hidden" id="hfdPDID" value="@Model.Detail.ProductDetail.ProductDetailID" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pb-0">
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Category<sup class="text-danger">*</sup></span>
+                                    <select class="form-control" id="ddlCategory" asp-items="@cList" asp-for="@Model.Detail.ProductDetail.CategoryID" required="required" value="0" tabindex="1">
+                                        <option value="0">:: Choose Category ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Level-1<sup class="text-danger">*</sup></span>
+                                    <select class="form-control" id="ddlLevel1" asp-items="@sList1" asp-for="@Model.Detail.ProductDetail.SubCategoryID1" required="required" value="0" tabindex="2">
+                                        <option>:: Choose Level 1 ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Level-2<sup class="text-danger">*</sup></span>
+                                    <select class="form-control" id="ddlLevel2" asp-items="@sList2" asp-for="@Model.Detail.ProductDetail.SubCategoryID2" required="required" value="0" tabindex="3">
+                                        <option>:: Choose Level 2 ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Product<sup class="text-danger">*</sup></span>
+                                    <select class="form-control" id="ddlProduct" asp-items="@MasterProduct" asp-for="@Model.Detail.ProductDetail.ProductID" required="required" value="0" tabindex="4">
+                                        <option>:: Product ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Brand<sup class="text-danger">*</sup></span>
+                                    <select class="form-control" id="ddlBrand" required="required" asp-items="@Brands" asp-for="@Model.Detail.ProductDetail.BrandID" tabindex="5">
+                                        <option value="0">:: Select Brand ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Vendor<sup class="text-danger">*</sup></span>
+                                    <select class="form-control" id="ddlVendor" required="required" asp-items="@Vendors" asp-for="@Model.Detail.ProductDetail.VendorID" tabindex="6">
+                                        <option value="0">:: Vendor ::</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Product Code</span>
+                                    <input type="text" class="form-control" id="txtProductCode" placeholder="Product Code" tabindex="7" value="@Model.Detail.ProductDetail.ProductCode" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Batch</span>
+                                    <input type="text" class="form-control" id="txtBatch" placeholder="Batch" tabindex="8" value="@Model.Detail.ProductDetail.Batch" />
+                                </div>
+                            </div>
+                            @*Div start here*@
+                            @if (ApplicationSetting.IsB2CEnabled && Role==1)
+                            {
+                                <div class="col-sm-12" id="divB2C">
+                                    <div class="ncheckbox">
+                                        <div class="ncheck">
+                                            <span>B2C Rate Description</span>
+                                            @*<input type="checkbox" class="form-control" />*@
+                                        </div>
+                                    </div>
+                                    <div class="row mrp-new">
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">MRP<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtCost" placeholder="MRP" required="required" tabindex="9" value="@Model.Detail.ProductDetail.MRP" onchange="CalculateSellingpricebyMRP(this);" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount</span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtDiscount" placeholder="Discount" tabindex="10" value="@Model.Detail.ProductDetail.Discount" onchange="CalculateSellingpricebyDiscount(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm DiscountType">
+                                                            <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.DiscountType?"btn-dark active":"btn-outline-dark")" data-Discount-Type="1" tabindex="11">Per</button>
+                                                            <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.DiscountType?"btn-outline-dark":"btn-dark active")" data-Discount-Type="0" tabindex="12">Fix</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Selling Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtSellingPrice" placeholder="Selling Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.SellingPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">
+                                                    Admin Commission<sup class="text-danger">*</sup>@*<small class="text-danger text-monospace">[Calculate on Sale Price]</small>*@
+                                                </span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtCommission" placeholder="Admin Commission" value="@Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin?ApplicationSetting.ECommerceCommission:@Model.Detail.ProductDetail.Commission)" required="required" tabindex="13" @Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin ? "disabled='disabled'" : "") onchange="CalculateVendorpricebyadmincomm(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm CommType">
+                                                            @if (ApplicationSetting.IsECommerceCommissionSetByAdmin)
+                                                            {
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14" disabled="disabled">Per</button>
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15" disabled="disabled">Fix</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14">Per</button>
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15">Fix</button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Admin Profit<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtAdminCommission" placeholder="Admin Profit" required="required" tabindex="9" value="@Model.Detail.ProductDetail.AdminProfit" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Vendor Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtVendorPrice" placeholder="Vendor Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.VendorPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Mode<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <select class="form-control" id="selShippingMode" required="required" tabindex="18" asp-for="@Model.Detail.ProductDetail.ShippingMode">
+                                                        <option value="0">:: Please Select ::</option>
+                                                        <option value="1">Flat</option>
+                                                        <option value="2">Per Quantity</option>
+                                                        <option value="3">Weight</option>
+                                                        <option value="4">Dimension</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Charges<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtShippingCharges" required="required" placeholder="Shipping Charges" tabindex="19" value="@Model.Detail.ProductDetail.ShippingCharges" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount Count<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtDiscountCount" required="required" placeholder="Shipping Discount Count" tabindex="20" value="@Model.Detail.ProductDetail.DiscountCount" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Discount %<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtshippingDiscount" placeholder="Shipping Discount %" tabindex="21" required="required" value="@Model.Detail.ProductDetail.shippingDiscount" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="col-sm-12" id="divB2B">
+                                    <div class="ncheckbox">
+                                        <div class="ncheck">
+                                            <span>B2B Rate Description</span>
+                                            <br />
+                                            <span>
+                                                <label class="" for="chkIsRateSame">Is Rate Same</label>
+                                                <input type="checkbox" class="form-control cus-control" id="chkIsRateSame" onchange="OnSameRateCheck(this);" />
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="row mrp-new">
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">MRP<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BCost" placeholder="MRP" tabindex="9" disabled="disabled" value="@Model.Detail.ProductDetail.MRP" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount</span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtB2BDiscount" placeholder="Discount" tabindex="10" value="@Model.Detail.ProductDetail.B2BDiscount" onchange="CalculateSellingpricebyDiscount(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm DiscountType">
+                                                            <button id="btnDT1" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.B2BDiscountType?"btn-dark active":"btn-outline-dark")" data-Discount-Type="1" tabindex="11">Per</button>
+                                                            <button id="btnDT0" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.B2BDiscountType?"btn-outline-dark":"btn-dark active")" data-Discount-Type="0" tabindex="12">Fix</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Selling Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BSellingPrice" placeholder="Selling Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.B2BSellingPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">
+                                                    Admin Commission<sup class="text-danger">*</sup>@*<small class="text-danger text-monospace">[Calculate on Sale Price]</small>*@
+                                                </span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtB2BCommission" placeholder="Admin Commission" value="@Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin?ApplicationSetting.ECommerceCommission:@Model.Detail.ProductDetail.B2BCommission)" required="required" tabindex="13" @Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin ? "disabled='disabled'" : "") onchange="CalculateVendorpricebyadmincomm(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm CommType">
+                                                            @if (ApplicationSetting.IsECommerceCommissionSetByAdmin)
+                                                            {
+                                                                <button id="btnCT1" class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14" disabled="disabled">Per</button>
+                                                                <button id="btnCT0" class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15" disabled="disabled">Fix</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button id="btnCT1" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14">Per</button>
+                                                                <button id="btnCT0" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15">Fix</button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Admin Profit<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BAdminCommission" placeholder="Admin Profit" required="required" tabindex="9" value="@Model.Detail.ProductDetail.B2BAdminProfit" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Vendor Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BVendorPrice" placeholder="Vendor Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.B2BVendorPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Mode<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <select class="form-control" id="selB2BShippingMode" tabindex="18" asp-for="@Model.Detail.ProductDetail.B2BShippingMode">
+                                                        <option value="0">:: Please Select ::</option>
+                                                        <option value="1">Flat</option>
+                                                        <option value="2">Per Quantity</option>
+                                                        <option value="3">Weight</option>
+                                                        <option value="4">Dimension</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Charges<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtB2BShippingCharges" required="required" placeholder="Shipping Charges" tabindex="19" value="@Model.Detail.ProductDetail.B2BShippingCharges" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount Count<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BDiscountCount" required="required" placeholder="Shipping Discount Count" tabindex="20" value="@Model.Detail.ProductDetail.B2BDiscountCount" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Discount %<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BshippingDiscount" placeholder="Shipping Discount %" tabindex="21" required="required" value="@Model.Detail.ProductDetail.B2BshippingDiscount" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                            else if (ApplicationSetting.IsB2CEnabled)
+                            {
+                                <div class="col-sm-12" id="divB2C">
+                                    <div class="ncheckbox">
+                                        <div class="ncheck">
+                                            <span>B2C Rate Description</span>
+                                            @*<input type="checkbox" class="form-control" />*@
+                                        </div>
+                                    </div>
+                                    <div class="row mrp-new">
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">MRP<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtCost" placeholder="MRP" required="required" tabindex="9" value="@Model.Detail.ProductDetail.MRP" onchange="CalculateSellingpricebyMRP(this);" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount</span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtDiscount" placeholder="Discount" tabindex="10" value="@Model.Detail.ProductDetail.Discount" onchange="CalculateSellingpricebyDiscount(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm DiscountType">
+                                                            <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.DiscountType?"btn-dark active":"btn-outline-dark")" data-Discount-Type="1" tabindex="11">Per</button>
+                                                            <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.DiscountType?"btn-outline-dark":"btn-dark active")" data-Discount-Type="0" tabindex="12">Fix</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Selling Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtSellingPrice" placeholder="Selling Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.SellingPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">
+                                                    Admin Commission<sup class="text-danger">*</sup>@*<small class="text-danger text-monospace">[Calculate on Sale Price]</small>*@
+                                                </span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtCommission" placeholder="Admin Commission" value="@Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin?ApplicationSetting.ECommerceCommission:@Model.Detail.ProductDetail.Commission)" required="required" tabindex="13" @Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin ? "disabled='disabled'" : "") onchange="CalculateVendorpricebyadmincomm(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm CommType">
+                                                            @if (ApplicationSetting.IsECommerceCommissionSetByAdmin)
+                                                            {
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14" disabled="disabled">Per</button>
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15" disabled="disabled">Fix</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14">Per</button>
+                                                                <button class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15">Fix</button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Admin Profit<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtAdminCommission" placeholder="Admin Profit" required="required" tabindex="9" value="@Model.Detail.ProductDetail.AdminProfit" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Vendor Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtVendorPrice" placeholder="Vendor Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.VendorPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Mode<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <select class="form-control" id="selShippingMode" required="required" tabindex="18" asp-for="@Model.Detail.ProductDetail.ShippingMode">
+                                                        <option value="0">:: Please Select ::</option>
+                                                        <option value="1">Flat</option>
+                                                        <option value="2">Per Quantity</option>
+                                                        <option value="3">Weight</option>
+                                                        <option value="4">Dimension</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Charges<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtShippingCharges" required="required" placeholder="Shipping Charges" tabindex="19" value="@Model.Detail.ProductDetail.ShippingCharges" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount Count<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtDiscountCount" required="required" placeholder="Shipping Discount Count" tabindex="20" value="@Model.Detail.ProductDetail.DiscountCount" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Discount %<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtshippingDiscount" placeholder="Shipping Discount %" tabindex="21" required="required" value="@Model.Detail.ProductDetail.shippingDiscount" />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="col-sm-12" id="divB2B">
+                                    <div class="ncheckbox">
+                                        <div class="ncheck">
+                                            <span>B2B Rate Description</span>
+                                            @*<input type="checkbox" class="form-control" id="chkIsRateSame" onchange="OnSameRateCheck(this);" />
+                                            <label class="" for="chkIsRateSame">Is Rate Same</label>*@
+                                        </div>
+                                    </div>
+                                    <div class="row mrp-new">
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">MRP<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtCost" placeholder="MRP" tabindex="9" value="@Model.Detail.ProductDetail.MRP" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount</span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtB2BDiscount" placeholder="Discount" tabindex="10" value="@Model.Detail.ProductDetail.B2BDiscount" onchange="CalculateSellingpricebyDiscount(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm DiscountType">
+                                                            <button id="btnDT1" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.B2BDiscountType?"btn-dark active":"btn-outline-dark")" data-Discount-Type="1" tabindex="11">Per</button>
+                                                            <button id="btnDT0" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.B2BDiscountType?"btn-outline-dark":"btn-dark active")" data-Discount-Type="0" tabindex="12">Fix</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Selling Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BSellingPrice" placeholder="Selling Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.B2BSellingPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">
+                                                    Admin Commission<sup class="text-danger">*</sup>@*<small class="text-danger text-monospace">[Calculate on Sale Price]</small>*@
+                                                </span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtB2BCommission" placeholder="Admin Commission" value="@Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin?ApplicationSetting.ECommerceCommission:@Model.Detail.ProductDetail.B2BCommission)" required="required" tabindex="13" @Html.Raw(ApplicationSetting.IsECommerceCommissionSetByAdmin ? "disabled='disabled'" : "") onchange="CalculateVendorpricebyadmincomm(this);" />
+                                                    <div class="input-group-append">
+                                                        <div class="btn-group btn-group-sm CommType">
+                                                            @if (ApplicationSetting.IsECommerceCommissionSetByAdmin)
+                                                            {
+                                                                <button id="btnCT1" class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14" disabled="disabled">Per</button>
+                                                                <button id="btnCT0" class="btn pl-3 pr-3 @Html.Raw(ApplicationSetting.ECommerceCommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15" disabled="disabled">Fix</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <button id="btnCT1" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-dark active":"btn-outline-dark")" data-Comm-Type="1" tabindex="14">Per</button>
+                                                                <button id="btnCT0" class="btn pl-3 pr-3 @Html.Raw(Model.Detail.ProductDetail.CommissionType?"btn-outline-dark":"btn-dark active")" data-Comm-Type="0" tabindex="15">Fix</button>
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Admin Profit<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BAdminCommission" placeholder="Admin Profit" required="required" tabindex="9" value="@Model.Detail.ProductDetail.B2BAdminProfit" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Vendor Price<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BVendorPrice" placeholder="Vendor Price" required="required" tabindex="9" value="@Model.Detail.ProductDetail.B2BVendorPrice" disabled="disabled" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Mode<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <select class="form-control" id="selB2BShippingMode" tabindex="18" asp-for="@Model.Detail.ProductDetail.B2BShippingMode">
+                                                        <option value="0">:: Please Select ::</option>
+                                                        <option value="1">Flat</option>
+                                                        <option value="2">Per Quantity</option>
+                                                        <option value="3">Weight</option>
+                                                        <option value="4">Dimension</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Charges<sup class="text-danger">*</sup></span>
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" id="txtB2BShippingCharges" required="required" placeholder="Shipping Charges" tabindex="19" value="@Model.Detail.ProductDetail.B2BShippingCharges" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Discount Count<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BDiscountCount" required="required" placeholder="Shipping Discount Count" tabindex="20" value="@Model.Detail.ProductDetail.B2BDiscountCount" />
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <div class="form-group">
+                                                <span class="text-monospace">Shipping Discount %<sup class="text-danger">*</sup></span>
+                                                <input type="text" class="form-control" id="txtB2BshippingDiscount" placeholder="Shipping Discount %" tabindex="21" required="required" value="@Model.Detail.ProductDetail.B2BshippingDiscount" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                            @*Div end here*@
+
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Weight(in KG)<sup class="text-danger">*</sup></span>
+                                    <input type="text" class="form-control" id="txtWeight" placeholder="Enter Weight(In KG)" tabindex="22" required="required" value="@Model.Detail.ProductDetail.WeightInKG" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Return Applicable(In Days)</span>
+                                    <input type="text" class="form-control" id="txtReturnApplicable" placeholder="Enter Weight(In KG)" tabindex="22" required="required" value="@Model.Detail.ProductDetail.ReturnApplicable" />
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Quantity<sup class="text-danger">*</sup></span>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="txtQuantity" placeholder="Quantity" tabindex="16" value="@Model.Detail.ProductDetail.Quantity" />
+                                        <div class="input-group-append">
+                                            <input type="file" class="form-control d-none" id="fileImage" placeholder="Product Image" multiple accept=".png,.jpeg,.jpg" tabindex="17" />
+                                            <label for="fileImage" class="btn btn-info" tabindex="17"><i class="fa fa-upload"></i> Images</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <div class="form-group">
+                                    <span class="text-monospace">Is Trending</span>
+                                    <div class="input-group input-group-sm mb-2">
+                                        <div class="input-group-prepend">
+                                            <div class="input-group-text">
+                                                <input type="checkbox" id="chkIsTrending" @Html.Raw(Model.Detail.ProductDetail.IsTrending ? "checked='checked'" : "") />
+                                            </div>
+                                        </div>
+                                        <label class="form-control MaxCount" for="chkIsTrending">Is Trending</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div id="imagePreview"></div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <span class="text-monospace">Specification</span>
+                                    <textarea class="form-control" id="txtSpecification">@Model.Detail.ProductDetail.Specification</textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <span class="text-monospace">Detail Description</span>
+                                    <textarea class="form-control" id="txtDescription">@Model.Detail.ProductDetail.Description</textarea>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="form-group">
+                                    <div id="filterSection">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="col-sm-12">
+                            <div class="form-group text-right">
+                                <div class="btn-group">
+                                    <button class="btn btn-outline-info" id="btnAddToList">@Html.Raw(Model.Detail.ProductDetail.ProductDetailID == 0 ? "ADD" : "UPDATE")</button>
+                                    <button class="btn btn-outline-danger" id="btnReset">RESET ALL</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-beta.1/dist/js/select2.min.js"></script>
+    @*<script type="text/javascript" src="//cdn.tinymce.com/4/tinymce.min.js"></script>*@
+    @*<script type="text/javascript" src="/js/tinymce/tinymce.min.js"></script>*@
+    <script type="text/javascript" src="~/lib/TinyMCE/tinymce.min.js?a=1"></script>
+    <script src="/js/Shopping/ShoppingCategory.js" asp-append-version="true"></script>
+    <script src="/js/Shopping/AddProduct.js" asp-append-version="true"></script>
+}

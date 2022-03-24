@@ -1,0 +1,212 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model List<ProductOptionSetInfoList>;
+@{
+    var FilterType = ViewData["FilterType"];
+    var DataID = 0;
+}
+@if (Model != null)
+{
+    @if (Model.Count > 0)
+    {
+        <div>
+            <div class="breadcrumb-area ">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="breadcrumbs">
+                                <ul>
+                                    <li>
+                                        <a href="/" routerlink="">Home <i class="fa fa-angle-right"></i></a>
+                                    </li>
+                                    <li>
+                                        <a href="ProductList/M/@Model.FirstOrDefault().MainCategoryID">
+                                            @Model.FirstOrDefault().MainCategoryName<i class="fa fa-angle-right"></i>
+                                        </a>
+
+                                    </li>
+                                    <li>
+                                        @if (FilterType.ToString() == "C"|| FilterType.ToString() == "S")
+                                        {
+                                            <a href="ProductList/C/@Model.FirstOrDefault().CategoryId">
+                                                @Model.FirstOrDefault().CategoryName <i class="fa fa-angle-right"></i>
+                                            </a>
+                                        }
+                                    </li><!---->
+                                    @if (FilterType.ToString() == "S")
+                                    {
+                                        <li>
+                                            <a href="ProductList/S/@Model.FirstOrDefault().SubCategoryId"> @Model.FirstOrDefault().SubCatName </a>
+                                        </li>
+                                    }
+
+                                </ul>
+                            </div>
+                            <div class=" d-sm-block d-md-none">
+                                <div class="row">
+                                    <div class="col-6 cus-mob-filter">
+                                        <button>
+                                            <i aria-hidden="true" class="fa fa-sort-amount-desc">
+                                            </i> Sort
+                                        </button>
+                                    </div><div class="col-6 cus-mob-filter">
+                                        <button>
+                                            <i aria-hidden="true" class="fa fa-filter"></i> Filter
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="mm-page mm-slideout" id="mm-0">
+                <div class="shop-area">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-xl-2 col-lg-3">
+
+                                <div id="filterlist"></div>
+
+
+
+                            </div>
+                            <div class="col-xl-10 col-lg-9">
+                                <div class="row align-items-center cus-border">
+
+                                    <div class="col-md-6 heading">
+                                        @{
+                                            DataID = FilterType.ToString() == "M" ? Model.FirstOrDefault().MainCategoryID : FilterType.ToString() == "C" ? Model.FirstOrDefault().CategoryId : FilterType.ToString() == "S" ? Model.FirstOrDefault().SubCategoryId : 0;
+                                            string data = FilterType.ToString() == "M" ? Model.FirstOrDefault().MainCategoryName : FilterType.ToString() == "C" ? Model.FirstOrDefault().CategoryName : FilterType.ToString() == "S" ? Model.FirstOrDefault().SubCatName : "";
+
+                                            @data <!---->
+
+                                            <span>(Showing 1 – 40 products of @Model.Count products)</span>
+                                        }
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="product-nav-tabs style-3 d-none d-sm-block">
+                                            <ul class="nav nav-tabs text-right" id="actflt" data-id="@DataID">
+                                                <li>
+                                                    <span style="padding: 0 10px 0 0;font-size: 13px;font-weight: 500;color: #6c757d;">Sort By</span>
+                                                </li>
+                                                <li><a class="filter show active" data-name="New" data-val="d" id="Newd" onclick="productsetlist('Newd')">Newest First</a></li>
+                                                <li><a class="filter show" data-name="Price" data-val="a" id="Pricea" onclick="productsetlist('Pricea')">Price - Low to High</a></li>
+                                                <li><a class="filter show" id="Priced" data-name="Price" data-val="d" onclick="productsetlist('Priced')">Price - High to Low </a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="tab-content">
+                                    <!---->
+                            <div class="tab-pane active d-sm-block" id="grid-products">
+                                        <div id="productlist">
+                                            <div class="row">
+
+                                                @foreach (var item in Model)
+                                                {
+                                                    <div class="col-xl-3 col-md-4 col-sm-6">
+                                                        <div class="product-single">
+                                                            <div class="product-thumb">
+                                                                <span class="off">₹ @item.Discount /-off</span>
+                                                                <a href="GetProductDetails/@item.POSId">
+                                                                    <img alt="" onerror="this.src='';" src="@item.FrontImage">
+                                                                </a>
+                                                                <div class="product-quick-view">
+                                                                    <farhan-quickview _nghost-qib-c16="">
+                                                                        <a _ngcontent-qib-c16="" href="javascript:void(0);" onclick="quickView('1',@item.POSId)">quick view</a><!---->
+                                                        </farhan-quickview>
+                                                                </div>
+                                                            </div>
+                                                            <div class="product-title">
+                                                                <h4>
+                                                                    <a href="GetProductDetails/@item.POSId">@item.Title</a>
+                                                                </h4>
+                                                            </div>
+                                                            <div class="product-price-rating">
+                                                                <div class="pull-left">
+                                                                    <span>₹ @item.SellingPrice /-</span>
+                                                                    <del>₹ @item.MRP /-</del>
+                                                                </div>
+                                                            </div>
+                                                            <farhan-affilate _nghost-qib-c17=""><!----><!----><!----></farhan-affilate>
+                                                            <div class="product-action">
+                                                                <a class="add-to-cart" href="javascript:void(0);">Add to Cart</a>
+                                                                <a class="product-wishlist" href="javascript:void(0);">
+                                                                    <i class="ti-heart"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div><!----><div class="container-fluid"><!----></div>
+                </div>
+            </div>
+        </div>
+    }
+}
+@section scripts{
+<script>
+        $(document).ready(function () {
+            var catid = $("#actflt").attr("data-id");
+                 FilterList("1", '@FilterType',catid);
+        });
+
+
+            var FilterList = (wsid = "1", ft = "C", ftid = 0) => {
+                $.post('/FilterList', { FilterTypeId: ftid, FilterType: ft, WebSiteId: wsid })
+                    .done(function (result) {
+                        $('#filterlist').html(result);
+                    })
+            }
+
+        var productsetlist = (type) => {
+            preloaderSmall.load();
+            var filterlist = $("#filter-list input:checkbox:checked").map(function () {
+                return $(this).val();
+            }).get(); // <----
+             $('.filter').removeClass( "active");
+             $("#"+type).addClass( "active");
+               var OrderBy=$("#actflt a.active").attr("data-name");
+               var OrderByType=$("#actflt a.active").attr("data-val");
+             var catid = $("#actflt").attr("data-id");
+             var filtertype ='@FilterType';
+
+              let jsonObject = {
+            StartIndex: 0,
+            PageLimitIndex: 40,
+            OrderBy: OrderBy,
+            OrderByType: OrderByType,
+                  FilterType: filtertype,
+            FilterTypeId: catid,
+            KeywordId: 0,
+            FilterOptionTypeIdList:filterlist
+        };
+        $.post('/ProductSetList', { productsetinfo: jsonObject })
+            .done(function (result) {
+                preloaderSmall.remove();
+                 $('#productlist').html(result);
+            })
+            .fail(function (xhr) {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+                reject(xhr);
+            })
+    }
+
+      var productfilter = (id="0") => {
+         var OrderBy=$("#actflt a.active").attr("data-name");
+                 var OrderByType=$("#actflt a.active").attr("data-val");
+        productsetlist(OrderBy+OrderByType);
+      }
+</script>
+
+}

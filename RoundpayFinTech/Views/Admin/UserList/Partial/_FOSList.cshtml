@@ -1,0 +1,114 @@
+﻿@model UserListModel
+@if (Model != null)
+{
+    @if (Model.userList.userReports != null)
+    {
+        @for (int i = 0; i < Model.userList.userReports.Count; i++)
+        {
+<tr data-item-id="@Model.userList.userReports[i].ID">
+    <th scope="row">@(i + 1)</th>
+    <td>
+        <div class="btn-group dropup">
+            <a href="#" id="act@(i + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+            <div class="dropdown-menu" aria-labelledby="act">
+                <h6 class="dropdown-header">Action Menu</h6>
+                @if (Model.userList.CanEdit)
+                {
+                    <a href="/EditFOS/@Model.userList.userReports[i].ID" class="dropdown-item">Edit</a>
+                }
+                @if (Model.userList.CanFundTransfer && !ApplicationSetting.IsCashCollectionOnly)
+                {
+                    <a href="#" class="dropdown-item" id="ft_@i">Fund Transfer</a>
+                }
+                <a href="UserLedger/@(Model.userList.userReports[i].MobileNo)" class="dropdown-item" name="@Model.userList.userReports[i].ID" target="_blank">View Ledger</a>
+            </div>
+        </div>
+    </td>
+    <td>
+        @Model.userList.userReports[i].OutletName <small class="font-weight-bold text-monospace">
+            [@(Model.userList.userReports[i].Prefix + Model.userList.userReports[i].ID)]
+        </small>
+    </td>
+    <td>@Model.userList.userReports[i].MobileNo</td>
+    <td>
+
+        @Model.userList.userReports[i].Role
+    </td>
+    <td class="text-right">@Model.userList.userReports[i].Balance</td>
+    <td class="text-right">@Model.userList.userReports[i].BCapping</td>
+    @if (Model.userBalnace.IsUBalance)
+    {
+        <td class="text-right">@Model.userList.userReports[i].UBalance</td>
+        <td class="text-right">@Model.userList.userReports[i].UCapping</td>
+    }
+    @if (Model.userBalnace.IsBBalance)
+    {
+        <td class="text-right">@Model.userList.userReports[i].BBalance</td>
+        <td class="text-right">@Model.userList.userReports[i].BBCapping</td>
+    }
+    @if (Model.userBalnace.IsIDBalance)
+    {
+        <td class="text-right">@Model.userList.userReports[i].CBalance</td>
+        <td class="text-right">@Model.userList.userReports[i].CCapping</td>
+    }
+    @if (Model.userBalnace.IsPacakgeBalance)
+    {
+        <td class="text-right">@Model.userList.userReports[i].IDBalnace</td>
+        <td class="text-right">@Model.userList.userReports[i].IDCapping</td>
+    }
+    @if (Model.userBalnace.IsCBalance)
+    {
+        <td class="text-right">@Model.userList.userReports[i].PacakgeBalance</td>
+        <td class="text-right">@Model.userList.userReports[i].PackageCapping</td>
+    }
+    @if (ApplicationSetting.IsAccountStatement)
+    {
+        <td class="text-right">@Model.userList.userReports[i].OSBalance</td>
+    }
+    <td>@Model.userList.userReports[i].Slab</td>
+    <td>@Model.userList.userReports[i].JoinDate </td>
+    <td>
+        @Model.userList.userReports[i].JoinBy <input type="hidden" value="@Model.userList.userReports[i].CommRate" />
+        <small class="font-weight-bold text-monospace">
+            [@(Model.userList.userReports[i].JoinByMobile)]
+        </small>
+    </td>
+    <td>
+        @if (Model.userList.CanChangeUserStatus)
+        {
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isact_@i" @Html.Raw(Model.userList.userReports[i].Status ? "checked='checked'" : "")>
+                <label for="isact_@i"></label>
+            </span>
+        }
+        else
+        {
+            @Html.Raw(Model.userList.userReports[i].Status ? "Active" : "Inactive");
+        }
+
+    </td>
+    <td>
+        @if (Model.userList.CanChangeOTPStatus)
+        {
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isotp_@i" checked="@Model.userList.userReports[i].IsOTP">
+                <label for="isotp_@i"></label>
+            </span>
+        }
+        else
+        {
+            @Html.Raw(Model.userList.userReports[i].IsOTP ? "Active" : "Inactive");
+        }
+    </td>
+    <td>@Model.userList.userReports[i].KYCStatus</td>
+    @if (ApplicationSetting.IsShowPassword && Model.IsAdmin)
+    {
+        <td class="text-center">
+            <span class="btn btn-outline-danger" id="showp_@i"><i class="fas fa-low-vision"></i> Show</span>
+        </td>
+    }
+</tr>
+        }
+    }
+}
+

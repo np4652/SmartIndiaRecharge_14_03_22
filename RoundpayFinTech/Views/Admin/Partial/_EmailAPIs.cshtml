@@ -1,0 +1,59 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<EmailAPIDetail>
+@{
+    var counter = 0;
+}
+@foreach (var mdl in Model)
+{
+<tr data-item-id="@mdl.ID">
+    <th style="width:1em;" scope="row">@(counter + 1)</th>
+    <td style="width:5em;">
+        <div class="btn-group dropup">
+            <a href="#" id="act@(counter + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+            <div class="dropdown-menu" aria-labelledby="act">
+                <h6 class="dropdown-header">Action Menu</h6>
+                <a href="#Edit@(counter + 1)" class="dropdown-item">Edit</a>
+            </div>
+        </div>
+    </td>
+    <td style="width:6em">@mdl.FromEmail</td>
+    <td style="width:6em">@mdl.HostName</td>
+    <td style="width:6em">@mdl.Port</td>
+    <td style="width:6em">@(mdl.IsActive ? "Active" : "De-active")</td>
+    <td style="width:6em">@(mdl.IsEmailVerified ? "Active" : "De-active")</td>
+    <td style="width:6em">@(mdl.IsSSL ? "Active" : "De-active")</td>
+    <td style="width:6em">@(mdl.IsDefault ? "Default" : " ")</td>
+    <td style="width:6em"><button id="btnSendMail_@(counter + 1)" data-eid="@mdl.ID"  class="btn btn-outline-info btn-sm"  >Send Mail</button></td>
+</tr>
+    counter++;
+}
+
+<script>
+    
+
+    $('button[id^=btnSendMail_]').on('click', function () {
+        preloader.load();
+        var EID = $(this).data().eid;
+      
+        $.post('/Sendmail', { EmailID: EID })
+            .done(result => {
+                $('#' + an.id).remove();
+                mdlA.id = 'sendEmail';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.options.keyboard = false;
+                mdlA.alert(mdlA.size.default);
+                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        return false;
+    });
+
+
+
+
+</script>

@@ -1,0 +1,256 @@
+﻿@{
+    ViewData["Title"] = "MiniBank Pending Transaction";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active">MiniBank Pendings</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-7 text-monospace">
+                                <i class="fas fa-link"></i>Pending Transaction
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div>
+                            <div class="table-responsive table-sm">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="tblPendingsaeps">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th>Actions</th>
+                                            <th>TransactionIDs</th>
+                                            <th scope="col">DateTime</th>
+                                            <th scope="col">Outlet</th>
+                                            <th scope="col">Opeartor</th>
+                                            <th scope="col">Bank Name</th>
+                                            <th scope="col">AccountNo</th>
+                                            <th scope="col" class="text-right">Amount</th>
+                                            <th scope="col">Status</th>
+                                            <th scope="col">API</th>
+                                            <th scope="col">VendorID</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan="12">
+                                                Searching...
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            pends();
+            $('#btnSearch').click(function () {
+                pends();
+            });
+
+        });
+        var pends = function () {
+            setTimeout(function () {
+                $('#txtSearch').focus();
+                $("#txtSearch").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $('#tblPendingsaeps tbody tr').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            }, 500);
+            preloader.load();
+            $.post('/aepspending', {})
+                .done(function (result) {
+                    resultReload(result);
+                    $('#tblPendingsaeps tbody').html(result);
+                    $('[data-toggle="tooltip"]').tooltip();
+
+                    $(".a_modal").click(function () {
+                        var Serviceid = $(this).data().ispes;
+                        var td = $(this).parent("td");
+                        var tid = $(this).attr("name");
+                        var transid = $(td).find("#lbltid").val();
+                        var vendorid = $(td).find("#lblvid").val();
+                        var apirequest = $(td).find("#lblapirqid").val();
+                        var moddate = $(td).find("#lblmoddate").val();
+                        var options = $(td).find("#lbloption").val().split('-');
+                        var option1 = options[0];
+                        var option2 = options[1];
+                        var option3 = options[2];
+                        var option4 = options[3];
+                        var custNo = $(td).find('#lblCustNo').val();
+                        var ccName = $(td).find('#hidCCName').val();
+                        var ccMob = $(td).find('#lblCCMobile').val();
+                        var tdate = $(td).find('#hidTDate').val();
+                        var displays = $(td).find('#lbldisplay').val().split('-');
+                        $.post('/Recharge-APiUrl', { TID: tid, T: transid }, function (result) {
+                            resultReload(result);
+                            $('#' + an.id).remove();
+                            mdlA.id = 'myalertAEPS';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.large);
+                            $('button.close span,#mdlCancel').unbind().click(function () {
+                                mdlA.dispose();
+                            });
+                            $("#lbltranid").text(transid);
+                            $("#lblvendorid").text(vendorid);
+                            $("#lblapirequestid").text(apirequest);
+                            $("#lblmodifydate").text(moddate);
+                            $("#lbloption1").text(option1);
+                            $("#lbloption2").text(option2);
+                            $("#lbloption3").text(option3);
+                            $("#lbloption4").text(option4);
+                            $("#lbldisplay1").text(displays[0] === '' ? 'Optional1' : displays[0]);
+                            $("#lbldisplay2").text(displays[1] === '' ? 'Optional2' : displays[1]);
+                            $("#lbldisplay3").text(displays[2] === '' ? 'Optional3' : displays[2]);
+                            $("#lbldisplay4").text(displays[3] === '' ? 'Optional4' : displays[3]);
+                            $('#lblCustNoShow').text(custNo);
+                            $('#lblCCName').text(ccName);
+                            $('#lblCCMob').text(ccMob);
+                            $('#spnTDate').text(tdate);
+                        }).fail(function (xhr) {
+                            if (xhr.status === 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status === 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+
+                    $('[id^=btnSuccess],[id^=btnFail]').click(function () {
+                        var status = this.id.toUpperCase()[3];
+                        var id = $(this).closest('tr').data().itemId;
+                        var apicode = $(this).closest('tr').data().itemAc;
+                        var txtRemark = $($('[data-item-id="' + id + '"]').children('td')[0]).find('[id^=txtRemark]');
+                        var transid = $(this).closest('tr').data().itemTid + String.fromCharCode(160);
+                        preloader.load();
+                        $.post('/aepsStsUpdate', { Status: status, ApiCode: apicode, TID: id, VenderId: '', rrn: txtRemark.val(), TransactionID: transid })
+                            .done(function (result) {
+                                resultReload(result);
+                                if (result.statuscode !== undefined) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $('[data-item-id="' + id + '"]').remove();
+                                    }
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request.Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                    $('[id^=btnStsCheck]').click(function () {
+                        preloader.load();
+                        var t = $(this).closest('tr').data().itemId;
+                        var tr = $(this).closest('tr').data().itemTid;
+                        $.post('/chk-sts-aeps', { TID: t, TransactionID: tr })
+                            .done(function (result) {
+                                resultReload(result);
+                                mdlA.id = "mymodelChkStsDmr";
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').unbind().click(function () {
+                                    mdlA.dispose();
+                                    pends();
+                                });
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request.Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+}

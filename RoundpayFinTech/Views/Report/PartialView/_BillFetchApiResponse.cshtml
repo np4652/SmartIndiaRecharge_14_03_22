@@ -1,0 +1,83 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.ProcApiURlRequestResponse>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+		
+        <h6 class="text-monospace">Last Modified [<label id="lblmodifydate" class="text-danger "></label>]</h6>
+		
+        <hr />
+    </div>
+
+    <div class="container-fluid">
+        <div class="form-horizontal bv-form">
+
+            @*<div class="form-group row gutter has-feedback">
+            <div class="col-md-3">
+                <span>Biller Number</span>
+                <div>
+                    <span id="lbltranid" class="text-monospace"></span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <span>Outlet</span>
+                <div>
+                    <span id="lblvendorid" class="text-monospace"></span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <span>API</span>
+                <div>
+                    <span id="lblapirequestid" class="text-monospace"></span>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <span>Account Number</span>
+                <div>
+                    <span id="lblCustNoShow" class="text-monospace"></span>
+                </div>
+            </div>
+        </div>*@
+
+            <hr class="mt-0 mb-0" />
+            @if (Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <span> Request </span>
+                            <textarea disabled="disabled" class="form-control" style="border-style:None;">@item._Request</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <span> Request1 </span>
+                            <textarea disabled="disabled" class="form-control" style="border-style:None;">@item._Request1</textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <span>Response</span>
+                            <label class="float-right text-monospace">Time [<span class="text-danger">@item._ResponseTime</span>]</label>
+                            <textarea disabled="disabled" class="form-control" style="border-style:None;">@item._Response</textarea>
+                        </div>
+                    </div>
+                }
+            }
+            <hr class="mt-0 mb-0" />
+
+        </div>
+        <div class="float-right">
+            <button class="btn btn-outline-danger btn-sm" id="mdlCancel">Cancel</button>
+        </div>
+    </div>
+    
+</div>

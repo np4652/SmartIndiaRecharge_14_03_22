@@ -1,0 +1,258 @@
+﻿@{
+    ViewData["Title"] = "Meeting Detail";
+
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Employee</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-8">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-4 text-right">
+                                <a href="javascript:void(0)" id="btnCreateMeetingWin" class="btn btn-sm btn-outline-light"><i class="fa fa-plus-square"></i> New</a>
+                                <a href="javascript:void(0)" id="btnDailyClosing" class="btn btn-sm btn-outline-light"><i class="fa fa-plus-square"></i> Daily Attendance</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row filter-rpt">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        <option value="1">UserId</option>
+                                        <option value="2">Mobile</option>
+                                        <option value="3">Employee Mobile</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <span id="btnSearch" tabindex="8" class="btn btn-outline-dark"><i class="fa fa-search"></i></span>
+                                            <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                        </div>
+                                    </div>
+                                    @*<small id="Small1" class="form-text text-muted d-none"></small>
+                                        <input type="hidden" id="hidTrID" value="" class="d-none" />*@
+                                </div>
+                            </div>
+                            <div class="table-responsive" id="gridData" style="max-height:calc(100vh - 288px)"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@{ string source = ApplicationSetting.MapKey;}
+@section scripts{
+    <script type="text/javascript" src=@source></script>
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        var _loadGrid = () => {
+            preloader.load();
+            $.post('/Employee/_MeetingDetail')
+                .done(result => {
+                    $('#gridData').html(result).find('table')?.fixTableHeader();
+                })
+                .fail(xhr => {
+
+                }).always(() => preloader.remove())
+        };
+        $(document).ready(function () {
+            _loadGrid();
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+            $('#btnCreateMeetingWin').click(e => meetingAddEdit(e));
+            $('#btnDailyClosing').click(e => getDailyClosing(e));
+            $("#btnSearch,#btnExport").click(e => search(e.currentTarget));
+            
+            //$('#btnSearch').click();
+        })
+
+        var meetingAddEdit = e => {
+            preloader.load();
+            $.post('/Employee/_CreateMeeting')
+                .done(result => {
+                    if (result.id === -1) {
+                        an.title = 'Oops!';
+                        an.content = 'Closing done for the day.';
+                        an.alert(an.type.failed);
+                    }
+                    else {
+                        mdlA.id = "myModel";
+                        mdlA.content = result;
+                        mdlA.alert(mdlA.size.large);
+                        $('button.close').unbind().click(() => mdlA.dispose());
+                    }
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+
+                })
+                .always(() => preloader.remove());
+        };
+
+        var getDailyClosing = e => {
+            preloader.load();
+            $.post('/Employee/_DailyClosing')
+                .done(result => {
+                    mdlA.id = "myModelClosing";
+                    mdlA.content = result;
+                    mdlA.alert(mdlA.size.large);
+                    $('button.close').unbind().click(() => mdlA.dispose());
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+
+                })
+                .always(() => preloader.remove());
+        };
+
+        var search = function (sender) {
+            let filter =
+            {
+                CommonInt: $("#ddlTop").val(),
+                CommonInt2: $("#ddlCriteria").val(),
+                CommonStr3: $('#txtSearch').val(),
+                CommonStr: $("#dtFromDate").val(),
+                CommonStr2: $("#dtToDate").val()
+            };
+            if (sender.id.indexOf('Export') > -1 || parseInt(filter.TopRows) > 4000) {
+                window.open("/Employee/_MeetingDetailExcel-Excel?" + $.param(filter), '_blank');
+            }
+            else {
+                preloader.load();
+                btnLdr.addClass = 'btn-light';
+                btnLdr.removeClass = 'btn-outline-light';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.post('/Employee/_MeetingDetail1', filter)
+                    .done(result => $('#gridData').html(result))
+                    .fail(xhr => {
+                        an.id = 'alertModal';
+                        an.title = 'Oops';
+                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    });
+            }
+        };
+
+    </script>
+}

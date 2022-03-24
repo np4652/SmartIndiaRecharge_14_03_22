@@ -1,0 +1,301 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model BulkSmsEmail
+
+@{
+    ViewData["Title"] = "Bulk E-Mail";
+}
+
+<style>
+    .form-group {
+        margin-bottom: 5px !important;
+    }
+
+    .bootstrap-select div.dropdown-menu {
+        width: 100%;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-7">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Send Message
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="form-group col-sm-3">
+
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="txtActiveDay" placeholder="Active Days" onchange="GetUser()" />
+                                </div>
+
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <div class="form-group">
+                                    <input type="text" class="form-control" id="txtParentNo" placeholder="Enter Mobile No" onchange="GetUser()" />
+                                </div>
+
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" onchange="GetUser()" id="chkIsDirect" checked="checked">
+                                        </div>
+                                    </div>
+                                    <label class="form-control" for="chkIsDirect">Is Direct</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-sm-3">
+                                <div class="input-group mb-2">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" onchange="GetUser()" id="chkIsSelf" checked="checked">
+                                        </div>
+                                    </div>
+                                    <label class="form-control text-nowrap" for="chkIsSelf">Is Self Website</label>
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                @if (Model.Roles != null)
+                                {
+                                    <div class="row mr-0">
+                                        @foreach (var item in Model.Roles)
+                                        {
+                                            <div class="col-md-4">
+                                                <div class="input-group mb-2">
+                                                    <div class="input-group-prepend">
+                                                        <div class="input-group-text">
+                                                            <input type="checkbox" name="Role" onchange="GetUser()" value="@item.ID" id="chbCircle_@item.ID">
+                                                        </div>
+                                                    </div>
+                                                    <label class="form-control" for="chbCircle_@item.ID">@item.Role</label>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                }
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                @Html.Label("txtMobiles", "Email'S Number", new { @class = "lbl" })
+                                <textarea id="txtMobiles" class="form-control" rows="4" cols="20" db aria-describedby="nameMobiles" tabindex="1"></textarea>
+                                <small id="nameMobiles" class="form-text text-muted d-none">Mobile is mandatory</small>
+
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="lbl">Subject</label>
+                                    <input type="text" id="txtSubject" class="form-control" placeholder="Enter Subject" tabindex="2" />
+                                </div>
+                            </div>
+                            <div class="form-group col-md-12">
+                                @Html.Label("txtMessage", "Message", new { @class = "lbl" })
+                                <textarea id="txtMessage" class="form-control" rows="4" cols="20" aria-describedby="nameMessage" tabindex="3"></textarea>
+                                <small id="nameMessage" class="form-text text-muted d-none">Message is mandatory</small>
+
+                            </div>
+                            <div class="form-group col-md-12">
+                                <button type="button" class="btn btn-dark" onclick="SendBulkMail()" id="btnCreate" tabindex="4"> Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-md-5 pl-0">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Message
+                    </div>
+                    <div class="card-body" id="div_opMsg">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @section scripts{
+        @*<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>*@
+        @*<script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>*@
+        <script type="text/javascript" src="~/lib/TinyMCE/tinymce.min.js?a=1"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                an.autoClose = 5;
+                BindOpertorMessage();
+                tinymce.init({
+                    selector: '#txtMessage',//'textarea',
+                    forced_root_block: "",
+                    height: 150,
+                    theme: 'modern',
+                    plugins: ['advlist autolink lists link image charmap print preview hr anchor pagebreak',
+                        'searchreplace wordcount visualblocks visualchars code fullscreen',
+                        'insertdatetime media nonbreaking save table contextmenu directionality',
+                        'emoticons template paste textcolor colorpicker textpattern '
+                    ],
+                    toolbar1: 'insertfile undo redo  | bold italic forecolor backcolor emoticons | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent table | preview',
+                    templates: [
+                        { title: 'Test template 1', content: 'Test 1' },
+                        { title: 'Test template 2', content: 'Test 2' }
+                    ],
+                    content_css: ['//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+                        '//www.tinymce.com/css/codepen.min.css'
+                    ],
+                    setup: function (ed) {
+                        ed.on('init', function () {
+                            $(ed.getBody()).on('focus', function (e) {
+                                lastFocusCtrl = $(e.currentTarget)
+                            });
+                        });
+                    }
+                });
+            });
+            function GetUser() {
+                var role = '';
+                $('.emailCount').remove();
+                $("input[name='Role']").each(function () {
+                    if (this.checked) {
+                        role += $(this).val() + ','
+                    }
+                });
+
+                if (role == '') {
+                    $('#txtMobiles').val('');
+                    return;
+                }
+                preloader.load();
+                $.post('/BulkUsers', { RoleID: role, IsEmail: true, parentMobile: $('#txtParentNo').val(), IsSelf: $('#chkIsSelf').is(':checked'), IsDirect: $('#chkIsDirect').is(':checked'), ActiveDays: $('#txtActiveDay').val() }, function (result) {
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        $('#txtMobiles').val(result.commonStr);
+                        $('[for="txtMobiles"]').append(`<span class="emailCount ml-2 badge badge-danger">${result.commonStr?.split(',').length}</span>`);
+                    }
+                })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+
+            function BindOpertorMessage() {
+                preloader.load();
+                $.post('/BulkOpertorMessage')
+                    .done(function (result) {
+                        resultReload(result);
+                        $('#div_opMsg').html(result);
+                    })
+                    .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    })
+                    .always(() => preloader.remove());
+            }
+
+            function GetMessage(ctr) {
+                preloader.load();
+                $('#txtSubject').val($('#ddlMessage option:selected').text());
+                $.post('/GetMessageFormat', { FormatID: $(ctr).val() })
+                    .done(function (result) {
+                        let subject = result.subject;
+                        let emailTemplate = result.emailTemplate;
+                        if (emailTemplate) {
+                            let currenttxt = $('#ddlOperator option:selected')?.map(function () {
+                                return `<b>${$(this).text()}</b>`;
+                            }).get().join(', ');
+                            if (currenttxt !== '') {
+                                subject = subject.replace('{Operator}', currenttxt).replace('{OperatorName}', currenttxt).replaceAll('<b>', '').replaceAll('</b>', '');
+                                emailTemplate = result.emailTemplate.replace('{Operator}', currenttxt).replace('{OperatorName}', currenttxt);
+                            }
+                            $('#txtTempMessage').val(emailTemplate);
+                            $('#txtSubject').val(subject);
+                            $('#txtSubject').attr('data-pre-text', result.subject);
+                            tinyMCE.activeEditor.setContent(emailTemplate);
+                            if (result.statuscode == an.type.failed) {
+                                an.title = "Oops! Error";
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                            }
+                        }
+                    })
+                    .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+
+                    })
+                    .always(() => preloader.remove());
+            }
+
+
+            function ReplaceValue(sender) {
+                try {
+                    var currenttxt = $('#' + $(sender).attr('id') + ' option:selected')?.map(function () {
+                        return `<b>${$(this).text()}</b>`;
+                    }).get().join(', ');
+                    tinyMCE.activeEditor.setContent($('#txtTempMessage').val()?.replace('{Operator}', currenttxt).replace('{OperatorName}', currenttxt));
+                    $('#txtSubject').val($('#txtSubject').data().preText.replace('{Operator}', currenttxt).replace('{OperatorName}', currenttxt).replaceAll('<b>', '').replaceAll('</b>', ''));
+                }
+                catch (ex) {
+                    console.log('Error : ' + ex);
+                    preloader.remove();
+                }
+            }
+
+            function SendBulkMail() {
+                let subject = $('#txtSubject').val(),
+                    msg = tinyMCE.get('txtMessage').getContent(),//$('#txtMessage').val();
+                    Mob = $('#txtMobiles').val();
+                preloader.load();
+                $.post('/SendBulkMail', { Emails: Mob, Subject: subject, Message: msg })
+                    .done(function (result) {
+                        resultReload(result);
+                        an.title = result.statuscode == an.type.success ? "Well done" : "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        if (result.statuscode === an.type.success) {
+                            tinyMCE.activeEditor.setContent('');
+                            $('input').val('');
+                            $('input[type=checkbox]').prop('checked', false);
+                        }
+                    })
+                    .fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    })
+                    .always(() => preloader.remove());
+            }
+        </script>
+    }

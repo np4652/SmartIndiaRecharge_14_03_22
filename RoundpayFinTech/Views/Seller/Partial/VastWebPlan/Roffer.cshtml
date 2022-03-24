@@ -1,0 +1,40 @@
+﻿@model RoundpayFinTech.AppCode.Model.ROffer.VastWebRPlan
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>R OFFER</h3>
+        <hr />
+    </div>
+    @if (Model.Response != null)
+    {
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="scroll-content">
+            <table class="table table-striped">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>RS</th>
+                        <th>Offer</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Response)
+                    {
+                    <tr>
+                        <td><span class="btn btn-outline-success" id="spnOferAmt_@item.price" style="margin-right: 0.5rem;">@item.price</span></td>
+                        <td>@item.offer</td>
+                        <td>@item.offerDetails</td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    }
+    else
+    {
+    <h1 class="text-danger">Oops no any roffer found!</h1>
+    }
+</div>

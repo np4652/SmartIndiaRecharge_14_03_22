@@ -1,0 +1,15 @@
+﻿@using Fintech.AppCode.Model.Reports
+@model AccountSummary
+@*(Opening+Fundtransfered+Refund+Commission+CCFCommission)-(FundDeducted+Surcharge+OtherCharge+Success)*@
+    <tr><th>Opening</th><td class="text-right text-success"> @Model.Opening</td></tr>
+    <tr><th>FundTransfered</th><td class="text-right  text-success"> @Model.FundTransfered</td></tr>
+    <tr><th>Refund</th><td class="text-right  text-success"> @Model.Refunded</td></tr>
+    <tr><th>Commission</th><td class="text-right  text-success"> @Model.Commission</td></tr>    
+    <tr><th>CCFComm</th><td class="text-right  text-success"> @Model.Return</td></tr>
+    <tr><th>FundDeducted</th><td class="text-right text-danger"> @Model.FundDeducted</td></tr>
+    <tr><th>Surcharge</th><td class="text-right text-danger"> @Model.Surcharge</td></tr>
+    <tr><th>Success</th><td class="text-right text-danger"> @Model.Debited</td></tr>
+    <tr><th>OtherCharge</th><td class="text-right text-danger"> @Model.OtherCharge</td></tr>
+    <tr><th>CCFCommDebited</th><td class="text-right text-danger"> @Model.CCFCommDebited</td></tr>
+    <tr><th>Expected</th><th class="text-right"> @Model.Expected</th></tr>
+

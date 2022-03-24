@@ -1,0 +1,208 @@
+﻿@model int;
+@{
+    ViewData["Title"] = "Attendance Report";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row filter-rpt">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlMonth">Month</label>
+                                    <select id="ddlMonth" tabindex="1" class="form-control">
+                                        <option value="0">::Select::</option>
+                                        <option value="1">Jan</option>
+                                        <option value="2">Feb</option>
+                                        <option value="3">Mar</option>
+                                        <option value="4">Apr</option>
+                                        <option value="5">May</option>
+                                        <option value="6">Jun</option>
+                                        <option value="7">Jul</option>
+                                        <option value="8">Aug</option>
+                                        <option value="9">Sep</option>
+                                        <option value="10">Oct</option>
+                                        <option value="11">Nov</option>
+                                        <option value="12">Dec</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlYear">Year</label>
+                                    <select id="ddlYear" tabindex="1" class="form-control">
+                                        <option value="0">::Select::</option>
+                                        <option value="1">2019</option>
+                                        <option value="2">2020</option>
+                                        <option value="3">2021</option>
+                                    </select>
+                                </div>
+                            </div>
+                            @*<div class="col-md-2 col-sm-2 col-xs-2">
+            <div class="mb-2">
+                <label class="lbl" for="dtFromDate">From Date</label>
+                <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                <small id="Small3" class="form-text text-muted d-none"></small>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-2 col-xs-2">
+            <div class="mb-2" id="asdf">
+                <label class="lbl" for="dtToDate">To Date</label>
+                <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                <small id="Small4" class="form-text text-muted d-none"></small>
+            </div>
+        </div>*@
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        <option value="1">UserId</option>
+                                        <option value="2">Mobile</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <span id="btnSearch" tabindex="8" class="btn btn-outline-dark"><i class="fa fa-search"></i></span>
+                                            <span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="table-responsive" id="partialTable" style="max-height:calc(100vh - 292px)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @{ string source = ApplicationSetting.MapKey;}
+</div>
+@section scripts{
+    <script type="text/javascript" src=@source></script>
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+
+            $("#btnSearch,#btnExport").click(e => search(e.currentTarget));
+
+            $('#btnSearch').click();
+        });
+        var search = function (sender) {
+            let filter =
+            {
+                CommonInt: $("#ddlMonth").val(),
+                CommonInt3: $("#ddlYear").val(),
+                CommonInt2: $("#ddlCriteria").val(),
+                CommonStr3: $('#txtSearch').val(),
+                //CommonStr: $("#dtFromDate").val(),
+                //CommonStr2: $("#dtToDate").val()
+            };
+            if (sender.id.indexOf('Export') > -1 || parseInt(filter.TopRows) > 4000) {
+                window.open("/Employee/_AttendanceReport-Excel?" + $.param(filter), '_blank');
+            }
+            else {
+                preloader.load();
+                btnLdr.addClass = 'btn-light';
+                btnLdr.removeClass = 'btn-outline-light';
+                btnLdr.Start($("#btnSearch"), 'Requesting');
+                $.post('/Employee/_AttendanceReport', filter)
+                    .done(result => $('#partialTable').html(result))
+                    .fail(xhr => {
+                        an.id = 'alertModal';
+                        an.title = 'Oops';
+                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => {
+                        btnLdr.Stop($("#btnSearch"));
+                        preloader.remove();
+                    });
+            }
+        };
+    </script>
+}
+

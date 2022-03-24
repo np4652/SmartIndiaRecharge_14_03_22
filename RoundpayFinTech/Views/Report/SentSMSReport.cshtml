@@ -1,0 +1,211 @@
+﻿@{
+    ViewData["Title"] = "SendSMS Report";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Admin Report</li>
+            <li class="breadcrumb-item active">Send SMS Report</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Send SMS Report
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtAccHolder">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="10">10</option>
+                                        <option value="20">20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="1000">1000</option>
+                                        <option value="5000">5000</option>
+                                        <option value="-1">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtTrID">Mobile No.</label>
+                                    <input aria-describedby="txtddTrID" class="form-control" id="txtMobile" name="txtddTrID" placeholder="Enter Mobile No." tabindex="2" type="text" value="">
+                                    <small id="txtddTrID" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtMsg">Message</label>
+                                    <input aria-describedby="txtddTrID" class="form-control" id="txtMsg" name="txtddTrID" placeholder="Enter Message" tabindex="2" type="text" value="">
+                                    <small id="txtddTrID" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1 text-right">
+                                <div class="form-group">
+                                    <label class="lbl" style="color:white" for="btnSearch">Search</label>
+                                    <button id="btnSearch" tabindex="6" class="btn btn-outline-dark">Search</button>
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1 text-right">
+                                <div class="form-group">
+                                    <label class="lbl" style="color:white" for="btnRsend">Resend</label>
+                                    <button id="btnRsend" tabindex="6" onclick="ResendSmsAll()" class="btn btn-outline-dark">Resend</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col"><input type="checkbox" onchange="_selectallresebd(this)"></th>
+                                        <th scope="col">TransactionId</th>
+                                        <th scope="col">Mobile</th>
+                                        <th scope="col">API</th>
+                                        <th scope="col">Message</th>
+                                        <th scope="col">Result</th>
+                                        <th scope="col" style="width:15%">Date</th>
+                                        <th scope="col" style="width:15%">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+                @section scripts{
+                    <script>
+                        $(document).ready(function () {
+
+                            preloader.load();
+                            an.autoClose = 5;
+                            $("#btnSearch").click(function () {
+                                debugger;
+                                var req = { LoginID: 0, MobileNo: $("#txtMobile").val(), Top: $("#ddlTop").val(), Message: $("#txtMsg").val()  };
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/SentSMS-Report',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify(req),
+                                    success: function (result) {
+                                        resultReload(result);
+                                        $('#__p tbody').html(result);
+                                        $('[data-toggle="tooltip"]').tooltip();
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (result) {
+                                        checkError(result);
+                                        an.title = 'Oops';
+                                        an.content = 'An error occured!';
+                                        an.alert(an.type.failed);
+                                    },
+                                    complete: function () {
+                                        preloader.remove();
+                                    }
+                                });
+                            });
+                            $("#btnSearch").click();
+                        });
+
+                        function _selectallresebd(chk) {
+                            $(".chksendsms").prop("checked", $(chk).is(':checked'))
+                        }
+                        function ResendSmsAll() {
+                            $(".chksendsms").each(function () {
+                                if ($(this).is(':checked')==true) {
+                                    var num = $(this).closest('tr').find("td:eq(2)").text();
+                                    var msg = $(this).closest('tr').find("td:eq(4)").find("span").text();
+                                    resendSms(num, msg);
+                                };
+
+                            });
+                        }
+                        function ResendSms(a) {
+                         //  $(this).html()
+                           
+                                  var num = $(a).closest('tr').find("td:eq(2)").text();
+                                  var msg = $(a).closest('tr').find("td:eq(4)").find("span").text();
+                                  resendSms(num, msg);
+                          
+
+                          
+                        }
+
+
+                        function resendSms(num,msg)
+                        {
+
+                            $.ajax({
+                                type: 'POST',
+                                url: '/_ResendSMS',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ MobileNos: num, Msg: msg.trim() }),
+                                success: function (result) {
+
+                                    if (result.statuscode == an.type.success) {
+                                        an.title = "Success";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        $("#btnSearch").click();
+                                    }
+
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+
+
+
+
+                        }
+
+                    </script>
+
+                }

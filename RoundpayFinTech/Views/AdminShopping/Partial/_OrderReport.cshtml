@@ -1,0 +1,121 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping;
+@model OrderReportModel
+
+@if (Model.OrderReport.Any())
+{
+    int counter = 1;
+    @foreach (var item in Model.OrderReport)
+    {
+        <tr data-Order-DetailID="@item.OrderDetailID">
+            <td>@counter</td>
+            <td><span class="fa fa-info-circle text-info a_modal" name="@item.OrderID" aria-hidden="true" title="Transaction More Detail" data-toggle="tooltip"></span> @item.OrderID</td>
+            <td>@item.OrderDate</td>
+            <td>@item.ProductCode</td>
+            <td>@item.ProductName</td>
+            <td>@item.Quantity</td>
+            <td>@item.MRP</td>
+            <td>@item.Discount.ToString("00.00")</td>
+            <td>@item.SellingPrice</td>
+            <td>@item.ShippingCharge</td>
+            <td>@item.RequestAmount</td>
+            <td>@item.UserCommAmount</td>
+            <td>@item.GSTAmt&#64;@item.GSTRate%</td>
+            <td>@item.TDSAmt&#64;@item.TDSRate%</td>
+            <td>@item.DebitAmount</td>
+            @*<td>@item.RetailCommission</td>*@
+            @if (Model.Role != 3)
+            {
+                <td>@item.AdminCommission</td>
+
+                <td>@item.TeamCommission</td>
+                <td>@Html.Raw(item.AdminCommission - item.RetailCommission - item.TeamCommission)</td>
+                <td>@item.VendorName</td>
+                <td>@item.VendorPayble</td>
+                <td>@Html.Raw(item.IsVendorPaid ? "Paid" : "Not Paid")</td>
+            }
+            <td>
+                <div style="width:150px">
+                    @{
+                        if (item.OrderStatusID == 7)
+                        {
+                            <label class="text-monospace text-danger">Closed</label>
+                        }
+                        else if (item.OrderStatusID == 4)
+                        {
+                            <label class="text-monospace text-danger">Cancelled</label>
+                        }
+                        else
+                        {
+                            if (Model.Role != Fintech.AppCode.StaticModel.Role.Admin)
+                            {
+                                var enumData = from OrderStatus e in Enum.GetValues(typeof(OrderStatus))
+                                               select new
+                                               {
+                                                   Value = (int)e,
+                                                   Text = e.ToString()
+                                               };
+                                if (item.OrderStatusID == 1)
+                                {
+                                    var enumDataCancel = enumData.Where(x => x.Value == 4).ToList();
+                                    var enumDataPartial = enumData.Where(x => x.Value == 1).ToList();
+                                    enumDataPartial.AddRange(enumDataCancel);
+                                    enumData = enumDataPartial;
+                                    var statusList = new SelectList(enumData, "Value", "Text");
+                                    <select class="form-control ddlOrderStatus" asp-items="@statusList" asp-for="@item.OrderStatusID"></select>
+                                }
+                                else
+                                {
+                                    enumData = enumData.Where(x => x.Value != 7);
+                                    var statusList = new SelectList(enumData, "Value", "Text");
+                                    <select class="form-control ddlOrderStatus" asp-items="@statusList" asp-for="@item.OrderStatusID" disabled></select>
+                                }
+                            }
+                            else
+                            {
+                                var enumData = from OrderStatus e in Enum.GetValues(typeof(OrderStatus))
+                                               select new
+                                               {
+                                                   Value = (int)e,
+                                                   Text = e.ToString()
+                                               };
+                                var statusList = new SelectList(enumData, "Value", "Text");
+                                <select class="form-control ddlOrderStatus" asp-items="@statusList" asp-for="@item.OrderStatusID"></select>
+                            }
+                            @*if (Model.Role != 3)
+                {
+                    <select class="form-control ddlOrderStatus" asp-items="@statusList" asp-for="@item.OrderStatusID"></select>
+                }
+                else
+                {
+                    <select class="form-control ddlOrderStatus" asp-items="@statusList" asp-for="@item.OrderStatusID" disabled></select>
+                }*@
+
+                        }
+                    }
+                </div>
+            </td>
+        </tr>
+        counter++;
+    }
+}
+
+<script>
+    var changePartialStatus = e => {
+        preloader.load();
+        let param = {
+            OrderDetailID: $(e.currentTarget).closest('tr').data().orderDetailid,
+            StatusID: $(e.currentTarget).get(0).tagName === 'BUTTON' ? 4 : $(e.currentTarget).val()
+        };
+        $.post('/ChangePartialOrderStatus', param)
+            .done(result => {
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove())
+    };
+    $('.ddlOrderStatus').unbind().change(e => changePartialStatus(e));
+</script>

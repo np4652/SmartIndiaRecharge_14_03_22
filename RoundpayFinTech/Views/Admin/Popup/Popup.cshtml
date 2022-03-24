@@ -1,0 +1,441 @@
+﻿@{
+    ViewData["Title"] = "Popup Master";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Branding</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="mb-1">
+
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">File</th>
+                                        <th scope="col">Upload</th>
+                                        <th scope="col">Remove</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            
+            var LoadWebsiteImages = function () {
+                preloader.load();
+                an.autoClose = 5;
+                $.post('/_Popup')
+                    .done(function (result) {
+                        $('#__p tbody').html(result);
+
+                        // remove  Website Popup
+                        $('#_Web  button').unbind().click(function () {
+                            
+                            var id = $(this).attr('id');
+                            preloader.load();
+                            $.post('/remove-Popup', { id })
+                                .done(function (result) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops! Error";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done!";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        LoadWebsiteImages();
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+
+                                })
+                                .fail(function (xhr) {
+                                    $(this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+
+
+                        // Befor Login Popup
+                        $('#_BLog  button').unbind().click(function () {
+                            
+                            var id = $(this).attr('id');
+                            preloader.load();
+                            $.post('/remove-Popup', { id })
+                                .done(function (result) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops! Error";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done!";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        LoadWebsiteImages();
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+
+                                })
+                                .fail(function (xhr) {
+                                    $(this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+
+                         // After Login Popup
+                        $('#_ALog  button').unbind().click(function () {
+                            
+                            var id = $(this).attr('id');
+                            preloader.load();
+                            $.post('/remove-Popup', { id })
+                                .done(function (result) {
+                                    if (result.statuscode == an.type.failed) {
+                                        an.title = "Oops! Error";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                    }
+                                    else if (result.statuscode == an.type.success) {
+                                        an.title = "Well done!";
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        LoadWebsiteImages();
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+
+                                })
+                                .fail(function (xhr) {
+                                    $(this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                })
+                                .always(function () {
+                                    preloader.remove();
+                                });
+                        });
+
+
+                        //Before Login Popup
+                        $("#dwhitelogoUpload").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#dwhitelogoUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Before-Login-Popup',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    if (result.statuscode === -1) {
+                                        an.title = 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(an.type.failed);
+                                    } else {
+                                        an.title = 'Success';
+                                        an.content = result.msg;
+                                        an.alert(an.type.success);
+
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                        });
+
+                        // Website Popup
+                        $("#dlWebPopup").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#dlWebPopup")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/Web-Popup',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    if (result.statuscode === -1) {
+                                        an.title = 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(an.type.failed);
+                                    } else {
+                                        an.title = 'Success';
+                                        an.content = result.msg;
+                                        an.alert(an.type.success);
+
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                        });
+
+                        //Bg-image change
+                        $("#dbgmainUpload").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#dbgmainUpload")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/After-Login-Popup',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    if (result.statuscode === -1) {
+                                        an.title = 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(an.type.failed);
+                                    } else {
+                                        an.title = 'Success';
+                                        an.content = result.msg;
+                                        an.alert(an.type.success);
+
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                        });
+
+
+                        //App before Login PopUp
+                         $("#BLoginApp").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#BLoginApp")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/AppBefore-Login-Popup',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    if (result.statuscode === -1) {
+                                        an.title = 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(an.type.failed);
+                                    } else {
+                                        an.title = 'Success';
+                                        an.content = result.msg;
+                                        an.alert(an.type.success);
+
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                         });
+                        // App After Login Popup
+                         $("#ALoginApp").change(function () {
+                            var formData = new FormData();
+                            formData.append('file', $("#ALoginApp")[0].files[0]);
+                            $.ajax({
+                                type: 'POST',
+                                url: '/AppAfter-Login-Popup',
+                                processData: false,
+                                contentType: false,
+                                data: formData,
+                                success: function (result) {
+                                    if (result.statuscode === -1) {
+                                        an.title = 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(an.type.failed);
+                                    } else {
+                                        an.title = 'Success';
+                                        an.content = result.msg;
+                                        an.alert(an.type.success);
+
+                                        LoadWebsiteImages();
+                                    }
+                                },
+                                statusCode: {
+                                    500: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    },
+                                    0: function () {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                },
+                                error: function (result) {
+                                    checkError(result);
+                                    an.title = 'Oops';
+                                    an.content = 'An error occured!';
+                                    an.alert(an.type.failed);
+                                },
+                                complete: function () {
+                                    preloader.remove();
+                                }
+                            });
+                        });
+                        
+
+                    })
+                    .catch(function (xhr, e, msg) {
+
+                    })
+                    .fail(function (xhr) {
+                        $(this).attr('checked', Is == false);
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+
+            LoadWebsiteImages();
+        });
+    </script>
+}

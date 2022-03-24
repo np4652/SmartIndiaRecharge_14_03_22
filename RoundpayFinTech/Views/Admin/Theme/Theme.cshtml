@@ -1,0 +1,475 @@
+﻿@model RoundpayFinTech.AppCode.Model.TemplatesAndThemes
+@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+
+}
+@{
+    ViewData["Title"] = "Theme";
+}
+<style type="text/css">
+    .cus-header {
+        color: #918c8c;
+        font-size: 20px;
+    }
+
+    .color-box {
+        background-color: orange;
+        height: 100px;
+        width: 100px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 14px -9px;
+    }
+
+    .cus-blue {
+        background-color: #053b84;
+        width: 100px;
+        height: 25px;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .cus-skyblue {
+        background-color: #17a3bb;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-skyblue2 {
+        background-color: #00768b;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-white {
+        background-color: #fff;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-lightgreen {
+        background-color: #4BC7CF;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-darkgreen2 {
+        background-color: #0096a6;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-orange {
+        background-color: #c44a80;
+        width: 100px;
+        height: 25px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .cus-grey {
+        background-color: #656b71;
+        width: 100px;
+        height: 25px;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .cus-black {
+        background-color: black;
+        width: 100px;
+        height: 25px;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .cus-primary {
+        background-color: #0074d9;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-primarynew {
+        background-color: #2887c8;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-dark-primary {
+        background-color: #3ca5ed;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-light-primary {
+        background-color: #fff;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-2-black {
+        background-color: #2b2b2b;
+        width: 100px;
+        height: 25px;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .cus-2-blue {
+        background-color: #393877;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-2-skyblue {
+        background-color: #5756a7;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-2-white {
+        background-color: #fff;
+        width: 100px;
+        height: 25px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .cus-3-black {
+        background-color: #262425;
+        width: 100px;
+        height: 25px;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .cus-3-green {
+        background-color: #125a4e;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-3-lightgreen {
+        background-color: #126656;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-4-black {
+        background-color: #1e1e1e;
+        width: 100px;
+        height: 25px;
+        border-top-right-radius: 10px;
+        border-top-left-radius: 10px;
+    }
+
+    .cus-4-green {
+        background-color: #25b8a3;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-4-lightgreen {
+        background-color: #179d89;
+        width: 100px;
+        height: 25px;
+    }
+
+    .cus-4-grey {
+        background-color: #625e5e;
+        width: 100px;
+        height: 25px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .cus-4-orange {
+        background: linear-gradient( 85deg,#166db8,#8dbae2);
+        width: 100px;
+        height: 25px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .cus-5-orange {
+        background: linear-gradient( 85deg,#055b6a,#64b7c7);
+        width: 100px;
+        height: 25px;
+        border-bottom-right-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Master</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <!--Login Theme-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-12">@ViewData["Title"]</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @if (Model != null && Model.Themes.Any())
+                            {
+                                foreach (var item in Model.Themes)
+                                {
+                                    <div class="col-sm-4 theme ml-2 p-2 mb-2" data-Theme-Id="@item.Id">
+                                        <div class="form-group">
+                                            <div style=" height: 170px; overflow: hidden;">
+                                                <img class="img-fluid" src="~/AvailableThemes/@item.Id/demo.png" />
+                                            </div>
+                                            <div class="input-group">
+                                                <label class="form-control text-nowrap">
+                                                    @item.ThemeName
+                                                </label>
+                                                <div class="input-group-append">
+
+                                                    <span class="input-group-text switch switch-sm bg-white align">
+                                                        <label><a href="~/AvailableThemes/@item.Id/index.html" target="_blank">View</a> </label><span class="pl-1 pr-1">|</span>
+                                                        <input type="checkbox" class="switch switch-sm ApplyTheme" id="chbIsApply_@item.Id" @Html.Raw(item.IsCurrentlyActive ? "checked='checked'" : "")>
+                                                        <label for="chbIsApply_@item.Id" class="font-weight-bold lbl">Apply</label>
+                                                    </span>
+                                                </div>
+                                                @if (_lr.WID == 1 && !item.IsOnlyForAdmin && ApplicationSetting.IsWhitelabel)
+                                                {
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text switch switch-sm bg-white align">
+                                                            <input type="checkbox" class="switch switch-sm wlApplyTheme" id="chbIsWLAllowed_@item.Id" @Html.Raw(item.IsWLAllowed ? "checked='checked'" : "") />
+                                                            <label for="chbIsWLAllowed_@item.Id" class="font-weight-bold lbl">IsWLAllowed</label>
+                                                        </span>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--ColorSet setting-->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-12">Colorset</div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-center scroll-content mob-scroll">
+                            <!--4-->
+                            
+                                <div class="col-md-2 colorSet cursor-pointer mb-2" data-colorset-Id="1">
+                                    <div class="color-box">
+                                        <div class="cus-2-black"></div>
+                                        <div class="cus-2-blue"></div>
+                                        <div class="cus-2-skyblue"></div>
+                                        <div class="cus-2-white"></div>
+                                    </div>
+                                </div>
+                                <!--5-->
+                                @if (Model.isOnlyForRP)
+                                {
+                                    <div class="col-md-2 colorSet cursor-pointer mb-2" data-colorset-Id="2">
+                                        <div class="color-box">
+                                            <div class="cus-3-black"></div>
+                                            <div class="cus-3-green"></div>
+                                            <div class="cus-3-lightgreen"></div>
+                                            <div class="cus-5-orange"></div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!--6-->
+                                <div class="col-md-2 colorSet cursor-pointer mb-2" data-colorset-Id="3">
+                                    <div class="color-box">
+                                        <div class="cus-4-black"></div>
+                                        <div class="cus-4-green"></div>
+                                        <div class="cus-4-lightgreen"></div>
+                                        <div class="cus-4-grey"></div>
+                                    </div>
+                                </div>
+                                <!--1-->
+                                <div class="col-md-2 colorSet cursor-pointer mb-2" data-colorset-Id="4">
+                                    <div class="color-box">
+                                        <div class="cus-blue"></div>
+                                        <div class="cus-skyblue"></div>
+                                        <div class="cus-lightgreen"></div>
+                                        <div class="cus-orange"></div>
+                                    </div>
+                                </div>
+                                <!--2-->
+                                <div class="col-md-2 colorSet cursor-pointer mb-2" data-colorset-Id="5">
+                                    <div class="color-box">
+                                        <div class="cus-grey"></div>
+                                        <div class="cus-darkgreen2"></div>
+                                        <div class="cus-skyblue2"></div>
+                                        <div class="cus-5-orange"></div>
+                                    </div>
+                                </div>
+                                <!--3-->
+                                <div class="col-md-2 colorSet cursor-pointer mb-2" data-colorset-Id="6">
+                                    <div class="color-box">
+                                        <div class="cus-black"></div>
+                                        <div class="cus-primarynew"></div>
+                                        <div class="cus-dark-primary"></div>
+                                        <div class="cus-4-orange"></div>
+                                    </div>
+                                </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Site Template -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-8">Template</div>
+                            <div class="col-sm-4 text-right"><a href="javascript:void(0)" id="editorWin">Edit Content</a></div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            @if (Model != null && Model.SiteTemplates.Any())
+                            {
+                                foreach (var item in Model.SiteTemplates)
+                                {
+                                    <div class="col-sm-4 template border ml-2 p-2 mb-2" data-template-Id="@item.TemplateId">
+                                        <div class="form-group">
+                                            <div style=" height: 170px; overflow: hidden;">
+                                                <img class="img-fluid" src="@item.DemoImage" />
+                                            </div>
+                                            <div class="input-group float-right">
+                                                <div class="input-group-append">
+
+                                                    <span class="input-group-text switch switch-sm bg-white align">
+                                                        <label><a href="@item.DemoPath" target="_blank">View</a> </label><span class="pl-1 pr-1"></span>
+                                                        <input type="checkbox" class="switch switch-sm ApplyTemplate" id="chbIsTemp_@item.TemplateId" @Html.Raw(item.IsCurrentlyActive ? "checked='checked'" : "")>
+                                                        <label for="chbIsTemp_@item.TemplateId" class="font-weight-bold lbl">Apply</label>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('.ApplyTheme').unbind().click(e => {
+            if ($(e.currentTarget).is(':checked')) {
+                preloader.load();
+                $('.ApplyTheme').not($(e.currentTarget)).prop('checked', false);
+                $.post('/ChangeTheme', { ThemeId: $(e.currentTarget).closest('.theme').data().themeId })
+                    .done(result => {
+                        an.id = 'alertChange';
+                        an.title = result.statuscode === an.type.success ? 'Well done ' : 'Oops ';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }).fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => preloader.remove());
+            }
+        })
+
+        $('.wlApplyTheme').unbind().click(e => {
+            if ($(e.currentTarget).on('change')) {
+                preloader.load();
+                var IsActive = $('input[id^="chbIsWLAllowed_"]').is(':checked');
+                $.post('/WLAllowTheme', { ThemeId: $(e.currentTarget).closest('.theme').data().themeId, IsWLAllowed: IsActive })
+                    .done(result => {
+                        an.id = 'alertChange';
+                        an.title = result.statuscode === an.type.success ? 'Well done ' : 'Oops ';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }).fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => preloader.remove());
+            }
+        });
+
+        $('.colorSet').click(e => {
+            let param = {
+                ColorSetId: $(e.currentTarget).data().colorsetId,
+                ThemeId: ThemeId
+            };
+            $.post('/admin/ChangeColorSet', param).done(result => {
+                an.title = result.statuscode == 1 ? 'wow' : 'Oops';
+                an.content = result.msg
+                an.alert(result.statuscode);
+                if (result.statuscode == 1)
+                    window.location.href = window.location.href;
+            }).fail(result => console.log(result));
+        });
+
+        $('.ApplyTemplate').unbind().click(e => {
+            if ($(e.currentTarget).is(':checked')) {
+                preloader.load();
+                $('.ApplyTemplate').not($(e.currentTarget)).prop('checked', false);
+                $.post('/Admin/ChangeSiteTemplate', { TemplateId: $(e.currentTarget).closest('.template').data().templateId })
+                    .done(result => {
+                        an.id = 'alertChange';
+                        an.title = result.statuscode === an.type.success ? 'Well done ' : 'Oops ';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }).fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => preloader.remove());
+            }
+        });
+
+        $('#editorWin').click(e => {
+            $.post('/admin/WebsitecontentEditor', { contentId: 1 }).done(result => {
+                mdlA.title = 'Content Editor';
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large);
+            }).fail(result => console.log(result));
+        });
+    </script>
+}

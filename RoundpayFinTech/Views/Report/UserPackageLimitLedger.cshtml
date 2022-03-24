@@ -1,0 +1,239 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model LedgerReportModel
+@{
+    ViewData["Title"] = "User Package Limit Ledger";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> User Ledger
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Choose Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="3500">3500</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                          
+                            @if (Model.HaveChild)
+                            {
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="txtMobile">Mobile No/User ID</label>
+                                        <input aria-describedby="txtddTrID" class="form-control" id="txtMobile" name="txtddTrID" placeholder="Enter Mobile No or User ID" tabindex="2" type="text" value="@Model.SelfMobile">
+                                        <small id="txtddTrID" class="form-text text-muted d-none"></small>
+                                        <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtTrID">Transaction ID</label>
+                                    <input aria-describedby="txtsTrID" class="form-control" id="txtTrID" name="txtsTrID" placeholder="Enter Transaction ID" tabindex="3" type="text" value="">
+                                    <small id="txtsTrID" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtsFromDate" class="form-control" id="dtFromDate" tabindex="4" type="text" readonly="readonly">
+                                    <small id="dtsFromDate" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="dtsToDate" class="form-control" id="dtToDate" tabindex="5" type="text" readonly="readonly">
+                                        <small id="dtsToDate" class="form-text text-muted d-none"></small>
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="6" class="btn btn-outline-dark">Search</button>
+                                            <button class="btn btn-outline-success far fa-file-excel" id="btnExport"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div style="box-shadow: 0 0 0 0.04rem rgba(52, 58, 64, 0.5)" id="asum">
+
+                        </div>
+                        <div class="table-responsive vh-2">
+                            <table class="table table-bordered" id="tblUserLedger">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%">#</th>
+                                        <th style="width:15%;">Transaction ID</th>
+                                        <th style="width:15%;">Date Time</th>
+                                        @if (Model.HaveChild)
+                                        {
+                                            <th style="width:15%;">User</th>
+                                        }
+                                        <th class="w-25">Description</th>
+                                        <th class="text-right" style="width:10%;">Old</th>
+                                        <th class="text-right" style="width:10%;">Debit</th>
+                                        <th class="text-right" style="width:10%;">Credit</th>
+                                        <th class="text-right" style="width:10%;">Current</th>
+                                        <th style="width:10%;">Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var search = function (sender) {
+                var ULedgerReportFilter =
+                {
+                    DebitCredit_F: -1,
+                    TransactionId_F: $("#txtTrID").val().trim(),
+                    FromDate_F: $("#dtFromDate").val(),
+                    ToDate_F: $("#dtToDate").val(),
+                    Mobile_F: $("#txtMobile").val() == undefined ? '' : $("#txtMobile").val().trim(),
+                    TopRows: $("#ddlTop").val().trim()
+                    
+                };
+                preloader.load();
+                
+
+                if (sender.id.indexOf('Export') > -1 || parseInt(ULedgerReportFilter.TopRows) > 4000) {
+                    window.location = "/UserPackage-LimitLedger?" + $.param(ULedgerReportFilter);
+                }
+                else {
+                    preloader.load();
+                    btnLdr.addClass = 'btn-dark';
+                    btnLdr.removeClass = 'btn-outline-dark';
+                    btnLdr.Start($("#btnSearch"), 'Requesting');
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '/UserPackage-LimitLedger',
+                        contentType: 'application/json',
+                        data: JSON.stringify(ULedgerReportFilter),
+                        success: function (result) {
+                            $('.__p #tblUserLedger tbody').html(result);
+                        },
+                        statusCode: {
+                            500: function () {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            },
+                            0: function () {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        },
+                        error: function (xhr, result) {
+                            an.title = "Oops";
+                            an.content = result;
+                            an.alert(an.type.failed);
+                            if (result === 'parsererror') {
+                                reload();
+                            }
+                        },
+                        complete: function () {
+                            btnLdr.Stop($("#btnSearch"));
+                            preloader.remove();
+                        }
+                    });
+                }
+            };
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+            $('#btnSearch').click();
+        });
+    </script>
+
+}
+

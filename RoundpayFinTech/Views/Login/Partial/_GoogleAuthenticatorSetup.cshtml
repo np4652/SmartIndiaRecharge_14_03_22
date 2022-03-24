@@ -1,0 +1,185 @@
+﻿@model RoundpayFinTech.AppCode.Model.GoogleAuthenticatorModal
+<style>
+    .modal{
+        overflow-y:auto!important;
+    }
+</style>
+<div class="col-md-12">
+    <h4>
+        Enable authenticator powered by <span>
+            <img src="~/images/googlelogo_color_272x92dp.png" style="height: 25px" />
+        </span>
+    </h4>
+    <div>
+        <p>To use an authenticator app go through the following steps:</p>
+        <ol class="list">
+            <li>
+                <p class="mb-2">
+                    Download a two-factor Google Authenticator for
+                    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en" target="_blank">Android</a> and
+                    <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8" target="_blank">iOS</a>.
+                </p>
+            </li>
+            <li>
+                <p class="mb-2">Scan the QR Code or enter this key <kbd>@Model.AccountSecretKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
+                <img src="@Model.QrCodeSetupImageUrl" style="width:150px;object-fit:cover"/>
+            </li>
+            <li>
+                <p class="mb-2">
+                    Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
+                    with a unique code. Enter the code in the confirmation box below.
+                </p>
+                @Html.AntiForgeryToken()
+                @if (!Model.AlreadyRegistered)
+                {
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label class="control-label" for="Code">Verification Code</label>
+                                <div class="input-group">
+                                    <input class="form-control" id="txtGooglePin" autocomplete="off" type="text" />
+                                    <div class="input-group-append">
+                                        <button class="btn btn-outline-dark" id="btnVerifyGOTP">Verify</button>
+                                    </div>
+                                    <span class="text-danger field-validation-valid"></span>
+                                </div>
+
+                            </div>
+                            <input type="hidden" placeholder="Enter Google PIN" id="AccountSecretKey" value="@Model.AccountSecretKey" />
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="col-sm-4 float-right">
+                        <div class="mb-2">
+                            <span class="switch switch-sm form-control">
+                                <input type="checkbox" class="switch" id="chkEnable" @Html.Raw(Model.IsEnabled ? "checked='checked'" : "")>
+                                <label for="chkEnable">@Html.Raw(Model.IsEnabled ? "Disable" : "Enable")</label>
+                            </span>
+                        </div>
+                        <div class="form-group">
+                            <button class="btn btn-block btn-outline-dark" id="resetGoogleAuth">Reset</button>
+                        </div>
+                    </div>
+                }
+            </li>
+        </ol>
+    </div>
+</div>
+<script>
+    $('#btnVerifyGOTP').click(e => {
+        let request = {
+            __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val(),
+            googlePin: $('#txtGooglePin').val(),
+            accountSecretKey: $('#AccountSecretKey').val()
+        };
+        if (request.googlePin == '' || request.googlePin.length < 6 || request.googlePin.length > 7) {
+            $('.field-validation-valid').text('The Verification Code must be at least 6 and at max 7 characters long.');
+            return false;
+        }
+        $.post('/CompleteGoogleAuthenticatorSetup', request)
+            .done(result => {
+                an.title = 'Oops';
+                if (result.statuscode === 1) {
+                    Two_FA_Win();
+                    an.title = 'Well done';
+                }
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });;
+    })
+    var changeGAuthStatus = () => {
+        let request = {
+            __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val(),
+            isEnable: $('#chkEnable').is(':checked'),
+            otp: $('#txtOTPForDGAuth').val()
+        };
+        $.post('/EnableGoogleAuthentication', request)
+            .done(result => {
+                if (result.statuscode === 2) {
+                    if (!$('#txtOTPForDGAuth')[0])
+                        $('#chkEnable').closest('div').after(`<div class="form-group"><div class="input-group"><input type="text" class="form-control" placeholder="${result.msg}" id="txtOTPForDGAuth"/>
+                                               <div class="input-group-append"><button class="btn btn-dark" onclick="changeGAuthStatus()">Submit</button></div></div></div>`);
+                    an.title = result.statuscode === 1 ? 'Well done' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    return
+                }
+                an.title = result.statuscode === 1 ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === 1)
+                    $('[data-dismiss="modal"]').click();
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    }
+    $('#chkEnable').click(() => changeGAuthStatus());
+    $('kbd').text(Q.formatUnformattedKey($('kbd').text()))
+    $('#resetGoogleAuth').click((e) => {
+        let parentDiv = $(e.currentTarget).closest('.form-group');
+        let request = {
+            __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val()
+        };
+        $.post('/User/SendOTPToRestGAuth', request)
+            .done(result => {
+                if (result.statuscode == 1) {
+                    if ($('body').html().indexOf('txtResetOTP') == -1) {
+                        parentDiv.hide();
+                        parentDiv.after(`<div class="send-otp-div"><div class="form-group"><input type="text" class="form-control" placeholder="${result.msg}" id="txtResetOTP"/></div>
+                                    <div class="form-group">
+                                       <button class="btn btn-dark" onclick="restGoogleAuth()">Submit</button>
+                                       <button class="btn btn-dark" onclick="cancel()">Cancel</button></div></div></div>`);
+
+                    }
+
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    });
+
+
+
+    var restGoogleAuth = () => {
+        let request = {
+            __RequestVerificationToken: $('[name="__RequestVerificationToken"]').val(),
+            otp: $('#txtResetOTP').val()
+        };
+        $('.otp-error').remove();
+        if (request.otp == undefined || request.otp == "") {
+            $('#txtResetOTP').after('<span class="text-danger text-monospace otp-error">Please Fill OTP first.</span>');
+            return false;
+        }
+        $.post('/User/ResetGoogleAuthenticator', request)
+            .done(result => {
+                if (typeof result === 'object') {
+                    an.title = 'Oops';
+                    an.content = result.msg
+                    an.alert(an.type.failed);
+                }
+                else {
+                    $('.modal-body:last').html(result);
+                }
+
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    };
+
+    var cancel = () => {
+        $('#resetGoogleAuth').closest('.form-group').show();
+        $('.send-otp-div').remove();
+    }
+</script>

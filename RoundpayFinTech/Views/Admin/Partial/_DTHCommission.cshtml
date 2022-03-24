@@ -1,0 +1,123 @@
+﻿@model RoundpayFinTech.AppCode.Model.DTHCommissionModel
+@{
+    var mdl = Model.DTHCommissions;
+    var mdlParent = Model.ParentSlabDetails;
+    var Operators = Model.Operators;
+}
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info">Commission Detail</h5><hr />
+        <div class="row">
+            <div class="col-sm-6">
+                @{
+                    var OList = new SelectList(Operators, "OID", "Operator");
+                    var _OID = Model.OID;
+                }
+                <select class="form-control" id="ddlOperator" asp-items="@OList" asp-for="@_OID">
+                </select>
+            </div>
+            <div class="col-sm-6">
+                <input class="form-control" id="txtSearchRSD" type="text" placeholder="Search" style="padding: 0.475rem 0.75rem;" />
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+                <thead class="bg-tableth">
+                    <tr>
+                        <th>#</th>
+                        <th style="width:23%"> Package</th>
+                        <th> Commission</th>
+                        <th style="line-height:33px;width:28%;">CommType/AmtType</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{int i = 1; }
+                    @foreach (var item in mdl)
+                    {
+                        if (Model.IsChannel)
+                        {
+                            <tr data-item-id="@item.PackageID">
+                                <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                                <td style="width:25em;" class="align-middle">
+                                    <input type="hidden" id="hid" value="@item.SlabID" class="d-none" />
+                                    @Html.DisplayFor(modelItem => item.PackageName)
+                                    <small class="form-text text-muted mt-0" style="font-size:70%">
+                                        @item.Operator , MRP :  Rs. @item.PackageMRP
+                                    </small>
+                                </td>
+                                @{
+                                    var parentItem = mdlParent.Where(x => x.PackageID == item.PackageID && x.SlabID == item.SlabID).FirstOrDefault();
+                                }
+                                <td style="width:20em;" class="align-middle">
+                                    <div class="form-inline">
+                                        @Html.TextBoxFor(modelItem => item.Comm, new { @id = "txtComAmt_" + i, @class = " text-right", @placeholder = "0.0", @style = "padding-right:2px;width:55%;", @aria_describedby = "helpComAmt_" + i })
+                                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate">&nbsp;&nbsp;</i>
+                                        @Html.HiddenFor(modelItem => item.Comm, new { @id = "hidComAmt" + i, @class = " text-right", @placeholder = "0.0", @style = "padding-right:2px;width:5em;" })
+                                        <small id="helpComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">
+                                            error
+                                        </small>
+                                        <small id="helpPComAmt_@i" class="mt-0 text-right text-monospace">
+                                            @parentItem.Comm (Received)
+                                        </small>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <span class="btn btn-sm btn-dark active">
+                                            @Html.Raw(parentItem.CommType == 0 ? "COM" : "SUR")
+                                        </span>
+                                    </div>
+                                    <div class="btn-group btn-group-sm">
+                                        <span class="btn btn-sm btn-dark active">
+                                            @Html.Raw(parentItem.AmtType == 0 ? "PER" : "FIX")
+                                        </span>
+                                    </div>
+                                </td>
+                            </tr>
+                            i++;
+                        }
+        else
+            {
+                <tr data-item-id="@item.PackageID">
+                    <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                    <td style="width:25em;" class="align-middle">
+                        <input type="hidden" id="hid" value="@item.SlabID" class="d-none" />
+                        @Html.DisplayFor(modelItem => item.PackageName)
+                        <small class="form-text text-muted mt-0" style="        font-size: 70%
+">
+                            @item.Operator , MRP :  Rs. @item.PackageMRP
+                        </small>
+                    </td>
+                    @{
+                        var parentItem = mdlParent.Where(x => x.PackageID == item.PackageID && x.SlabID == item.SlabID).FirstOrDefault();
+                    }
+                    <td>
+                        <div class="form-inline">
+                            @Html.TextBoxFor(modelItem => item.Comm, new { @id = "txtComAmt_" + i, @class = " text-right", @placeholder = "0.0", @style = "padding-right:2px;width:55%;", @aria_describedby = "helpComAmt_" + i })
+                            <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate">&nbsp;&nbsp;</i>
+                            @Html.HiddenFor(modelItem => item.Comm, new { @id = "hidComAmt" + i, @class = " text-right", @placeholder = "0.0", @style = "padding-right:2px;width:5em;" })
+                            <small id="helpComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">
+                                error
+                            </small>
+                        </div>
+                    </td>
+                    <td>
+                        <div class="btn-group btn-toggle" id="btnGroupComType_@i">
+                            <button class="btn btn-sm @Html.Raw(item.CommType==0?"btn-dark active":"btn-outline-dark")">COM</button>
+                            <button class="btn btn-sm @Html.Raw(item.CommType==1?"btn-dark active":"btn-outline-dark")">SUR</button>
+                        </div>
+                        <div class="btn-group btn-toggle" id="btnGroupAmtType_@i">
+                            <button class="btn btn-sm  @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                            <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                        </div>
+                    </td>
+                </tr>
+                i++;
+            }
+        }
+                    </tbody>
+                    </table>
+                </div>
+</div>

@@ -1,0 +1,265 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.Model.Paymentgateway
+@model PGDisplayModel
+@{
+    ViewData["Title"] = "Add Money";
+}
+<style>
+    .mode-box {
+        background: white;
+        border-radius: 4px;
+        padding: 2px 13px;
+        overflow: hidden;
+    }
+
+    .mode-header {
+        margin-bottom: 1px;
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: capitalize;
+        color: #424141;
+        margin-top: 13px;
+    }
+
+    .mode-span {
+        font-size: 11px;
+        text-transform: capitalize;
+        color: #9a0606;
+    }
+
+    .w18 {
+        width: 18% !important
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> Add Money</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="row">
+                    <div class="col-md-6 mt-3">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlWType">Wallet Type</label>
+                                    <select aria-describedby="helpddlWType" class="form-control" id="ddlWType">
+                                        <option value="@Wallet.Prepaid"> @Wallet._Prepaid </option>
+                                        @if (Model.UB.IsUBalanceFund)
+                                        {
+                                            <option value="@Wallet.Utility"> @Wallet._Utility </option>
+                                        }
+                                        @if (Model.UB.IsBBalanceFund)
+                                        {
+                                            <option value="@Wallet.Bank"> @Wallet._Bank</option>
+                                        }
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtAmount">Enter Amount</label>
+                                    @Html.TextBox("txtAmount", null, new { @class = "form-control text-capitalize mb-1 ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                                    <small id="AmountHelp" class="form-text text-danger d-none">Invalid Amount</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        @if (Model.modes.Any())
+                        {
+                            @foreach (var item in Model.modes)
+                            {
+                                if (item.IsActive)
+                                {
+                                    <div class="mode-box row mb-1">
+                                        <div class="col-md-6">
+                                            <h3 class="mode-header">
+                                                @item.Name.ToUpper() <br>
+                                                @if (item.CommSettingType == 1)
+                                                {
+                                                    <span class="mode-span">Charges: @item.Charge @(item.ChargeAmtType ? "" : "%")</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="badge badge-danger cursor-pointer" data-item-id="@item.OID" id="dvChargeDetail_@item.OID">Charge Detail</span>
+                                                }
+                                            </h3>
+                                        </div>
+                                        <div class="col-md-6 cursor-pointer" id="dv_Img_@item.OID" data-item-id="@item.OID">
+                                            <img src="/Image/operator/@(item.OID+".png")" alt="@item.Name" class="rounded-0 w18" style="float: right;">
+                                        </div>
+
+                                    </div>
+                                }
+
+                            }
+                        }
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card mt-4" id="DivTopFive" style="min-height: 540px;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+  window.addEventListener("storage", e => {
+        var result = $.parseJSON(event.newValue);
+        if (result.hasOwnProperty("origin")) {
+            if (result.origin === 'addMoney') {
+                if (IsPackage == 1) {
+                    window.close();
+                }
+                /* note : In Case of CashFree status :  1 - Pending , 2 - Success , 3- Failed  */
+                let cashFreePendings=['','0','1','pending'];
+                let isPending=cashFreePendings.includes(result.status?.toString().toLowerCase());
+                let iconSrc=`${$$host}/Image/iconMsg/${isPending ? '10' : (result.status == 2 ? '1' : '11')}.png`;
+                let h3Class=`${isPending ? 'text-info' : (result.status == 2 ? 'text-success' : 'text-danger')}`;
+                let statusText=`${isPending ? 'Transaction Pending' : (result.status == 2 ? 'Transaction Successful' : 'Transaction Failed')}`;
+                if (result.gateway === 'CashFree' && isPending) {
+                    let _html = `<div id="divStatusResult"><div class="text-center"><span class="h4">Waiting....</span></div>
+                                     <div class="text-center mt-5 mb-4">
+                                     <div class="mt-5 mb-5"><span class="text-success h1" id="JsTimer">02:00</span> mins</div>
+                                     <div>Do not press the back button untill the payment is complete</div>
+                                     <button class="btn btn-outline-primary w-75 mt-4" id="mdlCancel">Close</button>
+                                 </div></div>`;
+                    mdlA.id = "callBackAlert";
+                    mdlA.title = "Status";
+                    mdlA.content = _html;
+                    mdlA.modal(mdlA.size.large);
+                    $('#mdlCancel').click(() => mdlA.dispose());
+                    /* Cashfree Status check*/
+                    function CheckCashFreeStatus(TID, t, showJsTimer, onStopTimer) {
+                        $.post("/PGCallback/CashFreeStatusCheck", { TID }, function (result) {
+                            isPending=cashFreePendings.includes(result.status?.toString().toLowerCase());
+                            iconSrc=`${$$host}/Image/iconMsg/${isPending ? '10' : (result.status == 2 ? '1' : '11')}.png`;
+                            h3Class=`${isPending ? 'text-info' : (result.status == 2 ? 'text-success' : 'text-danger')}`;
+                            statusText=`${isPending ? 'Transaction Pending' : (result.status == 2 ? 'Transaction Successful' : 'Transaction Failed')}`;
+                            if (isPending && t < 7) {
+                                setTimeout(function () {
+                                    t = t + 1;
+                                    CheckCashFreeStatus(TID, t, showJsTimer, onStopTimer);
+                                }, 10 * 1000);
+                            } else {
+                                let _result = `<div class="row">
+                                                 <div class="col-sm-12 text-center">
+                                                     <img src="${iconSrc}" />
+                                                     <h3 class="${h3Class}">${statusText}</h3></div>
+                                                 <div class="col-sm-3"></div><div class="col-sm-3">Amount</div><div class="col-sm-6">${result.amount}</div>
+                                                 <div class="col-sm-3"></div><div class="col-sm-3">Transaction Id</div><div class="col-sm-6">${result.transactionID}</div>
+                                                 <div class="col-sm-3"></div><div class="col-sm-3">TID</div><div class="col-sm-6">${result.tid}</div>
+                                               </div>`;
+                                $('#divStatusResult').html(_result);
+                                if (showJsTimer != undefined)
+                                    showJsTimer.stopTimer();
+                            }
+                        }).catch(function (er) {
+                            console.log(er);
+                        }).fail(function (xhr) {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        });
+                    }
+                    /* End Cashfree Status check*/
+
+                    let showJsTimer = new ShowJsTimer(JsTimer, 2);
+                    showJsTimer.startTimer();
+                    setTimeout(function () {
+                        CheckCashFreeStatus(result.TID, 0, showJsTimer, function () {
+                            mdlA.dispose();
+                        });
+                    }, 6000);
+                }
+                else {
+                    let _html = `<div class="row">
+                                   <div class="col-sm-12 text-center">
+                                     <img src="${iconSrc}" />
+                                     <h3 class="${h3Class}">${statusText}<br/>
+                                        <small>${result.statuscode == -1 ? result.reason : ''}</small>
+                                      </h3>
+                                   </div>
+                                 </div>`;
+                    mdlA.id = "callBackAlert";
+                    mdlA.title = "Status";
+                    mdlA.content = _html;
+                    mdlA.modal(mdlA.size.large);
+                }
+            }
+        }
+    }, true);
+
+
+        var IsPackage = 0;
+        /*   $(document).ready(function () {*/
+        $('[id^=dv_Img_]').click(function () {
+            var IsE = !$v.$IsNum($('#txtAmount').val());
+            $v.showErrorFor($('#txtAmount'), 'Amount is  numeric mandatory field', IsE);
+            if (IsE) {
+                return false;
+            }
+            var id = $(this).data().itemId;
+            var a = $('#txtAmount').val();
+            var w = $('#ddlWType').val();
+            preloader.load();
+            $.post("/choose-pg", { id, a, w }, function (result) {
+                resultReload(result);
+                mdlA.id = 'pgModel';
+                mdlA.title = '<small>Payment Gateway Selection</small>';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.modal(mdlA.size.small);
+                if ($('#hidOnly').val() != undefined) {
+                    if ($('#hidOnly').val() == "true") {
+                        $('#dv_pgparent .mode-box').click();
+                        $('#pgModel .modal-content').animate({ opacity: 0 }, 500, function () {
+                            $('#pgModel,.modal-backdrop').remove();
+                            $('body').removeClass('modal-open').removeAttr('style');
+                        });
+                    }
+                }
+            }).catch(() => console.log()).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        });
+
+        $('[id^=dvChargeDetail_]').click(function () {
+            $.post('/rslab-detail-Range', { OID: $(this).data().itemId })
+                .done((result) => {
+                    mdlA.id = "divMore";
+                    mdlA.title = "Commission";
+                    mdlA.content = result;
+                    mdlA.modal(mdlA.size.large);
+                })
+                .always(() => preloader.remove())
+        });
+        var reqmoney = getQueryString().reqmoney;
+        if (reqmoney != undefined && reqmoney != '') {
+            $('#txtAmount').val(reqmoney.split('.')[0]).attr('readonly', 'readonly');
+            $('#ddlWType').attr('disabled', 'disabled');
+            IsPackage = 1;
+        }
+
+        var queryString = getQueryString();
+
+
+        /*  });*/
+
+    </script>
+}

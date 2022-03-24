@@ -1,0 +1,492 @@
+﻿@using RoundpayFinTech.AppCode.Model
+@using Fintech.AppCode.StaticModel
+@model _TargetModel
+@{
+
+}
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+
+    @if (Model.TargetType == TargetType.Servicewise)
+    {
+        <h5 class="text-uppercase text-info">Target Against Services </h5><hr />
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+                <thead class="shadow">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Services</th>
+                        <th scope="col">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    Target
+                                </div>
+                                <div class="col-md-1">
+                                    Commission
+                                </div>
+                                <div class="col-md-4">
+                                    Hike% &
+                                    Amount Type
+                                </div>
+                                <div class="col-md-5">
+                                    <input class="form-control" id="txtSearchRSD" type="text" placeholder="Search">
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int @i = 1;
+                        foreach (var item in Model.TargetModelList)
+                        {
+                            <tr data-item-id="@item.ID" data-item-Oid="@item.OID" data-item-slabType="@item.IsAdminDefined" data-item-Sid="@item.SlabID">
+                                <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                                <td class="align-middle" style="width:15%">
+                                    @item.OpName
+                                    <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                                        @item.OpTypeName
+                                    </small>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control txtTarget" placeholder="Target" value="@item.Target" />
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="text" class="form-control txtComm" placeholder="Commission" value="@item.Comm" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control txtHike" placeholder="Hike %" value="@item.HikePer" />
+                                                <div class="input-group-addon btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw(i+"_"+item.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <span class="switch switch-sm">
+                                                IsHikeOnEarn
+                                                <input type="checkbox" class="switch chkHikeOn" id="chkHikeOn_@i" @Html.Raw(item.IsHikeOnEarned ? "checked='checked'" : "") />
+                                                <label for="chkHikeOn_@i"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsEarn
+                                                <input type="checkbox" class="switch chkEarn" id="chkEarn_@i" @Html.Raw(item.IsEarned ? "checked='checked'" : "") />
+                                                <label for="chkEarn_@i"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsGift
+                                                <input type="checkbox" class="switch chkGift" id="chkGift-@i" @Html.Raw(item.IsGift ? "checked='checked'" : "") />
+                                                <label for="chkGift-@i"></label>
+                                            </span>
+                                        </div>
+
+                                        @if (item.IsGift == true)
+                                        {
+                                            <div class="col-md-2 img-upload" style="padding:0;">
+                                                <span class="btn btn-sm btn-outline-dark btnShowGift">
+                                                    <i class="fa fa-eye"></i> SHOW
+                                                </span>
+                                                <input type="hidden" value="@item.ImgaePath" />
+                                                <input type="file" class="form-control fUpload" id="ReUpload_@i" style="display:none" />
+                                                <label for="ReUpload_@i" class="btn btn-sm btn-outline-info">
+                                                    <span class="fa fa-upload"></span> UPLOAD
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            i += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.TargetType == TargetType.OpTypewise)
+    {
+        <h5 class="text-uppercase text-info">Target Against Operator Types </h5><hr />
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+                <thead class="shadow">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Operator Type</th>
+                        <th scope="col">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    Target
+                                </div>
+                                <div class="col-md-1">
+                                    Commission
+                                </div>
+                                <div class="col-md-4">
+                                    Hike% &
+                                    Amount Type
+                                </div>
+                                <div class="col-md-5">
+                                    <input class="form-control" id="txtSearchRSD" type="text" placeholder="Search">
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int @i = 1;
+                        foreach (var item in Model.TargetModelList)
+                        {
+                            <tr data-item-id="@item.ID" data-item-Oid="@item.OID" data-item-slabType="@item.IsAdminDefined" data-item-Sid="@item.SlabID">
+                                <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                                <td class="align-middle" style="width:15%">
+                                    @item.OpName
+                                    <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                                        @item.OpTypeName
+                                    </small>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control txtTarget" placeholder="Target" value="@item.Target" />
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="text" class="form-control txtComm" placeholder="Commission" value="@item.Comm" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control txtHike" placeholder="Hike %" value="@item.HikePer" />
+                                                <div class="input-group-addon btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw(i+"_"+item.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <span class="switch switch-sm">
+                                                IsHikeOnEarn
+                                                <input type="checkbox" class="switch chkHikeOn" id="chkHikeOn_@i" @Html.Raw(item.IsHikeOnEarned ? "checked='checked'" : "") />
+                                                <label for="chkHikeOn_@i"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsEarn
+                                                <input type="checkbox" class="switch chkEarn" id="chkEarn_@i" @Html.Raw(item.IsEarned ? "checked='checked'" : "") />
+                                                <label for="chkEarn_@i"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsGift
+                                                <input type="checkbox" class="switch chkGift" id="chkGift-@i" @Html.Raw(item.IsGift ? "checked='checked'" : "") />
+                                                <label for="chkGift-@i"></label>
+                                            </span>
+                                        </div>
+
+                                        @if (item.IsGift == true)
+                                        {
+                                            <div class="col-md-2 img-upload" style="padding:0;">
+                                                <span class="btn btn-sm btn-outline-dark btnShowGift">
+                                                    <i class="fa fa-eye"></i> SHOW
+                                                </span>
+                                                <input type="hidden" value="@item.ImgaePath" />
+                                                <input type="file" class="form-control fUpload" id="ReUpload_@i" style="display:none" />
+                                                <label for="ReUpload_@i" class="btn btn-sm btn-outline-info">
+                                                    <span class="fa fa-upload"></span> UPLOAD
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            i += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    @if (Model.TargetType == TargetType.Operatorwise)
+    {
+        <h5 class="text-uppercase text-info">Target Against Operator </h5><hr />
+        <div class="table-responsive">
+            <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+                <thead class="shadow">
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Operators</th>
+                        <th scope="col">
+                            <div class="row">
+                                <div class="col-md-2">
+                                    Target
+                                </div>
+                                <div class="col-md-1">
+                                    Commission
+                                </div>
+                                <div class="col-md-4">
+                                    Hike% &
+                                    Amount Type
+                                </div>
+                                <div class="col-md-5">
+                                    <input class="form-control" id="txtSearchRSD" type="text" placeholder="Search">
+                                </div>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int @i = 1;
+                        foreach (var item in Model.TargetModelList)
+                        {
+                            <tr data-item-id="@item.ID" data-item-Oid="@item.OID" data-item-slabType="@item.IsAdminDefined" data-item-Sid="@item.SlabID">
+                                <th style="width:1em;" scope="row" class="align-middle">@i</th>
+                                <td class="align-middle" style="width:15%">
+                                    @item.OpName
+                                    <small id="nameHelp" class="form-text text-muted mt-0" style="font-size:70%">
+                                        @item.OpTypeName
+                                    </small>
+                                </td>
+                                <td class="align-middle">
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control txtTarget" placeholder="Target" value="@item.Target" />
+                                        </div>
+                                        <div class="col-md-1">
+                                            <input type="text" class="form-control txtComm" placeholder="Commission" value="@item.Comm" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control txtHike" placeholder="Hike %" value="@item.HikePer" />
+                                                <div class="input-group-addon btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw(i+"_"+item.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <span class="switch switch-sm">
+                                                IsHikeOnEarn
+                                                <input type="checkbox" class="switch chkHikeOn" id="chkHikeOn_@i" @Html.Raw(item.IsHikeOnEarned ? "checked='checked'" : "") />
+                                                <label for="chkHikeOn_@i"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsEarn
+                                                <input type="checkbox" class="switch chkEarn" id="chkEarn_@i" @Html.Raw(item.IsEarned ? "checked='checked'" : "") />
+                                                <label for="chkEarn_@i"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsGift
+                                                <input type="checkbox" class="switch chkGift" id="chkGift-@i" @Html.Raw(item.IsGift ? "checked='checked'" : "") />
+                                                <label for="chkGift-@i"></label>
+                                            </span>
+                                        </div>
+
+                                        @if (item.IsGift == true)
+                                        {
+                                            <div class="col-md-2 img-upload" style="padding:0;">
+                                                <span class="btn btn-sm btn-outline-dark btnShowGift">
+                                                    <i class="fa fa-eye"></i> SHOW
+                                                </span>
+                                                <input type="hidden" value="@item.ImgaePath" />
+                                                <input type="file" class="form-control fUpload" id="ReUpload_@i" style="display:none" />
+                                                <label for="ReUpload_@i" class="btn btn-sm btn-outline-info">
+                                                    <span class="fa fa-upload"></span> UPLOAD
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            i += 1;
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+
+</div>
+<script>
+    var _update = function (sender) {
+         var param = {
+             ID: $(sender).closest('tr').data().itemId,
+             OID: $(sender).closest('tr').data().itemOid,
+             IsAdminDefined: $(sender).closest('tr').data().itemSlabtype,
+             SlabID: $(sender).closest('tr').data().itemSid,
+             RoleID: $(sender).closest('tr').data().roleId == undefined ? -1 : $(sender).closest('tr').data().roleId,
+             Target: $(sender).closest('tr').find('input.txtTarget').val(),
+             Comm: $(sender).closest('tr').find('input.txtComm').val(),
+             AmtType: $($(sender).closest('tr').find('.btn-toggle .active')).text() == 'PER' ? 0 : 1,
+             IsEarned: $(sender).closest('tr').find('.chkEarn').is(':checked'),
+             IsGift: $(sender).closest('tr').find('.chkGift').is(':checked'),
+             TargetTypeID:@Model.TargetType,
+             HikePer: $(sender).closest('tr').find('input.txtHike').val(),
+             IsHikeOnEarned: $(sender).closest('tr').find('.chkHikeOn').is(':checked')
+         };
+        if (param.Target > 0 && param.Comm > 0 && param.AmtType >= 0 && (param.IsEarned == true || param.IsGift == true)) {
+            $.post('/Target_Edit', { param: param })
+                .done(function (result) {
+                    if (result.statuscode == 1) {
+                        an.title = 'Success!';
+                        if (result.statuscode == an.type.success)
+                            an.content = result.msg;
+                        an.alert(result.Statuscode);
+                    }
+                    if (result.statuscode == -1) {
+                        an.title = 'Opps!';
+                        if (result.statuscode == an.type.failed)
+                            an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                })
+        }
+    }
+
+    var UploadImg = function (_id, sender) {
+        if ($('#' + _id).val() != "" && $('#' + _id) != undefined) {
+            var fileExtension = ['png', 'jpeg', 'jpg'];
+            var filename = $('#' + _id).val();
+            var extension = filename.replace(/^.*\./, '');
+            if ($.inArray(extension, fileExtension) == -1) {
+                an.title = 'Validation Warning';
+                an.content = "Please select only image files.";
+                an.alert(an.type.failed);
+                $('#' + _id).val('');
+                return false;
+            }
+            var param = {
+                OID: $('#' + _id).closest('tr').data().itemOid,
+                SlabID: $('#' + _id).closest('tr').data().itemSid,
+                RoleID: $('#' + _id).closest('tr').data().roleId == undefined ? -1 : $('#' + _id).closest('tr').data().roleId
+            };
+            var formData = new FormData();
+            var fileName = "Gift_" + param.RoleID + "_" + param.OID + "_" + param.SlabID + "." + filename.split('.')[1];
+            formData.append('file', $('#' + _id)[0].files[0]);
+            formData.append('fileName', fileName);
+            $.ajax({
+                type: "POST",
+                url: "/upload-Gift-Img",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (result) {
+                    if (result.statuscode === -1) {
+                        an.title = 'Oops';
+                        an.content = result.msg;
+                        an.alert(an.type.failed);
+                    } else {
+                        an.title = 'Success';
+                        an.content = result.msg;
+                        an.alert(an.type.success);
+                        $('#' + _id).val('');
+                        if (sender != undefined) {
+                            _update(sender);
+                            var _fileName = "Gift_" + param.RoleID + "_" + param.OID + "_" + param.SlabID + "." + filename.split('.')[1];
+                            var i = $(this).closest('tr').index() + 1;
+                            var _html = '<div class="col-md-2 img-upload" style="padding:0;">'
+                                +'<span class="btn btn-sm btn-outline-dark btnShowGift"> '
+                                + '<i class="fa fa-eye"></i> SHOW</span>'
+                                + '<input type="hidden" value="/Image/GiftImage/' + _fileName + '"/>'
+                                + '<input type="file" class="form-control fUpload" id="ReUpload_'+i+'" style="display:none" />'
+                                + '<label for="ReUpload_'+i+'" class="btn btn-sm btn-outline-info">'
+                                + '<span class="fa fa-upload"></span> UPLOAD</label></div>';
+                            $(sender).closest('.row').append(_html);
+                            $(sender).closest('tr').find('.img-upload')[0].remove();
+                            $('.btnShowGift').click(function () {
+                                showGiftImg(this);
+                            })
+                            $('.fUpload').on('change', function () {
+                                UploadImg($(this).attr('id'));
+                            });
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                }
+            })
+        }
+    }
+
+    var showGiftImg = function (sender) {
+        var _src = $($(sender).siblings()[0]).val()
+        var result = '<div class="col-md-12">'
+            + '<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            + '<h5>GIFT <u id="outlateName" class="font-italic text-info"></u></h5>'
+            + '<div class="row text-center"> <div class="col-sm-12">'
+            + '<img src="' + _src + '"/></div></div></div>'
+        $('#' + an.id).remove();
+        mdlA.id = 'showImage';
+        mdlA.content = result;
+        mdlA.options.backdrop = 'static';
+        mdlA.alert(mdlA.size.large);
+        $('#' + mdlA.id).css('background-color', 'rgba(0,0,0,0.5)');
+        $('button.close span').click(function () {
+            mdlA.dispose();
+            mdlA.id = 'mymodal';
+            $('button.close span').click(function () {
+                mdlA.dispose();
+            });
+        });
+    }
+
+    $('input.txtTarget,input.txtComm,input.txtHike').on('change', function () {
+        var _Target = $(this).closest('tr').find('input.txtTarget').val();
+        var _Comm = $(this).closest('tr').find('input.txtComm').val();
+        var _txtHike = $(this).closest('tr').find('input.txtHike').val();
+        if (_Target > 0 && _Comm > 0 && _txtHike>=0) {
+            _update(this);
+        }
+    })
+
+    $('.btn-toggle').on('click', function () {
+        $(this).find('modal.btn').toggleClass('active');
+        var sender=$(this)
+        setTimeout(function () {
+            _update(sender);
+        }, 100)
+    })
+
+    $('.modal input:checkbox').on('change', function () {
+        $(this).not('.chkHikeOn').closest('tr').find($('.modal input:checkbox')).not('.chkHikeOn').removeAttr('checked');
+        $(this).attr('checked', 'checked')
+        if ($(this).attr('class') == 'switch chkEarn') {
+            $(this).closest('tr').find('.img-upload').remove();
+            $(this).closest('tr').find('.btnShowGift').parent().remove();
+            $(this).closest('tr').find('.img-upload').remove();
+            $(this).closest('tr').find('.chkGift').prop('checked', false);
+            _update(this);
+        }
+        if ($(this).attr('class') == 'switch chkGift') {
+            $(this).closest('tr').find('.chkEarn').prop('checked', false)
+            if ($(this).is(':checked') == true && $(this).closest('td').find('.btnShowGift').index() == -1 && $('#fUpload').index()==-1) {
+                $(this).closest('td').find('.row').append('<div class="col-md-2 img-upload">'
+                    + '<input type="file" class="form-control" id="fUpload" style="display:none"/>'
+                    + '<label for="fUpload" class="btn btn-outline-success"><span class="fa fa-upload"></span> UPLOAD IMAGE</label></div>');
+                $('#fUpload').on('change', function () {
+                    UploadImg('fUpload', this);
+                });
+            }
+        }
+        if ($(this).attr('class') == 'switch chkHikeOn') {
+            _update(this);
+        }
+    })
+
+    $('.btnShowGift').on('click', function () {
+        showGiftImg(this);
+    })
+
+    $('.fUpload').on('change', function () {
+        UploadImg($(this).attr('id'));
+    });
+
+
+</script>

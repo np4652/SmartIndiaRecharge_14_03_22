@@ -1,0 +1,92 @@
+﻿@using System.IO;
+@model RoundpayFinTech.AppCode.Model.ProcModel.ReqAccOpenSetting
+@{ 
+    var img= "Image/BannerBank/"+@Model.AccList.OID+".png";
+    if(File.Exists(img))
+    {
+        img = Model._path.AbsoluteHost+"/"+img;
+
+    }
+    else
+    {
+        img = @Model._path.AbsoluteHost+"/Image/Website/0/Noimage.png";
+
+    }
+
+}
+
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4><span class="text-muted text-info" id="LblOpName"></span></h4><hr />
+        <div class="form-group">
+            <label class="lbl">Banner</label>
+             <div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src=@img?v=@DateTime.UtcNow.Ticks asp-append-version="true" /></div>
+            <center>
+                <input type='file' id="bannerUpload" class="d-none" />
+                <label for="bannerUpload" class="btn btn-secondary btn-sm">Change banner</label>
+            </center>
+
+        </div>
+        <div class="form-group">
+            <label class="lbl">Redirect URL</label>
+            @if (@Model != null && Model.AccList != null)
+            {
+                <input type="text" id="txtredirectURL" aria-describedby="namehelp" maxlength="300" value="@Model.AccList.RedirectURL" class="form-control" />
+            }
+            else
+            {
+                <input type="text" id="txtredirectURL" aria-describedby="namehelp" maxlength="300" value="" class="form-control" />
+            }
+
+            <small id="namehelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <label class="lbl">Content</label>
+            @if (@Model != null && Model.AccList != null)
+            {
+                <textarea id="txtcontent" aria-describedby="remarkHelp" class="form-control" maxlength="500" value="">@Model.AccList.Content</textarea>
+            }
+            else
+            {
+                <textarea id="txtcontent" aria-describedby="remarkHelp" maxlength="500" class="form-control" value=""></textarea>
+            }
+            <small id="remarkHelp" class="form-text text-muted"></small>
+            <small id="remarkHelp" class="form-text text-muted" style="        color: black !important;
+        color: black !important;font-size: 12px;">(Maximum 500 characters allowed.For Itelic use (_) and For Bold use (*) on both sides of the text. )</small>
+        </div>
+        <button class="btn btn-outline-dark" id="btnSubmitaos">Submit</button>
+
+
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+</div>
+<script>
+    $('#btnDelete').click(() => {
+        var param = {
+            /// OID: $('#ddloption').val().split('__')[0],
+            // OptionType: $('#ddloption').val().split('__')[3],
+        };
+        $.post('/DeleteOperatorOption', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.success ? 'Well done : ' : 'Oops : ';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    mdlA.dispose();
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error'
+                an.alert(an.type.failed);
+            })
+    })
+
+
+
+
+
+</script>

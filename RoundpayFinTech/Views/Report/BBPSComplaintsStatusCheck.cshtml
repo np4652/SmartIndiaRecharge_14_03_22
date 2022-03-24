@@ -1,0 +1,131 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel
+@model int
+@{
+    ViewData["Title"] = "BBPS Complaints Status Check";
+}
+
+
+<style>
+    .btnTrackComplaint {
+        cursor: pointer;
+    }
+</style>
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-globe"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> BBPS Complaints Status Check </li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row" id="parentContainer">
+            <div class="col-md-4"></div>
+            <div class="col-md-4">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> BBPS Complaints Status Check
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="complaintID">Complaint ID:</label>
+                                <input type="text" class="form-control" placeholder="Enter Complain ID" id="complaintID">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="complaintType">Complaint Type:</label>
+                                <select class="form-control" id="complaintType">
+                                    <option value="1">Service Based</option>
+                                    <option value="2">Transaction Level</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-12 text-center">
+                                <button type="button" class="btn btn-primary bg-gradientorange text-white btnSearch" style="border:none">Search</button>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-12 mt-3 text-center statusInfo d-none">
+                            <table class="table table-borderless bg-secondary text-success">
+                                <tr>
+                                    <td><strong>Complain Assigned</strong></td>
+                                    <td>:</td>
+                                    <td><span id="comlainAs"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ComplainID</strong></td>
+                                    <td>:</td>
+                                    <td><span id="complainID"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>ComplainStatus</strong></td>
+                                    <td>:</td>
+                                    <td><span id="complainSts"></span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Response</strong></td>
+                                    <td>:</td>
+                                    <td><span id="response"></span></td>
+                                </tr>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="float-right" style="margin-right: 40px;margin-top: 18px;">
+                    <img src="/images/BBPS.png" style="max-height: 88.99px;" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="/lib/jquery/dist/jquery.js"></script>
+<script>
+    $(document).ready(function () {
+        $(".btnSearch").click(() => { return transactionSearch(); })
+
+        var transactionSearch = () => {
+            $('#comlainAs,#complainID,#complainSts,#response').html('');
+            let comID = $("#complaintID").val(),
+                comType = $("#complaintType").val();
+
+            preloader.load();
+            $.post('/bbps-complaint-status-check', { liveid: comID, comType: comType })
+                .done(function (result) {
+                    $(".statusInfo").removeClass('d-none');
+                    $('#comlainAs').html(result.complainAssignedTo);
+                    $('#complainID').html(result.liveID);
+                    $('#complainSts').html(result.complainStatus);
+                    $('#response').html(result.complainReason);
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    })
+</script>

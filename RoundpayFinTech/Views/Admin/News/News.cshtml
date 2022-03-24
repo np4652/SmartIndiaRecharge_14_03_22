@@ -1,0 +1,116 @@
+﻿@{
+    ViewData["Title"] = "News";
+
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">News</li>
+        </ol>
+    </div>
+</div>
+<div class="__p  main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row text-monospace">
+                            <div class="col-sm-10 line-height-34">
+                                <i class="fas fa-link"></i> News List
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <span id="btnNew" class="btn btn-outline-light btn-sm pl-4 pr-4">
+                                    New
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Title</th>
+                                        <th scope="col">News</th>
+                                        <th scope="col">CreateDate</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script type="text/javascript" src="~/lib/TinyMCE/tinymce.min.js?a=1"></script>
+@section scripts{
+    <script>
+        (() => {
+            darkAnimBtn($('#btnNew'));
+            preloader.load();
+            an.autoClose = 5;
+            $('#btnNew').click(() => _edit(0));
+            $.post('/GetNews').
+                done(result => $('.__p tbody').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => {
+                    preloader.remove();
+                    $(".dropdown-toggle").dropdown();
+                    $('tr div.dropdown-menu a.dropdown-item.edit').click(e => _edit($(e.currentTarget).closest('tr').data().itemId));
+                });
+        })();
+
+        var _edit = id => {
+            preloader.load();
+            $.post('/NewsAddNew/', { id: id })
+                .done(result=> {
+                    resultReload(result);
+                    mdlA.id = 'mymodel';
+                    mdlA.content = result;
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.large);
+                    _bindEditor();
+                    $('button.close span,#mdlCancel').click(() => window.location.href = window.location.href);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+
+        }
+
+        var _bindEditor = () => {
+            tinymce.init({
+                selector: '.txtNewsDetail',//'textarea',
+                height: 100,
+                theme: 'modern',
+                plugins: ['autolink link', 'save',
+                    'emoticons paste textcolor colorpicker textpattern imagetools'
+                ],
+                toolbar1: 'insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | outdent indent | link image',
+                toolbar2: 'forecolor backcolor emoticons',
+                image_advtab: true,
+                templates: [
+                    { title: 'Test template 1', content: 'Test 1' },
+                    { title: 'Test template 2', content: 'Test 2' }
+                ],
+                content_css: ['//fast.fonts.net/cssapi/e6dc9b99-64fe-4292-ad98-6974f93cd2a2.css',
+                    '//www.tinymce.com/css/codepen.min.css'
+                ]
+            });
+        }
+    </script>
+}

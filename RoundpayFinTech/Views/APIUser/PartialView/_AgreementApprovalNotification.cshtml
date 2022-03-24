@@ -1,0 +1,47 @@
+﻿@model RoundpayFinTech.AppCode.Model.AgreementApprovalNotification
+
+
+   
+
+        <div class="row">
+            <p style="padding: 18px;" id="pbody">
+
+                Hi<br />
+                If You Are Using Any Service Other than Prepaid and DTH Recharge .<br />
+                Please Complete Your Agreement Before <span>@Model.Date</span>  to Enjoy our Services without any interruption<br />
+                All Services will be barred if Agreement will not be received at our office Before  <span>@Model.Date</span> <br />
+                <br />
+                For Any Assistance, You may contact us  <span>@Model.MobileNo</span>
+            </p>
+        </div>
+
+   
+
+
+@*@section scripts{
+    <script>
+        $(document).ready(function () {
+            loadDashboardPopup();
+        });
+        //var loadDashboardPopup = function () {
+        //    preloader.load();
+        //    $.post('/_DashboardPopup')
+        //        .done(result => $('pbody').html(result))
+        //        .fail(xhr => {
+        //            an.id = 'alertModal';
+        //            an.title = 'Oops';
+        //            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+        //            an.alert(an.type.failed);
+        //        }).always(() => preloader.remove());
+        //};
+        var loadDashboardPopup = function () {
+            $.get('/Admin/_DashboardPopup').done(function (result) {
+                $('#pbody').html(result);
+                console.log(result);
+            });
+
+        }
+
+    </script>
+}*@
+

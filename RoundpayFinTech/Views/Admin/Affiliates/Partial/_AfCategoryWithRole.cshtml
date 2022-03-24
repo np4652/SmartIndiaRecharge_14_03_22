@@ -1,0 +1,69 @@
+﻿@model RoundpayFinTech.AppCode.Model.ASlabDetailModel
+@{
+    int counter = 1;
+}
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Categories with role</h5><hr />
+    <input type="hidden" id="hfid" value="@Model.SlabID" class="d-none" />
+</div>
+<div class="col-sm-12">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm" id="tblRSD">
+            <thead class="bg-tableth">
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Role</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Operators.Any())
+                {
+                    foreach (var item in Model.Operators)
+                    {
+                        <tr data-Category-Id="@item.OID">
+                            <td>@counter</td>
+                            <td>@item.Name</td>
+                            <td>
+                                @foreach (var role in Model.Roles)
+                                {
+                                    <span class="btn btn-outline-info btnRole" data-Role-Id="@role.ID">@role.Role</span>
+                                }
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3"><h4 class="text-danger">No Data Found</h4></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+    $('.btnRole').unbind().click(e => {
+        let param = {
+            SlabID: $('#hfid').val(),
+            RoleID: $(e.currentTarget).data().roleId,
+            OID: $(e.currentTarget).closest('tr').data().categoryId
+        };
+        $.post('/Af-Slab-DetailRole', param)
+            .done(result => {
+                mdlA.content = result;
+                mdlA.id = 'AFCommission';
+                mdlA.alert(mdlA.size.xxlarge);
+                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+    })
+</script>

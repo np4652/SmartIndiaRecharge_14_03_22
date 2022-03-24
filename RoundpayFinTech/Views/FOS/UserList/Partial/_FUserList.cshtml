@@ -1,0 +1,152 @@
+﻿@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@model UserListModel
+@{
+    int RowCount = 0;
+    int PageNumber = 1;
+    int TopRows = 10;
+}
+
+@if (Model != null)
+{
+    if (Model.PegeSetting != null)
+    {
+        var pageSetting = Model.PegeSetting;
+        RowCount = pageSetting.Count == null ? 0 : (int)pageSetting.Count;
+        PageNumber = pageSetting.PageNumber;
+        TopRows = pageSetting.TopRows;
+    };
+    @if (Model.userList.userReports != null)
+    {
+        @for (int i = 0; i < Model.userList.userReports.Count; i++)
+        {
+            <tr data-item-id="@Model.userList.userReports[i].ID" data-User-Mobile="@Model.userList.userReports[i].MobileNo">
+                <th scope="row">@((PageNumber - 1) * TopRows + (i + 1))</th>
+                <td>
+                    <div class="btn-group dropup">
+                        <a href="#" id="act@(i + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                        <div class="dropdown-menu" aria-labelledby="act">
+                            <h6 class="dropdown-header">Action Menu</h6>
+                            @if (Model.userList.CanFundTransfer)
+                            {
+                                <a href="#" class="dropdown-item" id="ft_@i">Fund Transfer</a>
+                            }
+                            <a href="UserLedger/@(Model.userList.userReports[i].MobileNo)" class="dropdown-item" name="@Model.userList.userReports[i].ID" target="_blank">View Ledger</a>
+                        </div>
+                    </div>
+                </td>
+                <td class="text-nowrap">
+                    @Model.userList.userReports[i].OutletName <small class="font-weight-bold text-monospace">
+                        [@(Model.userList.userReports[i].Prefix + Model.userList.userReports[i].ID)]
+                    </small>
+                </td>
+                <td>@Model.userList.userReports[i].MobileNo</td>
+                <td class="text-nowrap">
+                    <span class="fa fa-server" aria-hidden="true" style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="Show Upline Users" onclick="showUplineUsers(this)"></span>
+                    <span class="fa fa fa-arrow-alt-circle-down" style="cursor:pointer" onclick="ChildPopUp(this,false)"></span>
+                    <span class="fa fa fa-arrow-alt-circle-up" style="cursor:pointer" onclick="ChildPopUp(this,true)"></span>
+                    @Model.userList.userReports[i].Role
+                </td>
+
+                <td class="text-right">@Model.userList.userReports[i].Balance</td>
+                <td class="text-right">@Model.userList.userReports[i].BCapping</td>
+                @if (Model.userBalnace.IsUBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].UBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].UCapping</td>
+                }
+                @if (Model.userBalnace.IsBBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].BBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].BBCapping</td>
+                }
+                @if (Model.userBalnace.IsIDBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].IDBalnace</td>
+                    <td class="text-right">@Model.userList.userReports[i].IDCapping</td>
+                }
+                @if (Model.userBalnace.IsPacakgeBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].PacakgeBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].PackageCapping</td>
+                }
+                @if (Model.userBalnace.IsCBalance)
+                {
+                    <td class="text-right">@Model.userList.userReports[i].CBalance</td>
+                    <td class="text-right">@Model.userList.userReports[i].CCapping</td>
+                }
+                
+                <td class="text-nowrap">@Model.userList.userReports[i].Slab</td>
+                <td class="text-nowrap">@Model.userList.userReports[i].JoinDate </td>
+                <td class="text-nowrap">@(Model.userList.userReports[i].JoinBy.Contains("-") ? Model.userList.userReports[i].JoinBy.Split('-')[0] : Model.userList.userReports[i].JoinBy) <input type="hidden" value="@Model.userList.userReports[i].CommRate" /></td>
+                <td>@(Model.userList.userReports[i].JoinBy.Contains("-") ? Model.userList.userReports[i].JoinBy.Split('-')[1] : string.Empty)</td>
+                <td>
+                    @Html.Raw(Model.userList.userReports[i].Status ? "Active" : "Inactive");
+                </td>
+                <td class="text-nowrap">@Model.userList.userReports[i].KYCStatus</td>
+            </tr>
+        }
+    }
+}
+
+<script>
+    @*,PageNumber=@PageNumber,TopRows=@TopRows*@
+    RowCount =@RowCount
+
+        $('.CommRate').on('change', function () {
+            if ($(this).val() != undefined && $(this).val() != "") {
+                $.post('/UpdateFlatComm', { comm: $(this).val(), UserID: $(this).closest('tr').data().itemId })
+                    .done(function (result) {
+                        an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    })
+            }
+        });
+
+    $('.assignEmployee').unbind().click(e => {
+        $('#hfdUMob').remove();
+        let mob = $(e.currentTarget).closest('tr').data().userMobile;
+        $('body').append('<input type="hidden" value="' + mob + '" id="hfdUMob"/>');
+        preloader.load();
+        e.preventDefault();
+        let UserID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/_AssignEmployee', { UserID: UserID }).done(result => {
+            mdlA.id = 'assignEmpWin';
+            mdlA.title = 'Assign Employee';
+            mdlA.content = result;
+            mdlA.modal(mdlA.size.large);
+        }).fail(xhr => {
+
+        }).always(() => preloader.remove());
+    });
+
+    $('.unassignEmployee').unbind().click(e => {
+        let _this = $(e.currentTarget);
+        preloader.load();
+        let UserID = _this.closest('tr').data().itemId;
+        $.post('/UnAssignEmployee', { UserID: UserID }).done(result => {
+            an.id = 'unassignEmp';
+            an.title = result.statuscode === an.type.success ? 'Well done : ' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+            if (result.statuscode === an.type.success)
+                _this.removeClass('unassignEmployee').addClass('assignEmployee').text('Assign Employee');
+        }).fail(xhr => {
+
+        }).always(() => preloader.remove());
+    })
+
+    $('.registerasvendor').unbind().click(e => {
+        preloader.load();
+        e.preventDefault();
+        let UserID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/RegisterasVendor', { UserID: UserID }).done(result => {
+            an.title = result.statuscode == 1 ? 'Wow' : 'Oops';
+            an.content = result.msg;
+            an.alert(result.statuscode);
+        }).fail(xhr => {
+
+        }).always(() => preloader.remove());
+    });
+</script>

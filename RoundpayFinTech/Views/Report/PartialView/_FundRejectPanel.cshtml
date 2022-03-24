@@ -1,0 +1,56 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.FundRequetResp;
+
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Fund Reject Form</h3>
+        <div class="btn-group btn-toggle" id="btnGroup">
+            <button class="btn  btn-dark active">Credit</button>
+            <button class="btn btn-outline-dark">Debit</button>
+        </div>
+        <div class="form-group">
+            @if (Model.FundReject.UserName != null)
+            {
+                <h3><span id="spnNam">@Model.FundReject.UserName</span></h3>
+                <h3><span id="spnMob">@Model.FundReject.MobileNo</span></h3>
+                <span id="spnUserId" style="display:none">@Model.FundReject.UserId</span>
+            }
+            else
+            {
+                <h3><span id="spnNam"></span></h3>
+                <h3><span id="spnMob"></span></h3>
+                <span id="spnUserId" style="display:none"></span>
+            }
+        </div>
+        <div class="form-group">
+            <label class="lbl" for="txtAmount">Amount</label>
+            @if (Model.FundReject.Amount != 0)
+            {
+                <input aria-describedby="amountHelp" class="form-control" id="txtAmount" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="@(Math.Round(Convert.ToDecimal(Model.FundReject.Amount),0))" disabled="disabled">
+            }
+            else
+            {
+                <input aria-describedby="amountHelp" class="form-control" id="txtAmount" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="0">
+            }
+            <small id="amountHelp" class="form-text text-muted d-none">Amount is mandatory</small>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("ddlreason", "Choose Reason", new { @class = "lbl" })
+            @{
+                var Reasons = new SelectList(Model.MasterRR, "ID", "Reason");
+            }
+            <select id="ddlreason" aria-describedby="txtreasonremHelp" class="form-control" asp-items="@Reasons">
+                
+            </select>
+            <small id="txtreasonremHelp" class="form-text text-muted d-none">Reason is mandatory</small>
+        </div>
+        <div class="form-group">
+            <label class="lbl" for="txtRemark">Remark</label>
+            <input aria-describedby="txtRemarkremHelp" class="form-control" id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text" value="">
+            <small id="txtRemarkremHelp" class="form-text text-muted d-none">Remark optional</small>
+        </div>
+        <button class="btn btn-outline-dark" id="bR">Reject</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>

@@ -1,0 +1,200 @@
+﻿@using RoundpayFinTech.AppCode.Configuration
+
+@{
+    ViewData["Title"] = "Range Slab Detail";
+}
+<div aria-label="breadcrumb" class="breadcrumb">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="row mb-1">
+                            <div class="col-md-6 col-sm-4 col-xs-4">
+                                <input type="text" id="txtSearch" class="form-control col-md-6 mb-1" placeholder="Search" />
+                            </div>
+                            <div class="col-md-6 col-sm-8 col-xs-8">
+                                <div class="btn-group float-right " style="display:none">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text switch switch-sm bg-white align">
+                                                <input type="checkbox" class="switch" id="chbIsSms" tabindex="2">
+                                                <label for="chbIsSms" class="font-weight-bold lbl lblstatus"></label>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm tblrecord">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAdminLedgers">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Service Provider</th>
+                                        <th scope="col">SP Key</th>
+                                        <th scope="col">IsBilling</th>
+                                        <th scope="col">BusinessModel</th>
+                                        @if (ApplicationSetting.IsRoleCommissionDisplay)
+                                        {
+                                            <th scope="col">Commission</th>
+                                            <th scope="col">Max Commission</th>
+                                            <th scope="col">Range</th>
+                                        }
+                                        else
+                                        {
+                                            <th scope="col">Max Commission</th>
+                                            <th scope="col">Range</th>
+                                            <th scope="col">Rate</th>
+                                            <th scope="col">Commission Type</th>
+                                            <th scope="col">Amount Type</th>
+                                        }
+
+                                        <th scope="col">Min To Max</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+                            $(document).ready(function () {
+                                an.autoClose = 5;
+                                //$('.body-content').removeClass('container').addClass('container-fluid');
+                                search();
+                                $("#txtSearch").on("keyup", function () {
+                                    var value = $(this).val().toLowerCase();
+                                    $('#tblAdminLedgers tbody tr').filter(function () {
+                                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                                    });
+                                });
+                            });
+                            var search = function () {
+                                var ct = {
+                                    statuscode: [{
+                                        ERROR: -1,
+                                        SUCCESS: 1,
+                                        PENDING: 0
+                                    }]
+                                };
+                                $.ajax({
+                                    type: 'POST',
+                                    url: '/rangeslab-detail',
+                                    data: {},
+                                    contentType: 'application/json',
+                                    success: function (result) {
+                                        resultReload(result);
+                                        $('.__p .tblrecord tbody').html(result);
+                                        var cte = {
+                                            lblstatus: $(".lblstatus"), chk: $("#chbIsSms")
+                                        };
+                                        var btstatus = $(".tr_bstatus").attr("data-item");
+                                        if (btstatus == "True") {
+                                            cte.chk.prop("checked", true);
+                                            cte.lblstatus.text("Real API Enabled");
+                                        }
+                                        else {
+                                            cte.chk.prop("checked", false);
+                                            cte.lblstatus.text("Real API Disabled");
+                                        }
+                                        $("#chbIsSms").change(function () {
+                                            $.ajax({
+                                                type: 'POST',
+                                                url: '/RealAPI-Status',
+                                                contentType: 'application/json',
+                                                success: function (result) {
+                                                    resultReload(result);
+                                                    if (result.statuscode === an.type.failed) {
+                                                        an.title = "Oops";
+                                                        an.content = result.msg;
+                                                        an.alert(result.statuscode);
+                                                    }
+                                                    else if (result.statuscode === an.type.success) {
+                                                        an.title = "Well done";
+                                                        an.content = result.msg;
+                                                        an.alert(result.statuscode);
+                                                        cte.lblstatus.text(result.msg)
+                                                    }
+                                                },
+                                                statusCode: {
+                                                    500: function () {
+                                                        an.title = 'Oops';
+                                                        an.content = 'Server error';
+                                                        an.alert(an.type.failed);
+                                                    },
+                                                    0: function () {
+                                                        an.title = 'Oops';
+                                                        an.content = 'Internet Connection was broken';
+                                                        an.alert(an.type.failed);
+                                                    }
+                                                },
+                                                error: function (xhr, result) {
+                                                    an.title = "Oops";
+                                                    an.content = result;
+                                                    an.alert(ct.statuscode.ERROR);
+                                                    if (result === 'parsererror') {
+                                                        reload();
+                                                    }
+                                                },
+                                                complete: function () {
+
+                                                }
+                                            });
+
+
+                                        });
+                                    },
+                                    statusCode: {
+                                        500: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        },
+                                        0: function () {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    },
+                                    error: function (xhr, result) {
+                                        an.title = "Oops";
+                                        an.content = result;
+                                        an.alert(ct.statuscode.ERROR);
+                                        if (result === 'parsererror') {
+                                            reload();
+                                        }
+                                    },
+                                    complete: function () {
+                                        btnLdr.Stop($("#btnSearch"));
+                                    }
+                                });
+
+                            };
+
+
+    </script>
+}
+

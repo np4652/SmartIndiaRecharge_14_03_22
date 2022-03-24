@@ -1,0 +1,86 @@
+﻿@using RoundpayFinTech.AppCode.Model.ShopingWebSite;
+@model ShoppingWebsiteCartDetails
+<div class="shopping-cart-area d-none d-sm-block">
+	<div class="container">
+		<div class="row">
+			<div id="_ShoppingCart"></div>
+
+			<div class="col-sm-12">
+				<table class="table table-hover table-condensed" id="cart">
+					<thead>
+						<tr>
+							<th style="width:50%">Product</th>
+							<th style="width:10%">Price</th>
+							<th style="width:8%">Quantity</th>
+							<th class="text-center" style="width:22%">Subtotal</th>
+							<th style="width:10%">
+							</th>
+						</tr>
+					</thead>
+					<!---->
+					<tbody>
+
+						@if (Model.CartDetail != null)
+						{
+							foreach (var item in Model.CartDetail)
+							{
+								<tr>
+									<td data-th="Product">
+										<div class="row">
+											<div class="col-sm-2 hidden-xs">
+												<img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+											</div>
+											<div class="col-sm-10">
+												<div class="cart-product-name">
+													<h5>@Html.Raw(@item.ProductName)</h5>
+												</div>
+
+											</div>
+										</div>
+									</td><!---->
+							<td data-th="Price"><span class="cart-product-price">₹ @item.SellingPrice</span></td><!---->
+							<td data-th="Quantity">
+										<div class="btn-group btn-cus-grp">
+											<button class="btn btn-outline-secondary" type="button" id="btnremovequntity" onclick="ChangeQuantity(@item.ProductDetailID,@item.Quantity,-1)">-</button>
+											<span class="Quntity lh-38 pl-3 pr-3">@item.Quantity</span>
+											<button class="btn btn-outline-secondary" type="button" id="btnaddqunatity" onclick="ChangeQuantity(@item.ProductDetailID,@item.Quantity,1)">+</button>
+										</div>
+									</td><!---->
+							<td class="text-center" data-th="Subtotal"><span class="cart-product-price">₹  @(item.SellingPrice*item.Quantity)</span></td>
+									<td class="actions" data-th="">
+										<button class="btn btn-info btn-sm" onclick="AddToWishList(@item.ProductDetailID)"><i class="icon_heart_alt"></i></button>
+										<button class="btn btn-danger btn-sm" onclick="removeitemfromcart(@item.ID,@item.ProductDetailID, false)">
+											<i class="fa fa-trash-o">
+											</i>
+										</button>
+									</td>
+								</tr>
+							}
+
+						}
+					</tbody>
+				</table>
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="cart-update">
+                            <a class="btn-common" routerlink="/" href="/">CONTINUE SHOPPING</a>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <strong style="float: right">Grand Total : ₹    @(Model.CartDetail != null ? Model.CartDetail.Sum(item => item.SellingPrice*item.Quantity) : 0) / -</strong>
+                    </div>
+                    @if (Model.CartDetail.Count>0)
+                    {
+                        <div class="col-md-4">
+
+                            <a class="btn-common pull-right" style="background:#e23e1d;color:#fff;" onclick="ProceedToCheckOut()">PROCEED TO CHECK OUT</a>
+
+                        </div>
+                    }
+                    </div>
+
+			</div>
+		</div>
+
+	</div>
+</div><!---->

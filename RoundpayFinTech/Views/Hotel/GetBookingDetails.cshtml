@@ -1,0 +1,202 @@
+﻿
+<!DOCTYPE html>
+<html lang="en">
+
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="TechyDevs">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Trizen - Travel Booking HTML Template</title>
+    <!-- Favicon -->
+    <link rel="icon" href="website-assets/images/favicon.png">
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;300;400;500;700;900&amp;display=swap" rel="stylesheet">
+
+    <!-- Template CSS Files -->
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/bootstrap-select.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/line-awesome.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.carousel.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/owl.theme.default.min.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery.fancybox.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/daterangepicker.css" rel="stylesheet" />
+    <link href="~/siteadmin/css/animate.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/animated-headline.css" rel="stylesheet" />
+    <link href="~/css/Common/jquery-ui.css" rel="stylesheet" />
+    <link href="~/css/Hotel/flag-icon.min.css" rel="stylesheet" />
+    <link href="~/css/Hotel/style.css" rel="stylesheet" />
+    <link href="~/css/Hotel/search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-search.css" rel="stylesheet" />
+    <link href="~/css/Hotel/tooltip.css" rel="stylesheet" />
+    <link href="~/css/Hotel/hotel-autocomplete.css" rel="stylesheet" />
+    <style type="text/css">
+        .btn-link-top {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .hero-box:after {
+            opacity: 0;
+            background-color: #0d233e;
+        }
+
+        .navbar {
+            padding: 0 1rem;
+        }
+        ._RoomType .roomLeft {
+            width: 25%;
+        }
+
+        ._RoomType .roomRight {
+            width: 75%;
+        }
+
+        ._RoomType .titleWidth {
+            width: 33.38%;
+        }
+
+        .price1 {
+            width: 100%;
+            column-span: all;
+            column-count: 2;
+            padding: 15px;
+        }
+
+        .makeFlex.appendTop40.roomTypePrice {
+            display: block;
+        }
+
+        .price1 .p2 {
+            padding-left: 15px;
+        }
+
+        .room-flex {
+            display: inline-flex;
+        }
+
+        .roomcombo1 {
+            width: 80%;
+        }
+
+        .comboPrice {
+            width: 20%;
+            border-right: solid 1px #bababa;
+            border-bottom: solid 9px #bababa;
+            background: #fff6e7;
+        }
+
+        .makeFlex.column.perfectCenter.noShrink {
+            padding-top: 60%;
+        }
+
+            .makeFlex.column.perfectCenter.noShrink.OpenCombinationSelect {
+                padding-top: 25%;
+            }
+
+        .info-area {
+            clear: both;
+        }
+    </style>
+</head>
+<body>
+
+
+    <!-- start cssload-loader -->
+    <!-- ================================
+                START HEADER AREA
+    ================================= -->
+    <header class="header-area">
+
+
+        <div class="header-menu-wrapper padding-right-100px padding-left-100px box-shadow">
+
+            <div class="search-widget-uistyles__OuterWrapDiv-f6e3g4-0 bhdKLn">
+                <div class="container-fluid">
+                    <div class="dweb-commonstyles__CenteredSpaceWrap-sc-13fxsy5-0 search-widget-uistyles__WrapperStyle-f6e3g4-6 cgGKLF cPwTXt padt10 pb-3">
+                        <h1 class="text-white">Booking Details</h1>
+
+                    </div>
+                </div>
+            </div>
+            <!-- end container-fluid -->
+        </div>
+        <!-- end header-menu-wrapper -->
+    </header>
+
+    <div class="container bg-white py-5 my-4 px-4">
+        <div class="row">
+            <div class="col-sm-12" style="min-height:30px">
+                <form action="/BookingDetilasByNo" method="post" id="frmbookingdetails">
+                
+                    <div class="form-row">
+                        <div class="form-group col-md-4">
+                            <input type="text" style="text-transform:capitalize" class="form-control" aria-describedby="stitle" name="bookingno" id="bookingno" placeholder="Booking No">
+                            <small id="stitle" class="form-text text-muted d-none">Title  is mandatory</small>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary"  id="btnsearch">Search</button>
+                </form>
+            </div>
+
+        </div>
+        <section class="h-50">
+            <div class="row mt-12 p-3 personTableOuter" id="dvGuest" style="display:none">
+                <div class="col-sm-12 table-responsive">
+                    <table class="table table-bordered personTable">
+                        <thead>
+                            <tr>
+                                <th>Full Name</th>
+                                <th>Lead Passenger</th>
+                                <th>Phone No.</th>
+                                <th>Email</th>
+                                <th>Age</th>
+                                <th>Pan No.</th>
+                                <th>Passport No.</th>
+                                <th>Passport Issue Date</th>
+                                <th>Passport Expiry Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!--Data will be here at run time-->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/js/Common/jquery-ui.js"></script>
+    @*<script src="~/lib/jquery/dist/popper.min.js"></script>*@
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    @*<script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>*@
+    <script src="~/lib/jquery/dist/moment.min.js"></script>
+    <script src="~/js/Hotel/daterangepicker.js"></script>
+    <script src="~/js/Common/owl.carousel.min.js"></script>
+    <script src="~/js/Hotel/jquery.fancybox.min.js"></script>
+    <script src="~/js/Hotel/jquery.countTo.min.js"></script>
+    <script src="~/js/Hotel/animated-headline.js"></script>
+    <script src="~/js/Hotel/jquery.ripples-min.js"></script>
+    <script src="~/js/Hotel/quantity-input.js"></script>
+    <script src="~/js/Hotel/main.js"></script>
+    <script src="~/js/Hotel/hotel-search.js"></script>
+
+    <script type="text/javascript">u
+
+        $(document).ready(function () {
+            $("#btnsearch").on("click", function () {
+                $("#frmbookingdetails").submit();
+            });
+        })
+
+    </script>
+
+</body>
+
+<!-- Mirrored from techydevs.com/demos/themes/html/trizen-demo/trizen/flight-list.html by HTTrack Website Copier/3.x [XR&CO'2014], Wed, 28 Apr 2021 09:20:30 GMT -->
+</html>

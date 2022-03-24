@@ -1,0 +1,290 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ROffer.RNPRechPlansPanel>
+@{
+    var rt = 0;
+    var pl = 0;
+
+}
+<style>
+    .fix-thead {
+        position: sticky;
+        top: 0;
+    }
+
+    .h-450 {
+        height: 450px !important;
+    }
+</style>
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Plans</h3>
+        <hr />
+    </div>
+    @if (Model.Count() > 1)
+    {
+        var rechType = Model.GroupBy(x => x.RechargePlanType)
+                            .Select(x => x.First())
+                            .ToList();
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    @foreach (var rT in rechType)
+                    {
+                        if (rt == 0)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link mr-1 active" data-toggle="pill" href="#@rT.RechargePlanType.Replace(" ","").ToString()">@rT.RechargePlanType.ToUpper()</a>
+                            </li>
+                            rt++;
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link mr-1" data-toggle="pill" href="#@rT.RechargePlanType.Replace(" ","").ToString()">@rT.RechargePlanType.ToUpper()</a>
+                            </li>
+                        }
+
+                    }
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    @foreach (var rT in rechType)
+                    {
+                        var lst = Model.Where(x => x.RechargePlanType == rT.RechargePlanType).ToList();
+
+                        if (pl == 0)
+                        {
+                            <div id="@rT.RechargePlanType.Replace(" ","").ToString()" class="table-responsive container tab-pane active h-450">
+                                <table class="table table-striped table-bordered">
+                                    <thead class="bg-tableth fix-thead">
+                                        <tr>
+                                            <th>RS</th>
+                                            <th>Description</th>
+                                            <th>Validity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (lst != null)
+                                        {
+                                            foreach (var plnT in lst)
+                                            {
+                                                <tr>
+                                                    <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.RAmount">@plnT.RAmount</span></td>
+                                                    <td>
+                                                        @if (plnT.Details.Contains('|') && (plnT.Details.Contains("Calls :") || plnT.Details.Contains("Data :") || plnT.Details.Contains("SMS :")))
+                                                        {
+                                                            var strDet = plnT.Details.Split('|');
+                                                            System.Text.StringBuilder sHtml = new System.Text.StringBuilder();
+
+                                                            if (strDet.Length > 0)
+                                                            {
+                                                                var pipes = 0;
+                                                                foreach (var item in strDet)
+                                                                {
+                                                                    var callsD = string.Empty;
+                                                                    var dataD = string.Empty;
+                                                                    var smsD = string.Empty;
+                                                                    if (item.Contains("Calls :"))
+                                                                    {
+                                                                        callsD = "<i class='fas fa-phone fa-lg text-success'></i>&nbsp;&nbsp;" + item.Split(':')[1].ToString();
+                                                                        pipes = pipes + 1;
+                                                                    }
+                                                                    if (item.Contains("Data :"))
+                                                                    {
+                                                                        pipes = pipes + 1;
+                                                                        dataD = " <i class='fas fa-wifi fa-lg text-info'></i>&nbsp;&nbsp;" + item.Split(':')[1].ToString();
+                                                                    }
+                                                                    if (item.Contains("SMS"))
+                                                                    {
+                                                                        pipes = pipes + 1;
+                                                                        smsD = "<i class='fas fa-envelope fa-lg .text-warning'></i>&nbsp;&nbsp;" + item.Split(':')[1].ToString();
+                                                                    }
+
+                                                                    if (!string.IsNullOrEmpty(callsD))
+                                                                    {
+                                                                        if (pipes > 1)
+                                                                        {
+                                                                            sHtml.Append("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                                                                            pipes = pipes - 1;
+                                                                        }
+                                                                        sHtml.Append(callsD);
+                                                                    }
+                                                                    if (!string.IsNullOrEmpty(dataD))
+                                                                    {
+                                                                        if (pipes > 1)
+                                                                        {
+                                                                            sHtml.Append("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                                                                            pipes = pipes - 1;
+                                                                        }
+                                                                        sHtml.Append(dataD);
+                                                                    }
+                                                                    if (!string.IsNullOrEmpty(smsD))
+                                                                    {
+                                                                        if (pipes > 1)
+                                                                        {
+                                                                            sHtml.Append("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                                                                            pipes = pipes - 1;
+                                                                        }
+                                                                        sHtml.Append(smsD);
+                                                                    }
+                                                                    if (item.Contains("Details :"))
+                                                                    {
+                                                                        sHtml.Append("<br>" + item.Split(':')[1].ToString());
+                                                                    }
+                                                                }
+                                                                @Html.Raw(sHtml.ToString())
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.Raw(plnT.Details)
+                                                            }
+                                                        }
+                                                        else if (plnT.Details.Contains("Data :") && !plnT.Details.Contains('|'))
+                                                        {
+                                                            if (plnT.Details.Contains("Data :"))
+                                                            {
+                                                                @Html.Raw("<i class='fas fa-wifi fa-lg text-info'></i>&nbsp;&nbsp;" + plnT.Details.Split(':')[1].ToString());
+                                                            }
+                                                        }
+                                                        else
+                                                        { @Html.Raw(plnT.Details)}
+                                                    </td>
+                                                    <td>@plnT.Validity</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr rowspan="2">
+                                                <td colspan="4"><center>No plan found for 3G/4G</center></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                            pl++;
+                        }
+                        else
+                        {
+                            <div id="@rT.RechargePlanType.Replace(" ","").ToString()" class="table-responsive container tab-pane h-450">
+                                <table class="table table-striped">
+                                    <thead class="bg-tableth fix-thead table-bordered">
+                                        <tr>
+                                            <th>RS</th>
+                                            <th>Description</th>
+                                            <th>Validity</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (lst != null)
+                                        {
+                                            foreach (var plnT in lst)
+                                            {
+                                                <tr>
+                                                    <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.RAmount">@plnT.RAmount</span></td>
+                                                    <td>
+                                                        @if (plnT.Details.Contains('|') && (plnT.Details.Contains("Calls :") || plnT.Details.Contains("Data :") || plnT.Details.Contains("SMS :")))
+                                                        {
+                                                            var strDet = plnT.Details.Split('|');
+                                                            System.Text.StringBuilder sHtml = new System.Text.StringBuilder();
+                                                            if (strDet.Length > 0)
+                                                            {
+                                                                var pipes = 0;
+                                                                foreach (var item in strDet)
+                                                                {
+                                                                    var callsD = string.Empty;
+                                                                    var dataD = string.Empty;
+                                                                    var smsD = string.Empty;
+                                                                    if (item.Contains("Calls :"))
+                                                                    {
+                                                                        callsD = "<i class='fas fa-phone fa-lg text-success'></i>&nbsp;&nbsp;" + item.Split(':')[1].ToString();
+                                                                        pipes = pipes + 1;
+                                                                    }
+                                                                    if (item.Contains("Data :"))
+                                                                    {
+                                                                        pipes = pipes + 1;
+                                                                        dataD = " <i class='fas fa-wifi fa-lg text-info'></i>&nbsp;&nbsp;" + item.Split(':')[1].ToString();
+                                                                    }
+                                                                    if (item.Contains("SMS"))
+                                                                    {
+                                                                        pipes = pipes + 1;
+                                                                        smsD = "<i class='fas fa-envelope fa-lg text-warning'></i>&nbsp;&nbsp;" + item.Split(':')[1].ToString();
+                                                                    }
+
+                                                                    if (!string.IsNullOrEmpty(callsD))
+                                                                    {
+                                                                        if (pipes > 1)
+                                                                        {
+                                                                            sHtml.Append("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                                                                            pipes = pipes - 1;
+                                                                        }
+                                                                        sHtml.Append(callsD);
+                                                                    }
+                                                                    if (!string.IsNullOrEmpty(dataD))
+                                                                    {
+                                                                        if (pipes > 1)
+                                                                        {
+                                                                            sHtml.Append("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                                                                            pipes = pipes - 1;
+                                                                        }
+                                                                        sHtml.Append(dataD);
+                                                                    }
+                                                                    if (!string.IsNullOrEmpty(smsD))
+                                                                    {
+                                                                        if (pipes > 1)
+                                                                        {
+                                                                            sHtml.Append("&nbsp;&nbsp;|&nbsp;&nbsp;");
+                                                                            pipes = pipes - 1;
+                                                                        }
+                                                                        sHtml.Append(smsD);
+                                                                    }
+                                                                    if (item.Contains("Details :"))
+                                                                    {
+                                                                        sHtml.Append("<br>" + item.Split(':')[1].ToString());
+                                                                    }
+                                                                }
+                                                                @Html.Raw(sHtml.ToString())
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.Raw(plnT.Details)
+                                                            }
+                                                        }
+                                                        else if (plnT.Details.Contains("Data :") && !plnT.Details.Contains('|'))
+                                                        {
+                                                            if (plnT.Details.Contains("Data :"))
+                                                            {
+                                                                @Html.Raw("<i class='fas fa-wifi fa-lg text-info'></i>&nbsp;&nbsp;" + plnT.Details.Split(':')[1].ToString());
+                                                            }
+                                                        }
+                                                        else
+                                                        { @Html.Raw(plnT.Details)}
+
+                                                    </td>
+                                                    <td>@plnT.Validity</td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr rowspan="2">
+                                                <td colspan="4"><center>No plan found for @rT.RechargePlanType!</center></td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>

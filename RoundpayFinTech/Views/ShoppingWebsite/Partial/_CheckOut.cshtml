@@ -1,0 +1,155 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProceedToPay
+<div class="checkout-area mt-15">
+    <div class="container">
+        <div class="row mt-10">
+            <div class="col-lg-4">
+
+                <div class="order-details mb-30">
+                    <h4>Shipping Address</h4>
+                    <div class="order-details-inner">
+
+                        <div class="payment-gateways mt-10">
+                            <div class="single-payment-gateway">
+
+                                @if (Model != null)
+                                {
+                                    if (Model.Addresses != null)
+                                    {
+                                        @foreach (var item in Model.Addresses)
+                                        {
+
+                                            <div class="row" id="dvaddress">
+                                                <div class="col-md-2">
+                                                    <label class="radiocontainer">
+                                                        <input type="radio"
+                                                   id="chkAddress_@item.ID" data-address-id="@item.ID" onclick="ShippingAddress(@item.ID)" data-Address-Id="@item.ID"
+                                                   name="ShippingAddress" @Html.Raw(item.IsDefault ? "checked='checked'" : "")>
+                                                    </label>
+
+                                                </div>
+                                                <div class="col-md-10 pl-0" data-address-id="@item.ID">
+                                                    <div class="_2AIo8W">
+                                                        <span class="_3zENzM">@item.Title</span>
+                                                        <a href="javascript:void(0)" id="btnDeleteAddress" onclick="DeleteAddress(@item.ID)" style="float:right;margin-left:05px;">Delete</a>
+                                                        <a href="javascript:void(0)" id="btnEditAddress" onclick="EditAddress(@item.ID)" data-Address-Id="@item.ID" style="float:right;color:#007bff">Edit</a>
+                                                     </div>
+                                                    <p class="mb-1">
+                                                        <span class="_2Fw4MM" id="custname_@item.ID">@item.CustomerName</span>
+                                                        <span class="_3MbGVP _2Fw4MM">@item.MobileNo</span>
+                                                    </p>
+                                                    <p id="Address_@item.ID" class="ZBYhh4 _1Zn3iq">
+                                                        @Html.Raw(@item.Address) - <span class="_3n0HwW">  @item.PinCode</span>
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                        }
+
+                                    }
+
+                                }
+                            </div>
+                        </div>
+                        <div class="cart-coupon cus-cart-coupon mt-30 text-center">
+                            <a href="javascript:void(0)" class="btn-common width-180" id="btnNewAddress">Add New Address</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-lg-8 ">
+                <div class="order-details block">
+                    <h4>Your Order</h4>
+                    <div class="order-details-inner">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>
+                                    </th>
+                                    <th>PRODUCT</th>
+                                    <th>TOTAL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.CartDetails != null)
+                                {
+                                    @foreach (var item in Model.CartDetails)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <div class="proImage">
+                                                    <img class="product-image-photo" height="80px" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <span>@item.ProductName ( ₹ @item.SellingPrice x @item.Quantity )</span>
+                                            </td>
+                                            <td>
+                                                <strong>₹ @item.SellingPrice/-</strong>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                <tr>
+                                    <td colspan="2"> TOTAL</td>
+                                    <td>
+                                        <strong>₹ @Model.TotalSellingPrice/-</strong>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">Shipping and Handling</td>
+                                    <td>₹ @Model.ShippingCharge/-</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">ORDER TOTAL</td>
+                                    <td class="font14">
+                                        <strong>₹ @Model.TotalCost/-</strong>
+                                    </td>
+                                </tr>
+                                <!--bindings={
+                                  "ng-reflect-ng-if": "false"
+                                }-->
+                                <!--bindings={
+                                  "ng-reflect-ng-if": "false"
+                                }-->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="order-details" style="font-size: 13px;">
+                        <h4>Delivery Address</h4>
+                        <div style="padding: 0 20px;" id="dvdeladdress">
+                            @if (Model != null)
+                            {
+                                if (Model.Addresses != null)
+                                {
+                                    @foreach (var item in Model.Addresses)
+                                    {
+                                        if (item.IsDefault)
+                                        {
+                                            <b>@item.CustomerName</b>
+                                            <br>
+                                            @item.Address
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+
+                        </div>
+                    </div>
+                    <div class="place-order text-center mt-2 mb-3 paybywalletdiv text-center">
+                        <input type="hidden" id="txtPWallet" value="@Html.Raw(@Model.PDeduction)" />
+                        <input type="hidden" id="txtSWallet" value="@Html.Raw(@Model.SDeduction)" />
+                        <button id="btnPlaceOrder" name="update_cart_action" title="Place Order" class="btn-common width-180 action update">
+                            <span>Place Order</span>
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

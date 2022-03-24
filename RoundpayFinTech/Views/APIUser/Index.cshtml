@@ -1,0 +1,506 @@
+﻿@using Themes = RoundpayFinTech.AppCode.StaticModel.Themes
+@{
+    ViewData["Title"] = "APIUser Dashboard";
+    var Theme = ViewData["Theme"] == null ? 1 : Convert.ToInt32(ViewData["Theme"]); //Set default theme to Theme ID:1 if no theme found
+    string partialToRender = "PartialView/" + Theme + "/_Index";
+}
+
+<partial name="@partialToRender" model="@Model" />
+
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+
+    @if (Themes.t1 == Theme || Themes.t3 == Theme || Themes.t4 == Theme)
+    {
+        <script src="~/js/chart/highcharts.js"></script>
+        <script src="~/js/chart/exporting.js"></script>
+        <script>
+
+            $(document).ready(function () {
+                if (serverSetting.applicationSetting.IsAgreementApproval) {
+                    OpenPopUp();
+                }
+                Getdata();
+                GetDownOperators();
+                AfterLoginPopup();
+            });
+
+            function OpenPopUp() {
+                preloader.load();
+                $.post('/_AgreementApprovalNotification')
+                    .done(function (result) {
+                        if (typeof (result) === 'string') {
+                            mdlA.id = 'DashboardPopup';
+                            mdlA.title = 'Notification';
+                            mdlA.content = result;
+                            mdlA.modal(mdlA.size.default);
+                        }
+                    }).fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    }).always(() => preloader.remove());
+            }
+
+
+            var rechsummary = function () {
+                preloader.load();
+                $.post('/dsummary', {}, function (result) {
+                    $('#dsummary').html(result);
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var GetDownOperators = function () {
+                preloader.load();
+                $.post('/GetDownOP', {}, function (result) {
+                    resultReload(result);
+                    var od = result.length > 0 ? 'Operator Down : ' + result.join(', ') : 'All operators working fine.';
+                    $('#divOpDown').html(od);
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+        </script>
+        <script>
+            function Getdata() {
+                preloader.load();
+                $.post('/Report/ServiceChartData', {}, function (result) {
+                    console.log(result)
+                    var Opertor = []; var Success = []; var Fail = []; var listdata = ''; var Success1 = 0; var dispute = 0;
+                    var list = result.chart;
+                    if (result.chart) {
+                        for (var i = 0; i < list.length; i++) {
+                            Opertor.push(list[i].opType);
+                            if (list[i].opTypeID == 2) {
+                                $('#Div_DP').html(list[i].pAmount);
+                            }
+                            if (list[i].opTypeID == 1) {
+                                $('#Div_RP').html(list[i].pAmount);
+                            }
+                            Success.push(list[i].sAmount);
+                            Fail.push(list[i].fAmount);
+                            Success1 += parseFloat(list[i].sAmount);
+                            dispute += parseFloat(list[i].dispute);
+                        }
+                    }
+                    getchart(Opertor, Success, Fail);
+                }).catch(function (xhr) {
+                    console.log(xhr.responseText);
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+            function getchart(Opertor, Success, Fail) {
+                $('#container').highcharts({
+                    chart: {
+                        type: 'column'
+                    },
+                    title: {
+                        text: 'Today\'s Report'
+                    },
+                    //subtitle: {
+                    //    text: 'Source: WorldClimate.com'
+                    //},
+                    xAxis: {
+                        categories:
+                            Opertor
+                        ,
+                        crosshair: true
+                    },
+                    yAxis: {
+                        min: 0,
+                        title: {
+                            text: 'Service Wise'
+                        }
+                    },
+                    tooltip: {
+                        headerFormat: '<span style="font-size:10px">{point.key}</span><table>',
+                        pointFormat: '<tr><td style="color:{series.color};padding:0">{series.name}: </td>' +
+                            '<td style="padding:0"><b>{point.y:.1f} Rs</b></td></tr>',
+                        footerFormat: '</table>',
+                        shared: true,
+                        useHTML: true
+                    },
+                    plotOptions: {
+                        column: {
+                            pointPadding: 0.1,
+                            borderWidth: 0
+                        }
+                    },
+                    series: [{
+                        name: 'Success',
+                        data: Success
+
+                    }, {
+                        name: 'Failed',
+                        data: Fail
+
+                    }]
+                });
+            }
+            function AfterLoginPopup() {
+                preloader.load();
+                $.post('/AfterLoginPopup', {}, function (result) {
+                    if (result != "") {
+                        $('#' + an.id).remove();
+                        mdlA.id = 'mdlForgetPass';
+                        mdlA.content = result;
+                        mdlA.options.backdrop = 'static';
+                        mdlA.options.keyboard = false;
+                        mdlA.alert(mdlA.size.large);
+                    }
+                    $('button.close span,#mdlCancel').click(function () {
+                        mdlA.dispose();
+                    });
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+        </script>
+    }
+    else if (Themes.t2 == Theme)
+    {
+        <script type="text/javascript">
+            $(document).ready(function () {
+                bindTSSection();
+                bindASSection();
+                bindBCSSection();
+                bannerSection();
+                //helpInfoSection();
+                holidaySection();
+               // whatsAppIconSection();
+
+                bindOpTypeList();
+                bindServiceList();
+            })
+
+            var bindTSSection = () => {
+                $.post('/GetTSummaryTable', {}, function (result) {
+                    $('#tsSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var bindASSection = () => {
+                $.post('/GetASummaryTable', {}, function (result) {
+                    $('#asSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var bindBCSSection = () => {
+                $.post('/GetBCSummaryTable', {}, function (result) {
+                    $('#dsSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var bannerSection = () => {
+                $.post('/GetBannerSlider', {}, function (result) {
+                    $('#bannerSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var helpInfoSection = () => {
+                $.post('/GetHelpInfoSection', {}, function (result) {
+                    $('#helpInfoSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var holidaySection = () => {
+                $.post('/GetHolidaySection', {}, function (result) {
+                    $('#holidaysSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var bindOpTypeList = () => {
+                $.post('/GetOpTypeList', {}, function (result) {
+                    if (result != null && result != undefined) {
+                        let optypelistOb = $("#optypelist");
+                        optypelistOb.empty();
+                        optypelistOb.append("<option value='0'>All</option>");
+                        for (var i = 0; i < result.length; i++) {
+                            optypelistOb.append("<option value='" + result[i].id + "'>" + result[i].opType + "</option>");
+                        }
+                    }
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var bindServiceList = () => {
+                $.post('/GetUsedServiceList', {}, function (result) {
+                    if (result != null && result != undefined) {
+                        console.log(result)
+                        let serlistOb = $("#servicelist");
+                        serlistOb.empty();
+                        serlistOb.append("<option value='0'>All</option>");
+                        for (var i = 0; i < result.length; i++) {
+                            serlistOb.append("<option value='" + result[i].serviceID + "'>" + result[i].serviceName + "</option>");
+                        }
+                    }
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+        </script>
+    }
+
+    <script>
+        $(document).ready(function () {
+            summary();
+            Getnews();
+
+            var FDate = DTPicker($('#date'), new Date().toDateString(), function () { }, function () {
+                var requestType = $(".btnServiceWiseRequestType.active").data("value");
+                refreshServiceWiseTransactionStatus({ RequestedDataType: parseInt(requestType) });
+            });
+
+            $("#optypelist").on("change", function () {
+                var requestType = $(".btnServiceWiseRequestType.active").data("value");
+                refreshServiceWiseTransactionStatus({ RequestedDataType: parseInt(requestType) });
+            })
+
+            $(".btnServiceWiseRequestType").on("click", function () {
+                $(".btnServiceWiseRequestType").removeClass("active");
+                $(this).addClass("active");
+
+                var requestType = $(this).data("value");
+                refreshServiceWiseTransactionStatus({ RequestedDataType: parseInt(requestType) });
+            })
+        })
+
+        var refreshServiceWiseTransactionStatus = function (dataObject) {
+            let requestedDate = $("#date").val().trim(),
+                requestedOpType = $("#optypelist").val().trim();
+            dataObject = { RequestedDate: requestedDate, OpTypeID: requestedOpType, RequestedDataType: dataObject.RequestedDataType };
+            let isAmountType = dataObject.RequestedDataType == 1;
+            serviceWiseTransactionStatusChart(dataObject, "", "optype-datewise-chart", amChartStatic.chartType.pieChartSliceLegend, amChartStatic.chartTheme.moonrisekingdom,isAmountType);
+        }
+
+        var summary = function () {
+            preloader.load();
+            $.post('/DSum', {}, function (result) {
+                $('#usrDSUM').html(result);
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+        var Getnews = function () {
+            preloader.load();
+            $.post('/GetNewsByRole', {}, function (result) {
+                $('#divNews').empty();
+                $('#divNews').append(result.newsDetail);
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+                $(_this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+    </script>
+}

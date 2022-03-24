@@ -1,0 +1,98 @@
+﻿@model RoundpayFinTech.AppCode.Model.IRViewModel
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roundpay - IRCTC</title>
+    <link href="~/css/style_IR.css" rel="stylesheet" />
+    <environment include="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+    </environment>
+</head>
+<body>
+    <div class="wrapper-detail">
+        @using (Html.BeginForm("ProcessTransaction", "Railway", FormMethod.Post))
+        {
+            <div class="formContent">
+                <div class="logo">
+                    <img src="https://roundpay.net/Image/Website/1/logo.png" style="height:37px;" />
+                </div>
+                <h3 class="form-head">Transaction Debit Details</h3>
+                <div class="row pb-3">
+                    <div class="col-md-4">Merchant Name </div>
+                    <div class="col-md-7 col-md-offset-1">@Model.MerchantCode</div>
+                </div>
+
+                <div class="row pb-3">
+                    <div class="col-md-4">Reservation ID </div>
+                    <div class="col-md-7 col-md-offset-1">@Model.reservationId</div>
+                </div>
+
+                <div class="row pb-3">
+                    <div class="col-md-4">Amount</div>
+                    <div class="col-md-7 col-md-offset-1">@Model.txnAmount</div>
+                </div>
+                <div class="row pb-3">
+                    <div class="col-md-4">OTP </div>
+                    <div class="col-md-4 col-md-offset-1">@Html.TextBoxFor(m => m.otp)</div>
+                </div>
+                <div class="row pb-3">
+                    <div class="col-md-12">@Html.CheckBoxFor(m => m.IsConfirm) <span>I agree with this transaction.</span></div>
+                </div>
+                @if (Model.StatusCode == 1)
+                {
+                    <div class="row pb-3">
+                        <div class="col-md-12">
+                            @Html.Label("lblValidationMsg", Model.Msg, new { @class = "lbl text-center text-success" })
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="row pb-3">
+                        <div class="col-md-12">
+                            @Html.Label("lblValidationMsg", Model.Msg, new { @class = "lbl text-center text-danger" })
+                        </div>
+                    </div>
+                }
+            </div>
+            <div class="confirm-but">
+                <button type="submit" class="btn btn-primary">Confirm</button>
+                <input type="button" class="btn btn-dark" value="Resend OTP" id="btnResend" />
+                <input type="button" class="btn btn-dark" value="Decline" id="btnDecline" />
+            </div>
+        }
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script>
+        $('#btnResend').click(function () {
+            $.post('/ResendIROtp')
+                .done(function (result) {
+                    $('#lblValidationMsg').text(result.msg);
+                })
+                .fail(function (xhr) {
+                    console.log(xhr);
+                    window.location.href = '/UnAuthorizedAccess';
+                });
+        });
+        $('#btnDecline').click(function () {
+            $.post('/IRDeclineTransaction')
+                .done(function (result) {
+                    window.location.href = '/UnAuthorizedAccess';
+                })
+                .fail(function (xhr) {
+                    console.log(xhr);
+                    window.location.href = '/UnAuthorizedAccess';
+                });
+        });
+    </script>
+</body>
+</html>

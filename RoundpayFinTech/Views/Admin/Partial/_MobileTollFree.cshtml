@@ -1,0 +1,17 @@
+﻿
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>
+@{int i = 1; }
+@foreach (var item in Model)
+{
+
+    <tr>
+        <td>@i</td>
+        <td>@item.Name</td>
+        <td>@item.TollFree</td>
+    </tr>
+    i++;
+}
+
+
+
+

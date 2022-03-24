@@ -1,0 +1,129 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ProcModel.TransactionDetail
+
+<style>
+    .main-body {
+        margin: 20px auto;
+        width: 100%;
+    }
+
+    .address-detail p {
+        font-size: 12px;
+        margin-bottom: 0;
+    }
+
+    .com-logo {
+        padding-left: 20px;
+        padding: 0;
+        vertical-align: top;
+    }
+
+    .bg-g {
+        background: #e6e6e6;
+    }
+
+    .table td, .table th {
+        padding: 5px;
+        font-size: 13px;
+    }
+</style>
+<button type="button" class="close cus_modal_close_btn" aria-label="Close" style="margin-right: 11px;">
+    <span aria-hidden="true">&times;</span>
+</button>
+
+<div class="main-body">
+    <header>
+        <table style="margin-bottom: 20px;">
+            <tr colspan="2">
+                <td class="com-logo" style="display: block; margin:0 0 1em">
+                    <img src="~/Image/Website/@Model.WID.ToString()/logo.png" data-holder-rendered="true" style="width: 150px;display: block;margin: auto;" />
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 48%;">
+                    <b>@Model.CompanyName</b>
+                    <div class="address-detail">
+                        <p class="address">@Model.CompanyAddress</p>
+                        <p><b>Landline No. :</b> @Model.CompanyPhone</p>
+                        <p><b>Mobile No. :</b> @Model.CompanyMobile</p>
+                        <p><b>Email :</b> @Model.SupportEmail</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </header>
+
+    <table style="width: 100%;border:1px solid #dee2e6;" class="table">
+        <thead>
+            <tr>
+                <th colspan="2" style="text-align: center;border:0">
+                    <h5>TRANSACTION DETAIL</h5>
+                </th>
+            </tr>
+            <tr colspan="2">
+                <th class="com-logo" colspan="2">
+                    <img src="~/Image/operator/@(Model.OID+".png")" data-holder-rendered="true" style=" width:50px;float: left;" /> <span style="margin: 1.3em;float: left;">@Model.OPName</span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr class="bg-g">
+                <td><b>Bank Name :</b></td>
+                <td>@Model.BankName</td>
+            </tr>
+            <tr>
+                <td><b>Account No :</b></td>
+                <td>@Model.Account</td>
+            </tr>
+            <tr class="bg-g">
+                <td><b>Amount :</b></td>
+                <td>@Model.RequestedAmount</td>
+            </tr>
+            <tr>
+                <td><b>Bank RRN :</b></td>
+                <td>@Model.LiveID</td>
+            </tr>
+            <tr class="bg-g">
+                <td><b>Transaction ID :</b></td>
+                <td>@Model.TransactionID</td>
+            </tr>
+            <tr>
+                <td><b>Transaction Status :</b></td>
+                <td>@Model.Status</td>
+            </tr>
+            <tr class="bg-g">
+                <td><b>Service Name :</b></td>
+                <td>@Model.OPName</td>
+            </tr>
+            <tr>
+                <td><b>Transaction Date :</b></td>
+                <td>@Model.EntryDate.ToString("dd-MMM-yyyy HH:mm:ss")</td>
+            </tr>
+            <tr class="bg-g">
+                <td><b>Bank Balance :</b></td>
+                <td>@Model.SenderNo</td>
+            </tr>
+            @if (@Model.convenientFee > 0)
+            {
+                <tr >
+                    <td><b>Convenience Fees :</b></td>
+                    <td>@Model.convenientFee</td>
+                </tr>
+            }
+            <tr class="bg-g">
+                <td><b>Total :</b></td>
+                <td><b>@(Model.RequestedAmount+ Model.convenientFee) </b></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="text-align:center">
+        <h5>Shop Detail</h5>
+        <p style="color: #636262;">Name : @Model.Name | Contact No. : @Model.MobileNo | <a href="mailto:@Model.Email" style="color: #636262;">@Model.Email</a></p>
+    </div>
+</div>
+<button class="btn btn-sm btn-danger" id="btnPrint" style="position: absolute;bottom:7px;right: 25px;">
+    Print
+</button>
+
+

@@ -1,0 +1,365 @@
+﻿@using Themes = RoundpayFinTech.AppCode.StaticModel.Themes
+@{
+    ViewData["Title"] = "Seller Dashboard";
+    var Theme = ViewData["Theme"] == null ? 1 : Convert.ToInt32(ViewData["Theme"]); //Set default theme to Theme ID:1 if no theme found
+    string partialToRender = "Partial/" + Theme + "/_Index";
+
+    string Upline = string.Empty;
+    string UplineContact = string.Empty;
+    string CCContact = string.Empty;
+    bool IsPaymentGatway = ApplicationSetting.IsAddMoneyEnable;
+}
+
+<partial name="@partialToRender" model="@Model" />
+
+@section scripts{
+    @if (Themes.t2 == Theme)
+    {
+        <script>
+            $(document).ready(function () {
+                helpInfoSection();
+                holidaySection();
+            })
+
+            var helpInfoSection = () => {
+                $.post('/GetHelpInfoSection', {}, function (result) {
+                    $('#helpInfoSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+
+            var holidaySection = () => {
+                $.post('/GetHolidaySection', {}, function (result) {
+                    $('#holidaysSection').html(result);
+                }).catch(function (err) {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            }
+        </script>
+    }
+
+    <script>
+        $(document).ready(function () {
+            rechsummary();
+            summary();
+            Getdata();
+            Getnews();
+            GetDownOperators();
+            AfterLoginPopup();
+            bindPopOver();
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+
+        var summary = () => {
+            preloader.load();
+            $.post('/DSum')
+                .done(result => $('#usrDSUM').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var rechsummary = () => {
+            preloader.load();
+            $.post('/dsummary').done(result => $('#dsummary').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var Getnews = () => {
+            preloader.load();
+            $.post('/GetNewsByRole')
+                .done(result => $('#divNews').append(result.newsDetail))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var GetDownOperators = () => {
+            preloader.load();
+            $.post('/GetDownOP')
+                .done(result => {
+                    resultReload(result);
+                    var od = result.length > 0 ? 'Operator Down : ' + result.join(', ') : 'All operators working fine.';
+                    $('#divOpDown').html(od);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var Getdata = () => {
+            preloader.load();
+            $.post('/UserDashBoard')
+                .done(result => chart(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var chart = data => {
+            am4core.useTheme(am4themes_animated);
+            let chart = am4core.create("chartdiv", am4charts.PieChart3D);
+            chart.hiddenState.properties.opacity = 0;
+            chart.data = data;
+            let series = chart.series.push(new am4charts.PieSeries3D());
+            series.dataFields.value = "amount";
+            series.dataFields.category = "service";
+        };
+
+        var AfterLoginPopup = () => {
+            preloader.load();
+            $.post('/AfterLoginPopup')
+                .done(result => {
+                    if (result != "") {
+                        $('#' + an.id).remove();
+                        mdlA.id = 'mdlForgetPass';
+                        mdlA.content = result;
+                        mdlA.options.backdrop = 'static';
+                        mdlA.options.keyboard = false;
+                        mdlA.alert(mdlA.size.large);
+                    }
+                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var bindPopOver = () => {
+            $('.popover-modal').each(function (k) {
+                let _r = $(this).data().filterList;
+                var _list = '';
+                for (let i = 0; i < _r.length; i++) {
+                    let _url = '';
+                    switch (_r[i].sCode) {
+                        case 'AFS':
+                            _url = '/AffilietedItems';
+                            break;
+                        case 'ECOM':
+                            _url = '/Shop';
+                            break;
+                        case 'SHP':
+                            _url = '/Azora';
+                            break;
+                        default:
+                            _url = `/Service/${_r[i].serviceID}`;
+                    }
+                    _list = _list + '<a class="btn btn-outline-info btn-block btn-sm" href="' + _url + '"> ' + _r[i].name + '</a>';
+                }
+                var _html = `<div class="popover-list">${_list}</div>`;
+                $(this).attr('data-content', _html).attr('title', $(this).find('span.shortcut-label').text());
+            }).popover({
+                html: true,
+                trigger: 'click'
+            });
+        };
+
+        var UpgradePackageWin = sender => {
+            $(sender).closest('.modal-dialog').find('button.close').click();
+            var IsAddi = $(sender).data().isAddserv;
+            console.log(IsAddi);
+            $.post('/Seller-Availabe-Packages', { Id: -1, IsAddService: IsAddi })
+                .done(result => {
+                    resultReload(result);
+                    if (IsAddi) {
+                        resultReload(result);
+                        $('#' + an.id).remove();
+                        mdlA.id = 'mymodal';
+                        mdlA.content = result;
+                        mdlA.options.backdrop = 'static';
+                        mdlA.options.keyboard = false;
+                        mdlA.alert(mdlA.size.default);
+                        $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                    }
+                    else {
+                        mdlA.id = 'UpgradePackageWin';
+                        mdlA.title = 'Upgrade Package';
+                        mdlA.content = result
+                        mdlA.modal(mdlA.size.xlarge);
+                        $("input[id^='chkUpgrade']").change(e => UpgradePackage(-1, e.currentTarget));
+                    }
+                    
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        var UpgradePackage = function (UserID, ctrl, PID = 0) {
+            var _sfx = '';
+            if (PID > 0 && ctrl == null) {
+                _sfx = PID;
+            }
+            else {
+                var id = $(ctrl).attr('id');
+                if (id) {
+                    _sfx = id.split('_')[1];
+                }
+            }
+            var chk = $('#chkUpgrade_' + _sfx);
+            $.post('@(ApplicationSetting.IsPackageAllowed? "/UpgradePackage":"/")', { UserID: parseInt(UserID), AvailablePackageId: parseInt(_sfx), IsAvailable: chk.is(':checked') },
+                function (result) {
+                    if (result.statuscode == an.type.failed) {
+                        an.title = result.statuscode == an.type.success ? "Well done!" : "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == -2) {
+                        $('body').append(`<input type="hidden" value="${parseInt(_sfx)}" id="hfdPID"/>`);
+                        $('body').append(`<input type="hidden" value="${parseInt(UserID)}" id="hfdUID"/>`);
+                        $('#UpgradePackageWin').remove();
+                        let IsGatewayAllowed = $('#hfdGatewayAllowed').val();
+                        let _html = `<div class="row text-center">
+                                      <div class="col-md-12 mb-3">
+                                          <button type="button" class="close pull-right" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                          </button>
+                                      </div>
+                                      <div class="col-sm-12 mt-2 mb-2">
+                                        <img src="/Image/iconMsg/9.png"/>
+                                      </div>
+                                      <div class="col-sm-12 text-danger">
+                                           <h5> ${result.msg}</h5>
+                                      </div>
+                                      <div class="col-sm-12">
+                                        <a class="btn btn-outline-info" href="${IsGatewayAllowed == 1 ? `/addmoney?reqmoney=${result.commonStr}` : `/fund-request`}" target="_blank">Add Money</a>
+                                      </div>
+                                  </div>`
+                        mdlA.id = "MoneySufficeint";
+                        mdlA.content = _html;
+                        mdlA.alert(mdlA.size.large);
+                        $('button.close').click(() => mdlA.dispose());
+                    }
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        (() => {
+            $('.service-link').click(e => {
+                e.preventDefault();
+                let selection = $(e.currentTarget);
+                let _target = selection.attr('target');
+                $('#mymodal').remove();
+
+                var IsAddServ = selection.data().isAddi
+                
+                if (selection.data().isActive == 'True') {
+                    _target === '_blank' ? window.open(selection.attr('href'), "_blank") : window.location.href = selection.attr('href');
+                }
+                else {
+                    var _html = `<div class="row text-center">
+                                    <div class="col-sm-12">
+                                        <img src="/Image/iconMsg/9.png">
+                                    </div>
+                                    <div class="col-sm-12 pt-2 text-danger font-weight-bold h5 text-center text-monospace">
+                                        <div>
+                                            Dear Customer,You are not eligible to use this service.Please activate this service.
+                                        </div>
+                                            <div class="mt-2">
+                                                प्रिय विक्रेता इस सेवा के उपयोग के लिए आप अधिकृत नहीं है इस सेवा को Active करने के लिए अपना पैकेज upgrade करें या निम्न फ़ोन पर संपर्क करें
+                                            </div>
+                                        <div>
+                                             @Upline : @UplineContact
+                                        </div>
+                                        <div>
+                                            Customer Care : @CCContact
+                                        </div>
+                                        <div class="mt-3">
+                                            <button class="btn btn-outline-success" data-is-AddServ="`+ IsAddServ+`" onclick="UpgradePackageWin(this)">UPGRADE PACKAGE</button>
+                                        </div>
+                                      </div>
+                                    </div>`;
+                    mdlA.id = "alertModal";
+                    mdlA.content = _html;
+                    mdlA.isHeaderBorder = false;
+                    mdlA.title = " ";
+                    mdlA.modal(mdlA.size.large);
+                }
+            })
+        })();
+
+        window.addEventListener("storage", e => {
+            var result = $.parseJSON(event.newValue);
+            if (result.statuscode == 2) {
+                $('#MoneySufficeint').remove();
+                if ($('#hfdPID').val() != undefined) {
+                    UpgradePackage($('#hfdUID').val(),$('#hfdPID').val())
+                }
+            }
+            else {
+                $('#MoneySufficeint').remove();
+                var _html = `<div class="row">
+                           <div class="col-md-12 mb-3">
+                              <button type="button" class="close pull-right" aria-label="Close">
+                               <span aria-hidden="true">&times;</span>
+                              </button>
+                           </div>
+                           <div class="col-sm-12 text-center">
+                               <img src="${$$host}/Image/iconMsg/${result.statuscode == 1 ? '10' : (result.statuscode == 2 ? '1' : '11')}.png" />
+                               <h3 class="${result.statuscode == 1 ? 'text-info' : (result.statuscode == 2 ? 'text-danger' : 'text-danger')}">${result.statuscode == 1 ? 'Transaction Pending' : (result.statuscode == 2 ? 'Transaction Successful' : 'Transaction Failed')}<br/>
+                                <small>${result.statuscode == -1 ? result.reason : ''}</small>
+                                </h3>
+                           </div>
+                       </div>`;
+                mdlA.id = "callBackAlert";
+                mdlA.content = _html;
+                mdlA.alert(mdlA.size.large);
+                $('button.close').click(() => mdlA.dispose());
+            }
+        }, true)
+        
+    
+    </script>
+}

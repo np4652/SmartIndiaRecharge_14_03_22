@@ -1,0 +1,51 @@
+﻿.top-navbar {
+    border-bottom: 1px solid #262425;
+    background: #262425;
+}
+
+.bg-greenhead {
+    background: linear-gradient(85deg, #125a4e, #013423);
+}
+
+.main-wrapper .breadcrumb {
+    background: #126656 !important;
+}
+
+.bg-purple {
+    background-color: #126656 !important;
+}
+
+.bg-gradientorange {
+    background: linear-gradient(85deg, #f9680f, #e47107);
+}
+
+.card-holiday {
+    background: #126656!important;
+}
+
+.bg-pri-td {
+    background: linear-gradient(85deg, #125a4e, #013423);
+}
+
+.bg-sec-td {
+    background: linear-gradient(85deg, #125a4e, #013423);
+}
+
+.bg-ter-td {
+    background-color: #126656 !important;
+}
+
+.nav-item.show {
+    background: #8a89d3 !important;
+}
+#profileImage {
+    width: 59px;
+    height: 44px;
+    border-radius: 50%;
+    background: #8a89d3 !important;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    line-height: 43px;
+}
+

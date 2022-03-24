@@ -1,0 +1,39 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.APISTATUSCHECK>
+@{int i = 1; }
+@if (Model.Any())
+{    
+    @foreach (var item in Model)
+    {
+        <tr data-item-id="@item.ID">
+            <th scope="row">@i</th>
+            <td>
+                <div class="btn-group dropup">
+                    <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                    <div class="dropdown-menu" aria-labelledby="act_@i">
+                        <h6 class="dropdown-header">Action Menu</h6>
+                        <a href="#" class="dropdown-item">Delete</a>
+                    </div>
+                </div>
+            </td>
+            <td>@item.ID</td>
+            <td>@item.ErrorCode</td>
+            <td>@item.Checks</td>
+            <td>@RechargeRespType.GetRechargeStatusText(item.Status)</td>
+            <td>@item.VendorID</td>
+            <td>@item.OperatorID</td>
+            <td>@item.TransactionID</td>
+            <td>@item.Balance</td>
+            <td>@item.IndLength</td>
+            <td>@item.EntryDate</td>
+            <td>@item.ModifyDate</td>
+        </tr>
+        i++;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="14" rowspan="2" class="text-center">No record found!</td>
+    </tr>
+}

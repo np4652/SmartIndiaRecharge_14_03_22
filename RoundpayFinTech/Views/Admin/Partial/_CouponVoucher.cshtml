@@ -1,0 +1,155 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.ApiListModel>
+
+
+<style>
+    .cmb-0 {
+        margin-bottom: 0.05rem !important;
+    }
+</style>
+
+
+<input type="hidden" value="@ViewBag.VoucherID" id="hfId" />
+<div class="card mt-12">
+    <div class="card-header bg-gradientorange text-white" style=" line-height: 27px;">
+        <i class="fas fa-link"></i> Coupon Voucher
+        <div class="float-right"><button id="" onclick="UploadExcel(@ViewBag.VoucherID)" class="btn btn-default btn-sm"> <i class="fa fa-upload"></i> Excel Upload</button></div>
+        <div class="float-right mr-1"><button id="" onclick="DownloadExcel(@ViewBag.VoucherID)" class="btn btn-default btn-sm"><i class="fa fa-download"></i> Excel Download</button></div>
+    </div>
+
+    <div class="card-body" style="">
+        <div class="row form-group">
+            <div class="col-md-3 col-sm-3 col-xs-3">
+
+                <input type="hidden" id="VoucherID" value="@ViewBag.VoucherID" />
+                <input type="hidden" id="tblID" value="0" />
+                <label class="lbl" for="txtAccHolder">Coupon Code</label>
+                <input aria-describedby="txtCouponCode1" maxlength="16" class="form-control" id="txtCouponCode" name="txtCouponCode" placeholder="Enter Coupon Code" tabindex="2" type="text" value="">
+                <small id="txtCouponCode1" class="form-text text-muted d-none"></small>
+
+            </div>
+            <div class="col-md-3 col-sm-3 col-xs-3">
+
+                <label class="lbl" for="txtTrID">Amount </label>
+                <input aria-describedby="minAmt1" class="form-control" onkeypress="return isNumberwithoutdecimal(event)" placeholder="Enter Min Amount" id="_Amt" name="Amt" tabindex="2" type="text">
+                <small id="minAmt1" class="form-text text-muted d-none"></small>
+                <input type="hidden" id="hidTrID" value="" class="d-none" />
+
+            </div>
+
+            <div class="col-md-6 col-sm-6 col-xs-6">
+
+                @{
+                    var list = new SelectList(Model, "Id", "Name");
+                }
+                <label class="lbl" for="ddlApiName">Choose Vendor</label>
+                <div class="input-group">
+                    <select aria-describedby="txtApi1" class="form-control" id="ddlApi" tabindex="4" asp-items="@list">
+                        <option value="0"> :: Select Vendor :: </option>
+                    </select>
+                    <div class="input-group-append">
+                        <button id="btnSaveCard" tabindex="6" class="btn btn-outline-dark">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-12 table-responsive">
+            <gridView></gridView>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var partialGrid;
+    $(document).ready(function () {
+        var id = $('#hfId').val()
+        partialGrid = () => {
+            $.post('/CouponVoucherList/' + id, {}).done(result => $('gridView').html(result)).fail(() => { })
+        }
+        partialGrid();
+        $('#btnSaveCard').click(function () {
+            var ctCv = { vocid: $('#VoucherID'), tblid: $('#tblID'), _api: $('#ddlApi'), _Amt: $('#_Amt'), _Copcode: $('#txtCouponCode') }
+            var IsE = {
+                api: ctCv._api.val().trim() == '0',
+                _Amt: ctCv._Amt.val().trim() == '',
+
+                code: ctCv._Copcode.val() == ''
+            }
+            IsE.err = (IsE.api || IsE._Amt || IsE.code)
+            $v.showErrorFor(ctCv._api, 'Please select Api.', IsE.api);
+            $v.showErrorFor(ctCv._Amt, 'Enter  Amount.', IsE._Amt);
+
+            $v.showErrorFor(ctCv._Copcode, 'Enter Coupon code.', IsE.code);
+            if (IsE.err) {
+                return false;
+            }
+            var dprt = {
+                ID: ctCv.tblid.val(),
+                Amount: ctCv._Amt.val(),
+                CouponCode: ctCv._Copcode.val(),
+                APIID: ctCv._api.val(),
+                VoucherID: ctCv.vocid.val(),
+                IsSale: true
+            }
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/CouponVoucher-Edit',
+                data: JSON.stringify(dprt),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == an.type.success) {
+                        ctCv._Amt.val(""),
+
+                            ctCv._Copcode.val("")
+                        ctCv._api.val("0"),
+                            $("#btnSaveCard").text("Save")
+                        partialGrid();
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result, msg) {
+                    an.title = "Oops";
+                    an.content = msg;
+                    an.alert(an.type.failed);
+
+                    preloader.remove();
+                },
+                complete: function () {
+
+                    preloader.remove();
+                }
+            });
+        })
+    })
+    function isNumberwithoutdecimal(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+    function DownloadExcel(id) {
+        window.location = `/CouponVocher-Export/${id}`;
+
+    }
+
+
+</script>

@@ -1,0 +1,145 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model SwitchingViewModel
+@{
+    ViewData["Title"] = "User Denomination Switch Report";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">API & Operator Management</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-8 line-height-34 text-monospace">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-4">
+                                <input id="txtSearchOp" class="form-control text-left" placeholder="Search Operator" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row form-group">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <input id="txtSearchUser" maxlength="12" class="form-control text-left" aria-describedby="helpSearch" placeholder="Enter MobileNo/UserID with prefix" type="text" />
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                @{
+                                    var Oplist = new SelectList(Model.opTypes, "ID", "OpType");
+                                    var OPTypeID = OPTypes.Prepaid;
+                                }
+                                <select id="ddlOType" class="form-control" asp-items="@Oplist" asp-for="@OPTypeID"></select>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="form-group">
+                                    <button id="btnSearch" tabindex="8" class="btn btn-outline-dark">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="tblReport" class="table-responsive"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            _loadGrid();
+            $('#btnSearch').click(function () {
+                _loadGrid();
+            });
+        });
+
+        var _loadGrid = function () {
+            preloader.load();
+            $.post('/De-Sw-Report-U', { OpTypeID: $('#ddlOType').val(), MobileNo: $('#txtSearchUser').val()})
+                .done(function (result) {
+                    $('#tblReport').html(result);
+                    setTimeout(function () {
+                        $('#txtSearchOp').focus();
+                        $("#txtSearchOp").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblRechReport tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+
+                        $("table .denValue").click(function () {
+                            let itemid = $(this).data().itemId;
+                            mdlStk.id = 'mystack' + itemid;
+                            mdlStk.content = mdlStk.confirmStack(itemid, '<h5>Are you sure you want to Remove?</h5>');
+                            mdlStk.alert(mdlA.size.small);
+                            $('#mdlCancel' + itemid).unbind().click(function () {
+                                mdlStk.dispose();
+                            });
+
+                            $('#btnOK').unbind().click(function () {
+
+                                preloader.load();
+                                $.post('/De-Sw-Report-U-Remove', { id: itemid })
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                        an.content = result.msg;
+                                        an.alert(result.statuscode);
+                                        if (result.statuscode == an.type.success) {
+                                            _loadGrid();
+                                        }
+                                    })
+                                    .catch(function (xhr, e, msg) {
+                                        an.title = 'Oops';
+                                        an.content = 'An error has been occured during request.Reload again!'
+                                        an.alert(an.type.failed);
+                                    })
+                                    .fail(function (xhr) {
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                        $('#mdlCancel' + itemid).click();
+                                    });
+                            });
+                        })
+
+
+                    }, 500);
+                    preloader.remove();
+                }).fail(function (xhr) {
+                    if (xhr.status === 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status === 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+}

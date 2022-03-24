@@ -1,0 +1,43 @@
+﻿@model ErrorAPICodeModel
+@if (Model != null)
+{
+    int i = 1;
+    @foreach (var item in Model.ErrorCodeDetails)
+    {
+        var apiGroupDtails = Model.APIGroupDetails.Where(x => !string.IsNullOrEmpty(x.GroupCode));
+        <tr data-item-id="@item.EID">
+            <th class="align-middle">@i</th>
+            <td class="align-middle">
+                @item.Error<small class="form-text text-muted mt-0">@item._ErrType - @("["+ item.Code + "]") </small>
+            </td>
+            <td class="align-middle">
+                <div class="row mr-0">
+                    @if (apiGroupDtails != null)
+                    {
+                        @foreach (var apiItem in apiGroupDtails)
+                        {
+                            var APICode = "";
+                            if (Model.APIErrorCodes != null)
+                            {
+                                if (Model.APIErrorCodes.Any())
+                                {
+                                    var aPIErrorCodes = Model.APIErrorCodes.Where(x => x.GroupCode == apiItem.GroupCode && x.ECode == item.Code).ToList();
+                                    APICode = aPIErrorCodes.Any() ? aPIErrorCodes[0].APICode : APICode;
+                                }
+                            }
+                            <div class="col-md-2">
+                                <div class="form-group">
+                                    <input type="hidden" id="hidOp_@Html.Raw(i + "_" + apiItem.GroupID)" />
+                                    <label class="text-monospace text-uppercase cursor-pointer" for="txtOp_@Html.Raw(i + "_" + apiItem.GroupID)">@Html.Raw(apiItem.GroupName.Replace(" ", ""))</label>
+                                    <input type="text" id="txtOp_@Html.Raw(i + "_" + apiItem.GroupID)" class="form-control" placeholder="ErrorCode" value="@APICode" aria-describedby="helpOp_@Html.Raw(i + "_" + apiItem.GroupID)" />
+                                    <small id="helpOp_@Html.Raw(i + "_" + apiItem.GroupID)" class="form-text text-danger d-none">Error</small>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </td>
+        </tr>
+        i++;
+    }
+}

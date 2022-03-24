@@ -1,0 +1,125 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.DenominationDetailModal
+@{
+    var domList = Model.circleWithDominations;
+    var deList = domList.Where(x => x.DominationType == 1);
+    var deRanList = domList.Where(x => x.DominationType == 2);
+}
+<style>
+    .demonPadding {
+        padding: 3px 0px 3px 3px;
+    }
+</style>
+<div class="col-sm-12">
+    <table class="table table-bordered table-striped table-responsive-sm" id="tblRNG">
+        <tr class="dTR">
+            <td class="align-middle denom2TD" width="40%">
+                @{
+
+                    foreach (var item in deList)
+                    {
+                        <div class="box box-info denom demonPadding">
+                            <span class="">
+                                <!--switch switch-sm-->
+                                <input data-item-id="@item.ID" type="checkbox" class="switch isactive" id="de_@(item.DominationType.ToString()+item.ID.ToString())">
+                                <label for="de_@(item.DominationType.ToString()+item.ID.ToString())"></label>
+                            </span>
+                            <label data-item-id="@item.ID" class="pl-2 pr-2 denomLabel">@item.Amount</label>
+                        </div>
+                    }
+                }
+            </td>
+            <td>
+                <div class="input-group">
+                    <div class="form-inline">
+                        <input type="text" class="form-control-sm _comm" />
+                        &nbsp;&nbsp;
+                    </div>
+
+                    <div class="btn-group btn-toggle commType">
+                        <button class="btn btn-sm btn-dark active" style="border-top-left-radius:0;border-bottom-left-radius:0;">C</button>
+                        <button class="btn btn-sm btn-outline-dark" style="border-top-right-radius:0;border-bottom-right-radius:0;">S</button>
+                    </div>
+
+                    <div class="btn-group btn-toggle amtType">
+                        <button class="btn btn-sm btn-dark active" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                        <button class="btn btn-sm btn-outline-dark" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                    </div>
+                </div>
+            </td>
+
+            @*<td>
+               
+            </td>
+
+            <td>
+               
+            </td>*@
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" checked class="switch isactive" id="isactive_den">
+                    <label for="isactive_den"></label>
+                </span>
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-outline-success btn-sm btnUpdateDemonSpecial">Save Denomination</button>
+            </td>
+        </tr>
+
+        <tr class="dranTR">
+            <td class="align-middle denomRange2TD" width="40%">
+                @{
+
+                    foreach (var item in deRanList)
+                    {
+                        <div class="box box-info denom demonPadding">
+                            <span class="">
+                                <!--switch switch-sm-->
+                                <input data-item-id="@item.ID" type="checkbox" class="switch isactive" id="de_@(item.DominationType.ToString()+item.ID.ToString())">
+                                <label for="de_@(item.DominationType.ToString()+item.ID.ToString())"></label>
+                            </span>
+                            <label data-item-id="@item.ID" class="pl-2 pr-2 denomLabel">@item.Amount</label>
+                        </div>
+                    }
+                }
+            </td>
+            <td>
+                <div class="input-group">
+                    <div class="form-inline">
+                        <input type="text" class="form-control-sm _comm" />
+                        &nbsp;&nbsp;
+                    </div>
+
+                    <div class="btn-group btn-toggle commType">
+                        <button class="btn btn-sm btn-dark active" style="border-top-left-radius:0;border-bottom-left-radius:0;">C</button>
+                        <button class="btn btn-sm btn-outline-dark" style="border-top-right-radius:0;border-bottom-right-radius:0;">S</button>
+                    </div>
+
+                    <div class="btn-group btn-toggle amtType">
+                        <button class="btn btn-sm btn-dark active" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                        <button class="btn btn-sm btn-outline-dark" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                    </div>
+                </div>
+            </td>
+
+            @*<td>
+               
+            </td>
+
+            <td>
+                
+            </td>*@
+
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" checked class="switch isactive" id="isactive_denrange">
+                    <label for="isactive_denrange"></label>
+                </span>
+            </td>
+
+            <td>
+                <button type="button" class="btn btn-outline-success btn-sm btnUpdateDemonRangeSpecial">Save Denomination Range</button>
+            </td>
+        </tr>
+    </table>
+</div>

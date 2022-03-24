@@ -1,0 +1,73 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.RefundTransaction>
+
+@{
+    var couter = 1;
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+}
+@if (Model.Any())
+{
+    foreach (var item in Model)
+    {
+<tr data-item-id="@item.TID">
+    <th>@couter</th>
+    <td>
+        @if (_lr.RoleID.In(Role.Admin))
+        {
+            @item.TID <small class="font-weight-bold text-monospace"> [@item.TransactionID]</small>
+        }
+        else
+        {
+            @item.TransactionID
+        }
+    </td>
+    @if (_lr.RoleID.In(Role.Admin))
+    {
+        <td>@item.OutletName <small class="font-weight-bold text-monospace"> [@item.OutletMobile]</small></td>}
+    }
+    <td>@item.EntryDate</td>
+    <td>@item.RefundActionDate</td>
+    <td class="align-middle"><h5><span class="badge badge-warning" style="cursor:not-allowed">@item.AccountNo</span></h5></td>
+    <td class="align-middle"><h5><span class="badge badge-success" style="cursor:copy">@item.RightAccountNo</span></h5></td>
+    <td>@item.RefundRemark</td>
+    <td class="text-right">@item.RequestedAmount</td>
+    @if (_lr.RoleID.In(Role.Admin))
+    {
+        <td><span class="badge badge-light">@item.APIName</span></td>
+    }
+    <td><span class="badge badge-light">@item.Operator</span></td>
+
+    <td>
+        @if (item.RefundType_ == RefundType._REQUESTED)
+        {
+            <span class="badge badge-warning">@item.RefundType_</span>
+        }
+        else if (item.RefundType_ == RefundType._REFUNDED)
+        {
+            <span class="badge badge-info">ACCEPTED</span>
+        }
+        else
+        {
+            <span class="badge badge-danger">@item.RefundType_</span>
+        }
+    </td>
+    <td>@item.LiveID</td>
+    <td>@item.RefundRequestDate</td>
+    <td>@item.RequestMode</td>
+</tr>
+        couter = couter + 1;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="16" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}

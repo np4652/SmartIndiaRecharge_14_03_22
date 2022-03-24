@@ -1,0 +1,248 @@
+﻿@using RoundpayFinTech.AppCode.Model.ROffer
+@model RoundpayFinTech.AppCode.Model.ROffer.RNPDTHPlans
+@{
+    var rt = 0;
+    var pl = 0;
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Plans</h3>
+        <hr />
+    </div>
+    @if (Model.Response.Any())
+    {
+        var monthly = Model.Response.Where(x => x.RechargeType == "Monthly");
+        var quarterly = Model.Response.Where(x => x.RechargeType == "Quarterly").ToList();
+        var halfyearly = Model.Response.Where(x => x.RechargeType == "Half-Yearly").ToList();
+        var yearly = Model.Response.Where(x => x.RechargeType == "Yearly").ToList();
+        var addOnPack = Model.Response.Where(x => x.RechargeType == "Add On Pack").ToList();
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="container">
+                <ul class="nav nav-pills" role="tablist">
+                    @if (addOnPack.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1 active" data-toggle="pill" href="#adOnPck">Add On Pack</a>
+                        </li>
+                    }
+                    @if (monthly.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1 active" data-toggle="pill" href="#Monthly">Monthly</a>
+                        </li>
+                    }
+                    @if (quarterly.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1" data-toggle="pill" href="#Quarterly">Quarterly</a>
+                        </li>
+                    }
+                    @if (halfyearly.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1" data-toggle="pill" href="#HalfYearly">Half-Yearly</a>
+                        </li>
+                    }
+                    @if (yearly.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1" data-toggle="pill" href="#Yearly">Yearly</a>
+                        </li>
+                    }
+                    @if (Model.Package.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1" data-toggle="pill" href="#TopPlan">Top Plan</a>
+                        </li>
+                    }
+                    @if (Model.Language.Any())
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link mr-1" data-toggle="pill" href="#Language">Language</a>
+                        </li>
+                    }
+                </ul>
+            </div>
+            <div class="scroll-content">
+                <div class="tab-content">
+                    @if (addOnPack.Any())
+                    {
+                        <div id="adOnPck" class="table-responsive container tab-pane active">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>RS</th>
+                                        <th>Description</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in addOnPack)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.rechargeAmount">@plnT.rechargeAmount</span></td>
+                                            <td>@plnT.details</td>
+                                            <td>@plnT.RechargeValidity</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (monthly.Any())
+                    {
+                        <div id="Monthly" class="table-responsive container tab-pane active">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>RS</th>
+                                        <th>Description</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in monthly)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.rechargeAmount">@plnT.rechargeAmount</span></td>
+                                            <td>@plnT.details</td>
+                                            <td>@plnT.RechargeValidity</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (quarterly.Any())
+                    {
+                        <div id="Quarterly" class="table-responsive container tab-pane">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>RS</th>
+                                        <th>Description</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in quarterly)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.rechargeAmount">@plnT.rechargeAmount</span></td>
+                                            <td>@plnT.details</td>
+                                            <td>@plnT.RechargeValidity</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (halfyearly.Any())
+                    {
+                        <div id="HalfYearly" class="table-responsive container tab-pane">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>RS</th>
+                                        <th>Description</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in halfyearly)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.rechargeAmount">@plnT.rechargeAmount</span></td>
+                                            <td>@plnT.details</td>
+                                            <td>@plnT.RechargeValidity</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (yearly.Any())
+                    {
+                        <div id="Yearly" class="table-responsive container tab-pane">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>RS</th>
+                                        <th>Description</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in yearly)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.rechargeAmount">@plnT.rechargeAmount</span></td>
+                                            <td>@plnT.details</td>
+                                            <td>@plnT.RechargeValidity</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (Model.Package.Any())
+                    {
+                        <div id="TopPlan" class="table-responsive container tab-pane">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>RS</th>
+                                        <th>Description</th>
+                                        <th>Validity</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in Model.Package)
+                                    {
+                                        <tr>
+                                            <td><span class="btn btn-outline-success" id="spnOferAmt_@plnT.rechargeAmount">@plnT.rechargeAmount</span></td>
+                                            <td>@plnT.details</td>
+                                            <td>@plnT.RechargeValidity</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    @if (Model.Language.Any())
+                    {
+                        <div id="Language" class="table-responsive container tab-pane">
+                            <table class="table table-striped">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>Operator</th>
+                                        <th>Languange</th>
+                                        <th>Package Available</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var plnT in Model.Language)
+                                    {
+                                        <tr>
+                                            <td>@plnT.Opname</td>
+                                            <td>@plnT.Language</td>
+                                            <td>@plnT.PackageCount</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <h1 class="text-danger">Oops no any plan found for selected criteria</h1>
+    }
+</div>

@@ -1,0 +1,118 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel
+@model ShowIPAddressModel
+
+@{
+    var counter = 1;
+    var _Model = Model.IPAddressModels;
+}
+
+@if (_Model.Any())
+{
+    foreach (var item in _Model)
+    {
+<tr data-item-id="@item.ID">
+    <td>@counter</td>
+    <td>
+        <div class="btn-group dropup">
+            <a href="#" id="act_@counter" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+            <div class="dropdown-menu" aria-labelledby="act_@counter">
+                <h6 class="dropdown-header">Action Menu</h6>
+                <a href="#" class="dropdown-item ddlRemove" id="rem_@item.ID">Remove</a>
+            </div>
+        </div>
+    </td>
+    <td>@item.UserID</td>
+    <td>@item.OutletName @*<small class="font-weight-bold text-monospace"> [@item.MobileNo]</small>*@</td>
+    <td>@item.MobileNo</td>
+    <td>@item.IP</td>
+    <td>
+        @{
+            var type = "";
+            if (item.IPType == IPType.APIUser)
+            {
+                type = nameof(IPType.APIUser);
+            }
+            else if (item.IPType == IPType.Callback)
+            {
+                type = nameof(IPType.Callback);
+            }
+            else if (item.IPType == IPType.Longcode)
+            {
+                type = nameof(IPType.Longcode);
+            }
+        }
+        @type
+    </td>
+
+    @if (Model.IsAdmin)
+    {
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="ipSts_@counter" checked="@item.IsActive">
+                <label for="ipSts_@counter"></label>
+            </span>
+        </td>
+    }
+    else
+    {
+        <td class="@(item.IsActive?"text-success":"text-danger")">@(item.IsActive?"Active":"Inactive")</td>
+    }
+    <td>@item.LastModified</td>
+    @if (Model.IsAdmin)
+    {
+        <td>@item.Source</td>
+    }
+</tr>
+        counter = counter + 1;
+    }
+}
+else
+{
+    <tr rowspan="2">
+        <td colspan="9">
+            <center>No Record Found</center>
+        </td>
+    </tr>
+}
+<script>
+    $("[id^=ipSts_]").on("change", function () {
+        preloader.load();
+        var id = $(this).closest('tr').data().itemId;
+        var status = $(this).prop("checked") ? true : false;
+        $.post('/u-ip-sts', { ID: id, Sts: status })
+            .done(function (result) {
+                if (result.statuscode == an.type.failed) {
+                    an.title = "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }
+                else if (result.statuscode == an.type.success) {
+                    an.title = "Well done";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }
+                loadError('', 0);
+            })
+            .catch(function (xhr, e, msg) {
+            })
+            .fail(function () {
+                $(this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+
+    })
+
+</script>
+

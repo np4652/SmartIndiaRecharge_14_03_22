@@ -1,0 +1,128 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.Meetingdetails>
+
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="bg-tableth">
+            @*<tr>
+                <th colspan="10" class="">Details</th>
+                <th colspan="10">Other Brand Details</th>
+                <th colspan="1"></th>
+            </tr>*@
+            <tr>
+                <th>#</th>
+                <th>Map</th>
+                <th>Employee Name</th>
+                <th>Name</th>
+                <th>Mobile No</th>
+                <th class="text-nowrap">Outlet Name</th>
+                <th>Area</th>
+                <th class="text-nowrap">Pin Code</th>
+                <th>Purpuse</th>
+                <th>Consumption</th>
+                <th>Using Other Brand</th>
+                <th>Other Brand Name</th>
+                @*<th>Other Brands</th>*@
+                @*<th class="text-nowrap">Consumption from Other Brands</th>*@
+                <th>Recharge Consumption</th>
+                <th>Bill Payment Consumption</th>
+                <th>Money Transfer Consumption</th>
+                <th>AEPS Consumption</th>
+                <th>Mini ATM Consumption</th>
+                <th>Insurance Consumption</th>
+                <th>Hotel Consumption</th>
+                <th>Pan Consumption</th>
+                <th>Vehicle Consumption</th>
+                <th class="text-nowrap">Reason to Use Other Brands</th>
+                <th>Remark</th>
+                <th>Shop Image</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                if (Model.Count() > 0)
+                {
+                    int counter = 1;
+                    foreach (var item in Model)
+                    {
+                        <tr data-place-latitude="@item.Latitute" data-place-Longitude="@item.Longitute" data-name="@item.Name" data-mobile="@item.MobileNo">
+                            <td>@counter</td>
+                            <td>
+                                <a href="javascript:void(0)" onclick="callMapPlotter(this)" class="lnkMap"><i class="fa fa-map-marker" aria-hidden="true"></i></a>
+                            </td>
+                            <td>@item.EmployeeName</td>
+                            <td>@item.Name</td>
+                            <td>@item.MobileNo</td>
+                            <td>@item.OutletName</td>
+                            <td>@item.Area</td>
+                            <td>@item.Pincode</td>
+                            <td>@item.Purpose</td>
+                            <td>@item.Consumption</td>
+                            <td>@item.Isusingotherbrands</td>
+                            <td>@item.BrandName</td>
+                            @*<td>@item.Otherbrandconsumption</td>*@
+                            <td>@item.RechargeConsumption</td>
+                            <td>@item.BillPaymentConsumption</td>
+                            <td>@item.MoneyTransferConsumption</td>
+                            <td>@item.AEPSConsumption</td>
+                            <td>@item.MiniATMConsumption</td>
+                            <td>@item.InsuranceConsumption</td>
+                            <td>@item.HotelConsumption</td>
+                            <td>@item.PanConsumption</td>
+                            <td>@item.VehicleConsumption</td>
+                            <td>@item.Reason</td>
+                            <td>@item.Remark</td>
+                            <td>
+                                <a href="@item.ShopImagePath" target="_blank"><img src="@item.ShopImagePath" width="50px" height="50px" /></a> 
+                            </td>
+                        </tr>
+                        counter++;
+                    }
+                }
+                else
+                {
+                    <tr><td colspan="11" class="text-danger text-center">No record found.</td></tr>
+                }
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="col-sm-12 text-danger text-monospace">No Data Found</div>
+}
+<script>
+    var callMapPlotter = function (sender) {
+        let ele = $(sender).closest('tr');
+        let lat = ele.data().placeLatitude;
+        let lng = ele.data().placeLongitude;
+        var _description = ele.data().name + ' [' + ele.data().mobile + ']';
+        var _html = '<div class="col-md-12 mb-3"> <button type="button" class="close pull-right" aria-label="Close"><span aria-hidden="true">&times;</span></button></div><div id="dvMap" class="card" style="width: 100%; height: 400px"></div>';
+        mdlA.content = _html;
+        mdlA.options.backdrop = 'static';
+        mdlA.alert(mdlA.size.large);
+        $('button.close').click(function () {
+            mdlA.dispose();
+        });
+        var mapOptions = {
+            center: new google.maps.LatLng(lat, lng),
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+        var infoWindow = new google.maps.InfoWindow();
+        var map = new google.maps.Map(document.getElementById("dvMap"), mapOptions);
+        var data = { description: _description, latitude: lat, longitude: lng };
+        var myLatlng = new google.maps.LatLng(data.latitude, data.longitude);
+        var marker = new google.maps.Marker({
+            position: myLatlng,
+            map: map,
+            title: data.description
+        });
+        (function (marker, data) {
+            google.maps.event.addListener(marker, "click", function (e) {
+                infoWindow.setContent(data.description);
+                infoWindow.open(map, marker);
+            });
+        })(marker, data);
+    };
+</script>

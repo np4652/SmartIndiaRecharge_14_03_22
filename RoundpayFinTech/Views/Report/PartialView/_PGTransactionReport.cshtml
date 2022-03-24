@@ -1,0 +1,239 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.TransactionPGReportModel
+@{
+    var counter = 1;
+    var mdl = Model.Report;
+    
+    decimal TotalRequestedAmount = 0;
+    decimal TotalAmount = 0;
+    decimal TotalCommission = 0;
+    var colSpan = Model.IsAdmin == true ? 3 : 1;
+}
+@{
+    if (Model != null)
+    {
+        var _model = Model.Report;
+        if (_model != null)
+        {
+            int i = 1;
+            foreach (var item in _model)
+            {
+
+              
+    <tr data-item-TID="@item.TID">
+        <td>@i</td>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    @if (Model.CanSuccess && (item.Type == RechargeRespType.PENDING || item.Type == RechargeRespType.REQUESTSENT || item.Type == RechargeRespType.FAILED))
+                    {
+                        <a href="#" class="dropdown-item text-success btnSts" data-Status-Id="@RechargeRespType.SUCCESS">
+                            <i class="far fa-check-circle"></i> Success
+                        </a>
+                    }
+                    @if (item.Type == RechargeRespType.PENDING || item.Type == RechargeRespType.REQUESTSENT)
+                    {
+                        <a href="#" class="dropdown-item text-danger btnSts" data-Status-Id="@RechargeRespType.FAILED">
+                            <i class="far fa-times-circle"></i> Fail
+                        </a>
+                        <a href="#" class="dropdown-item text-danger btnCheckStatus">
+                            <i class="far fa-times-circle"></i> Check Status
+                        </a>
+                    }
+                </div>
+            </div>
+        </td>
+        <td>@item.UserName<br /><small>@item.MobileNo</small></td>
+        <td>@item.RequestedAmount</td>
+        <td>@item.Amount</td>
+        <td>
+            @if (item.Type == RechargeRespType.PENDING || item.Type == RechargeRespType.REQUESTSENT)
+            {
+                <span class="badge badge-secondary">@(nameof(RechargeRespType.PENDING))</span>
+            }
+
+            @if (item.Type == RechargeRespType.FAILED)
+            {
+                <span class="badge badge-danger">@(nameof(RechargeRespType.FAILED))</span>
+            }
+            @if (item.Type == RechargeRespType.SUCCESS)
+            {
+                <span class="badge badge-success">@(nameof(RechargeRespType.SUCCESS))</span>
+            }
+            @if (item.Type == RechargeRespType.REFUND)
+            {
+                <span class="badge badge-info">@(nameof(RechargeRespType.REFUND))</span>
+            }
+        </td>
+        <td>@item.PgCharge</td>
+        <td>@item.PGName</td>
+        <td>@item.EntryDate</td>
+        <td>@item.Operator</td>
+        <td>@item.OPID</td>
+        <td>
+            <span>
+                <i class="fa fa-info-circle text-info a_modal" name="@item.TID" aria-hidden="true" data-toggle="tooltip" title="Transaction More Detail" data-item-lastModify="@item.LastModifyDate"><span class="text-monospace text-dark">@item.TID</span></i>
+                @item.TransactionID
+            </span>
+        </td>
+        <td>@item.VendorID</td>
+        <td>@item.LiveID</td>
+        <td>
+            @if (item.RequestedMode == RequestMode.PANEL)
+            {
+                @(nameof(RequestMode.PANEL));
+            }
+            @if (item.RequestedMode == RequestMode.API)
+            {
+                @(nameof(RequestMode.API));
+            }
+            @if (item.RequestedMode == RequestMode.APPS)
+            {
+                @(nameof(RequestMode.APPS));
+            }
+            @if (item.RequestedMode == RequestMode.SMS)
+            {
+                @(nameof(RequestMode.SMS));
+            }
+            @if (item.RequestedMode == RequestMode.WEBAPPS)
+            {
+                @(nameof(RequestMode.WEBAPPS));
+            }
+        </td>
+        <td>@item.surcharge</td>
+        <td>
+            @if (item.WalletID == Wallet.Prepaid)
+            {
+                @(nameof(Wallet.Prepaid));
+            }
+            @if (item.WalletID == Wallet.Utility)
+            {
+                @(nameof(Wallet.Utility));
+            }
+            @if (item.WalletID == Wallet.Bank)
+            {
+                @(nameof(Wallet.Bank));
+            }
+            @if (item.WalletID == Wallet.Card)
+            {
+                @(nameof(Wallet.Card));
+            }
+            @if (item.WalletID == Wallet.RegID)
+            {
+                @(nameof(Wallet.RegID));
+            }
+            @if (item.WalletID == Wallet.Package)
+            {
+                @(nameof(Wallet.Package));
+            }
+        </td>
+    </tr>
+                counter += 1;
+                TotalRequestedAmount += item.RequestedAmount;
+                TotalAmount += item.Amount;
+                TotalCommission += item.PgCharge;
+                i++;
+
+            }
+            <tr class="text-left bg-blue text-white text-monospace">
+                <td colspan="@colSpan" class="h5">
+                    <strong>Total</strong>
+                </td>
+                
+                <td>@TotalRequestedAmount</td>
+                <td>@TotalAmount</td>
+                <td></td>
+                <td>@TotalCommission</td>
+               
+                <td colspan="7"></td>
+            </tr>
+        }
+    }
+}
+<script>
+    $('.btnSts').click((e) => ChangeStatus(e.currentTarget));
+    $('.btnCheckStatus').click((e) => CheckStatus($(e.currentTarget).closest('tr').data().itemTid));
+
+    var ChangeStatus = (sender) => {
+        preloader.load();
+        var param = {
+            Type: $(sender).data().statusId,
+            TID: $(sender).closest('tr').data().itemTid
+        };
+        $.post('/_ChangePGTransactionStatus', param)
+            .done((result) => {
+                an.title = result.statuscode == an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                $("#btnSearch").click();
+            }).fail((xhr) => {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(() => {
+                preloader.remove();
+            });
+    }
+
+    //var SuccessStatus = (sender) => {
+    //    preloader.load();
+    //    var param = {
+    //        Type: $(sender).data().statusId,
+    //        TID: $(sender).closest('tr').data().itemTid
+    //    };
+    //    $.post('/_ChangePGTransactionStatus', param)
+    //        .done((result) => {
+    //            an.title = result.statuscode == an.type.success ? 'Well done' : 'Oops';
+    //            an.content = result.msg;
+    //            an.alert(result.statuscode);
+    //            $("#btnSearch").click();
+    //        }).fail((xhr) => {
+    //            if (xhr.status === 500) {
+    //                an.title = 'Oops';
+    //                an.content = 'Server error';
+    //                an.alert(an.type.failed);
+    //            }
+    //            if (xhr.status === 0) {
+    //                an.title = 'Oops';
+    //                an.content = 'Internet Connection was broken';
+    //                an.alert(an.type.failed);
+    //            }
+    //        }).always(() => {
+    //            preloader.remove();
+    //        });
+    //}
+
+    var CheckStatus = (TID) => {
+        preloader.load();
+        $.post('/_CheckPGTransactionStatus_', { TID: TID })
+            .done((result) => {
+                an.title = result.statuscode == an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                $("#btnSearch").click();
+            }).fail((xhr) => {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(() => {
+                preloader.remove();
+            });
+    }
+</script>

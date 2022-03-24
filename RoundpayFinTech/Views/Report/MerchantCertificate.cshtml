@@ -1,0 +1,97 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel; 
+@model RoundpayFinTech.AppCode.Model.CertificateModel
+@if (ApplicationSetting.IsRPOnly)
+
+{
+
+    <!DOCTYPE html>
+ 
+    <html xmlns='http://www.w3.org/1999/xhtml'>
+    <head>
+        <title></title>
+        @*//<link href='//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css' rel='stylesheet' id='bootstrap-css'>
+        <style type='text/css'></style>
+        <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+        <script src='//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js'></script>*@
+        <style>
+            .main-bg {
+                position: relative;
+                margin: 0px auto;
+                margin-top: 0px;
+                width: 960px
+            }
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <div class='row'>
+                <div class='col'>
+                    <div class='main-bg'>
+                        <div class='certificate-bg' style=' background:url(@(DOCType.CertificateBackGroundSign.Replace('\\', '/').Replace("{0}",Model.WID.ToString()))); -webkit-print-color-adjust: exact;'>
+                            <div class='align-content-around'>
+                                <table style='text-align: center; height: 646px; width: 877px'>
+                                    <tbody>
+                                        <tr>
+                                            <td colspan='3'>
+                                                <div class='logo' style='margin: 5px; position: absolute;top: 10px; left: 38%;'> <img src='@DOCType.Logo.Replace("{0}",@Model.WID.ToString())' style='width: 240px' /></div>
+                                                <h2 style='font-size: 69px;margin-top: 84px;color: #0d0b0c;margin-top: 1.49em;margin-bottom: 0px;margin-left: 73px;'>𝕮𝖊𝖗𝖙𝖎𝖋𝖎𝖈𝖆𝖙𝖊</h2>
+                                                <h6 style='font-size: 19px; margin-top:0px;margin-left: 73px;font-family:arial;'>OF BUSINESS CORRESPONDENT AGENT</h6>
+                                                <p style='font-size: 18px;margin-bottom: 10px;text-align: left;line-height: 32px;margin-top: 55px;margin-left: 50px;font-family: arial;'> This is to certify that <b style='font-weight:500'>@Model.OutletName</b> BC ID <b>115580</b> with Pan Number <b>@Model.Pan</b> his/her place of operation<b> @Model.Address</b> has been appointed as Business Correspondent Agent (BCA)  through <b>@Model.Name</b> who is Business Correspondent (BC) of the Bank. The BCA has been duly trained during Training Session held on <b>@Model.joiningDate</b> and has been authorized to act as BCA of the Bank with effect from <b>@Model.joiningDate</b> until further notice.</p>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style='text-align: left; width: 50%; padding-bottom: 65px; padding-left: 4em'>
+                                                <p style='margin-top:16px;margin-bottom:0;'> <img src='@DOCType.CertificateFooterImage.Replace("{0}", @Model.WID.ToString())' style='width:170px;margin-left:73px;' /></p>
+                                                <p style='margin-top:0'> <img src='@DOCType.CertificateTapitSign.Replace("{0}", @Model.WID.ToString())' style='width: 139px;margin-left: 90px;' /></p>
+                                            </td>
+                                            <td style='text-align: left; width: 50%; padding-bottom: 65px; padding-left: 2em'>
+                                                <div style='text-align: right;padding-right: 5.6em;'> <img src='@DOCType.CertificateImgSign.Replace("{0}", @Model.WID.ToString())' style='width: 77px;'></div>
+                                                <p style='text-align: right;padding-right: 92px;font-size: 16px;line-height: 20px;font-weight: 300;padding-top: 0;margin-top: 0;font-family:arial;'> For <b>@Model.Name</b> <br> <b>@Model.OwnerName</b>,<br> <b>@Model.OwnerDesignation</b></p>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+}
+else
+{
+<html>
+<body style='padding:1.5em;text-align:center'>
+    <div class='bg-img' style='background:#ebebeb;padding:1em; z-index: -2; position: relative;'>
+        <img src='@DOCType.CertificateImgSide' style='position: absolute;width: 50%; right: 1px; bottom: 0; z-index: -1;' />
+        <div class='main text-center' style='background:#fff;text-align:center;z-index:10'>
+            <table style='text-align:center'>
+                <tbody>
+                    <tr>
+                        <td colspan='3'>
+                            <h2 style='font-size:60px;margin-top:60px;color:#0672a0;margin-bottom:35px;'>𝕸𝖊𝖗𝖈𝖍𝖆𝖓𝖙 𝕮𝖊𝖗𝖙𝖎𝖋𝖎𝖈𝖆𝖙𝖊</h2>
+                            <p style='font-size:25px;margin-bottom:20px;'>This is to certify that <b>@Model.OutletName</b> having his place operation at @Model.Address  for @Model.Name. has been appointed as bussiness correspondent Agent (BCA) of ICICI Bank Ltd. The BCA is duty trained during Traning session & has been  authorised to act as a BCA of the bank with effect from @Model.joiningDate until further notice.</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style='text-align:left;width: 26%;padding-bottom:65px;padding-left:2em'>
+                            <p>Merchant code<br />@Model.OutletID.ToString()</p>
+                            <img src='@DOCType.CertificateTapitSign.Replace("{0}", @Model.WID.ToString())' style='width:92px' />
+                        </td>
+                        <td style='text-align:center;padding-bottom:65px'><img src='@DOCType.CertificateFooterImage.Replace("{0}", @Model.WID.ToString())' style='width:170px' /></td>
+                        <td style='text-align:right;padding-bottom:65px;padding-right:2em'>
+                            <img src='@DOCType.CertificateImgSign.Replace("{0}", @Model.WID.ToString())' style='width:92px' />
+                            <p>For @Model.Name<br />@Model.OwnerName<br />@Model.OwnerDesignation</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>
+
+}

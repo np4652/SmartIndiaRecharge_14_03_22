@@ -1,0 +1,82 @@
+﻿@model int;
+@{
+    ViewData["Title"] = "Payment Gateway";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="row">
+                            <div class="table-responsive table-sm">
+                                <table class="table table-bordered table-striped table-responsive-sm">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">PGID</th>
+                                            <th scope="col">Name</th>
+                                            <th scope="col">WID</th>
+                                            <th scope="col">MerchantID</th>
+                                            <th scope="col">MerchantKey</th>
+                                            <th scope="col">ENVCode</th>
+                                            <th scope="col">IndustryType</th>
+                                            <th scope="col">SuccessURL</th>
+                                            <th scope="col">FailedURL</th>
+                                            <th scope="col">IsActive</th>
+                                            <th scope="col">EntryBy</th>
+                                            <th scope="col">EntryDate</th>
+                                            <th scope="col">ModifyBy</th>
+                                            <th scope="col">ModifyDate</th>
+                                            <th scope="col">AgentType</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            loadPaymentGatway();
+        });
+        var loadPaymentGatway = function () {
+            $.post('/Admin/_PaymentGateway')
+                .done(result => $('tbody').html(result))
+                .fail(xhr => {
+                    an.id = 'alertModal';
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => {
+                    btnLdr.Stop($("#btnSearch"));
+                    preloader.remove();
+                });
+        };
+    </script>
+}
+
+
+

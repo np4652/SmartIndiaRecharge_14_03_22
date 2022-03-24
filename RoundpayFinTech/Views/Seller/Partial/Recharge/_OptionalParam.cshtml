@@ -1,0 +1,61 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.OperatorParamModels
+@{
+    var _Model = Model.operatorOptionals;
+    var _Model2 = Model.operatorParams;
+    var _Model3 = Model.OpOptionalDic;
+    var IsByModel2 = false;
+    if (_Model2 != null)
+    {
+        IsByModel2 = _Model2.Count > 0;
+    }
+    var IsModel3 = false;
+    if (_Model3 != null)
+    {
+        IsModel3 = _Model3.Count > 0;
+    }
+}
+@if (IsByModel2)
+{
+    var i = 1;
+    foreach (var item in _Model2)
+    {
+        if (item.IsCustomerNo)
+        {
+            <h5 id="h2IsCusomerNo"></h5>
+        }
+<div class="form-group">
+    @Html.Label(("txtOption" + i), item.ParamName, new { @class = "lbl" })
+    @if (item.IsDropDown && IsModel3)
+    {
+        var OpOptionDic = _Model3.Where(w => w.OptionalID == item.ID).ToList();
+        if (OpOptionDic.Count > 0)
+        {
+            var selectOpOpDic = new SelectList(OpOptionDic, "Value", "Value");
+            <select id="txtOption@(i)" tabindex="7" class="form-control" asp-items="selectOpOpDic"></select>
+        }
+        else
+        {
+            @Html.TextBox(("txtOption" + i), null, new { @class = "form-control", @placeholder = "Enter " + item.ParamName, @aria_describedby = "Option" + i + "Help", @tabindex = 1, @data_params = Json.Serialize(item) });
+        }
+    }
+    else
+    {
+        @Html.TextBox(("txtOption" + i), null, new { @class = "form-control", @placeholder = "Enter " + item.ParamName, @aria_describedby = "Option" + i + "Help", @tabindex = 1, @data_params = Json.Serialize(item) });
+    }
+
+    <small id="@("Option"+i+"Help")" class="form-text">@item.Remark</small>
+</div>
+        i++;
+    }
+}
+else
+{
+    foreach (var item in _Model)
+    {
+        <div class="form-group">
+            @Html.Label(("txtOption" + item.OptionalType), item.DisplayName, new { @class = "lbl" })
+            @Html.TextBox(("txtOption" + item.OptionalType), null, new { @class = "form-control", @placeholder = "Enter " + item.DisplayName, @aria_describedby = "Option" + item.OptionalType + "Help", @tabindex = 1 })
+            <small id="@("Option"+item.OptionalType+"Help")" class="form-text text-danger  d-none">Invalid @item.DisplayName</small>
+        </div>
+    }
+}

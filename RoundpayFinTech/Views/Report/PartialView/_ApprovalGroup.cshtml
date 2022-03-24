@@ -1,0 +1,62 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ResponseStatus>
+<div class="row">
+    <div class="col-sm-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <h5 class="text-info">Approval Group</h5><hr />
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-12">
+        <div class="form-group">
+            <div class="input-group">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Group</th>
+                            <th>Download</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            var _list = Model.ToList();
+                            for (int i = 0; i < _list.Count(); i++)
+                            {
+                        <tr>
+                            <td>@(i + 1)</td>
+                            <td width="70%">Group - @(i + 1) <span class="text-monospace">[@_list[i].CommonStr2]</span></td>
+                            <td><a class="btnDownload cursor-pointer text-success" data-Group-ID="@_list[i].CommonInt"><i class="fa fa-download"></i> <i class="fa fa-file-excel"></i></a></td>
+                        </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="text-center text-monospace">
+                                <td colspan="3">
+                                    No Data Found
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                @*<select class="form-control" id="ddlApprovalGroup">
+                    <option value="0">-- Select Group --</option>
+                    @if (Model.Any())
+                    {
+                        var _list = Model.ToList();
+                        for (int i = 0; i < _list.Count(); i++)
+                        {
+                            <option value="@_list[i].CommonInt">Group - @(i+1)</option>
+                        }
+                    }
+                </select>*@
+                @*<div class="input-group-append">
+                    <button class="btn btn-outline-success" id="btnDownload"><i class="fa fa-download"></i> Export</button>
+                </div>*@
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,165 @@
+﻿<!--Show form-->
+@using Fintech.AppCode.Configuration
+@using RoundpayFinTech.AppCode.StaticModel;
+@model List<RoundpayFinTech.AppCode.Model.FieldMasterModel>
+
+<form action="/" method="post">
+    <div class="col-md-12">
+        <div id="frm">
+            @if (Model != null && Model.Count > 0)
+            {
+
+                <div class="form-group">
+                    <label for="cname"><span class="text-danger h4">*</span> Customer Name </label>
+                    <input type="text" id="cname" autocomplete="off" class="form-control" placeholder="Customer Name" />
+                </div>
+
+
+                <div class="form-group">
+                    <label for="cmobno"><span class="text-danger h4">*</span> Customer MobileNo. </label>
+                    <input type="text" autocomplete="off" id="cmobno" class="form-control" placeholder="Customer MobileNo." />
+                </div>
+
+                <div class="text-center h5">
+                    <span class="badge badge-danger">Fields with * is mandatory !</span>
+                </div>
+                <hr style="height:0.5px;background:#ff6a00" />
+                foreach (var r in Model.OrderBy(p => p._IND))
+                {
+                    if (r._FieldType.In(PESFieldType.Input, PESFieldType.PINCodeOnly, PESFieldType.PINCodeWithState))
+                    {
+
+                        <div class="form-group">
+                            @{
+                                if (r._InputType == FieldInputType.file)
+                                {
+                                    <div class="custom-file">
+                                        <label for="@("file"+r._ID)" class="custom-file-label">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                        <input type="@r._InputType" accept="image/*,text/plain, application/pdf" class="custom-file-input" id="@("file"+r._ID)" @(r._IsRequired ? "required=required" : "") />
+                                    </div>
+                                    <span class="badge badge-warning cursor-pointer" onclick="readURL('@("file"+r._ID)');">Show On Preview</span>
+                                }
+                                else if (r._InputType == FieldInputType.number)
+                                {
+                                    <label for="@("txt"+r._ID)">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                    <input type="@r._InputType" id="@("txt"+r._ID)" class="form-control" placeholder="@r._Placeholder" @(r._IsRequired ? "required=required" : "") min="@r._MinLength" max="@r._MaxLength" @(r._IsReadOnly ? "readonly='readonly'" : "") @(r._AutoComplete ? "autocomplete='on'" : "autocomplete='off'") @(r._IsDisabled ? "disabled='disabled'" : "") @Html.Raw(r._FieldType == PESFieldType.PINCodeWithState ? "name='txtPinCodeWithState'" : "") />
+                                }
+                                else if (r._InputType == FieldInputType.text)
+                                {
+                                    <label for="@("txt"+r._ID)">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                    <input type="@r._InputType" id="@("txt"+r._ID)" class="form-control" placeholder="@r._Placeholder" @(r._IsRequired ? "required=required" : "") maxlength="@r._MaxLength" @(r._IsReadOnly ? "readonly='readonly'" : "") @(r._AutoComplete ? "autocomplete='on'" : "autocomplete='off'") @(r._IsDisabled ? "disabled='disabled'" : "") />
+                                }
+                                else
+                                {
+                                    <label for="@("txt"+r._ID)">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                                    <input type="@r._InputType" id="@("txt"+r._ID)" class="form-control" placeholder="@r._Placeholder" @(r._IsRequired ? "required=required" : "") maxlength="@r._MaxLength" @(r._IsReadOnly ? "readonly='readonly'" : "") @(r._IsDisabled ? "disabled='disabled'" : "") />
+                                }
+                            }
+                        </div>
+                    }
+                    else if (r._FieldType == PESFieldType.TextArea)
+                    {
+
+                        <div class="form-group">
+                            <label for="@("txtarea"+r._ID)">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                            <textarea rows="3" id="@("txtarea"+r._ID)" placeholder="@r._Placeholder" class="form-control"></textarea>
+                        </div>
+
+                    }
+                    else if (r._VocabID > 0 && r._FieldType == PESFieldType.DropDown)
+                    {
+                        var lst = new SelectList(r._VocabOptions, "_Name", "_Name");
+
+                        <div class="form-group">
+                            <label for="@("ddl"+r._ID)">@Html.Raw(r._IsRequired ? "<span class='text-danger h4'>*</span>" : "") @r._Label</label>
+                            <select asp-items="@lst" data- id="@("ddl"+r._ID)" class="form-control">
+                                <option value="0">::Select::</option>
+                            </select>
+                        </div>
+
+                    }
+                }
+
+                <div class="form-group">
+                    <div class="row">
+                        <div class="col">
+                            <button type="reset" class="btn btn-warning btn-block">Reset</button>
+                        </div>
+                        <div class="col">
+                            <button type="button" class="btn btn-success btn-block" id="btnSavePESForm">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+            }
+            else
+            {
+                Random rnd = new Random();
+                <h4 class="text-center" style="color:#@rnd.Next(123456,999999)">Service is disabled ! </h4>
+                <h5 class="text-center text-info">Please contact to Admin !</h5>
+            }
+        </div>
+    </div>
+    <div id="imgprev" class="d-none">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">×</span>
+        </button>
+        <div class="img-responsive">
+            <img src="~/images/no-image.png" class="img-thumbnail" id="blah" alt="Images Preview" />
+            <label class="text-center mt-3 bg-warning form-control text-uppercase" id="pimgname">image preview</label>
+        </div>
+    </div>
+</form>
+
+<script>
+    // Add the following code if you want the name of the file appear on select
+    $(".custom-file-input").change(function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+        //$("#pimgname").text(fileName);
+    });
+
+    //for image display
+    function readURL(input) {
+
+        var fileName = $("#" + input).val().split("\\").pop();
+        $("#pimgname").text(fileName);
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+
+        if ($("#" + input)[0].files && $("#" + input)[0].files[0]) {
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                $('#blah').attr('src', e.target.result);
+                mdlA.id = 'imgpr';
+                mdlA.content = $("#imgprev").html();
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.xlarge);
+                $('.close').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            }
+            reader.readAsDataURL($("#" + input)[0].files[0]);
+        }
+
+    }
+
+    $('input[name="txtPinCodeWithState"]').change(e => PinCodeDetail(e.currentTarget))
+
+    var PinCodeDetail = (sender) => {
+        var pincode = $(sender).val()
+        $.post('/PinCodeDetail', { Pincode: pincode })
+            .done((result) => {
+                _html = `<div class="form-group">
+                                    <label for="txtState"><span class="text-danger h4">*</span> State</label>
+                                    <input type="text" id="txtarea77" class="form-control" value="${result.statename}"  disabled="disabled"/>
+                        </div><div class="form-group">
+                                    <label for="txtCity"><span class="text-danger h4">*</span> District</label>
+                                    <input type="text" id="txtarea78" class="form-control" value="${result.districtname}"  disabled="disabled"/>
+                        </div>`
+                console.log(_html)
+                $(sender).parent().after(_html);
+            });
+    }
+</script>
+
+

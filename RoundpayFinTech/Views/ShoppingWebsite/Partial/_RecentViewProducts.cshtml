@@ -1,0 +1,32 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model List<RecentViewModel>;
+
+<div class="row">
+    @if (Model != null)
+    {
+        @foreach (var item in Model)
+        {
+            <div class="col-6 col-md-2 cus-padding-pro-sec">
+                <div class="product-single">
+                    <div class="product-thumb">
+                        <span class="off">₹ @item.Discount /- off</span>
+                        <a href="GetProductDetails/@item.POSId">
+                            <img class="product-image-photo" src="@item.FrontImage" loading="lazy" alt="@item.FrontImage">
+                        </a>
+                    </div>
+                    <div class="product-title">
+                        <h4>
+                            <a href="GetProductDetails/@item.POSId">@item.ProductName</a>
+                        </h4>
+                    </div><div class="product-price-rating">
+                        <span> ₹ @item.SellingPrice /-</span><del>
+                            ₹ @item.MRP /-
+                        </del>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+
+</div>

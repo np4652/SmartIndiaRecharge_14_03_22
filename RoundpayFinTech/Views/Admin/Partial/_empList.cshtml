@@ -1,0 +1,145 @@
+﻿@model RoundpayFinTech.AppCode.Model.Employee.EmployeeList
+@{
+    int RowCount = 0;
+    int PageNumber = 1;
+    int TopRows = 10;
+}
+@if (Model != null)
+{
+    if (Model.PegeSetting != null)
+    {
+        var pageSetting = Model.PegeSetting;
+        RowCount = pageSetting.Count == null ? 0 : (int)pageSetting.Count;
+        PageNumber = pageSetting.PageNumber;
+        TopRows = pageSetting.TopRows;
+    };
+    @if (Model.Employees != null)
+    {
+        @for (int i = 0; i < Model.Employees.Count; i++)
+        {
+    <tr data-item-id="@Model.Employees[i].EmpID">
+        <th scope="row">@((PageNumber - 1) * TopRows + (i + 1))</th>
+        <td>
+            <div class="btn-group dropup">
+                <a href="#" id="act@(i + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="javascript:void(0)" class="dropdown-item Edit" id="Emp_@i">Edit</a>
+                    <a href="javascript:void(0)" class="dropdown-item assignU">Assign Users</a>
+                    @if (Model.Employees[i].ReportingTo == Model.LoginID)
+                    {
+                        <a href="javascript:void(0)" class="dropdown-item target">Target</a>
+                    }
+                </div>
+            </div>
+
+        </td>
+        <td class="text-nowrap">
+            @Model.Employees[i].Name
+            <small class="text-monospace">[@Html.Raw(Model.Employees[i].Prefix + Model.Employees[i].EmpID)]</small>
+        </td>
+        <td>@Model.Employees[i].MobileNo</td>
+        <td>@Model.Employees[i].EmailID</td>
+        <td class="text-nowrap" data-Role-Id="@Model.Employees[i].EmpRoleID">
+            <span class="fa fa fa-arrow-alt-circle-down" style="cursor:pointer" onclick="ChildPopUp(this,false)"></span>
+            <span class="fa fa fa-arrow-alt-circle-up" style="cursor:pointer" onclick="ChildPopUp(this,true)"></span>
+            @Model.Employees[i].EmpRole
+        </td>
+        <td>@Model.Employees[i].AADHAR</td>
+        <td>@Model.Employees[i].PAN</td>
+        <td>@Model.Employees[i].Address</td>
+        <td>@Model.Employees[i].ReferralBy</td>
+        <td class="text-nowrap" style="min-width:200px" data-ReportiTo-Id="@Model.Employees[i].ReportingTo"><i class="fa fa-edit btnReportingTo"></i> @Model.Employees[i].ReportingToName</td>
+
+        <td class="text-nowrap">
+            @if (ApplicationSetting.IsShowPassword && Model.IsAdmin)
+            {
+                <span class="btn btn-sm btn-outline-danger showpassword" id="showp_@i"><i class="fas fa-low-vision"></i> Show</span>
+            }
+            <span class="btn btn-sm btn-outline-info  resendEmpP" id="Resend_@i"><i class="fa fa-paper-plane"></i> Resend</span>
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isotp_@i" @Html.Raw(Model.Employees[i].IsOtp ? "checked='checked'" : "")>
+                <label for="isotp_@i"></label>
+            </span>
+        </td>
+        <td>
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="isact_@i" @Html.Raw(Model.Employees[i].IsActive ? "checked='checked'" : "")>
+                <label for="isact_@i"></label>
+            </span>
+        </td>
+    </tr>
+        }
+    }
+}
+
+<script>
+    RowCount = @RowCount
+    $('.assignU').unbind().click(e => {
+            let _html = `<div class="row">
+                            <div class="col-sm-12">
+                                <button type="button" class="close" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                                <h5 class="text-info">Assign User</h5><hr />
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtUserMob">User Mobile</label>
+                                    <input type="text" class="form-control" id="txtUserMob" placeholder="Enter user's mobile No" data-Item-Id="${$(e.currentTarget).closest('tr').data().itemId}"/>
+                                </div>
+                                <div class="fomr-group">
+                                    <button class="btn btn-outline-dark" id="btnAssign">Assign</button>
+                                </div>
+                            </div>
+                        </div>`;
+            mdlA.id = "winModel";
+            mdlA.content = _html;
+            mdlA.alert(mdlA.size.default);
+            $('button.close').unbind().click(() => mdlA.dispose());
+            AssignUserToEmp();
+            });
+    $('.btnReportingTo').unbind().click(e => GetEmpByRole($(e.currentTarget)));
+    $('.target').unbind().click(e => {
+        preloader.load();
+        let EmpID = $(e.currentTarget).closest('tr').data().itemId;
+        $.post('/_EmpTarget', { EmpID: EmpID})
+            .done(result => {
+                mdlA.id = "targetModel";
+                mdlA.content = result;
+                mdlA.alert(mdlA.size.large);
+                $('button.close').unbind().click(() => mdlA.dispose());
+                $('#hfEid').val(EmpID);
+            }).fail(xhr => {
+                an.title = "Oops! Error";
+                an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                an.alert(-1);
+            }).always(() => preloader.remove());
+    });
+    var AssignUserToEmp = () => {
+        $('#btnAssign').click(() => {
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($('#btnAssign'), 'Requesting');
+            let param = {
+                EmpID: $('#txtUserMob').data().itemId,
+                mobileNo: $('#txtUserMob').val()
+            };
+            $.post('/AssignUserToEmp', param)
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? "Well done!" : "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == an.type.success) {
+                        mdlA.dispose();
+                    }
+                }).fail(xhr => {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                    an.alert(an.type.error);
+                }).always(() => btnLdr.Stop($('#btnAssign')));
+        });
+    }
+</script>

@@ -1,0 +1,103 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.AffiliatedItem>
+
+
+<div class="row">
+    <div class="col-sm-12">
+        <div class="table-responsive">
+            <table class="table table-bordered">
+                @if (Model.Any())
+                {
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Action</th>
+                            <th>Link</th>
+                            <th>Status</th>
+                            <th>Image</th>
+                            <th>ImageURL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            foreach (var item in Model)
+                            {
+                                <tr data-Item-id="@item.ID">
+                                    <td>@i</td>
+                                    <td>
+                                        <div class="btn-group dropup">
+                                            <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                                            <div class="dropdown-menu" aria-labelledby="act">
+                                                <h6 class="dropdown-header">Action Menu</h6>
+                                                <a href="#" class="dropdown-item btneditItem">Edit</a>
+                                                <a href="#" class="dropdown-item btndeleteItem">Delete</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>@Html.Raw(@item.Link)</td>
+                                    <td>@Html.Raw(@item.IsActive?"<span class='text-monospace text-success'>Active</span>": "<span class='text-monospace text-danger'>Deactive</span>")</td>
+                                    <td>
+                                        @if (item.LinkType == 2)
+                                        {
+                                            <img class="img-fluid" src="~/image/AffiliateItem/@item.VendorID/@item.ImgUrl" />
+                                        }
+                                        else
+                                        {
+                                            <img class="img-fluid" src="~/image/AffiliateItem/@item.VendorID/@item.ImageURL" />
+                                        }
+                                    </td>
+                                    <td>@item.ImageURL</td>
+                                </tr>
+                                i++;
+                            }
+                        }
+                    </tbody>
+                }
+                else
+                {
+                    <tr>
+                        <td>No Data Found</td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(".dropdown-toggle").dropdown();
+    $('.btneditItem').unbind().click(e => {
+        preloader.load();
+        $.post('/AffiliatedItem', { Id: $(e.currentTarget).closest('tr').data().itemId })
+            .done(result => {
+                mdlA.id = "AddItemWin";
+                mdlA.title = "update item";
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.large, () => location.reload(true));
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    });
+
+    $('.btndeleteItem').unbind().click((e) => {
+        var param = {
+            ID: $(e.currentTarget).closest('tr').data().itemId,
+            IsDel: true
+        };
+        $.post('/AddAffiliatedItems', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.error ? 'Oops' : 'Success';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                mdlA.dispose();
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => btnLdr.Stop($('#btnSave')));
+    });
+</script>

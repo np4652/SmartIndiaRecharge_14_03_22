@@ -1,0 +1,160 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-info text-monospace">Operator Details</h5><hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    @Html.Label("txtOperatorName", "Operator Name", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtOperatorName", Model.Name, new { @class = "form-control", @placeholder = "Enter Operator Name", @aria_describedby = "opName", @tabindex = 1 })
+                        <div class="input-group-append">
+                            <span class="input-group-text switch switch-sm bg-white align">
+                                <input type="checkbox" class="switch" id="chbIsBBPS" tabindex="2" @Html.Raw(Model.IsBBPS ? "checked='checked'" : "")>
+                                <label for="chbIsBBPS" class="font-weight-bold lbl">Is BBPS</label>
+                            </span>
+                        </div>
+                    </div>
+                    <small id="opName" class="form-text text-muted d-none">Name is mandatory</small>
+                    <input type="hidden" id="hid" value="@Model.OID" class="d-none" />
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtOPID", "Operator Code", new { @class = "lbl" })
+                        @Html.TextBox("txtOperatorCode", Model.OPID, new { @class = "form-control", @placeholder = "Enter Operator Code", @aria_describedby = "opCode", @tabindex = 2 })
+                        <small id="opCode" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlCommType", "Comm Setting Type", new { @class = "lbl" })
+                        <select id="ddlCommType" aria-describedby="bmHelp" tabindex="5" class="custom-select custom-select-md mb3" asp-for="@Model.CommSettingType">
+                            <option value="1">Traditional</option>
+                            <option value="2">Rangewise</option>
+                        </select>
+                        <small id="bmHelp" class="form-text text-muted d-none">Comm Setting Type is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlAllowedChannel", "Allowed Channel", new { @class = "lbl" })
+                        <select id="ddlAllowedChannel" aria-describedby="bmHelp" tabindex="5" class="custom-select custom-select-md mb3" asp-for="@Model.AllowedChannel">
+                            <option value="1">B2B Only</option>
+                            <option value="2">B2C Only</option>
+                            <option value="3">Both</option>
+                            <option value="4">API Only</option>
+                        </select>
+                        <small id="bmHelp" class="form-text text-muted d-none">Allowed Channel is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtLength", " Length", new { @class = "lbl" })
+                        @Html.TextBox("txtLength", Model.Length, new { @class = "form-control", @placeholder = "Enter Length", @aria_describedby = "lenHelp", @tabindex = 3 })
+                        <small id="lenHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtLengthMax", "Max Length", new { @class = "lbl" })
+                        @Html.TextBox("txtLengthMax", Model.LengthMax, new { @class = "form-control", @placeholder = "Enter Max Length", @aria_describedby = "lenHelp", @tabindex = 3 })
+                        <small id="lenHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlOperatorType", "Operator Type", new { @class = "lbl" })
+                        @{
+                            var list = new SelectList(ViewBag.OpTypeMasters, "ID", "OpType");
+                        }
+                        <select id="ddlOperatorType" aria-describedby="opType" tabindex="4" class="custom-select custom-select-md mb3" asp-items="@list" asp-for="@Model.OpType"></select>
+                        <small id="opType" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlBusinessModel", "Business Model", new { @class = "lbl" })
+                        <select id="ddlBusinessModel" aria-describedby="bmHelp" tabindex="5" class="custom-select custom-select-md mb3" asp-for="@Model.BusinessModel">
+                            <option value="P2P">P2P</option>
+                            <option value="P2A">P2A</option>
+                            <option value="RCM">RCM</option>
+                        </select>
+                        <small id="bmHelp" class="form-text text-muted d-none">Method is mandatory</small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtMinimum", "Minimum Value", new { @class = "lbl" })
+                        @Html.TextBox("txtMinimum", Model.Min, new { @class = "form-control", @placeholder = "Enter Minimum Value", @aria_describedby = "minHelp", @tabindex = 6 })
+                        <small id="minHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtMaximum", "Maximum Value", new { @class = "lbl" })
+                        @Html.TextBox("txtMaximum", Model.Max, new { @class = "form-control", @placeholder = "Enter Maximum Value", @aria_describedby = "maxHelp", @tabindex = 7 })
+                        <small id="maxHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtHSNCode", "HSN Code", new { @class = "lbl" })
+                        @Html.TextBox("txtHSNCode", Model.HSNCode, new { @class = "form-control", @placeholder = "Enter HSN Code", @aria_describedby = "hsnHelp", @tabindex = 8 })
+                        <small id="hsnHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtStartwith", "Startwith Value", new { @class = "lbl" })
+                        @Html.TextBox("txtStartwith", Model.StartWith, new { @class = "form-control", @placeholder = "Enter Startwith Value", @aria_describedby = "starHelp", @tabindex = 9 })
+                        <small id="starHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        <label>IsAccountNumeric</label>
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="chbIsAccNumeric" tabindex="11" @Html.Raw(Model.IsAccountNumeric ? "checked='checked'" : "")>
+                            <label for="chbIsAccNumeric" class="font-weight-bold lbl"></label>
+                        </span>
+                    </div>
+                </div>               
+                <div class="form-row">
+                    <div class="col-md form-group">
+                        @Html.Label("txtAccountName", "AccountName", new { @class = "lbl" })
+                        @Html.TextBox("txtAccountName", Model.AccountName, new { @class = "form-control", @placeholder = "Enter AccountName", @aria_describedby = "actNaHelp", @tabindex = 8 })
+                        <small id="actNaHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("txtAccountRemark", "AccountRemark", new { @class = "lbl" })
+                        @Html.TextBox("txtAccountRemark", Model.AccountRemak, new { @class = "form-control", @placeholder = "Enter AccountRemak", @aria_describedby = "actRemHelp", @tabindex = 9 })
+                        <small id="actRemHelp" class="form-text text-muted d-none"></small>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="col-md-3 form-group">
+                        <label>IsBilling Allowed</label>
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="chbIsBilling" tabindex="11" @Html.Raw(Model.IsBilling ? "checked='checked'" : "")>
+                            <label for="chbIsBilling" class="font-weight-bold lbl"></label>
+                        </span>
+                    </div>
+                    <div class="col-md form-group">
+                        @Html.Label("ddlexactness", "EXACTNESS", new { @class = "lbl" })
+                        @{
+                            var Exactlist = new SelectList(ViewBag.GetExactness, "ID", "EXACTNESS");
+                        }
+                        <select id="ddlexactness" aria-describedby="exactness" tabindex="4" class="custom-select custom-select-md mb3" asp-items="@Exactlist" asp-for="@Model.ExactNessID"></select>
+                        <small id="exactness" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label>In Slab</label>
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="chbInSlab" tabindex="11" @Html.Raw(Model.InSlab ? "checked='checked'" : "")>
+                            <label for="chbInSlab" class="font-weight-bold lbl"></label>
+                        </span>
+                    </div>
+                    <div class="col-md-3 form-group">
+                        <label>IsTake CustomerNum</label>
+                        <span class="input-group-text switch switch-sm bg-white align">
+                            <input type="checkbox" class="switch" id="chbIsTakeCustomerNum" tabindex="11" @Html.Raw(Model.IsTakeCustomerNum ? "checked='checked'" : "")>
+                            <label for="chbIsTakeCustomerNum" class="font-weight-bold lbl"></label>
+                        </span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md form-group">
+                        <button type="button" class="btn btn-outline-dark" id="btnOpDetails" tabindex="12">Save Operator Detail</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

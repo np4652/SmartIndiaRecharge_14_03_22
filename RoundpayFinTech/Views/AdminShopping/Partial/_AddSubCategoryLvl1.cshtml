@@ -1,0 +1,122 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ShoppingSubCategoryLvl1
+@{
+
+}
+<div class="row">
+    <div class="col-sm-9">
+        <div class="form-group">
+            Category Name
+            <input type="text" placeholder="Category Name" class="form-control" id="textCategory" value="@Model.SubCategoryName" data-Category-Id="@Model.CategoryID" data-Subcategory-Id="@Model.SubCategoryID" />
+        </div>
+    </div>
+    <div class="col-sm-3">
+        <div class="form-group">
+            &nbsp;&nbsp;
+            <div class="input-group-append">
+                <input type="file" class="form-control d-none" id="fileImage" placeholder="Category Image" accept=".png,.jpeg,.jpg" tabindex="17" />
+                <label for="fileImage" class="btn btn-info" tabindex="17"><i class="fa fa-upload"></i> Image</label>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkActive" @Html.Raw(Model.IsActive ? "checked='checked'" : "") />
+                <label for="chkActive" class="font-weight-bold lbl">IsActive</label>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div class="form-group">
+            <span class="input-group-text switch switch-sm bg-white align ">
+                <input type="checkbox" class="switch" id="chkIsNext" @Html.Raw(Model.IsNextLevelExists ? "checked='checked'" : "") />
+                <label for="chkIsNext" class="font-weight-bold lbl">IsNextLevelExits</label>
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-6">
+            <div class="form-group">
+                &nbsp;&nbsp;
+                <div class="input-group-append">
+                    <input type="file" class="form-control d-none" id="fileImageBanner" placeholder="Category Banner Image" multiple accept=".png,.jpeg,.jpg" tabindex="18" />
+                    <label for="fileImageBanner" class="btn btn-info" tabindex="18"><i class="fa fa-upload"></i> Banner</label>
+                </div>
+            </div>
+        </div>
+    <div class="col-sm-12">
+        <div id="imagePreview"></div>
+    </div>
+    <div class="col-sm-12 text-right">
+        <div class="form-group">
+            <button class="btn btn-outline-success" id="btnSave">@Html.Raw(Model.SubCategoryID == 0 ? "Save" : "Update")</button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#btnSave').click(() => {
+        preloader.load();
+        let cid = $('#textCategory').data().categoryId;
+        let param = {
+            CommonInt: $('#textCategory').data().subcategoryId,
+            CommonInt2: cid,
+            CommonStr: $('#textCategory').val(),
+            CommonBool: $('#chkActive').is(':checked'),
+            CommonBool1: $('#chkIsNext').is(':checked'),
+            CommonStr2:  '',
+            CommonStr3: ''
+        },
+            //$('#fileImage').value()
+            formData = new FormData();
+        if (newFileList.length > 0) {
+            for (let i = 0; i < newFileList.length; i++) {
+                formData.append('file', newFileList[i]);
+            }
+        }
+        formData.append('detail', JSON.stringify(param));
+        $.ajax({
+            type: 'POST',
+            url: '/updatesubCategoryLvl1',
+            processData: false,
+            contentType: false,
+            data: formData,
+            success: result => {
+                preloader.remove();
+                an.title = result.statuscode === an.type.success ? 'Well done' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === an.type.success) {
+                    preloader.remove();
+                    $('span').removeClass('active');
+                    $('#imagePreview').empty();
+                    newFileList = [];
+                    $('.close').button().click();
+                    loadGrid();
+                }
+            },
+            error: xhr => {
+                preloader.remove();
+                console.log(xhr);
+                an.title = 'Oops';
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+            }
+        });
+    });
+
+    (() => {
+        $('#fileImage').change(e => previewImage(e, 'imagePreview'));
+        var id = $('#textCategory').data().subcategoryId;
+        console.log(id);
+        if (id > 0) {
+            preloadedImages(id, 'S1');
+        }
+    })();
+    (() => {
+        $('#fileImageBanner').change(e => previewImage(e, 'imagePreview'));
+        var id = $('#textCategory').data().subcategoryId;
+    
+        if (id > 0) {
+            preloadedImages(id, 'S1Banner');
+        }
+    })();
+</script>

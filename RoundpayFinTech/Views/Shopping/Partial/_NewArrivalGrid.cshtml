@@ -1,0 +1,85 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+@{
+
+}
+@if (Model.Any())
+    {
+        <div class="new_product home1">
+            <div class="rokan-newproduct ">
+                <div class="rokan-product-heading rokan-onsale-heading"><h2>New arrival <span class="sup-title"> Products</span></h2></div>
+                <div class="block-content-new">
+                    <div class="wrap-category">
+                        <div id="carousel-last" class="owl-carousel">
+                            @foreach (var item in Model)
+                            {
+                                <div class="product_row">
+                                    <div class="wp-item">
+                                        <div class="item">
+                                            <div class="popcat-box">
+                                                <div class="wp category-item">
+                                                    <a href="/Shop/Product/@item.ProductDetailID">
+                                                        <img src="~/image/Products/@item.ProductID/@item.ImgUrl" alt="@item.ProductName" />
+                                                    </a>
+                                                </div>
+                                                <div class="category-info">
+                                                    <h3 class="product-name">
+                                                        <a title="@item.ProductName (@item.AdditionalTitle)" href="/Shop/Product/@item.ProductDetailID" class="product-item-link">
+                                                            @item.ProductName (@item.AdditionalTitle)
+                                                        </a>
+                                                    </h3>
+                                                    @*<div class="product-rating">
+                                                        <div class="product-reviews-summary">
+                                                            <div class="rating-summary">
+                                                                <span class="label"><span>Rating:</span></span>
+                                                                <div class="rating-result" title="100%">
+                                                                    <span style="width: 100%"><span><span>100</span>% of <span>100</span></span></span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="reviews-actions">
+                                                                <a class="action view" href="australian-certified-organic-beetroot-500g.html#reviews">
+                                                                    <span>2</span>&nbsp;<span>Reviews</span>
+                                                                </a>
+                                                                <a class="action add" href="australian-certified-organic-beetroot-500g.html#review-form">Add Your Review</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>*@
+                                                    <div class="info-price">
+                                                        <div class="price-box price-final_price" data-role="priceBox" data-product-id="33" data-price-box="product-id-33">
+                                                            <span class="price-container price-final_price tax weee">
+                                                                <span data-price-amount="@item.SellingPrice" data-price-type="finalPrice" class="price-wrapper "><span class="price">&#8377; @item.SellingPrice</span></span>
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+
+<script>
+    jQuery(document).ready(function () {
+        jQuery('#carousel-last').owlCarousel({
+            loop: true,
+            nav: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 3
+                },
+                1000: {
+                    items: 4
+                }
+            }
+        });
+    });
+</script>

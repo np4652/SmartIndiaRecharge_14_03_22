@@ -1,0 +1,81 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model List<WishListResponse>;
+<div class="order-details">
+	<h3>
+		<i aria-hidden="true" class="fa fa-heart"></i>
+		My WishList
+	</h3>
+
+
+	<div class="order-details-inner">
+		<table class="table table-hover" id="cart">
+
+			<thead>
+				<tr>
+					<th style="width:50%">Product</th>
+					<th class="text-center" style="width:22%">Price</th>
+					<th style="width:10%"></th>
+				</tr>
+			</thead>
+
+
+
+			<tbody>
+				@if (Model != null)
+				{
+					@if (Model.Count > 0)
+					{
+						@foreach (var item in Model)
+						{
+							<tr>
+								<td data-th="Product">
+									<div class="row">
+										<div class="col-sm-2 hidden-xs">
+											<img alt="..." class="img-responsive" src="@item.FrontImage">
+										</div><div class="col-sm-10">
+											@if (@item.RemainingStock < 1)
+											{
+												<h4 style="font-size: 11px;font-weight: 500;color: #b53217;">
+													Out Of Stock
+												</h4>
+											}
+											<p>@item.Title</p>
+										</div>
+									</div>
+								</td>
+								<td class="text-center" data-th="Subtotal">₹ @item.SellingPrice</td>
+
+								<td class="actions" data-th="">
+									<button class="btn btn-info btn-sm" onclick="WishListToCart('@item.POSId','@item.WishListID')" title="Add to Cart">
+										<i class="icon_bag_alt"></i>
+									</button>
+									<button class="btn btn-danger btn-sm" onclick="removeItemFromWishList('@item.POSId','@item.WishListID')" title="Remove from WishList">
+										<i class="fa fa-trash-o"></i>
+									</button>
+								</td>
+
+							</tr>
+						}
+					}
+					else
+					{
+						<tr>
+							<td colspan="3">No data found</td>
+						</tr>
+					}
+
+				}
+
+			</tbody>
+		</table>
+		<div class="cart-update text-center mt-3">
+			<a class="btn-common" href="#">CONTINUE SHOPPING</a>
+		</div>
+
+	</div>
+</div>
+
+
+
+
+

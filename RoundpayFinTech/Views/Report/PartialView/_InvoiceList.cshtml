@@ -1,0 +1,78 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using Fintech.AppCode.StaticModel
+@using Fintech.AppCode.Configuration
+@model InvoiceListModel
+
+@{
+    var counter = 1;
+}
+
+@if (Model != null)
+{
+    foreach (var item in Model.invoiceDetails)
+    {
+        <tr>
+            <th class="align-middle">@counter</th>
+            <th class="align-middle">@item.InvoiceID</th>
+            <td class="align-middle">@item.InvoiceMonth</td>
+            <td class="align-middle">
+                <a class="md-2 btn btn-outline-info" href="Invoice/Operatorwise?m=@Model.MobileNo&mth=@item.InvoiceMonth" target="_blank">Operator Wise <i class="fas fa-download"></i></a>
+                <a class="md-2 btn btn-outline-info" href="Invoice/Servicewise?m=@Model.MobileNo&mth=@item.InvoiceMonth" target="_blank">Service Wise <i class="fas fa-download"></i></a>
+                <a class="md-2 btn btn-outline-info" href="Invoice/Surcharge?m=@Model.MobileNo&mth=@item.InvoiceMonth" target="_blank">Surcharge <i class="fas fa-download"></i></a>
+                <a class="md-2 btn btn-outline-info" href="Invoice/Summary?m=@Model.MobileNo&mth=@item.InvoiceMonth" target="_blank">SUMMARY <i class="fas fa-download"></i></a>
+                <a class="md-2 btn btn-outline-info" href="Invoice/DebitNote?m=@Model.MobileNo&mth=@item.InvoiceMonth" target="_blank">Debit Note <i class="fas fa-download"></i></a>
+               
+                @if (!Model.IsAdmin)
+                {
+                    @if (string.IsNullOrEmpty(item.InvoiceURL) || item.UploadStatus.In(DocVerifyType.NOTUPLOADED, DocVerifyType.REJECTED))
+                    {
+                        <input type='file' id="dimageUpload_@counter" class="d-none" />
+                        <label for="dimageUpload_@counter" class="btn btn-outline-secondary mt-2">Upload Invoice <i class="fas fa-upload"></i></label>
+                    }
+                    else if (item.UploadStatus == DocVerifyType.NOTVERIFIED)
+                    {
+                        <span class="md-2 btn btn-secondary">Screening <i class="fas fa-chalkboard-teacher"></i></span>
+                    }
+                    else
+                    {
+                        <a class="md-2 btn btn-outline-success" href="/Doc/Invoice/@item.InvoiceURL" target="_blank">Verified <i class="fas fa-eye"></i></a>
+                    }
+                }
+            </td>
+            @if (!Model.IsAdmin)
+            {
+                <td class="align-middle">
+                    @{
+                        var cls = "badge-dark";
+                        if (item.UploadStatus == DocVerifyType.REJECTED)
+                        {
+                            cls = "badge-danger";
+                        }
+                        else if (item.UploadStatus == DocVerifyType.NOTVERIFIED)
+                        {
+                            cls = "badge-info";
+                        }
+                        else if (item.UploadStatus == DocVerifyType.VERIFIED)
+                        {
+                            cls = "badge-success";
+                        }
+                        var UStatus = DocVerifyType.DicDocVerify[item.UploadStatus];
+                        <span class="badge @cls cursor-pointer" data-toggle="tooltip" data-placement="top" title="Remark: @item.Remark">@UStatus</span>
+                    }
+                </td>
+            }
+        </tr>
+        counter = counter + 1;
+    }
+}
+else
+{
+    <tr>
+        <td colspan="4" rowspan="2">
+            <center>No Record Found</center>
+        </td>
+
+    </tr>
+}
+
+

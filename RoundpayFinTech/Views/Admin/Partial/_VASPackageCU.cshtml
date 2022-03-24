@@ -1,0 +1,68 @@
+﻿@model Fintech.AppCode.Model.SlabMaster
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-info">Package Master</h5><hr />
+    <div class="form-group">
+        <label class="lbl" for="txtSlabName">PakageName</label>
+        <div class="input-group">
+            <input aria-describedby="slbNameHelp" style="text-align: start; font-size: 1rem !important; padding: 0.3rem 0.3rem !important; " class="form-control" id="txtSlabName" name="txtSlabName" placeholder="Enter Package Name" tabindex="1" type="text" value="@Model.Slab">
+            <div class="input-group-append">
+                @if (Model.IsDefault == true)
+                {
+                    <span class="input-group-text switch switch-sm bg-white align">
+                        <label class="font-weight-bold lbl">Default</label>
+                    </span>
+                }
+            </div>
+        </div>
+        <small id="slbNameHelp" class="form-text text-muted d-none"></small>
+        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+    </div>
+    <div class="form-group">
+        <label class="lbl" for="txtPkgCost">Package Cost</label>
+        <input aria-describedby="pcHelp" class="form-control" style="text-align: start; font-size: 1rem !important; padding: 0.3rem 0.3rem !important; " id="txtPkgCost" placeholder="Enter Package Cost" type="text" value="@Model.PackageCost">
+        <small id="pcHelp" class="form-text text-muted d-none"></small>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6">
+            <label class="lbl" for="txtValidityInDays">Validity In Days</label>
+            <input aria-describedby="lVIDHelp" class="form-control" style="text-align: start; font-size: 1rem !important; padding: 0.3rem 0.3rem !important; " id="txtValidityInDays" placeholder="Enter Days In No." type="text" value="@Model.ValidityInDays">
+            <small id="lVIDHelp" class="form-text text-muted d-none"></small>
+        </div>
+        <div class="col-sm-6 ">
+            <label class="lbl" for="txtDailyHit">Daily Hit</label>
+            <input aria-describedby="lDHHelp" class="form-control" style="text-align: start; font-size: 1rem !important; padding: 0.3rem 0.3rem !important; " id="txtDailyHit" placeholder="Enter Hit In No." type="text" value="@Model.DailyHitCount">
+            <small id="lDHHelp" class="form-text text-muted d-none"></small>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="lbl" for="txtRemark">Enter Remark</label>
+        <textarea aria-describedby="remHelp" class="form-control" style="text-align: start; font-size: 1rem !important; padding: 0.3rem 0.3rem !important; " id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text">@Model.Remark</textarea>
+        <small id="remHelp" class="form-text text-muted d-none"></small>
+    </div>
+
+
+    <div class="form-group row">
+        <div class="col-sm-6 input-group-append">
+            <span class="input-group-text switch switch-sm bg-white align">
+                <input type="checkbox" class="switch" id="chbIsActive" checked="@Model.IsActive">
+                <label for="chbIsActive" class="font-weight-bold lbl">Is Active</label>
+            </span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-8">
+            <button class="btn btn-dark" id="btnSlbSave" tabindex="5">Save</button>
+            <button class="btn btn-danger" id="mdlCancel" tabindex="6">Cancel</button>
+        </div>
+    </div>
+</div>
+<script>
+    $('#txtPkgCost,#txtDailyHit,#txtValidityInDays').keypress(function (e) {
+        let charCode = (e.which) ? e.which : event.keyCode
+        if (String.fromCharCode(charCode).match(/[^0-9]/g))
+            return false;
+    });
+</script>

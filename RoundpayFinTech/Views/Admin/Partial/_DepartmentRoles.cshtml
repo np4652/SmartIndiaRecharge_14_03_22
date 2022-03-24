@@ -1,0 +1,32 @@
+﻿@using RoundpayFinTech.AppCode.Model.DepartmentModel;
+@model IEnumerable<DepartmentRole>
+@{int i = 1; }
+@foreach (var item in Model)
+{
+<tr data-item-id="@item.ID" data-id="@item.DepartmentID">
+    <td>@i</td>
+    <td>
+        <div class="btn-group dropup">
+            <a href="#" id="act_@i" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+            <div class="dropdown-menu" aria-labelledby="act">
+                <h6 class="dropdown-header">Action Menu</h6>
+                <a href="#" class="dropdown-item" id="succcess_@i"><i class="far fa-check-circle"></i> Edit</a>
+                <a href="#" class="dropdown-item" id="asdmnu_@i"><i class="fas fa-bars"></i> Assign Menu</a>
+                @if (ApplicationSetting.IsSocialAlert)
+                {
+                   
+               <a href="#" class="dropdown-item" id="sendernummapping_@i"><i class="fas fa-map-signs"></i> Sender Number Mapping</a>
+                   
+                }
+                
+            </div>
+        </div>
+    </td>
+    <td>@item.DepartmentName</td>
+    <td>@item.Name</td>
+    <th>@item.Prefix</th>
+    <td>@item.Remark</td>
+    <td>@item.ModifyDate</td>    
+</tr>
+    i++;
+}

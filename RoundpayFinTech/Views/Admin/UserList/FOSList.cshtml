@@ -1,0 +1,562 @@
+﻿@using Fintech.AppCode.StaticModel
+@using RoundpayFinTech.AppCode.StaticModel
+@model UserListModel;
+@{
+    ViewData["Title"] = "FOS List2";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row sbxU" id="sbxU">
+                            <div class="input-group mb-2 col-md-3" style="display:none">
+                                <select class="form-control" asp-items="@Model.selectListItems" id="ddlRole" aria-describedby="roleHelp">
+                                    <option value="0">:: Choose Role::</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl">Mobile Number</label>
+                                    <input type="text" id="txtSearch" class="form-control" aria-label="Text input with segmented dropdown button" placeholder="Search" value="@Model.SelfMobileNo">
+                                </div>
+                            </div>
+                            <div class="col-md-1 col-sm-1 col-xs-1">
+                                <div class="form-group">
+                                    <label class="text-white" for="btnSearch">btnSearch</label>
+                                    <button type="button" class="btn btn-outline-secondary" id="btnSearch">Search</button>
+                                </div>
+                            </div>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="tblUserList">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Actions</th>
+                                            <th scope="col">OutletName</th>
+                                            <th scope="col">MobileNo</th>
+                                            <th scope="col">Role</th>
+                                            <th class="text-right">@Wallet._Prepaid</th>
+                                            <th class="text-right">@Wallet._PrepaidCapping</th>
+                                            @if (Model.userBalnace.IsUBalance)
+                                            {
+                                                <th class="text-right">@Wallet._Utility</th>
+                                                <th class="text-right">@Wallet._UtilityCapping</th>
+                                            }
+                                            @if (Model.userBalnace.IsBBalance)
+                                            {
+                                                <th class="text-right">@Wallet._Bank</th>
+                                                <th class="text-right">@Wallet._BankCapping</th>
+                                            }
+                                            @if (Model.userBalnace.IsIDBalance)
+                                            {
+                                                <th class="text-right">@Wallet._RegID</th>
+                                                <th class="text-right">@Wallet._RegIDCapping</th>
+                                            }
+                                            @if (Model.userBalnace.IsPacakgeBalance)
+                                            {
+                                                <th class="text-right">@Wallet._Package</th>
+                                                <th class="text-right">@Wallet._PackageCapping</th>
+                                            }
+                                            @if (Model.userBalnace.IsCBalance)
+                                            {
+                                                <th class="text-right">@Wallet._Card</th>
+                                                <th class="text-right">@Wallet._CardCapping</th>
+                                            }
+                                            @if (ApplicationSetting.IsAccountStatement)
+                                            {
+                                                <th class="text-right">OutStanding Balance</th>
+                                            }
+                                            <th scope="col">Slab</th>
+                                            <th scope="col">JoinDate</th>
+                                            <th scope="col">JoinBy</th>
+                                            <th scope="col">IsActive</th>
+                                            <th scope="col">IsOTP</th>
+                                            <th scope="col">KYC Status</th>
+                                            @if (Model.IsAdmin && ApplicationSetting.IsShowPassword)
+                                            {
+                                                <th scope="col">Show Password</th>
+                                            }
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var statuscode = { SUCCESS: 1, ERROR: -1, INFO: 2 }
+        var $v = $validator;
+        $(document).ready(function () {
+            an.autoClose = 5;
+            GetU();
+            $('#btnSearch').click(function () {
+                GetU();
+            });
+            $("#txtSearch").on("keyup", function () {
+                var value = $(this).val().toLowerCase();
+                $('#tblUserList tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                });
+            });
+        });
+        var GetU = function () {
+            preloader.load();
+            var CommonFilter = { Criteria: 0, CriteriaText: '', RoleID: 0, SortByID: false, IsDesc: true };
+            CommonFilter.CriteriaText = $('#sbxU input[type="text"]').val();
+            CommonFilter.SortByID = false;
+            CommonFilter.IsDesc = false;
+            CommonFilter.RoleID = $('#ddlRole').val();
+            CommonFilter.Criteria = $('#ddlCriteria').val();
+            $.ajax({
+                type: 'POST',
+                url: '/FOS_List',
+                contentType: 'application/json',
+                data: JSON.stringify(CommonFilter),
+                success: function (result) {
+                    if (result.length === 2) {
+                        an.title = 'Oops';
+                        an.content = 'No record found for this searching criteria!';
+                        an.alert(an.type.warning);
+                        an.autoClose = 5;
+                    }
+                    $('#__p tbody').html(result);
+                    $('#sbxU input[type="text"]').focus();
+                    $(".dropdown-toggle").dropdown();
+                    $('#tblUserList tr :checkbox').change(function () {
+                        var stsT = 0;
+                        var Is = $(this).is(':checked');
+                        var _this = this;
+                        if (this.id.indexOf('isact') > -1) {
+                            stsT = 1
+                        }
+                        if (this.id.indexOf('isotp') > -1) {
+                            stsT = 2;
+                        }
+                        if (this.id.indexOf('isEcol') > -1) {
+                            stsT = 3;
+                        }
+                        if (stsT == 1 || stsT == 2) {
+                            preloader.load();
+                            $.post('/ToggleStatus', { ID: $(this).closest('tr').data().itemId, type: stsT }, function (result) {
+                                resultReload(result);
+                                if (result.statuscode == 1) {
+                                    var nm = $($(_this).closest('tr').find('td')[1]).html();
+                                    if (result.msg.indexOf('{User}')) {
+                                        result.msg = result.msg.replace('{User}', '<mark>' + nm + '</mark>');
+                                        result.statuscode = Is ? statuscode.SUCCESS : statuscode.INFO;
+                                    }
+                                }
+                                an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                an.autoClose = 5;
+                                if (result.statuscode == -1) {
+                                    $(_this).attr('checked', Is == false);
+                                }
+                            }).catch(function () {
+                                console.clear();
+                            }).fail(function (xhr) {
+                                $(_this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                        }
+                        else if (stsT == 3) {
+                            var uid = $(this).closest('tr').data().itemId;
+                            ToggleColSts(uid);
+                        }
+                    });
+                    $('tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($(this).text() === "Fund Transfer") {
+                            preloader.load();
+                            var itemID = $(this).closest('tr').data().itemId;
+                            var nam = $($(this).closest('tr').find('td')[1]).html();
+                            var mob = $($(this).closest('tr').find('td')[2]).html();
+                            var commsn = $($(this).closest('tr').find('td')[7]).find('[type="hidden"]').val();
+                            var cSelctr = $(this);
+                            $.post('/F-T', { pid: 0, uid: itemID}, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'mymodal';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.options.keyboard = false;
+                                mdlA.alert(mdlA.size.default);
+                                $('[name="options"]').on('change', function () {
+                                    var bType = $(this).data().btype;
+                                    var lbltxt = $(this).data().text;
+                                    $('#btnBType').val(bType);
+                                });
+                                $('#spnNam').html(nam);
+                                $('#spnMob').html(mob);
+                                var amt = $('#txtAmount');
+                                var comm = $('#txtCommission');
+                                if (comm.val()==0)
+                                comm.val(commsn);
+                                var amtCom = $('#txtAmount,#txtCommission');
+                                var ttl = 0;
+                                setTimeout(function () {
+                                    amt.focus();
+                                }, 350);
+                                var tamt = $('#spnRup');
+                                var oType = 0;
+                                var remk = $('#txtRemark');
+                                var stk = $('#txtSecKey');
+                                var btnT = $('#bT');
+                                var btnTxt = btnT.html();
+                                var wt = 1;
+                                $('#btnGroup').click(function () {
+                                    $(this).find('.btn').toggleClass('active');
+                                    if ($(this).find('.btn-dark').length > 0) {
+                                        $(this).find('.btn').toggleClass('btn-dark');
+                                    }
+                                    if ($(this).find('.btn-outline-dark').length > 0) {
+                                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                                    }
+                                    amt.focus();
+                                    if ($('#btnGroup.btn-toggle').find('.btn.active').text() === 'Credit') {
+                                        comm.removeAttr('disabled').val(0);
+                                        $('#spnT').html('Transferable');
+                                        btnT.html('Transfer');
+                                        oType = 0;
+                                    } else {
+                                        oType = 1;
+                                        btnT.html('Deduct');
+                                        comm.attr('disabled', 'true').val(0);
+                                        $('#spnT').html('Deductible');
+                                    }
+                                    btnTxt = btnT.html();
+                                });
+                                $('#btnGroupUType').click(function () {
+                                    $(this).find('.btn').toggleClass('active');
+                                    if ($(this).find('.btn-dark').length > 0) {
+                                        $(this).find('.btn').toggleClass('btn-dark');
+                                    }
+                                    if ($(this).find('.btn-outline-dark').length > 0) {
+                                        $(this).find('.btn').toggleClass('btn-outline-dark');
+                                    }
+                                    amt.focus();
+                                    btnTxt = btnT.html();
+                                });
+                                amtCom.on('keyup', function () {
+                                    if (!$v.$IsNum(amt.val())) {
+                                        amt.val(0);
+                                    }
+                                    var am = parseInt(amt.val());
+                                    amt.val(am);
+                                    var cm = comm.val();
+                                    try {
+                                        cm = cm.split('.').length - 1 > 1 ? parseFloat(cm) : cm;
+                                        if (cm.split('.').length - 1 == 1) {
+                                            cm = cm.split('.')[0] == '' ? 0 + cm : cm;
+                                            cm = cm.split('.')[1] == '' ? cm + 0 : cm;
+                                            cm = $v.$numOnly(cm.split('.')[0]) + '.' + $v.$numOnly(cm.split('.')[1]);
+                                            cm = cm;
+                                        } else {
+                                            cm = $v.$numOnly(parseInt(cm));
+                                        }
+                                    } catch (e) {
+
+                                    }
+                                    cm = cm == '' || cm == null ? '0' : cm;
+                                    comm.val(cm);
+                                    ttl = (parseFloat(cm) !== 0 ? (am + (am * parseFloat(cm) / 100)) : am);
+                                    tt2 = am;  
+                                    tamt.text(ttl);
+                                });
+                                $('button.close span,#mdlCancel').click(function () {
+                                    mdlA.dispose();
+                                });
+                                an.autoClose = 5;
+                                btnT.click(function () {
+                                    if (btnTxt !== btnT.html())
+                                        return false;
+                                    btnLdr.addClass = 'btn-dark';
+                                    btnLdr.removeClass = 'btn-outline-dark';
+                                    btnLdr.Start(btnT, oType === 0 ? 'Transfering...' : 'Deducting...');
+                                    if (ttl < 1) {
+                                        an.title = 'Info';
+                                        an.content = 'Enter amount!!!';
+                                        an.alert(an.type.info);
+                                        btnLdr.Stop(btnT);
+                                        return false;
+                                    }
+                                    wt = parseInt($('#btnBType').val());
+                                    var isMC = $('#chbIsMarkCredit').is(':checked');
+                                    var FundProcessReq = { UserID: itemID, Amount: tt2, OType: oType, Remark: remk.val(), WalletType: wt,  SecurityKey: stk.val() , IsMarkCredit: isMC }
+                                    preloader.load();
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/FT',
+                                        dataType: 'json',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(FundProcessReq),
+                                        success: function (result) {
+                                            resultReload(result);
+                                            an.autoClose = 5;
+                                            if (result.statuscode === -1) {
+                                                an.title = 'Oops';
+                                                an.content = result.msg;
+                                                an.alert(an.type.failed);
+                                            } else {
+                                                an.title = oType === 0 ? 'Transfered' : 'Deducted';
+                                                an.content = result.msg.replace('{User}', '<b>' + nam + '</b>');
+                                                an.alert(oType === 0 ? an.type.success : an.type.info);
+                                                try {
+                                                    $(cSelctr.closest('tr').find('td')[4]).html((oType === 0 ? (parseFloat($(cSelctr.closest('tr').find('td')[4]).html()) + ttl) : (parseFloat($(cSelctr.closest('tr').find('td')[4]).html()) - ttl)));
+                                                } catch (e) {
+                                                    console.log(e)
+                                                }
+                                                mdlA.dispose();
+                                            }
+                                        },
+                                        statusCode: {
+                                            500: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Server error';
+                                                an.alert(an.type.failed);
+                                            },
+                                            0: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Internet Connection was broken';
+                                                an.alert(an.type.failed);
+                                            }
+                                        },
+                                        error: function (result) {
+                                            an.title = 'Oops';
+                                            an.content = 'An error occured!';
+                                            an.alert(an.type.failed);
+                                        },
+                                        complete: function () {
+                                            btnLdr.Stop(btnT);
+                                            preloader.remove();
+                                        }
+                                    });
+                                });
+                            }).fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });;
+                            return false;
+                        }
+                        else if ($(this).text() === "Services Assigned") {
+                            preloader.load();
+                            var userID = $(this).attr('name');
+
+                            $.post('/ServiceAssigned', { UserId: userID }, function (result) {
+                                $('#' + an.id).remove();
+                                mdlA.id = 'mymodal';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.options.keyboard = false;
+                                mdlA.alert(mdlA.size.default);
+                                $('button.close span,#mdlCancel').click(function () {
+                                    mdlA.dispose();
+                                    preloader.remove();
+                                });
+                                $('[data-toggle="tooltip"]').tooltip();
+
+                                $("#tblService tr :checkbox").change(function () {
+
+                                    var currid = $(this).closest("tr").attr("data-item-id");
+                                    var userid = $(this).attr("name");
+
+                                    var ServiceAssigned = { ID: currid, UserId: userid, LoginID: 0, StatusCode: 0, Status: false }
+                                    preloader.load();
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: '/UpdateServiceAssigned',
+                                        dataType: 'json',
+                                        contentType: 'application/json',
+                                        data: JSON.stringify(ServiceAssigned),
+                                        success: function (result) {
+                                            if (result.statuscode === -1) {
+                                                an.title = 'Oops';
+                                                an.content = result.status;
+                                                an.alert(an.type.failed);
+                                            } else {
+                                                mdlA.anim(100);
+                                                an.title = 'Well Done'
+                                                an.content = result.status;
+                                                an.alert(an.type.success);
+                                                try {
+                                                    $(cSelctr.closest('tr').find('td')[4]).html((oType === 0 ? (parseFloat($(cSelctr.closest('tr').find('td')[4]).html()) + ttl) : (parseFloat($(cSelctr.closest('tr').find('td')[4]).html()) - ttl)));
+                                                } catch (e) {
+                                                    console.log(e)
+                                                }
+                                            }
+                                        },
+                                        statusCode: {
+                                            500: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Server error';
+                                                an.alert(an.type.failed);
+                                            },
+                                            0: function () {
+                                                an.title = 'Oops';
+                                                an.content = 'Internet Connection was broken';
+                                                an.alert(an.type.failed);
+                                            }
+                                        },
+                                        error: function (result) {
+                                            an.title = 'Oops';
+                                            an.content = 'An error occured!';
+                                            an.alert(an.type.failed);
+                                        },
+                                        complete: function () {
+                                            preloader.remove();
+                                        }
+                                    });
+                                });
+
+                            }).fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            }).always(function () {
+                                preloader.remove();
+                            });
+                            return false;
+                        }
+                    });
+                    ShowPas();
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    console.log(result);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        }
+        var ShowPas = function () {
+            $('[id^=showp_]').click(function () {
+                var _this = this;
+                var itemID = $(this).closest('tr').data().itemId;
+                preloader.load();
+                $.post('/ShowPass/'+itemID, function (result) {
+                    resultReload(result);
+                    $($(_this).parent()[0]).html(result);
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+            });
+        }
+
+        function ChildSearch(ctr) {
+            mdlA.dispose();
+            $('#txtSearch').val($(ctr).html());
+            $("#ddlCriteria option[value=1]").attr('selected', 'selected');
+            $('#btnSearch').click();
+        }
+
+
+        var ToggleColSts = (uid) => {
+            preloader.load()
+            $.post('/chng-fos-colsts', { ID: uid }, function (result) {
+                resultReload(result);
+                if (result.statuscode === -1) {
+                    an.title = 'Oops';
+                    an.content = result.status;
+                    an.alert(an.type.failed);
+                } else {
+                    an.title = 'Well Done'
+                    an.content = result.status;
+                    an.alert(an.type.success);
+                    GetU();
+                }
+                
+            }).catch(function () {
+                console.clear();
+            }).fail(function (xhr) {
+
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        }
+
+    </script>
+}

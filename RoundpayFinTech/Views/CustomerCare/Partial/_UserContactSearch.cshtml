@@ -1,0 +1,56 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using Fintech.AppCode.StaticModel
+@model GetWhatsappContactListModel;
+@{ Layout = null;}
+<!-- Messages -->
+
+<div class="card-body" id="_P" style="">
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-responsive-sm">
+            <thead class="bg-tableth">
+                <tr>
+                    <th>#</th>
+
+                    <th>Name</th>
+                    <th>Mobile No</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{int index = 1;}
+                @foreach (var item in Model.GetWhatsappContactList)
+                {
+
+                    <tr>
+                        <td>
+                            @index
+                        </td>
+
+                        <td>
+
+                            @item.UserContact
+
+                        </td>
+
+                        <td>
+
+                            @item.MobileNo
+
+                        </td>
+                        <td>
+                            <button id="btngetcontact@(index)"  onclick="syncUserContact(@item.ID)" class="form-control btn btn-primary getdata" name="1" value="@item.ID">Sync Contact</button>
+                            @*<span class="glyphicon glyphicon-search" style="cursor:pointer" data-onclick="ShowDetails('@item.ID')">fffff</span>*@
+                            @*<a class="form-control" id="getcontact">get contact</a>*@
+                            @*<div >
+                                    Get str
+                                    <a style="display:none" onclick="getValue(this);">@item.ID</a>
+                                </div>*@
+                            @*<a class="form-control" href="@Url.Action("SyncContacts", "CustomerCare", new { userid = item.ID })">Get Contact</a>*@
+                        </td>
+                    </tr>
+                    index++;
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

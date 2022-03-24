@@ -1,0 +1,67 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<APIDetail>
+@{
+    var counter = 0;
+}
+@foreach (var mdl in Model)
+{
+    <tr data-item-id="@mdl.ID">
+        <th style="width:1em;" scope="row">@(counter + 1)</th>
+        <td>@mdl.Name</td>
+        <td class="text-success text-right">0</td>
+        <td class="text-center">
+            <span class="btn btn-outline-success btn-sm" id="btnGetBal_@mdl.ID">Reload</span>
+            <span class="btn btn-info btn-sm" id="btnShowResponse_@mdl.ID">Detail</span>
+        </td>
+    </tr>
+    counter++;
+}
+<script>
+    var GetAPIBalance = function (id,Is) {        
+        var btnGetBal = $('#btnGetBal_' + id);
+        if (btnGetBal.text() == "Reloading")
+            return;
+        btnLdr.addClass = 'btn-dark';
+        btnLdr.removeClass = 'btn-outline-dark';
+        btnLdr.Start(btnGetBal, 'Reloading');
+        $.post('/_APIForBalance', { id })
+            .done(function (result) {
+                resultReload(result);
+                $($('[data-item-id="' + id + '"]').find('td')[1]).html(result.balance);
+                if (Is === true) {
+                    mdlA.content = result.template;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                }
+            }).catch(function (xhr, ex, message) {
+                an.title = 'Oops';
+                an.content = message;
+                an.alert(an.type.failed);
+                an.autoClose = 2;
+            }).fail(function (xhr) {
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                btnLdr.Stop(btnGetBal)
+            });
+    }
+    $('[id^=btnGetBal_]').click(function () {
+        GetAPIBalance($(this).attr('id').split('_')[1],false);
+    });
+    $('[id^=btnGetBal_]').click();
+    $('[id^=btnShowResponse_]').click(function () {
+        GetAPIBalance($(this).attr('id').split('_')[1],true);
+    });
+</script>

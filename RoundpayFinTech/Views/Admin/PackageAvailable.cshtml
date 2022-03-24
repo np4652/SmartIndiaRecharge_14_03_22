@@ -1,0 +1,339 @@
+﻿@model RoundpayFinTech.AppCode.Model.ProcModel.AvailablePackageMaster
+@{
+    ViewData["Title"] = "Package Commission Detail";
+}
+<style>
+    footer {
+        position: fixed;
+        bottom: 0;
+    }
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Commission</li>
+            <li class="breadcrumb-item active">Package-Service Assignment</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-8 text-monospace">
+                                <i class="fas fa-link"></i> Package Commission Details
+                            </div>
+                            <div class="col-sm-4">
+                                <input id="txtSearchSlab" class="form-control text-left " placeholder="Search On List" />
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            darkAnimBtn($('#btnNew'));
+            preloader.load();
+            $.post('/Availabe-Packages', { Id: -1 })
+                .done(function (result) {
+                    resultReload(result);
+                    $('#__p .card-body').html(result);
+                    $("input[id^='chkUpgrade']").change(e => UpgradePackage(-1, e.currentTarget));
+                    $("input[id^='PCom_']").change(e => updateCommmission(e));
+                    $('input[id^="txtComAmt"]').on('blur', function () {
+                        if (event.type == "click" && ($(this).is(':input[id^="txtComAmt"]'))) {
+                            return true;
+                        }
+                        var IstxtComAmt = false;
+                        if ($(this).is(':input[id^="txtComAmt"]')) {
+                            IstxtComAmt = true;
+                        }
+                        var _tid = $(this).attr('id');
+
+                        var PackageId = parseInt(_tid.split('_')[1]);
+                        var comm = $('#txtComAmt_' + PackageId).val();
+                        var hidcomm = $('#hidComAmt_' + PackageId).val();
+                        var dotLen = comm.split('.').length - 1;
+                        var IsE = { comm: (comm.trim() == '' || isNaN(comm) || comm.indexOf(' ') > -1 || dotLen > 1 || dotLen === 0 && !$v.$IsNum(comm)) || (dotLen === 1 && (!$v.$IsNum(comm.split('.')[0]) || !$v.$IsNum(comm.split('.')[1]))) }
+
+                        $v.showErrorFor($('#txtComAmt_' + PackageId), 'Invalid amount.', IsE.comm);
+                        IsE.err = IsE.comm;
+                        if (IsE.err) {
+                            return false;
+                        }
+
+                        if (parseFloat(comm) === parseFloat(hidcomm) && IstxtComAmt) {
+                            return true;
+                        }
+                        var Slab = { PackageId: PackageId, Commission: parseFloat(comm), ActionType: 1 };
+
+                        preloader.load();
+                        $.ajax({
+                            type: 'POST',
+                            url: '/Update-Level-PkgComm',
+                            data: JSON.stringify(Slab),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    $('#ToolTip_' + PackageId).attr('data-original-title', 'Last Modified: Just Now!');
+                                    $('#hidComAmt_' + PackageId).val(comm);
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (xhr, result) {
+                                if (result.responseText.indexOf('login.js') > -1) {
+                                    rel(0);
+                                    return false;
+                                }
+                                an.title = 'Oops';
+                                an.content = 'An error occured!';
+                                an.alert(an.type.failed);
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+
+                    });
+                    $(".dropdown-toggle").dropdown();
+                    an.autoClose = 5;
+                    $("#txtSearchSlab").on("keyup", function () {
+                        var value = $(this).val().toLowerCase();
+                        $('#__p table tbody tr').filter(function () {
+                            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                        });
+                    });
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('[id^="chbService_"]').unbind().change(function () {
+                        var id = $(this).attr('id');
+                        var s = id.split('_')[2];
+                        var Is = $(this).is(':checked');
+                        var lbl = $('label[for="' + this.id + '"]');
+                        preloader.load();
+
+                        $.post('/p-update', { p: $(this).closest('tr').data().itemId, s: s, a: Is }, function (result) {
+                            resultReload(result);
+                            an.title = result.statuscode == -1 ? 'Oops' : Is ? 'Activated' : 'Inactivated';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            an.autoClose = 5;
+                            if (result.statuscode == an.type.failed) {
+                                lbl.addClass('is-invalid');
+                            } else {
+                                lbl.addClass('is-valid');
+                            }
+                        }).catch(function () {
+                            console.clear();
+                        }).fail(function (xhr) {
+                            $(_this).attr('checked', Is == false);
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+                    $('[id^="btnUpgrade_"]').unbind().click(function () {
+                        var pid = $(this).attr('id').split('_')[1];
+                        preloader.load();
+                        $.post('/upgrade-package', { pid}, function (result) {
+                            resultReload(result);
+                            an.title = result.statuscode == -1 ? 'Oops' : 'Wow';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            an.autoClose = 5;
+                        }).catch(function () {
+                        }).fail(function (xhr) {
+                            $(_this).attr('checked', Is == false);
+                            if (xhr.status == 500) {
+                                an.title = 'Oops';
+                                an.content = 'Server error';
+                                an.alert(an.type.failed);
+                            }
+                            if (xhr.status == 0) {
+                                an.title = 'Oops';
+                                an.content = 'Internet Connection was broken';
+                                an.alert(an.type.failed);
+                            }
+                        }).always(function () {
+                            preloader.remove();
+                        });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        });
+        
+     var UpgradePackage = function (UserID, ctrl, PID = 0) {
+             var _sfx = '';
+            if (PID > 0 && ctrl == null) {
+                _sfx = PID;
+            }
+            else {
+                 var id = $(ctrl).attr('id');
+            if (id) {
+                _sfx = id.split('_')[1];
+                }
+            }
+            var chk = $('#chkUpgrade_' + _sfx);
+            $.post('@(ApplicationSetting.IsPackageAllowed? "/UpgradePackage":"/")', { UserID: parseInt(UserID), AvailablePackageId: parseInt(_sfx), IsAvailable: chk.is(':checked') },
+                function (result) {
+                    console.log(result)
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops! Error";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done!";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == -2) {
+                        $('body').append(`<input type="hidden" value="${parseInt(_sfx)}" id="hfdPID"/>`);
+                        $('body').append(`<input type="hidden" value="${parseInt(UserID)}" id="hfdUID"/>`);
+                        $('#UpgradePackageWin').remove();
+                        let IsGatewayAllowed = $('#hfdGatewayAllowed').val();
+                       let _html=`<div class="row text-center">
+                                      <div class="col-md-12 mb-3">
+                                          <button type="button" class="close pull-right" aria-label="Close">
+                                              <span aria-hidden="true">&times;</span>
+                                          </button>
+                                      </div>
+                                      <div class="col-sm-12 mt-2 mb-2">
+                                        <img src="/Image/iconMsg/9.png"/>
+                                      </div>
+                                      <div class="col-sm-12 text-danger">
+                                           <h5> ${result.msg}</h5>
+                                      </div>
+                                      <div class="col-sm-12">
+                                        <a class="btn btn-outline-info" href="${IsGatewayAllowed==1?`/addmoney?reqmoney=${result.commonStr}`:`/fund-request`}" target="_blank">Add Money</a>
+                                      </div>
+                                  </div>`
+                        mdlA.id = "MoneySufficeint";
+                        mdlA.content = _html;
+                        mdlA.alert(mdlA.size.large);
+                        $('button.close').click(() => mdlA.dispose());
+                    }
+                }).catch(function () {
+                    console.clear();
+                }).fail(function (xhr) {
+                    $(_this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                }).always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var updateCommmission = e => {
+            var element = $(e.currentTarget)
+            var param = {
+                Commission: element.val(),
+                PackageId: element.closest('tr').data().itemId,
+                ActionType: 1
+            };
+              $.ajax({
+                            type: 'POST',
+                            url: '/Update-Level-PkgComm',
+                            data: JSON.stringify(param),
+                            dataType: 'json',
+                            contentType: 'application/json',
+                            success: function (result) {
+                                resultReload(result);
+                                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                an.content = result.msg;
+                                an.alert(result.statuscode);
+                                if (result.statuscode == an.type.success) {
+                                    $('#ToolTip_' + PackageId).attr('data-original-title', 'Last Modified: Just Now!');
+                                    $('#hidComAmt_' + PackageId).val(comm);
+                                }
+                            },
+                            statusCode: {
+                                500: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                },
+                                0: function () {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            },
+                            error: function (xhr, result) {
+                                if (result.responseText.indexOf('login.js') > -1) {
+                                    rel(0);
+                                    return false;
+                                }
+                                an.title = 'Oops';
+                                an.content = 'An error occured!';
+                                an.alert(an.type.failed);
+                            },
+                            complete: function () {
+                                preloader.remove();
+                            }
+                        });
+        };
+    </script>
+}

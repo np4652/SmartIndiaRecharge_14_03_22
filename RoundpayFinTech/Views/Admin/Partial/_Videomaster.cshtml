@@ -1,0 +1,32 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<Video>
+@{
+    var counter = 0;
+}
+@foreach (var mdl in Model)
+{
+    <tr data-item-id="@mdl.ID">
+        <th style="width:1em;" scope="row">@(counter + 1)</th>
+        <td style="width:5em;">
+            <div class="btn-group dropup">
+                <a href="#" id="act@(counter + 1)" class="btn btn-outline-dark btn-sm btn-block dropdown-toggle" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expaned="false"></a>
+                <div class="dropdown-menu" aria-labelledby="act">
+                    <h6 class="dropdown-header">Action Menu</h6>
+                    <a href="#Remove@(counter + 1)" class="dropdown-item">Remove</a>
+                </div>
+            </div>
+        </td>
+        @*<td class="">
+
+           
+                <div class="col-md-4">
+                    <button type="button" class="btn btn-sm btn-outline-primary" title="" data-toggle="tooltip" id="btnStsCheck_@counter"><i class="fas fa-eye"></i></button>
+                </div>
+            
+        </td>*@
+    <td style="text-align:center">@Html.Raw(@mdl.URL)</td>
+        <td style="width:6em">@mdl.Title</td>
+
+    </tr>
+    counter++;
+}

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.WebNotification>
+@if (Model.Any())
+{
+    int counter = 1;
+    foreach (var item in Model)
+    {
+        <tr data-Notification-Id="@item.ID">
+            <td><span class="pr-2"><input type="checkbox" class="chkSelect"/></span>@counter</td>
+            <td>@item.UserMobileNo</td>
+            <td>@item.Title</td>
+            <td>@item.Notification</td>
+            <td class="text-center">                
+                @Html.Raw(item.IsSeen ? "<i class='fa fa-check-circle text-success'></i>" : "<i class='fa fa-times-circle text-danger'></i>")
+            </td>
+            <td>
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch isActive" id="chbIsActive_@item.ID" @Html.Raw(item.IsActive ? "checked=checked" : "") />
+                    <label for="chbIsActive_@item.ID" class="font-weight-bold lbl"></label>
+                </span>
+            </td>
+            <td>@item.EntryDate</td>
+        </tr>
+        counter++;
+    }
+}
+
+<script>
+    $('.switch.isActive').unbind().click(e => {
+        let _ele = $(e.currentTarget);
+        let param = {
+            id: _ele.closest('tr').data().notificationId,
+            IsActive: _ele.is(':checked')
+        };
+        $.post('/DeactiveNotification', param)
+            .done(result => {
+                an.id = "alert1";
+                an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+                an.content = result.msg;
+                an.alert(result.statuscode)
+            });
+    });
+
+    $('.chkSelect').click(() => {
+        if ($('.chkSelect:checked').length > 0) {
+            $('#btnGroupAction').removeClass('d-none');
+        }
+        else {
+            $('#btnGroupAction').addClass('d-none');
+        }
+    });
+</script>

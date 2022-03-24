@@ -1,0 +1,46 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<Fintech.AppCode.Model.PincodeDetail>
+@{int i = 0; }
+@foreach (var item in Model)
+{
+    <tr data-item-id="@item.ID">
+        <th style="width:1em;" scope="row">@(i + 1)</th>
+
+        <td style="width:15em;">
+            @Html.DisplayFor(modelItem => item.Pincode)
+
+        </td>
+        <td style="width:15em;">
+            @Html.DisplayFor(modelItem => item.Area)
+
+        </td>
+        <td style="width:10em;">
+            <div class="form-inline">
+                @Html.TextBoxFor(modelItem => item.ReachInHour, new { @id = "txthour" + i, @class = "form-control text-center ReachInHour", @placeholder = "0.0", @style = "width:6em", @aria_describedby = "helphour_" + i })
+                @Html.HiddenFor(modelItem => item.ID, new { @id = "hidhour" + i, @class = "form-control text-center", @placeholder = "0.0", @style = "width:4em" })
+            </div>
+            <small id="helpOPID_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%"></small>
+        </td>
+        <td>
+            <div class="form-inline">
+                <input type="text" value="@item.ExpectedDeliverInDays" id="txtdays_@item.ID" class="form-control expectedDelivery" />
+            </div>
+        </td>
+        <td>
+            <div class="form-inline">
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch IsDeliveryOff" id="sts_@item.ID" @Html.Raw(item.IsDeliveryOff?"checked='checked'":"")/>
+                    <label for="sts_@item.ID"></label>
+                </span>
+            </div>
+        </td>
+    </tr>
+    i++;
+}
+
+<script>
+    $('.ReachInHour,.expectedDelivery').numeric({
+        numericType: "number",
+        maxLength: 3
+    });
+</script>

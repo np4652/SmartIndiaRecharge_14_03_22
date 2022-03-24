@@ -1,0 +1,54 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorOptional>
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4><span class="text-muted text-info" id="LblOpName"></span></h4><hr />
+        <div class="form-group">
+            <label class="lbl">Option Type</label>
+            <select id="ddloption" aria-describedby="Helpopltype" tabindex="5" class="custom-select custom-select-md mb3" onchange="ChangeType(this)">
+                @foreach (var item in Model)
+                {
+                    <option value="@(item.OID+"__"+item.DisplayName+"__"+item.Remark+"__"+item.OptionalType)">Option@(item.OptionalType)</option>
+                }
+            </select>
+            <small id="Helpopltype" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <label class="lbl">Display Name</label>
+            <input type="text" id="txtdisplayname" aria-describedby="namehelp" value="@Model.First().DisplayName" class="form-control" />
+            <small id="namehelp" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <label class="lbl">Remark/Description</label>
+            <textarea id="txtremark" aria-describedby="remarkHelp" class="form-control" value="">@Model.First().Remark</textarea>
+            <small id="remarkHelp" class="form-text text-muted"></small>
+        </div>
+        <button class="btn btn-outline-dark" id="btnSubmit">Submit</button>
+        <button class="btn btn-outline-dark @Html.Raw(Model.First().OID==-1?"d-none":"")" id="btnDelete">Delete</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+</div>
+<script>
+    $('#btnDelete').click(() => {
+        var param = {
+            OID: $('#ddloption').val().split('__')[0],
+            OptionType: $('#ddloption').val().split('__')[3],
+        };
+        $.post('/DeleteOperatorOption', param)
+            .done(result => {
+                an.title = result.statuscode == an.type.success ? 'Well done : ' : 'Oops : ';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode == an.type.success) {
+                    mdlA.dispose();
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error'
+                an.alert(an.type.failed);
+            })
+    })
+</script>

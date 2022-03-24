@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @ViewData["CName"]</title>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+
+    </environment>
+    <environment exclude="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.min.css" />
+    </environment>
+    <style type="text/css">
+        table > tbody > tr > td > h3, .h3 {
+            font-size: 16px;
+            margin-top: 4px;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+        table > tbody > tr > td > p {
+            margin-bottom: 0;
+        }
+
+        .format {
+            font-family: Bookman Old Style;
+            font-size: 15px;
+        }
+
+        @@page {
+            size: A4;
+            margin: 0.07;
+        }
+
+        @@media print {
+            html, body {
+                width: 210mm;
+                height: 297mm;
+            }
+        }
+    </style>
+</head>
+<body>  
+    <div class="container ">
+        <div id="alertmsg"></div>
+        @RenderBody()        
+    </div>
+
+    <environment include="Development">
+        <script src="~/lib/jquery/dist/jquery.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/lib/jquery/dist/jquery.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+    </environment>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

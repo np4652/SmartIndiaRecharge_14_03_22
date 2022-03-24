@@ -1,0 +1,206 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProceedToPay
+@{
+    Layout = "/Views/Shared/_LayoutShopping.cshtml";
+    decimal totalMrp = 0;
+    decimal totalDis = 0;
+    decimal totalSP = 0;
+}
+
+<main id="maincontent" class="page-main container single_product">
+    <div class="page-title-wrapper">
+        <h1 class="page-title">
+            <span class="base" data-ui-id="page-title-wrapper">Shopping Cart</span>
+        </h1>
+    </div>
+    <div class="cart column">
+        @if (Model != null)
+        {
+            <div class="row">
+                <div class="col-lg-9 col-md-9 col=sm-12">
+                    <div class="cart table-wrapper">
+                        <table id="shopping-cart-table" class="cart items data table">
+                            <caption role="heading" aria-level="2" class="table-caption">Shopping Cart Items</caption>
+                            <thead>
+                                <tr>
+                                    <th class="col item" scope="col"><span>Product name</span></th>
+                                    <th class="col price" scope="col"><span>MRP</span></th>
+                                    <th class="col price" scope="col"><span>Discount</span></th>
+                                    <th class="col price" scope="col"><span>SP</span></th>
+                                    <th class="col qty" scope="col"><span>Qty</span></th>
+                                    <th class="col subtotal" scope="col"><span>Subtotal</span></th>
+                                    <th class="col actions" scope="col"><span>Action</span></th>
+                                </tr>
+                            </thead>
+                            <tbody class="cart item">
+                                @foreach (var item in Model.CartDetails)
+                                {
+                                    totalMrp += item.MRP * item.Quantity;
+                                    totalDis += item.Discount * item.Quantity;
+                                    totalSP += item.SellingPrice * item.Quantity;
+
+
+                                    <tr class="item-info" data-id="@item.ID" , data-pdid="@item.ProductDetailID">
+                                        <td data-th="Item" class="col item">
+                                            <a href="/Shop/Product/@item.ProductDetailID" title="@item.ProductName" tabindex="-1" class="product-item-photo">
+                                                <span class="product-image-container product-image-container-91020514662" style="width: 90px;">
+                                                    <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                        <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+                                                    </span>
+                                                </span>
+                                            </a>
+                                            <div class="product-item-details">
+                                                <strong class="product-item-name">
+                                                    <a href="/Shop/Product/@item.ProductDetailID">@item.ProductName</a>
+                                                </strong>
+                                            </div>
+                                        </td>
+                                        <td class="col price">
+                                            <span class="price-excluding-tax">
+                                                <span class="cart-price">
+                                                    <span class="price">@item.MRP</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td class="col price">
+                                            <span class="price-excluding-tax">
+                                                <span class="cart-price">
+                                                    <span class="price">@item.Discount</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td class="col price">
+                                            <span class="price-excluding-tax">
+                                                <span class="cart-price">
+                                                    <span class="price">@item.SellingPrice</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td class="col qty" data-th="Qty">
+                                            <div class="field qty">
+                                                <label class="label" for="cart-2624-qty">
+                                                    <span>Qty</span>
+                                                </label>
+                                                <div class="control qty">
+                                                    <a class="qty-down-fixed-onclick-page-cart" href="#"><i class="ion ion-ios-minus-empty"></i></a>
+                                                    <input id="qty_@item.ProductDetailID" name="qty_@item.ProductDetailID" value="@item.Quantity" type="number" size="4" title="Qty" class="input-text qty" maxlength="12" data-validate="{required:true,'validate-greater-than-zero':true}" data-role="qty_@item.ProductDetailID">
+                                                    <a class="qty-up-fixed-onclick-page-cart" href="#"><i class="ion ion-ios-plus-empty"></i></a>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="col subtotal" data-th="Subtotal">
+                                            <span class="price-excluding-tax" data-label="Excl. Tax">
+                                                <span class="cart-price">
+                                                    <span class="price">@(item.SellingPrice * item.Quantity)</span>
+                                                </span>
+                                            </span>
+                                        </td>
+                                        <td colspan="100" class="col action">
+                                            <div class="actions-toolbar">
+                                                <div id="gift-options-cart-item-2624" data-bind="scope:'giftOptionsCartItem-2624'" class="gift-options-cart-item">
+                                                </div>
+                                                @*<a class="action action-edit" href="#" title="Edit item parameters">
+                                                        <span>Edit</span>
+                                                    </a>*@
+                                                <a href="#" title="Remove item" class="action action-delete" data-post="">
+                                                    <span>Remove item </span>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="cart main actions">
+                        <a class="action continue" href="/Shopping" title="Continue Shopping">
+                            <span>Continue Shopping</span>
+                        </a>
+                        <button onclick="" name="update_cart_action" value="empty_cart" title="Clear Shopping Cart" class="action clear" id="empty_cart_button">
+                            <span>Clear Shopping Cart</span>
+                        </button>
+                        <button onclick="" name="update_cart_action" data-cart-item-update="" value="update_qty" title="Update Shopping Cart" class="action update">
+                            <span>Update Shopping Cart</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-3 col=sm-12">
+                    <div class="cart-summary" style="top: 0px;">
+                        <strong class="summary title">Summary</strong>
+                        <div id="cart-totals" class="cart-totals" data-bind="scope:'block-totals'">
+                            <!-- ko template: getTemplate() -->
+                            <div class="table-wrapper" data-bind="blockLoader: isLoading">
+                                <table class="data table totals">
+                                    <caption class="table-caption" data-bind="text: $t('Total')">Total</caption>
+                                    <tbody>
+                                        <tr class="totals sub">
+                                            <th data-bind="i18n: title" class="mark" scope="row">MRP</th>
+                                            <td class="amount">
+                                                <span class="price" data-th="Subtotal">@totalMrp</span>
+                                            </td>
+                                        </tr>
+
+                                        <!-- ko if: ifShowValue() && !ifShowDetails() -->
+                                        <tr class="totals-tax">
+                                            <th data-bind="text: title" class="mark" colspan="1" scope="row">Discount</th>
+                                            <td data-bind="attr: {'data-th': title}" class="amount" data-th="Tax">
+                                                <span class="price" data-bind="text: getValue()">@totalDis</span>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="grand totals">
+                                            <th class="mark" scope="row">
+                                                <strong data-bind="i18n: title">Order Total</strong>
+                                            </th>
+                                            <td data-bind="attr: {'data-th': title}" class="amount" data-th="Order Total">
+                                                <strong><span class="price" data-bind="text: getValue()">@totalSP</span></strong>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <ul class="checkout methods items checkout-methods-items">
+                            <li class="item">
+                                <button type="button" title="Proceed to Checkout" class="action primary checkout">
+                                    <span>Proceed to Checkout</span>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <script>
+                ECommLogin();
+            </script>
+        }
+    </div>
+</main>
+
+<script>
+    jQuery(document).ready(function () {
+        let _model = @Model;
+        if (@Model == null) {
+            ECommLogin();
+        }
+    });
+
+    $('.action-delete').click(e => {
+        $.post('/ECommRemoveItemFromCart', { ID: $(e.currentTarget).closest('tr').data().id, PdId: $(e.currentTarget).closest('tr').data().pdid }).done(result => {
+            anEC.id = 'removeAlert';
+            anEC.title = result.statuscode == anEC.type.success ? 'Well Done' : 'Oops';
+            anEC.content = result.msg;
+            anEC.alert(result.statuscode);
+            if (result.statuscode == anEC.type.success) {
+                CartCount();
+                $(e.currentTarget).closest('tr').remove();
+            }
+        }).fail(xhr => {
+            anEC.title = 'Oops';
+            anEC.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+            anEC.alert(anEC.type.failed);
+        }).always(() => preloader.remove());
+    });
+</script>

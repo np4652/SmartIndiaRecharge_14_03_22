@@ -1,0 +1,66 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.AffiliateVendors>
+@{
+    string Name = string.Empty;
+    int id = 0;
+    bool IsActive = false;
+    if (Model.Any())
+    {
+        foreach (var item in Model)
+        {
+            Name = item.VendorName;
+            id = item.Id;
+     
+            IsActive = item.IsActive;
+        }
+    }
+}
+
+<div class="row">
+    <div class="col-sm-12">
+        <input type="hidden" id="hfid" value="@id" />
+        <div class="form-group">
+            Vendor Name
+            <input type="text" class="form-control" id="txtVendorName" value="@Name" />
+        </div>
+       
+
+        <div class="form-group">
+            <span class="switch switch-sm">
+                <input type="checkbox" class="switch" id="chkStatus" checked="@IsActive" />
+                <label for="chkStatus">IsActive</label>
+            </span>
+        </div>
+        <div class="form-group">
+            <button class="btn btn-outline-success" id="btnSave">SAVE</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    $('#btnSave').click(() => {
+        preloader.load();
+        var param = {
+            Id:$('#hfid').val(),
+            VendorName: $('#txtVendorName').val(),
+            Type: $('#ddlType').val(),
+            IsActive: $('#chkStatus').is(':checked'),
+        }
+        $.post('/update-AffiliateVendor', param)
+            .done(result => {
+                _load();
+                $('button.close').click();
+                an.title = result.statuscode == "1" ? "Success" : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+
+    })
+
+   
+</script>

@@ -1,0 +1,778 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RechargeReportModel
+@{
+    ViewData["Title"] = "Transaction Details";
+}
+@{
+    ViewData["Title"] = "Banner Setting";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="@Html.Raw(ApplicationSetting.IsB2CEnabled?"col-md-3":"col-md-6")" id="__p">
+                <div class="card mt-3">
+                    <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                        <i class="fas fa-link"></i>Website Banner Setting
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div class="mb-1">
+
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:13%">Action</th>
+                                        <th class="text-center">
+                                            <input type='file' id="dimageUpload" class="d-none UploadImage" />
+                                            <label for="dimageUpload" class="btn btn-secondary btn-sm">Upload Website Banner</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="@Html.Raw(ApplicationSetting.IsB2CEnabled?"col-md-3":"col-md-6")" id="__App">
+                <div class="card mt-3">
+                    <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                        <i class="fas fa-link"></i> User Banner Setting
+                    </div>
+
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblAPIOpCode">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:13%">Action</th>
+                                        <th class="text-center">
+                                            <input type='file' id="dimageUploadApp" class="d-none UploadImage" />
+                                            <label for="dimageUploadApp" class="btn btn-secondary btn-sm">Upload User Banner</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (ApplicationSetting.IsB2CEnabled)
+            {
+                <div class="col-md-3">
+                    <div class="card mt-3">
+                        <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                            <span><i class="fas fa-link"></i> B2C</span>
+                            <div class="float-right">
+                                @{
+                                    var Oplist = new SelectList(Model.OpTypes, "ID", "OpType");
+                                }
+                                <select id="ddlOType" class="form-control-sm" asp-items="@Oplist">
+                                    <option value="">:: Operator Type ::</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-responsive-sm" id="__B2C">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th>#</th>
+                                            <th style="width:13%">Action</th>
+                                            <th class="text-center">
+                                                <input type='file' id="imgB2CBanner" class="d-none UploadImage" />
+                                                <label for="imgB2CBanner" class="btn btn-secondary btn-sm">Upload B2C Banner</label>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div class="col-md-3">
+                <div class="card mt-3">
+                    <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                        <span><i class="fas fa-link"></i>Lead Service</span>
+                        <div class="float-right">
+                            @{
+                                var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                            }
+                            <select id="ddlOperator" tabindex="7" class="form-control" asp-items="@listOperator">
+                                <option value="0">:: Select Operator :: </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="__LOID">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:13%">Action</th>
+                                        <th class="text-center">
+                                            <input type='file' id="imgOperator" class="d-none UploadImage" />
+                                            <label for="imgOperator" class="btn btn-secondary btn-sm">Operator Banner</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                        <span><i class="fas fa-link"></i> Refferal Content</span>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="__Refferal">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:13%">Action</th>
+                                        <th class="text-center">
+                                            <input type='file' id="_RefferalContent" class="d-none UploadImage" />
+                                            <label for="_RefferalContent" class="btn btn-secondary btn-sm">Upload Refferal Banner</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                        <span><i class="fas fa-link"></i> Hotel Loader Banner</span>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="__HotelLoadBanner">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th>#</th>
+                                        <th style="width:13%">Action</th>
+                                        <th class="text-center">
+                                            <input type='file' id="_HotelLoaderBanner" class="d-none UploadImage" />
+                                            <label for="_HotelLoaderBanner" class="btn btn-secondary btn-sm">Upload Hotel Loader  Image</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4" id="dvhotel">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white" style="line-height: 33px;">
+                        <span><i class="fas fa-link"></i> Hotel Search Background</span>
+
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="__Hotel">
+                                <thead class="bg-tableth">
+                                    <tr>
+
+
+                                        <th class="text-center">
+                                            <input type='file' id="_HotelSearch" class="d-none UploadImage" />
+                                            <label for="_HotelSearch" class="btn btn-secondary btn-sm">Upload Hotel Search Image</label>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="_Hotel">
+                                        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" id="hotelimage" alt="41.jpg"></div></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            $('.UploadImage').change(function () {
+                var _id = $(this).attr('id');
+                let _url = "";
+                if (_id == "dimageUpload") {
+                    _url = "/upload-web-banner"
+                }
+                if (_id == "dimageUploadApp") {
+                    let _html = `<div class="col-sm-12"><div class="form-group"><input class="form-control" type="text" id="txtbackUrl"/></div><div class="form-group">&emsp;&emsp;&emsp;<button class="btn btn-outline-dark" onclick="uploadImage('${_id}','/upload-banner')">Save</button>&emsp;<button class="btn btn-outline-dark" onclick="uploadImage('${_id}','/upload-banner')">Skip Url</button></div></div></div>`
+                    mdlA.title = "Back URL Setting";
+                    mdlA.content = _html;
+                    mdlA.modal(mdlA.size.small);
+                    return false;
+                }
+                if (_id == "imgB2CBanner") {
+                    _url = "/upload-b2cbanner";
+                }
+                if (_id == "imgOperator") {
+                    _url = "/upload-DTHLeadOperator";
+                }
+                if (_id == "_RefferalContent") {
+                    _url = "/RefferalImageUpload";
+                }
+                if (_id == "_HotelSearch") {
+                    _url = "/HotelSearchImageUpload";
+                    HotelContent();
+                }
+                if (_id == "_HotelLoaderBanner") {
+                    var rowCount = $("#__HotelLoadBanner tr").length;
+                    if (rowCount >= 4) {
+                        an.title = "Oops! Error";
+                        an.content = "Max 3 Banner Allow To Upload.";
+                        an.alert(an.type.failed);;
+                        return;
+                    }
+                    else {
+                        _url = "/LoaderBannerImageUpload";
+                    }
+                }
+                uploadImage(_id, _url);
+            });
+            LoadBanner();
+            LoadUserBanner();
+            HotelLoaderBanner();
+            RefferalContent();
+            LoadOperatorBanner();
+            HotelContent();
+            $('#ddlOType').change(function () {
+                LoadB2CBanner();
+            })
+            $('#ddlOperator').change(function () {
+                LoadOperatorBanner();
+            })
+        });
+        var LoadBanner = function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('/_SiteBannerMaster')
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    $('#_11  button').unbind().click(function () {
+                        var id = $(this).attr('id');
+                        preloader.load();
+                        $.post('/rem-Sitebanr', { id })
+                            .done(function (result) {
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops! Error";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done!";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    LoadBanner();
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var RefferalContent = function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('GetRefferalImage')
+                .done(function (result) {
+
+                    $('#__Refferal tbody').html(result);
+
+                    $('#_111  button').unbind().click(function () {
+
+                        var id = $(this).attr('id');
+                        preloader.load();
+                        $.post('RemoveRefferalImage', { id })
+                            .done(function (result) {
+
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops! Error";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    LoadBanner();
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done!";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    RefferalContent();
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var LoadUserBanner = function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('/_BannerMaster')
+                .done(function (result) {
+                    $('#__App tbody').html(result);
+                    $('#_22 button').unbind().click(function () {
+                        var id = $(this).attr('id');
+                        preloader.load();
+                        $.post('/rem-banr', { id })
+                            .done(function (result) {
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops! Error";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done!";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    LoadUserBanner();
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var LoadB2CBanner = function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('/get-B2CBanner', { opType: $('#ddlOType').val() })
+                .done(function (result) {
+                    $('#__B2C tbody').html(result);
+                    $('#__B2C tbody tr button').unbind().click(function () {
+                        preloader.load();
+                        $.post('/rm-B2Cbanner', { id: $(this).attr('id'), opType: $('#ddlOType').val() })
+                            .done(function (result) {
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops! Error";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done!";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    LoadB2CBanner();
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var LoadOperatorBanner = function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('/get-OperatorBanner', { Name: $('#ddlOperator').val() })
+                .done(function (result) {
+                    $('#__LOID tbody').html(result);
+                    $('#__LOID tbody tr button').unbind().click(function () {
+                        preloader.load();
+                        $.post('/rm-Operatorbanner', { id: $(this).attr('id'), Name: $('#ddlOperator').val() })
+                            .done(function (result) {
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops! Error";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done!";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    LoadOperatorBanner();
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var HotelContent = function () {
+            let x = Math.floor((Math.random() * 10000) + 1);
+            $("#hotelimage").attr("src", "Image/Hotel/41.jpg?" + x);
+        }
+        var HotelLoaderBanner = function () {
+            preloader.load();
+            an.autoClose = 5;
+            $.post('HotelLoaderBannerMaster')
+                .done(function (result) {
+
+                    $('#__HotelLoadBanner tbody').html(result);
+
+                    $('#_41  button').unbind().click(function () {
+
+                        var id = $(this).attr('id');
+                        preloader.load();
+                        $.post('RemHotelLoaderBanner', { id })
+                            .done(function (result) {
+
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = "Oops! Error";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    LoadBanner();
+                                }
+                                else if (result.statuscode == an.type.success) {
+                                    an.title = "Well done!";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    HotelLoaderBanner();
+                                }
+                            })
+                            .catch(function (xhr, e, msg) {
+
+                            })
+                            .fail(function (xhr) {
+                                $(this).attr('checked', Is == false);
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+
+                })
+                .fail(function (xhr) {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        var uploadImage = (_id, _url) => {
+            const regex = /^((ftp|http|https):\/\/)(www.)?(?!.*(ftp|http|https|www.))[a-zA-Z0-9_-]+(\.[a-zA-Z]+)+((\/)[\w#]+)*(\/\w+\?[a-zA-Z0-9_]+=\w+(&[a-zA-Z0-9_]+=\w+)*)?$/gm;
+            var Url = $('#txtbackUrl').val();
+            var formData = new FormData();
+            formData.append('file', $("#" + _id)[0].files[0]);
+            if (_url === "/upload-banner") {
+                if (Url !== '' && !Url.match(regex)) {
+                    an.titl = "Oops!";
+                    an.id = "alert1";
+                    an.content = "Please fill valid url";
+                    an.alert(an.type.failed);
+                    return false;
+                }
+                formData.append('Url', Url);
+            }
+            if (_url === "/upload-b2cbanner") {
+                formData.append('opType', $('#ddlOType').val());
+            }
+            if (_url === "/upload-DTHLeadOperator") {
+                formData.append('Name', $('#ddlOperator').val());
+            }
+            if (_url === "/RefferalImageUpload") {
+                formData.append('opType', $('#ddlOType').val());
+            }
+            $.ajax({
+                type: 'POST',
+                url: _url,
+                processData: false,
+                contentType: false,
+                data: formData,
+                success: function (result) {
+                    if (result.statuscode === -1) {
+                        an.title = 'Oops';
+                        an.content = result.msg;
+                        an.alert(an.type.failed);
+                        mdlA.dispose();
+                    } else {
+                        an.title = 'Success';
+                        an.content = result.msg;
+                        an.alert(an.type.success);
+                        mdlA.dispose();
+                        if (_id == "dimageUpload") {
+                            LoadBanner();
+                        }
+                        else if (_id == "dimageUploadApp") {
+                            LoadUserBanner();
+                        }
+                        else if (_id == "imgB2CBanner") {
+                            LoadB2CBanner();
+                        }
+                        else if (_id == "imgB2CBanner") {
+                            LoadB2CBanner();
+                        }
+
+                        else if (_id == "imgOperator") {
+                            LoadOperatorBanner();
+                        }
+                        else if (_id == "_RefferalContent") {
+                            RefferalContent();
+                        }
+                        else if (_id == "_HotelLoaderBanner") {
+                            HotelLoaderBanner();
+                        }
+                        else if (_id == "_HotelSearch") {
+                            HotelContent();
+                        }
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                    $('.UploadImage').val('');
+                }
+            });
+        };
+        
+    </script>
+}

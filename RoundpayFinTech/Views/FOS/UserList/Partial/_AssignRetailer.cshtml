@@ -1,0 +1,53 @@
+﻿@model UserListModel
+@if (Model != null)
+{
+    @if (Model.userList.userReports != null)
+    {
+        @for (int i = 0; i < Model.userList.userReports.Count; i++)
+        {
+<tr>
+    <th scope="row">@(i + 1)</th>
+    <td>
+        <input type="checkbox" id="@Model.userList.userReports[i].ID" name="childcheck" />
+    </td>
+
+    <td>
+        @Model.userList.userReports[i].OutletName <small class="font-weight-bold text-monospace">
+            [@(Model.userList.userReports[i].Prefix + Model.userList.userReports[i].ID)]
+        </small>
+    </td>
+    <td>@Model.userList.userReports[i].MobileNo</td>
+    <td>
+
+        @Model.userList.userReports[i].Role
+    </td>
+    <td class="text-right">@Model.userList.userReports[i].Balance</td>
+
+    @if (Model.userBalnace.IsUBalance)
+    {
+        <td class="text-right">@Model.userList.userReports[i].UBalance</td>
+
+    }
+
+    <td>@Model.userList.userReports[i].Slab</td>
+    <td>@Model.userList.userReports[i].JoinDate </td>
+    <td>@Model.userList.userReports[i].JoinBy <input type="hidden" value="@Model.userList.userReports[i].CommRate" /></td>
+    <td>@Model.userList.userReports[i].KYCStatus</td>
+    <td>
+        @if (Model.userList.userReports[i].FOSName == string.Empty)
+        {
+            <span>Unassigned</span>
+        }
+        else
+        {
+        @Model.userList.userReports[i].FOSName <small class="font-weight-bold text-monospace">
+            [@(Model.userList.userReports[i].FOSMobile)]
+        </small>
+        }
+    </td>
+
+</tr>
+        }
+    }
+}
+

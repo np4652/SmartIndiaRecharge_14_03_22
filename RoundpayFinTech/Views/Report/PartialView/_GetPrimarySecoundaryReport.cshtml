@@ -1,0 +1,134 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.PSTReport>
+@{
+    int i = 1;
+    double TotalPrimary = 0;
+    double TotalSecoundary = 0;
+    double TotalRecharge = 0;
+    double TotalTransfer = 0;
+    double TotalPayment = 0;
+    double TotalAEPS = 0;
+    double TotalInsurance = 0;
+    double TotalShopping = 0;
+    double TotalEServices = 0;
+    double TotalPSA = 0;
+    double TotalDTHSubscription = 0;
+}
+@if (Model.Any())
+{
+    <table class="table table-bordered table-striped">
+        <thead class="bg-tableth">
+            <tr>
+                <th>#</th>
+                <th>User</th>
+                <th class="text-right text-nowrap">Primary (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Secoundary (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Recharge (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Money Transfer (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Bill Payment (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">AEPS (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Genral Insurance (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Shopping (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Public E-Services (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">PSA Service (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">DTH Subscription (<i class="fas fa-rupee-sign"></i>) </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr data-User-ID="@item.UserID">
+                    <td>@i</td>
+                    <td>
+                        <span class="fa fa-plus-square text-info cursor-pointer moreInfo"></span>
+                        @item.UserName <br />
+                        <small>[@(item.Prefix + item.UserID.ToString() + "/" + item.MobileNo)]</small>
+                    </td>
+                    <td class="text-right">@item.PriAmount</td>
+                    <td class="text-right">@item.SecAmount</td>
+                    <td class="text-right">@item.Recharge</td>
+                    <td class="text-right">@item.MoneyTransfer</td>
+                    <td class="text-right">@item.BillPayment</td>
+                    <td class="text-right">@item.AEPS</td>
+                    <td class="text-right">@item.GenralInsurance</td>
+                    <td class="text-right">@item.Shopping</td>
+                    <td class="text-right">@item.EServices</td>
+                    <td class="text-right">@item.PSAService</td>
+                    <td class="text-right">@item.DTHSubscription</td>
+                </tr>
+                <tr class="childTable"></tr>
+                TotalPrimary += item.PriAmount;
+                TotalSecoundary += item.SecAmount;
+                TotalRecharge += item.Recharge;
+                TotalTransfer += item.MoneyTransfer;
+                TotalPayment += item.BillPayment;
+                TotalAEPS += item.AEPS;
+                TotalInsurance += item.GenralInsurance;
+                TotalShopping += item.Shopping;
+                TotalEServices += item.EServices;
+                TotalPSA += item.PSAService;
+                TotalDTHSubscription += item.DTHSubscription;
+                i++;
+            }
+            <tr>
+                
+                <td colspan="2" class="text-right text-dark">
+                    <strong>Total</strong>
+                </td>
+                <td class="text-right">@TotalPrimary</td>
+                <td class="text-right">@TotalSecoundary</td>
+                <td class="text-right">@TotalRecharge</td>
+                <td class="text-right">@TotalTransfer</td>
+                <td class="text-right">@TotalPayment</td>
+                <td class="text-right">@TotalAEPS</td>
+                <td class="text-right">@TotalInsurance</td>
+                <td class="text-right">@TotalShopping</td>
+                <td class="text-right">@TotalEServices</td>
+                <td class="text-right">@TotalPSA</td>
+                <td class="text-right">@TotalDTHSubscription</td>
+            </tr>
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td class="text-center">No Record Found !</td>
+        </tr>
+    </table>
+}
+<script>
+    (() => {
+        $('.moreInfo').click(e => {
+            if ($(e.currentTarget).attr('class').indexOf('fa-minus-square') != -1) {
+                $('.childTable').addClass('d-none');
+                $('.moreInfo').removeClass('fa-minus-square').addClass('fa-plus-square ');
+                return
+            }
+            if ($(e.currentTarget).closest('tr').next('.childTable').find('table').attr('class') != undefined) {
+                $('.childTable').addClass('d-none');
+                $('.moreInfo').removeClass('fa-minus-square').addClass('fa-plus-square ');
+                $(e.currentTarget).closest('tr').next('.childTable').removeClass('d-none');
+                $(e.currentTarget).toggleClass('fa-plus-square fa-minus-square');
+            }
+            else {
+                var param = {
+                    UserID: $(e.currentTarget).closest('tr').data().userId,
+                    FromDate: $("#dtFromDate").val(),
+                    ToDate: $("#dtToDate").val()
+                };
+                $.post('/PSTDeatilReport', param)
+                    .done(result => {
+                        $('.childTable').addClass('d-none');
+                        $('.moreInfo').removeClass('fa-minus-square').addClass('fa-plus-square ');
+                        $(e.currentTarget).closest('tr').next('.childTable').html('<td colspan="13">' + result + '</td>');
+                        $(e.currentTarget).closest('tr').next('.childTable').removeClass('d-none');
+                        $(e.currentTarget).toggleClass('fa-plus-square fa-minus-square')
+                    })
+                    .always(() => {
+                    });
+            }
+        })
+    })();
+</script>

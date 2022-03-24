@@ -1,0 +1,260 @@
+﻿@{
+    ViewData["Title"] = "Bulk QR Generation";
+}
+
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row line-height-34">
+                            <div class="col-sm-3">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <select id="ddlTop" tabindex="7" class="form-control">
+                                    <option value="50" selected="selected">50</option>
+                                    <option value="100">100</option>
+                                    <option value="500">500</option>
+                                    <option value="1000">1000</option>
+                                    <option value="2000">2000</option>
+                                    <option value="5000">5000</option>
+                                </select>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <select id="ddlCriteria" tabindex="7" class="form-control">
+                                    <option value="-1" selected="selected"> :: Select Criteria :: </option>
+                                    <option value="1">Transaction ID</option>
+                                    <option value="2">Bank RefID</option>
+                                    <option value="3">Mobile No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <div class="input-group">
+                                    <input type="text" id="txtSearch" class="form-control form-control-sm " aria-label="Text input with segmented dropdown button" placeholder="Search">
+                                    <div class="input-group-append btn-group">
+                                        <button type="button" id="btnSearch" class="btn btn-dark text-monospace">Search</button>
+                                        <button type="button" id="btnAskQty" class="btn btn-success text-monospace">Generate</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body" style="">
+                        <div>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-condensed" id="tblQR">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Transaction ID</th>
+                                            <th>Bank Ref ID</th>
+                                            <th>Creation Date</th>
+                                            <th>Assigned To</th>
+                                            <th>Assigned Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="qrGen">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var RowCount = 0;
+        $(document).ready(function () {
+            BindQRData();
+        });
+
+        //$("#txtSearch").on("keyup", function () {
+        //    var value = $(this).val().toLowerCase();
+        //    $('#tblQR tbody tr').filter(function () {
+        //        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        //    });
+        //});
+        $('#btnSearch').on('click', function () {
+            BindQRData();
+        });
+        var BindQRData = (btnID = 1, isPageNavClicked = false) => {
+            var top = $('#ddlTop').val();
+            var fID = $('#ddlCriteria').val();
+            var fText = $('#txtSearch').val();
+            preloader.load();
+            $.post('/get-qr-data', { PageSize: top, PageNo: btnID, FilterID: fID, FilterText: fText })
+                .done(function (result) {
+                    $('#qrGen').html(result);
+                    BindPagination(BindQRData, isPageNavClicked);
+                    $('button[id^=btnDownloads_]').on('click', function () {
+                        var refid = $(this).data().refid;
+                        $.post('/down-qr', { RefID: refid })
+                            .done(function (result) {
+                                resultReload(result);
+                                if (result.statuscode == an.type.failed) {
+                                    an.title = 'Oops! ';
+                                    an.content = result.msg;
+                                    an.alert(an.type.failed);
+                                    return false;
+                                }
+                                var html = `<a id="myAnchor" href="${$$host + '/Report/QRCodeDownloadByAdmin?bri='}${result.commonStr2}&aID=${refid}" download="` + result.commonStr + `_QR"><p id="blQRCode"></p></a>`;
+                                $('body').append(html);
+                                setTimeout(function () {
+                                    $('#blQRCode').trigger('click');
+                                    $('#myAnchor').remove();
+                                    preloader.remove();
+                                }, 1000);
+                                BindQRData();
+                            })
+                            .catch(function (xhr, e, msg) {
+                                an.title = 'Oops';
+                                an.content = 'An error has been occured during request.Reload again!'
+                                an.alert(an.type.failed);
+                            })
+                            .fail(function (xhr) {
+                                if (xhr.status == 500) {
+                                    an.title = 'Oops';
+                                    an.content = 'Server error';
+                                    an.alert(an.type.failed);
+                                }
+                                if (xhr.status == 0) {
+                                    an.title = 'Oops';
+                                    an.content = 'Internet Connection was broken';
+                                    an.alert(an.type.failed);
+                                }
+                            })
+                            .always(function () {
+                                preloader.remove();
+                            });
+                        Q.pagination(BindQRData, isPageNavClicked);
+
+                    });
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        $('#btnAskQty').on('click', function () {
+            mdlA.id = 'qrQtymodel';
+            mdlA.content = `<div class="col-md-12">
+                                                <button type="button" class="close" aria-label="Close">
+                                                <span aria-hidden="true">×</span></button>
+                                                <h5 class="text text-info">Generate Qr</h5><hr/>
+                                                <div class="form-group">
+                                                    <input type="text" placeholder="Enter Numbers..." class="form-control" id="txtQRQty" maxlength="10"/>
+                                                </div>
+                                                <button class="btn btn-outline-dark mr-2" id="btnGenerateQR">Ok</button>
+                                                <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+                                            </div>`;
+            mdlA.options.backdrop = 'static';
+            mdlA.alert(mdlA.size.small);
+            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+            $('#btnGenerateQR').unbind().click(() => GenQRBulk($('#txtQRQty').val()));
+        });
+        var GenQRBulk = QrQty => {
+
+            preloader.load();
+            $.post('/bulk-gen-qr', { Qty: QrQty })
+                .done(function (result) {
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(an.type.success);
+                    mdlA.dispose();
+                    BindQRData(); ``
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        };
+        var BindPagination = (callBack, isPageNavClicked) => {
+            if (!isPageNavClicked) {
+                if ($('#stylePageination').index() === -1) {
+                    $('head').append('<style id="stylePageination">.pagination {display: flex;max-width: 50%;float: right;} .pagination a {color: black;float: left;padding: 8px 16px;text-decoration:none;transition: background-color .3s;} .pagination a.active {background-color: #4CAF50;color:white;} .pagination a:hover:not(.active) {background-color: #ddd;} .pgButtons {max-height:35px;max-width:411.5px;display:inline-block;overflow:hidden;} #prePage,#nextPage{border:1px solid #dee2e6;height:35px;padding-top:3px}</style>');
+
+                    $('table').wrap('<div class="table-responsive" id="tblQRResponsive" style="max-height: calc(100vh - 308.5px);overflow:auto"</div>');
+                    $('#tblQRResponsive').wrap('<div id="content_P0"><div>');
+                    $('#content_P0').append('<div class="pagination"><a href = "#" class="page-item" id="prePage">&laquo;</a><div class="pgButtons"></div><a href="#" class="page-item" id="nextPage">&raquo;</a></div>');
+                }
+
+                let c = RowCount / $('#ddlTop').val();
+                let _btns = '';
+                if (parseInt(c) > 0) {
+                    for (var k = 0; k < c; k++) {
+                        _btns += `<a class="page-link page-item ${k === 0 ? 'active' : ''}" href="#">${k + 1}</a>`
+                    }
+                }
+                $('.pagination .pgButtons').html(_btns);
+                $('.page-item').unbind().click(e => {
+                    if (!isNaN($(e.currentTarget).text())) {
+                        $('.page-item').removeClass('active');
+                        $(e.currentTarget).addClass('active');
+                        callBack($(e.currentTarget).text(), true);
+                    }
+                    else {
+                        let _id = $(e.currentTarget).attr('id');
+                        if (_id === "nextPage") {
+                            $('.page-item.active').next('.page-item').click()
+                        }
+                        if (_id === "prePage") {
+                            $('.page-item.active').prev('.page-item').click()
+                        }
+                    }
+                });
+            }
+            $('table').fixTableHeader();
+        };
+    </script>
+}

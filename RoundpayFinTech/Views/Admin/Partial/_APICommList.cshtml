@@ -1,0 +1,62 @@
+﻿@using Fintech.AppCode.StaticModel
+@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Model;
+@using Fintech.AppCode.Configuration;
+@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode;
+@inject IHttpContextAccessor HttpContextAccessor
+@{
+    ISession _session = HttpContextAccessor.HttpContext.Session;
+    LoginResponse _lr = _session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+    var userML = new UserML(_lr);
+    var IsChannel = (_lr.RoleID == Role.Admin && _lr.LoginTypeID == LoginType.ApplicationUser || userML.IsCustomerCareAuthorised(ActionCodes.AddEditSLAB)) || !_lr.IsAdminDefined;
+}
+@model APIDetailModel
+@{int i = 1; }
+@{
+    IList<string> types = new List<string>();
+    types.Add("<option value=''>:: Operator Type ::</option>");
+}
+@foreach (var item in Model.SlabComs)
+{
+    var ot = item.IsBBPS ? item.OperatorType + "|BBPS" : item.OperatorType;
+    if ((OPTypes.AllowToWhitelabel.Contains(item.OpType) || !Model.IsWLAPIAllowed) || _lr.UserID==1 )
+    // if (Model.IsWLAPIAllowed)
+    {
+        if (!types.Contains("<option value='" + ot + "'>" + ot + "</option>"))
+        {
+            types.Add("<option value='" + ot + "'>" + ot + "</option>");
+        }
+        <tr data-item-id="@item.OID">
+            <th style="width:1em;" scope="row">@i</th>
+            <td style="width:25em;">
+                <input type="hidden" id="hid" value="@item.SlabID" class="d-none" />
+                @Html.DisplayFor(modelItem => item.Operator)
+                <small id="nameHelp_@i" class="form-text text-muted mt-0" style="font-size:70%">@ot</small>
+            </td>
+            <td style="width:20em;">
+                <div class="form-inline">
+                    @Html.TextBoxFor(modelItem => item.Comm, new { @id = "txtComAmt" + i, @class = "form-control text-right", @placeholder = "0.0", @style = "width:5em", @aria_describedby = "helpComAmt_" + i })
+                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                    @Html.HiddenFor(modelItem => item.Comm, new { @id = "hidComAmt" + i, @class = "form-control text-right", @placeholder = "0.0", @style = "width:5em" })
+                </div>
+                <small id="helpComAmt_@i" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+            </td>
+            <td>
+                <div class="btn-group btn-toggle" id="btnGroupComType_@i">
+                    <button class="btn @Html.Raw(item.CommType==0?"btn-dark active":"btn-outline-dark")">COM</button>
+                    <button class="btn  @Html.Raw(item.CommType==1?"btn-dark active":"btn-outline-dark")">SUR</button>
+                </div>
+            </td>
+            <td>
+                <div class="btn-group btn-toggle" id="btnGroupAmtType_@i">
+                    <button class="btn  @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")">PER</button>
+                    <button class="btn @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")">FIX</button>
+                </div>
+            </td>
+        </tr>
+    }
+
+    i++;
+}
+<input type="hidden" id="hidType" value="@Html.Raw(string.Join(",",types))" />

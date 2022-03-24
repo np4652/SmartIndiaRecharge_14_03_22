@@ -1,0 +1,248 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.TargetModel
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close" id="closeEditTarget">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="text-uppercase">
+            Target edit for
+            <span class="text-info">@Model.RoleName</span> for
+            <span class="text-info">@Model.OpName</span>
+        </h5>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    <label class="lbl">Target</label>
+                    <input type="text" class="form-control text-capitalize" id="txtTarget" value="@Model.Target" placeholder=""Enter Target" tabindex="1"/>
+                    <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-6">
+                        <label class="lbl">Commission</label>
+                        <input type="text" class="form-control text-capitalize" id="txtComm" value="@Model.Comm" placeholder="" Enter Commission" tabindex="1" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="lbl">Hike %</label>
+                        <input type="text" class="form-control text-capitalize" id="txtHikePer" value="@Model.HikePer" placeholder="" Enter Commission" tabindex="1" />
+                    </div>
+                </div>
+
+                <div class="row form-group">
+                    <div class="col-md-2">
+                        <div class="btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw("id_"+Model.ID)">
+                            <button class="btn btn-sm @Html.Raw(Model.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                            <button class="btn btn-sm @Html.Raw(Model.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                        </div>
+                    </div>
+                    <div class="col-md-7">
+                        <span class="switch switch-sm">
+                            IsHikeOnEarn
+                            <input type="checkbox" class="switch chkHikeOn" id="chkHikeOn" @Html.Raw(Model.IsHikeOnEarned ? "checked='checked'" : "") />
+                            <label for="chkHikeOn"></label>
+                        </span>
+                        <span class="switch switch-sm">
+                            IsEarn
+                            <input type="checkbox" class="switch chkEarn" id="chkEarn" @Html.Raw(Model.IsEarned ? "checked='checked'" : "") />
+                            <label for="chkEarn"></label>
+                        </span>
+                        <span class="switch switch-sm">
+                            IsGift
+                            <input type="checkbox" class="switch chkGift" id="chkGift" @Html.Raw(Model.IsGift ? "checked='checked'" : "") />
+                            <label for="chkGift"></label>
+                        </span>
+                    </div>
+                    @if (Model.IsGift == true)
+                    {
+                        <div class="col-md-3 img-upload gift-Section" style="padding:0">
+                            <span class="btn btn-sm btn-outline-dark btnShowGift">
+                                <i class="fa fa-eye"></i> SHOW
+                            </span>
+                            <input type="hidden" value="@Model.ImgaePath" />
+                            <input type="file" class="form-control fUpload" id="ReUpload" style="display:none" />
+                            <label for="ReUpload" class="btn btn-sm btn-outline-info">
+                                <span class="fa fa-upload"></span> UPLOAD
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+     var _update = function () {
+         var param = {
+             ID: @Model.ID,
+             OID: @Model.OID,
+             IsAdminDefined: true,
+             SlabID: @Model.SlabID,
+             RoleID: @Model.RoleID,
+             Target: $('#txtTarget').val(),
+             Comm: $('#txtComm').val(),
+             AmtType: $('#EditTarget .btn-toggle .active').text() == 'PER' ? 0 : 1,
+             IsEarned: $('#EditTarget .chkEarn').is(':checked'),
+             IsGift: $('#EditTarget .chkGift').is(':checked'),
+             TargetTypeID:@Model.TargetTypeID,
+             HikePer: $('#txtHikePer').val(),
+             IsHikeOnEarned: $('#EditTarget .chkHikeOn').is(':checked'),
+         };
+         //   if (param.Target > 0 && param.Comm > 0 && param.AmtType >= 0 && (param.IsEarned == true || param.IsGift == true)) {
+        if (param.Target > 0  && param.AmtType >= 0) {
+            $.post('/Target_Edit', { param: param })
+                .done(function (result) {
+                    console.log(result);
+                    if (result.statuscode == 1) {
+                        an.title = 'Success!';
+                        if (result.statuscode == an.type.success)
+                            an.content = result.msg;
+                        an.alert(result.Statuscode);
+                    }
+                    if (result.statuscode == -1) {
+                        an.title = 'Opps!';
+                        if (result.statuscode == an.type.failed)
+                            an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                })
+        }
+    }
+
+    var UploadImg = function (_id) {
+        if ($('#' + _id).val() != "" && $('#' + _id) != undefined) {
+            var fileExtension = ['png', 'jpeg', 'jpg'];
+            var filename = $('#' + _id).val();
+            var extension = filename.replace(/^.*\./, '');
+            if ($.inArray(extension, fileExtension) == -1) {
+                an.title = 'Validation Warning';
+                an.content = "Please select only image files.";
+                an.alert(an.type.failed);
+                $('#' + _id).val('');
+                return false;
+            }
+            var formData = new FormData();
+            var fileName = "Gift_" + @Model.RoleID + "_" + @Model.OID + "_" + @Model.SlabID + "." + filename.split('.')[1];
+            formData.append('file', $('#' + _id)[0].files[0]);
+            formData.append('fileName', fileName);
+            $.ajax({
+                type: "POST",
+                url: "/upload-Gift-Img",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (result) {
+                    if (result.statuscode === -1) {
+                        an.title = 'Oops';
+                        an.content = result.msg;
+                        an.alert(an.type.failed);
+                    }
+                    else {
+                        an.title = 'Success';
+                        an.content = result.msg;
+                        an.alert(an.type.success);
+                        $('#' + _id).val('');
+                        if (_id == "fUpload") {
+                            var _fileName = "Gift_" + @Model.RoleID + "_" + @Model.OID + "_" + @Model.SlabID + "." + filename.split('.')[1];
+                            var _html ='<div class="col-md-3 img-upload" style="padding:0">'
+                                +'<span class="btn btn-sm btn-outline-dark btnShowGift" > '
+                                + '<i class="fa fa-eye"></i> SHOW</span>'
+                                + '<input type="hidden" value="/Image/GiftImage/' + _fileName + '"/>'
+                                + '<input type="file" class="form-control fUpload" id="ReUpload" style="display:none" />'
+                                + '<label for="ReUpload" class="btn btn-sm btn-outline-info">'
+                                + '<span class="fa fa-upload"></span> UPLOAD</label></div>';
+                            $('#fUpload').closest('.row').append(_html);
+                            $('.img-upload')[0].remove();
+                            $('.btnShowGift').click(function () {
+                                showGiftImg(this);
+                            })
+                        }
+                        _update();
+                    }
+                },
+                error: function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                }
+            })
+        }
+    }
+    var showGiftImg = function (sender) {
+        var _src = $($(sender).siblings()[0]).val()
+        var result = '<div class="col-md-12">'
+            + '<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            + '<h5>GIFT <u id="outlateName" class="font-italic text-info"></u></h5>'
+            + '<div class="row text-center"> <div class="col-sm-12">'
+            + '<img src="' + _src + '"/></div></div></div>'
+        $('#' + an.id).remove();
+        mdlA.id = 'showImage';
+        mdlA.content = result;
+        mdlA.options.backdrop = 'static';
+        mdlA.alert(mdlA.size.large);
+        $('#' + mdlA.id).css('background-color', 'rgba(0,0,0,0.5)');
+        $('button.close span').unbind().click(function () {
+            $('#showImage').remove();
+            $('button.close span').click(function () {
+                $('#EditTarget').remove();
+                $('button.close span').click(function () {
+                    mdlA.id = "mymodal";
+                    mdlA.dispose();
+                });
+            });
+        });
+    }
+
+
+    $('#txtTarget,#txtComm,#txtHikePer').on('change', function () {
+        _update();
+    });
+
+    $('.modal input:checkbox').on('change', function () {
+        if ($(this).attr('id') != "chkHikeOn") {
+            $(this).closest('.modal').find($('input:checkbox')).not('#chkHikeOn').removeAttr('checked');
+        }
+        $(this).attr('checked', 'checked')
+        if ($(this).attr('id') == 'chkEarn') {
+            $('#chkGift').prop('checked', false)
+            $('.gift-Section').remove();
+            _update();
+        }
+        if ($(this).attr('id') == 'chkGift') {
+            $('#chkEarn').prop('checked', false)
+            if ($(this).is(':checked') == true && $(this).closest('modal').find('.btnShowGift').index() == -1 && $('#fUpload').index()==-1) {
+                $(this).closest('.row').append('<div class="col-md-2 img-upload">'
+                    + '<input type="file" class="form-control" id="fUpload" style="display:none"/>'
+                    + '<label for="fUpload" class="btn btn-outline-success"><span class="fa fa-upload"></span> UPLOAD IMAGE</label></div>');
+                $('#fUpload').on('change', function () {
+                    UploadImg('fUpload');
+                });
+            }
+        }
+    });
+
+    $('.btn-toggle').on('click', function () {
+        $(this).find('.btn').toggleClass('active');
+        if ($(this).find('.btn-dark').length > 0) {
+            $(this).find('.btn').toggleClass('btn-dark');
+        }
+        if ($(this).find('.btn-outline-dark').length > 0) {
+            $(this).find('.btn').toggleClass('btn-outline-dark');
+        }
+        setTimeout(function () {
+            _update();
+        }, 100)
+    })
+
+    $('.btnShowGift').on('click', function () {
+        showGiftImg(this)
+    })
+
+    $('#ReUpload').on('change', function () {
+        UploadImg('ReUpload');
+    });
+</script>

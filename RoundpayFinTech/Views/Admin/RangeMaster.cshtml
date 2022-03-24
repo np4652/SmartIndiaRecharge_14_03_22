@@ -1,0 +1,265 @@
+﻿@model int
+@{
+    ViewData["Title"] = "Range Master";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                        @if (Model == 1)
+                        {
+                            <div class="float-right">  <button id="btnNew" class="btn btn-default btn-sm ">New</button></div>
+                        }
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="row mb-1 form-group">
+                            <div class="col-md-4 col-sm-4 col-xs-4">
+                                <input id="txtSearch" class="form-control text-left" placeholder="Search" />
+                            </div>
+
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblERR">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        @if (Model == 1)
+                                        {
+                                            <th scope="col">Actions</th>
+                                        }
+                                        <th scope="col">Optype</th>
+                                        <th scope="col">Minimum Range</th>
+                                        <th scope="col">Maximum Range</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var  Model = @Model;;
+        $(document).ready(function () {
+            an.id = 'alretID';
+            an.autoClose = 5;
+            //$('.body-content').removeClass('container').addClass('container-fluid');
+            darkAnimBtn($('#btnNew'));
+            setTimeout(function () {
+                $('#txtSearch').focus();
+                $("#txtSearch").on("keyup", function () {
+                    var value = $(this).val().toLowerCase();
+                    $('#tblERR tbody tr').filter(function () {
+                        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                    });
+                });
+            }, 500);
+
+            loadError();
+        });
+        var loadError = function () {
+            preloader.load();
+            $.post('/Range-Master')
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    if (Model == 1)
+                    {
+                        $(".dropdown-toggle").dropdown();
+                        $('[data-toggle="tooltip"]').tooltip();
+                        an.autoClose = 5;
+                        $('input[id^=txtCode]').on('blur', function () {
+                            preloader.load();
+                            var id = $(this).closest('tr').data().itemId;
+                            var hidCode = $('[data-item-id="' + id + '"] input[id^="hidCode"]').val();
+                            var Code = $('[data-item-id="' + id + '"] input[id^="txtCode"]').val();
+                            var IsE = { orcode: Code.trim().length > 10 };
+                            $v.showErrorFor($('[data-item-id="' + id + '"] input[id^="txtCode"]'), 'Invalid Error Code', IsE.orcode);
+                            IsE.err = IsE.orcode;
+                            if (IsE.err) {
+                                return false;
+                            }
+                            if (Code === hidCode) {
+                                preloader.remove();
+                                return true;
+                            }
+                            $.post('/ErrCode', { ID: id, Code })
+                                .done(function (result) {
+                                    resultReload(result);
+                                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == an.type.success) {
+                                        $('[data-item-id="' + id + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                                        $('[data-item-id="' + id + '"] input[id^="hidCode"]').val(Code);
+                                    }
+                                })
+                                .catch(function (xhr, e, msg) {
+
+                                })
+                                .fail(function (xhr) {
+                                    $(this).attr('checked', Is == false);
+                                    if (xhr.status == 500) {
+                                        an.title = 'Oops';
+                                        an.content = 'Server error';
+                                        an.alert(an.type.failed);
+                                    }
+                                    if (xhr.status == 0) {
+                                        an.title = 'Oops';
+                                        an.content = 'Internet Connection was broken';
+                                        an.alert(an.type.failed);
+                                    }
+                                }).always(function () {
+                                    preloader.remove();
+                                });
+                        });
+                        $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                            var id = 0;
+                            if ($(this).text() === 'Edit' || $(this).text() === 'New') {
+
+                                if ($(this).text() === 'Edit') {
+                                    id = $(this).closest('tr').data().itemId;
+                                }
+                                $.post('/Range-Edit/' + id)
+                                    .done(function (result) {
+                                        resultReload(result);
+                                        mdlA.content = result;
+                                        mdlA.id = 'mymodal';
+                                        mdlA.options.backdrop = 'static';
+                                        mdlA.alert(mdlA.size.default);
+                                        $('button.close span,#mdlCancel').unbind().click(function () {
+                                            mdlA.dispose();
+                                        });
+                                        var ctErr = { hid: $('#hid'), txtMinRange: $('#txtMinRange'), txtMaxRange: $('#txtMaxRange'), ddlOpType: $('#ddlOpType'), btn: $('#btnErrDetails') }
+                                        ctErr.btnTxt = ctErr.btn.html();
+                                        setTimeout(function () {
+                                            ctErr.txtMinRange.focus();
+                                        }, 500);
+                                        $('#btnErrDetails').click(function () {
+                                            if (ctErr.btnTxt !== ctErr.btn.html()) {
+                                                return false;
+                                            }
+                                            btnLdr.addClass = 'btn-dark';
+                                            btnLdr.removeClass = 'btn-outline-dark';
+                                            btnLdr.Start(ctErr.btn, 'Requesting');
+                                            var IsE = { txtMinRange: (ctErr.txtMinRange.val().trim() == '0' || ctErr.txtMinRange.val().trim() == ''), txtMaxRange: (ctErr.txtMaxRange.val().trim() == '0' ||  ctErr.txtMaxRange.val().trim() == '') }
+                                            IsE.err = IsE.txtMinRange || IsE.txtMaxRange;
+                                            $v.showErrorFor(ctErr.txtMinRange, 'Enter Minimum Range .', IsE.txtMinRange);
+                                            $v.showErrorFor(ctErr.txtMaxRange, 'Enter Maximum Range.', IsE.txtMaxRange);
+                                            if (IsE.err) {
+                                                btnLdr.Stop(ctErr.btn);
+                                                return false;
+                                            }
+                                            var EM = { ID: ctErr.hid.val(), MinRange: ctErr.txtMinRange.val(), MaxRange: ctErr.txtMaxRange.val(), OpTypeId: ctErr.ddlOpType.val()}
+                                            preloader.load();
+                                            $.ajax({
+                                                type: 'POST',
+                                                url: '/Range-Edit',
+                                                data: JSON.stringify(EM),
+                                                dataType: 'json',
+                                                contentType: 'application/json',
+                                                success: function (result) {
+                                                    resultReload(result);
+                                                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                                                    an.content = result.msg;
+                                                    an.alert(result.statuscode);
+                                                    btnLdr.Stop(ctErr.btn);
+                                                    if (result.statuscode == an.type.success) {
+                                                        mdlA.dispose();
+                                                        loadError();
+                                                    }
+                                                },
+                                                statusCode: {
+                                                    500: function () {
+                                                        an.title = 'Oops';
+                                                        an.content = 'Server error';
+                                                        an.alert(an.type.failed);
+                                                    },
+                                                    0: function () {
+                                                        an.title = 'Oops';
+                                                        an.content = 'Internet Connection was broken';
+                                                        an.alert(an.type.failed);
+                                                    }
+                                                },
+                                                error: function (xhr, result, msg) {
+                                                    an.title = "Oops";
+                                                    an.content = msg;
+                                                    an.alert(an.type.failed);
+                                                    if (result === 'parsererror') {
+                                                        rel(1);
+                                                    }
+                                                },
+                                                complete: function () {
+                                                    btnLdr.Stop(ctErr.btn);
+                                                    preloader.remove();
+                                                }
+                                            });
+                                        });
+                                    })
+                                    .catch(function (xhr, e, msg) {
+
+                                    })
+                                    .fail(function () {
+                                        $(this).attr('checked', Is == false);
+                                        if (xhr.status == 500) {
+                                            an.title = 'Oops';
+                                            an.content = 'Server error';
+                                            an.alert(an.type.failed);
+                                        }
+                                        if (xhr.status == 0) {
+                                            an.title = 'Oops';
+                                            an.content = 'Internet Connection was broken';
+                                            an.alert(an.type.failed);
+                                        }
+                                    })
+                                    .always(function () {
+                                        preloader.remove();
+                                    });
+                            }
+                        });
+                    }
+                })
+                .catch(function (xhr, e, msg) {
+                })
+                .fail(function () {
+                    $(this).attr('checked', Is == false);
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        function ChangeType(ctr) {
+            var id = $(ctr).val().split('__');
+            $('#txtdisplayname').val(id[1]);
+            $('#txtremark').val(id[2]);
+        }
+    </script>
+}
+

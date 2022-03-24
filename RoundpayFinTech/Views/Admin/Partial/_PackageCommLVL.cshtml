@@ -1,0 +1,56 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model PackageMaster
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5>Commission Detail for @Model.PackageName </h5>
+
+    <div class="table-responsive">
+        <table class="table table-hover" id="tblRSD">
+            <thead class="shadow">
+                <tr>
+                   <th scope="col">RoleWise</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                        <tr>
+                            <td class="align-middle">
+                                <div class="container-fluid">
+                                    <div class="row mr-0">
+                                        @{
+                                            foreach (var item in Model.RoleDetail)
+                                            {
+                                                <div class="col-md">
+                                                    <label class="font-weight-bold text-monospace mb-0">
+                                                        @item.Role
+                                                    </label>
+                                                    <div class="form-inline">
+                                                        @Html.TextBoxFor(modelItem => item.Commission, new { @id = "txtComAmt_" + Model.PackageId + "_" + item.RoleId, @class = "form-control text-right", @placeholder = "0.0", @style = "width:10.8em;border-radius:0px;", @aria_describedby = "helpComAmt_" + Model.PackageId + "_" + item.RoleId })
+
+                                                        <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" id="ToolTip_@Html.Raw(Model.PackageId+"_"+item.RoleId)" data-placement="top" title="Last Modified: @Html.Raw(item.ModifyDate==""?"Not yet":item.ModifyDate)"></i>
+                                                        @Html.HiddenFor(modelItem => item.Commission, new { @id = "hidComAmt_" + Model.PackageId + "_" + item.RoleId, @class = "form-control text-right", @placeholder = "0.0", @style = "width:5em" })
+                                                    </div>
+                                                    <small id="helpComAmt_@Html.Raw(Model.PackageId+"_"+item.RoleId)" class="form-text text-danger mt-0 d-none" style="font-size:70%">error</small>
+                                                    <div class="btn-group btn-toggle" id="btnGroupComType_@Html.Raw(Model.PackageId+"_"+item.RoleId)">
+                                                        <button class="btn btn-sm @Html.Raw(item.CommType==false?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">COM</button>
+                                                        <button class="btn btn-sm @Html.Raw(item.CommType==true?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">SUR</button>
+                                                    </div>
+
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        @if (Model != null)
+        {
+            <input type="hidden" value="@Model.PackageId" id="hid" />
+        }
+    </div>
+</div>

@@ -1,0 +1,79 @@
+﻿@model Fintech.AppCode.Model.SlabModel
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Slab Master</h5>
+
+    <div class="form-group">
+        <label class="lbl" for="txtSlabName"> SlabName</label>
+        @if (Model.IsAdmin)
+        {
+            <div class="input-group">
+                <input aria-describedby="slbNameHelp" class="form-control col-md-12" id="txtSlabName" name="txtSlabName" placeholder="Enter Slab Name" tabindex="1" type="text" value="@Model.slabMaster.Slab">
+                <div class="input-group-append">
+                    <span class="input-group-text switch switch-sm bg-white align">
+                        @if (Model.slabMaster.ID < 1)
+                        {
+                        <select class="form-control-sm" id="ddlSlabType" tabindex="2">
+                            <option value="true">Level</option>
+                            <option value="false">Channel</option>
+                            @if (ApplicationSetting.IsMultiLevel == true)
+                            {
+                        <option value="true">MultiLevel</option>
+                            }
+                        </select>
+                        }
+                        else
+                        {
+                            <u class="text-monospace font-weight-bold">@Html.Raw(Model.slabMaster.IsAdminDefined ? "Level" : "Channel")</u>
+                        }
+
+                    </span>
+                </div>
+            </div>
+        }
+        else
+        {
+            <input aria-describedby="slbNameHelp" class="form-control col-md-12" id="txtSlabName" name="txtSlabName" placeholder="Enter Slab Name" tabindex="1" type="text" value="@Model.slabMaster.Slab">
+        }
+        <small id="slbNameHelp" class="form-text text-muted d-none"></small>
+        <input type="hidden" id="hid" value="@Model.slabMaster.ID" class="d-none" />
+    </div>
+    
+
+    <div class="form-group">
+        <label class="lbl" for="txtRemark">Enter Remark</label>
+        <textarea aria-describedby="remHelp" class="form-control" id="txtRemark" name="txtRemark" placeholder="Enter Remark" tabindex="3" type="text">@Model.slabMaster.Remark</textarea>
+        <small id="remHelp" class="form-text text-muted d-none"></small>
+    </div>
+    <div class="row">
+        @*@if (Model.IsAdmin)
+        {
+            <div class="col-md-4">
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <input type="checkbox" class="switch" id="chbIsReal" tabindex="4" @Html.Raw(Model.slabMaster.IsRealSlab ? "checked='checked'" : "")>
+                    <label for="chbIsReal" class="font-weight-bold lbl">Is Real</label>
+                </span>
+            </div>
+        }*@
+
+        @*@if (Model.IsAdmin || Model.IsWebsite)
+        {*@
+            <div class="col-md-6">
+                <span class="input-group-text switch switch-sm bg-white align">
+                    <input type="checkbox" class="switch" id="chbIsB2B" tabindex="4" @Html.Raw(Model.slabMaster.IsB2B ? "checked='checked'" : "")>
+                    <label for="chbIsB2B" class="font-weight-bold lbl">IsSignUpB2B</label>
+                </span>
+            </div>
+            @*}*@
+        <div class="col-md-2">
+            <button class="btn btn-info btn-sm" id="btnSlbSave" tabindex="5">Save</button>
+        </div>
+        <div class="col-md-2" style="padding-left:0">
+            <button class="btn btn-danger btn-sm " id="mdlCancel" tabindex="6">Cancel</button>
+        </div>
+    </div>
+
+</div>

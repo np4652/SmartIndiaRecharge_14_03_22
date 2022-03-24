@@ -1,0 +1,303 @@
+﻿@using Fintech.AppCode.StaticModel;
+@using RoundpayFinTech.AppCode.Model.Shopping;
+@model RoundpayFinTech.AppCode.Model.Shopping.OrderReport;
+
+
+@{
+    ViewData["Title"] = "Order Report";
+    var category = new SelectList(Model.Category, "CategoryID", "CategoryName");
+    var vendors = new SelectList(Model.Vendors, "vendorsID", "vendorsName");
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2 mb-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-10">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-sm-1">
+                                <div class="form-group">
+                                    Top
+                                    <select class="form-control" id="ddlTop">
+                                        <option>25</option>
+                                        <option>50</option>
+                                        <option>100</option>
+                                        <option>150</option>
+                                        <option>200</option>
+                                        <option>500</option>
+                                        <option>1000</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-sm-2">
+                                <label>Request Mode</label>
+                                <select class="form-control" id="ddlRequestMode">
+                                    <option value="3"> All </option>
+                                    <option value="1"> PANEL </option>
+                                    <option value="2"> APP </option>
+                                    <option value="0"> API </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Status</label>
+                                @{
+                                    var enumData = from OrderStatus e in Enum.GetValues(typeof(OrderStatus))
+                                                   select new
+                                                   {
+                                                       Value = (int)e,
+                                                       Text = e.ToString()
+                                                   };
+                                    var statusList = new SelectList(enumData, "Value", "Text");
+                                }
+                                <select class="form-control" id="ddlStatusList" asp-items="@statusList">
+                                    <option value="0"> All </option>
+                                </select>
+                            </div>
+                            @if (Model.Role == 1)
+                            {
+
+                                <div class="col-sm-3">
+                                    <label>Vendor</label>
+                                    <select class="form-control" id="ddlVendor" asp-items="@vendors">
+                                        <option value="0">:: Select Vendor :: </option>
+                                    </select>
+                                </div>
+                            }
+
+                            <div class="col-sm-3">
+                                <label>Category</label>
+                                <select class="form-control" id="ddlCategory" asp-items="@category">
+                                    <option value="0">:: Select Category :: </option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-sm-3">
+                                <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                <select id="ddlCriteria" tabindex="3" class="form-control">
+                                    <option value="0">:: Select Criteria :: </option>
+                                    <option value="@Criteria.UserID">UserID</option>
+                                    <option value="@Criteria.UserOutletMobile">User Mobile</option>
+                                    <option value="@Criteria.Name">Customer Name</option>
+                                    <option value="@Criteria.CMobileNo">Customer MobileNo</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input class="form-control" id="txtCriteriaText" name="txtCriteriaText" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <span id="btnSearch" tabindex="8" class="btn btn-dark"><i class="fa fa-search"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-12" id="OrdersGrid">
+                                <div class="table-responsive table-sm table-mh">
+                                    <table class="table table-bordered table-striped table-responsive-sm" id="tblOrder">
+                                        <thead class="bg-tableth">
+                                            <tr>
+                                                <th>SrNo</th>
+                                                <th>OrderNo</th>
+                                                <th>Order Date</th>
+                                                <th>ProductCode</th>
+                                                <th>ProductName</th>
+                                                <th>Quantity</th>
+                                                <th class="text-nowrap">MRP</th>
+                                                <th class="text-nowrap">Discount</th>
+                                                <th class="text-nowrap">Selling Price</th>
+                                                <th class="text-nowrap">Shipping Charges</th>
+                                                <th class="text-nowrap">Amount</th>
+                                                <th class="text-nowrap">Comm</th>
+                                                <th class="text-nowrap">GST</th>
+                                                <th class="text-nowrap">TDS</th>
+                                                <th class="text-nowrap">Debit Amount</th>
+                                                @*<th class="text-nowrap">Retail Commission</th>*@
+                                                @if (Model.Role != 3)
+                                                {
+                                                    <th class="text-nowrap">Admin Profit</th>
+                                                    <th class="text-nowrap">Team Commission</th>
+                                                    <th class="text-nowrap">Net Admin Profit</th>
+                                                    <th class="text-nowrap">Vendor</th>
+                                                    <th class="text-nowrap">Vendor Payble</th>
+                                                    <th class="text-nowrap">Is Paid To Vendor</th>
+                                                }
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script type="text/javascript">
+        //var loadGrid = () => {
+        //    preloader.load();
+        //    let param = {
+        //        TopRows: $('#ddlTop').val(),
+        //        MobileNo: $('#txtMobile').val(),
+        //        RequestedMode: $('#ddlRequestMode').val(),
+        //        VendorId: $('#ddlVendor').val(),
+        //        CategoryId: $('#ddlCategory').val(),
+        //        StatusID: $('#ddlStatusList').val(),
+        //        Criteria: $('#ddlCriteria').val(),
+        //        CriteriaText: $('#txtCriteriaText').val(),
+        //        FromDate: $('#dtFromDate').val(),
+        //        ToDate: $('#dtToDate').val()
+        //    };
+        //    $.post('/_OrderReport', param).done(result => $('tbody').html(result)).always(() => preloader.remove());
+        //};
+
+        var loadGrid = function () {
+            preloader.load();
+            let param = {
+                TopRows: $('#ddlTop').val(),
+                MobileNo: $('#txtMobile').val(),
+                RequestedMode: $('#ddlRequestMode').val(),
+                VendorId: $('#ddlVendor').val(),
+                CategoryId: $('#ddlCategory').val(),
+                StatusID: $('#ddlStatusList').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtCriteriaText').val(),
+                FromDate: $('#dtFromDate').val(),
+                ToDate: $('#dtToDate').val()
+            };
+            $.post('/_OrderReport', { req: param })
+                .done(function (result) {
+                    resultReload(result);
+                    $('tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $(".a_modal").click(function () {
+                        var Oid = $(this).attr("name");
+                        $.post('/ShippingDetail-Receipt', { ID: Oid, IsPrint: false }, function (result) {
+                            resultReload(result);
+                            mdlA.id = 'myalert';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.large);
+                            $('#hdnOID').val(Oid);
+                            $('#btnPrint').click(function () {
+                                Oid = $('#hdnOID').val();
+                                var win = window.open(`/ShippingDetailReceipt/?Oid=${Oid}&IsPrint=${true}`, "_blank", "toolbar=0,width=900,height=650,left=0,top=0");
+                                win.focus();
+                            });
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+
+                    });
+                    an.autoClose = 5;
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        };
+
+        (() => {
+            loadGrid();
+            $('#btnSearch').click(() => loadGrid());
+            DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+        })();
+    </script>
+}
+

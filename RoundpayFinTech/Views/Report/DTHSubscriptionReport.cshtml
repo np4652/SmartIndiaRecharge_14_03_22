@@ -1,0 +1,356 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RechargeReportModel
+@{
+    ViewData["Title"] = "DTH Subscriptiion Report";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="row filter-rpt">
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="2000">2000</option>
+                                        <option value="2500">2500</option>
+                                        <option value="3000">3000</option>
+                                        <option value="4000">4000</option>
+                                        <option value="5000">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlStatus">Choose Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="@RechargeRespType.SUCCESS">@RechargeRespType._SUCCESS </option>
+                                        <option value="@RechargeRespType.FAILED">@RechargeRespType._FAILED </option>
+                                        <option value="@RechargeRespType.REFUND">@RechargeRespType._REFUND </option>
+                                        <option value="@RechargeRespType.PENDING">@RechargeRespType._PENDING </option>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <option value="@RechargeRespType.REQUESTSENT">@RechargeRespType._REQUESTSENT </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlBookingStatus">Choose Booking Status</label>
+                                    <select id="ddlBookingStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="1">Requested</option>
+                                        <option value="2">ForwardToEngineer</option>
+                                        <option value="3">Installing</option>
+                                        <option value="4">Completed</option>
+                                        <option value="5">Rejected</option>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <option value="@RechargeRespType.REQUESTSENT">@RechargeRespType._REQUESTSENT </option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            @if (Model.IsAdmin)
+                            {
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlRMode">Choose RequestMode</label>
+                                        <select id="ddlRMode" tabindex="2" class="form-control">
+                                            <option value="0">:: Select RequestMode :: </option>
+                                            <option value="@RequestMode.PANEL">PANEL</option>
+                                            <option value="@RequestMode.APPS">APPS</option>
+                                            @if (Model.IsAdmin || Model.IsAPIUser)
+                                            {
+                                                <option value="@RequestMode.API">API</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-2 col-sm-2 col-xs-2">
+                                    <div class="mb-2">
+                                        <label class="lbl" for="ddlAPI">Choose API</label>
+                                        @{
+                                            var listAPI = new SelectList(Model.RechargeAPI, "ID", "Name");
+                                        }
+                                        <select id="ddlAPI" tabindex="7" class="form-control" asp-items="@listAPI">
+                                            <option value="0">:: Select API :: </option>
+                                        </select>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="dtFromDate">From Date</label>
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")" />
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2" id="asdf">
+                                    <label class="lbl" for="dtToDate">To Date</label>
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value="@DateTime.Now.ToString(" dd MMM yyyy")">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlOpType">Choose OPType</label>
+                                    <select id="ddlOpType" tabindex="2" class="form-control">
+                                        <option value="0">:: Select OPType :: </option>
+                                        <option value="@OPTypes.HDBOX">HD Box</option>
+                                        <option value="@OPTypes.SDBOX">SD Box</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlOperator">Choose Operator</label>
+                                    @{
+                                        var listOperator = new SelectList(Model.Operators, "OID", "Name");
+                                    }
+                                    <select id="ddlOperator" tabindex="7" class="form-control" asp-items="@listOperator">
+                                        <option value="0">:: Select Operator :: </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="3" class="form-control">
+                                        <option value="0">:: Select Criteria :: </option>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <option value="@Criteria.UserID">UserID</option>
+                                            <option value="@Criteria.OutletMobile">Outlet Mobile</option>
+                                            <option value="@Criteria.TID">TID</option>
+                                            <option value="@Criteria.VendorID">Vendor ID</option>
+                                            <option value="@Criteria.LiveID">LiveID</option>
+                                        }
+                                        <option value="@Criteria.CMobileNo">Customer Mobile</option>
+                                        <option value="@Criteria.AccountNo">Account No.</option>
+                                        <option value="@Criteria.TransactionID">Transaction ID</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-2 col-sm-2 col-xs-2">
+                                <div class="mb-2">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearch" class="form-control" id="txtSearch" name="txtSearch" placeholder="Enter Search" tabindex="4" type="text" value="" />
+                                        <div class="input-group-append">
+                                            <span id="btnSearch" tabindex="8" class="btn btn-outline-dark"><i class="fa fa-search"></i></span>
+                                            @*<span class="btn btn-outline-success far fa-file-excel pt-2" style="font-size:20px;" id="btnExport"></span>*@
+                                        </div>
+                                    </div>
+                                    <small id="Small1" class="form-text text-muted d-none"></small>
+                                    <input type="hidden" id="hidTrID" value="" class="d-none" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+
+                                        <th scope="col">TransactionID</th>
+                                        <th scope="col">RequestedDate</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th scope="col">LastModifyOn</th>
+                                        }
+                                        <th scope="col">OutletName</th>
+                                        <th scope="col">Account</th>
+                                        <th scope="col" class="text-right">Opening</th>
+                                        <th scope="col" class="text-right">RequestedAmount</th>
+                                        <th scope="col" class="text-right">Amount</th>
+                                        <th scope="col" class="text-right">Balance</th>
+                                        <th scope="col" class="text-right">Commission</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">BookingStatus</th>
+                                        <th scope="col">CustomerNumber</th>
+                                        <th scope="col">CustomerName</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">PIN</th>
+                                        <th scope="col">PackageName</th>
+                                        <th scope="col">Operator</th>
+                                        @if (Model.IsAdmin || Model.IsAPIUser)
+                                        {
+                                            <th scope="col">API</th>
+                                            <th scope="col">APIRequestID</th>
+                                        }
+                                        <th>LivID</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+    <script src="~/js/datepickerHelper.js"></script>
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                var lastDay_f = new Date(fy, fm + 1, 0);
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                if (fdate > tdate) {
+                    $('#dtToDate').val($('#dtFromDate').val());
+                } else {
+                    if (fy == ty) {
+                        var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                        if (cm == fm) {
+                            if (curDate == fdate && fdate != tdate) {
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            } else if (fdate < curDate) {
+                                curDate = curDate.setDate(curDate.getDate() - 1)
+                                $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                            }
+                        }
+                        else if (tm > fm) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                    }
+                }
+            });
+            var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                $('dp').addClass('d-none');
+                var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                var firstDay_t = new Date(ty, tm, 1);
+
+                var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                if (curDate.toString() == tdate.toString()) {
+                    $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                }
+                else if (fdate > tdate) {
+                    $('#dtFromDate').val($('#dtToDate').val());
+                } else {
+                    if (fy == ty) {
+                        if (tm > fm) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    } else if (fy < ty) {
+                        $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                    }
+                }
+            });
+            $('#ddlCriteria').change(function () {
+                $('label[for=txtSearch]').html("Select Criteria");
+                if ($(this)[0].selectedIndex > 0) {
+                    $('label[for=txtSearch]').html('Enter ' + $('#ddlCriteria :selected').text());
+                }
+            });
+            $("#btnSearch,#btnExport").click(function () {
+                search(this);
+            });
+            $("#btnSearch").click();
+        });
+
+        var search = function (sender) {
+            var RRFilter = {
+                TopRows: $('#ddlTop').val(),
+                Status: $('#ddlStatus').val(),
+                BookingStatus: $('#ddlBookingStatus').val(),
+                RequestModeID: $('#ddlRMode').val(),
+                APIID: $('#ddlAPI').val(),
+                OPTypeID: $('#ddlOpType').val(),
+                OID: $('#ddlOperator').val() != undefined ? $('#ddlOperator').val() : 0,
+                FromDate: $('#dtFromDate').val(),
+                ToDate: $('#dtToDate').val(),
+                Criteria: $('#ddlCriteria').val(),
+                CriteriaText: $('#txtSearch').val(),
+                IsExport: sender.id.indexOf('Export') > -1 || parseInt($('#ddlTop').val()) > 4000 ? true : false,
+            };
+            if (RRFilter.TopRows > 4000 && sender.id.indexOf('Export') < 0) {
+                an.title = 'Exporting to excel';
+                an.content = 'Because you have selected all record!';
+                an.alert(an.type.info);
+                an.autoClose = 10;
+            }
+            if (RRFilter.IsExport) {
+                window.location = "/DTHSubscriptionReport-Excel?" + $.param(RRFilter);
+            } else {
+                preloader.load();
+                $.post('/DTHSubscription-Report', RRFilter)
+                    .done(function (result) {
+                        //  resultReload(result);
+                        $('table tbody').html(result);
+
+                        $(".a_modal").click(function () {
+                            var Serviceid = $(this).data().ispes;
+                            var td = $(this).parent("td");
+                            var tid = $(this).attr("name");
+                            var transid = $(td).find("#lbltid").val();
+                            debugger;
+                            $.post('/DTH-Deatils', { TID: tid }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'myalert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                                $("#lbltranid").text(transid);
+
+                            }).fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+
+                        });
+                    })
+                    .fail(xhr => {
+                        an.id = "alertBox";
+                        an.title = "Oops";
+                        an.content = xhr.status == 0 ? 'Internet connection was broken' : 'Server Error';
+                        an.alert(-1);
+                    }).always(() => preloader.remove());
+            }
+        };
+    </script>
+}
+

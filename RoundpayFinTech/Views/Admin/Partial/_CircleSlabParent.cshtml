@@ -1,0 +1,116 @@
+﻿@model CircleSlabModel
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Circle Commission Setting</h5>
+    <div class="row">
+        <div class="form-group col-md-4">
+            <label class="lbl" for="ddlOperator">Choose Operator</label>
+            @{
+                if (Model != null)
+                {
+                    var Ops = new SelectList(Model.Ops, "OID", "Name");
+                    <select class="form-control" asp-items="Ops" id="ddlOperator"></select>
+                }
+            }
+        </div>
+    </div>
+
+    <div class="row" id="slbParentCircle"></div>
+</div>
+<script>
+    var SlabID = @Model.SlabID;
+    var loadCircleCommission = function () {
+        var OID = $('#ddlOperator').val();
+
+        preloader.load();
+        $.post('/Circle-Slab-Setting', { SlabID, OID }, function (result) {
+            resultReload(result);
+            $('#slbParentCircle').html(result);
+            $('[data-toggle="tooltip"]').tooltip();
+            $('div[id^="btnGroupComType"], div[id^="btnGroupAmtType"]').on('blur click', function () {
+                UpdateCircleCom(this, event);
+            });
+            $('input[id^="txtComAmt"], input[id^="txtRComAmt"]').on('change', function () {
+                UpdateCircleCom(this, event);
+            })
+        }).catch(function () {
+
+        }).fail(function (xhr) {
+            if (xhr.status == 500) {
+                an.title = 'Oops';
+                an.content = 'Server error';
+                an.alert(an.type.failed);
+            }
+            if (xhr.status == 0) {
+                an.title = 'Oops';
+                an.content = 'Internet Connection was broken';
+                an.alert(an.type.failed);
+            }
+        }).always(function () {
+            preloader.remove();
+        });
+    }
+    loadCircleCommission();
+    $('#ddlOperator').change(function () {
+        loadCircleCommission();
+    });
+    var UpdateCircleCom = function (_t, _e) {
+        if (_e.type == "click" && ($(_t).is(':input[id^="txtComAmt"]'))) {
+            return true;
+        }
+        
+        if ($(_t).is(':input[id^="txtComAmt"]')) {
+            IstxtComAmt = true;
+        }
+        var CircleID = $(_t).closest('tr').data().itemId;
+        var SlabID = $('#hidSlabID').val();
+        var OID = $('#hidOID').val();
+
+        var _tid = $(_t).attr('id');
+        var _sfx = '';
+        if (_tid) {
+            _sfx = _tid.substr(_tid.indexOf('_'), _tid.length);
+        }
+
+
+        var roleID = '0';
+        if ($('#IsRole').text().trim() == "RoleWise") {
+            roleID = _tid.split('_').length == 3 ? _tid.split('_')[2] : roleID;
+        }
+
+        var comm = $('[data-item-id="' + CircleID + '"] #txtComAmt' + _sfx).val();
+        var commType = $('[data-item-id="' + CircleID + '"] #btnGroupComType' + _sfx + ' button.active').text()[0];
+        var amtType = $('[data-item-id="' + CircleID + '"] #btnGroupAmtType' + _sfx + ' button.active').text()[0];
+        var Slab = { CircleID, OID: parseInt(OID), SlabID: parseInt(SlabID), Comm: parseFloat(comm), CommType: commType === 'S' ? 1 : 0, AmtType: amtType === 'F' ? 1 : 0 }
+        preloader.load();
+        $.ajax({
+            type: 'POST',
+            url: '/update-circle-slab',
+            data: JSON.stringify(Slab),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                //if (result.statuscode == an.type.success) {
+                //    $('[data-item-id="' + oId + '"] [data-toggle="tooltip"]').attr('data-original-title', 'Last Modified: Just Now!');
+                //    $('[data-item-id="' + oId + '"] input[id^="hidComAmt"]').val(comm);
+                //}
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(an.type.failed);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            },
+            complete: () => preloader.remove()
+        });
+    }
+</script>

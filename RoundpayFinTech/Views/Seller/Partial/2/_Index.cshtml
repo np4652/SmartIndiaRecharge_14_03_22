@@ -1,0 +1,399 @@
+﻿@using RoundpayFinTech.AppCode.Configuration;
+@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model SellerDashboard
+@{
+    string Upline = string.Empty;
+    string UplineContact = string.Empty;
+    string CCContact = string.Empty;
+    bool IsPaymentGatway = ApplicationSetting.IsAddMoneyEnable;
+
+    var ThemeID = ViewData["Theme"] == null ? 1 : Convert.ToInt32(ViewData["Theme"]);
+}
+<style>
+    .popover-list .btn {
+        margin: 0;
+        border-radius: unset;
+        border: none;
+    }
+
+    .popover-header {
+        color: #fff;
+        background-color: #373673;
+    }
+
+    .card-count-left i {
+        color: #fff;
+        font-size: 19px;
+    }
+
+    .card-count-left {
+        width: 50px;
+        height: 50px;
+    }
+
+    .sales-heading {
+        font-size: 21px;
+    }
+</style>
+<input type="hidden" id="hfdGatewayAllowed" value="@Html.Raw(IsPaymentGatway?"1":"0")" />
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left pt-1"><i class="fa fa-home"></i>Seller Dashboard</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid mb-3">
+        <div class="bg-purple row mb-0">
+            <marquee behavior="scroll"><span id="divNews" class="text-white" style="font-size: 18px;"></span></marquee>
+        </div>
+        <div class="mb-3 mt-2">
+            <div class="bg-grey-light grid-margin">
+                <div class="card bg-grey-light card-det-short">
+                    <div class="row">
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-cyan">
+                                <a class="stats-left " href="/RechargeReport">
+                                    <h5>Transaction</h5>
+                                    <h4>History</h4>
+                                </a>
+                                <div class="stats-right border-cyan">
+                                    <label><i class="fas fa-file-alt tx-60 lh-0 txt-cyan op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-red">
+                                <a class="stats-left " href="/UserLedger">
+                                    <h5>Account</h5>
+                                    <h4>Ledger</h4>
+                                </a>
+                                <div class="stats-right border-red">
+                                    <label><i class="fa fa-chart-bar tx-60 lh-0 txt-red op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-yellow">
+                                <a class="stats-left " href="/FundReceiveStatement">
+                                    <h5>Purchase</h5>
+                                    <h4>History</h4>
+                                </a>
+                                <div class="stats-right border-yellow">
+                                    <label><i class="fas fa-shopping-basket tx-60 lh-0 txt-yellow op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-dark">
+                                <a class="stats-left " href="/USalesSummary">
+                                    <h5>Sales</h5>
+                                    <h4>Summary</h4>
+                                </a>
+                                <div class="stats-right border-dark">
+                                    <label><i class="fas fa-book-open tx-60 lh-0 txt-dark op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-green">
+                                <a class="stats-left " href="/UDaybook">
+                                    <h5>Day</h5>
+                                    <h4>Book</h4>
+                                </a>
+                                <div class="stats-right border-green">
+                                    <label><i class="fas fa-book tx-60 lh-0 txt-green op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-blue">
+                                <a class="stats-left " href="/fund-request">
+                                    <h5>Fund</h5>
+                                    <h4>Request</h4>
+                                </a>
+                                <div class="stats-right border-blue">
+                                    <label><i class="fas fa-rupee-sign tx-60 lh-0 txt-blue op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="services-panel mb-4">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <h6>Our Services </h6>
+                        <div class="card-body">
+                            <div class="scrollbar" id="style-3">
+                                <div class="force-overflow">
+                                    <div class="shortcuts">
+                                        @if (Model != null)
+                                        {
+                                            List<string> bindServices = new List<string>();
+                                            for (int i = 0; i < Model.PackageCl.Count; i++)
+                                            {
+                                                if (i == 0)
+                                                {
+                                                    Upline = Model.PackageCl[i].Upline;
+                                                    UplineContact = Model.PackageCl[i].UplineMobile;
+                                                    CCContact = Model.PackageCl[i].CCContact;
+                                                }
+                                                bool IsAllowed = true;
+                                                if (Model.PackageCl[i].IsDisplayService)
+                                                {
+                                                    if (!bindServices.Contains(Model.PackageCl[i].Service))
+                                                    {
+                                                        bindServices.Add(Model.PackageCl[i].Service);
+
+                                                        if (Model.PackageCl[i].SCode == "ECOM" || Model.PackageCl[i].SCode == "SHP")
+                                                        {
+                                                            switch (Model.PackageCl[i].SCode)
+                                                            {
+                                                                case "ECOM":
+                                                                    IsAllowed = ApplicationSetting.IsECommerceAllowed;
+                                                                    break;
+                                                                case "SHP":
+                                                                    IsAllowed = ApplicationSetting.IsShopping;
+                                                                    break;
+                                                            }
+                                                        }
+
+                                                        if (IsAllowed)
+                                                        {
+                                                            <a href="javascript:void(0)" @Html.Raw(Model.PackageCl[i].IsServiceActive ? Model.PackageCl[i].IsActive ? "class='shortcut popover-modal service-link'" : "class='shortcut service-link'" : "class='shortcut' data-toggle='tooltip' data-original-title='Coming Soon!'") data-service-Id="@Model.PackageCl[i].ServiceID" data-Filter-List='@Json.Serialize(Model.PackageCl.Where(x=>x.ParentID==Model.PackageCl[i].ParentID && x.IsDisplayService==true))' data-toggle="popover" data-Is-Addi="@Model.PackageCl[i].IsAdditionalServiceType" data-Is-Active="@Model.PackageCl[i].IsActive" data-item-Object="@Model.PackageCl[i]">
+                                                                <img src="/Image/icon/@ThemeID/@Html.Raw("S"+Model.PackageCl[i].ParentID + ".png")?v=@DateTime.Now.Ticks" class="shortcut-icon img-fluid" />
+                                                                <span class="shortcut-label">@Model.PackageCl[i].Service</span>
+                                                            </a>
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    string _url = "/Service/" + Model.PackageCl[i].ServiceID;
+                                                    string _target = "_self";
+                                                    switch (Model.PackageCl[i].SCode)
+                                                    {
+                                                        case "AFS":
+                                                            _url = "/AffilietedItems";
+                                                            break;
+                                                        case "ECOM":
+                                                            IsAllowed = ApplicationSetting.IsECommerceAllowed;
+                                                            _url = "/Shop";
+                                                            break;
+                                                        case "SHP":
+                                                            IsAllowed = ApplicationSetting.IsShopping;
+                                                            _url = "/Azora";
+                                                            break;
+                                                    }
+                                                    if (Model.PackageCl[i].SCode == "ACCOP")
+                                                    {
+                                                        //AccountOpeningService
+                                                        _url = "/GetAccountOpeningBanner/" + Model.PackageCl[i].ServiceID;
+                                                        <a @Html.Raw(Model.PackageCl[i].IsServiceActive ? "href='" + _url + "' class='shortcut service-link' data-Is-Active='" + Model.PackageCl[i].IsActive + "' data-Is-Addi='" + Model.PackageCl[i].IsAdditionalServiceType + "' target='" + _target + "'" : "class='shortcut' data-toggle='tooltip' data-original-title='Coming Soon!'")>
+                                                            <img src="/Image/icon/@Html.Raw(Model.PackageCl[i].ServiceID + ".png")" class="shortcut-icon img-fluid" />
+                                                            <span class="shortcut-label">@Model.PackageCl[i].Name</span>
+                                                        </a>
+                                                    }
+                                                    else if (IsAllowed)
+                                                    {
+                                                        <a @Html.Raw(Model.PackageCl[i].IsServiceActive ? "href='" + _url + "' class='shortcut service-link' data-Is-Active='" + Model.PackageCl[i].IsActive + "' data-Is-Addi='" + Model.PackageCl[i].IsAdditionalServiceType + "' target='" + _target + "'" : "class='shortcut' data-toggle='tooltip' data-original-title='Coming Soon!'")>
+                                                            <img src="/Image/icon/@ThemeID/@Html.Raw(Model.PackageCl[i].ServiceID + ".png")?v=@DateTime.Now.Ticks" class="shortcut-icon img-fluid" />
+                                                            <span class="shortcut-label">@Model.PackageCl[i].Name</span>
+                                                        </a>
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <div class="row" id="usrDSUM">
+                        <!--Data will be bind at run time-->
+                    </div>
+                </div>
+                <div class="col-3">
+                    <section id="helpInfoSection">
+                        <!--HelpInfo section will be bind at runtime-->
+                    </section>
+
+                    <section id="holidaysSection">
+                        <!--Holidays section will be bind at runtime -->
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="grap">
+            <div class="row">
+                <div class="col-4">
+                    <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="lmtd">LMTD</div>
+                                <div class="lmtdAmt">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="lmtd">MTD</div>
+                                <div class="mtdAmt">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="lmtd">Today</div>
+                                <div class="todayAmt">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="line-dmt" style="height: 150px; width:100%;background-color:white"></div>
+
+                    <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="lmtdCount">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mtdCount">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="todayCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="lmtd">LMTD</div>
+                                <div class="lmtdAmt">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="lmtd">MTD</div>
+                                <div class="mtdAmt">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="lmtd">Today</div>
+                                <div class="todayAmt">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="line-aeps" style="height: 150px; width:100%;background-color:white"></div>
+
+                    <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="lmtdCount">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mtdCount">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="todayCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-4">
+                    <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="lmtd">LMTD</div>
+                                <div class="lmtdAmt">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="lmtd">MTD</div>
+                                <div class="mtdAmt">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="lmtd">Today</div>
+                                <div class="todayAmt">0</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="line-rec" style="height: 150px; width:100%;background-color:white"></div>
+
+                    <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="lmtdCount">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="mtdCount">0</div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="todayCount">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/chart/armchart/core.js"></script>
+<script src="~/js/chart/armchart/charts.js"></script>
+<script src="~/js/chart/armchart/themes/dataviz.js"></script>
+<script src="~/js/chart/armchart/themes/frozen.js"></script>
+<script src="~/js/chart/armchart/themes/moonrisekingdom.js"></script>
+@*<script src="~/js/chart/armchart/animated.js"></script>*@
+<script src="~/js/chart/chart-utility.js"></script>
+<script src="~/js/chart-data/recent-transaction-chart.js"></script>
+
+<script id="Script1">
+    let amChartStatic = new amChartUtility().amChartUtility;
+    var arrService = [{ ServiceTypeID: 1, title: "Last 7 Days : Recharge" }, { ServiceTypeID: 2, title: "Last 7 Days : Money Transfer" }, { ServiceTypeID: 17, title: "Last 7 Days : AEPS" }];
+    $(document).ready(function () {
+        mostUsedServices();
+    })
+
+    var mostUsedServices = function () {
+        $.post('/most-used-services')
+            .done(result => {
+                console.log(result);
+                if (result != "") {
+                    if (result != undefined && result != '') {
+                        recentDaysTransactionChart("line-dmt", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.none, arrService.filter(x => x.ServiceTypeID == result[0].serviceID)[0].title, { ServiceTypeID: result[0].serviceID });
+                        recentDaysTransactionChart("line-aeps", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.frozen, arrService.filter(x => x.ServiceTypeID == result[1].serviceID)[0].title, { ServiceTypeID: result[1].serviceID });
+                        recentDaysTransactionChart("line-rec", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.moonrisekingdom, arrService.filter(x => x.ServiceTypeID == result[2].serviceID)[0].title, { ServiceTypeID: result[2].serviceID });
+                    }
+                }
+            })
+            .fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+    }
+
+</script>

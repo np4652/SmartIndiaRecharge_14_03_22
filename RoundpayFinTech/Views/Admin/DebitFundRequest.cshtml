@@ -1,0 +1,236 @@
+﻿@*@model SattlementAccountStatus*@
+@{
+    ViewData["Title"] = "Debit Fund Request";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Requests</li>
+            <li class="breadcrumb-item active"> Debit Fund Request</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> Debit Fund Request
+                    </div>
+
+                    <div class="card-body">
+
+
+                        <div class="row">
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlTop">Top</label>
+                                    <select id="ddlTop" tabindex="1" class="form-control">
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                        <option value="200">200</option>
+                                        <option value="500">500</option>
+                                        <option value="1000">1000</option>
+                                        <option value="1500">1500</option>
+                                        <option value="-1">ALL</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="lbl" for="dtFromDate">From Date</label>
+                                <div class="input-group">
+
+                                    <input aria-describedby="dtFromDate" class="form-control" id="dtFromDate" tabindex="5" type="text" readonly="readonly" value=" 25 Oct 2021">
+                                    <small id="Small3" class="form-text text-muted d-none"></small>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <label class="lbl" for="dtToDate">To Date</label>
+                                <div class="input-group" id="asdf">
+
+                                    <input aria-describedby="dtToDate" class="form-control" id="dtToDate" tabindex="6" type="text" readonly="readonly" value=" 25 Oct 2021">
+                                    <small id="Small4" class="form-text text-muted d-none"></small>
+                                    
+                                </div>
+                            </div>
+
+                           
+                        </div>
+                        <div class="row">
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlStatus">Choose Status</label>
+                                    <select id="ddlStatus" tabindex="2" class="form-control">
+                                        <option value="0">:: Select Status :: </option>
+                                        <option value="1" selected>REQUESTED</option>
+                                        <option value="2">ACCEPTED</option>
+                                        <option value="3">REJECTED</option>
+                                    </select>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="ddlCriteria">Choose Criteria</label>
+                                    <select id="ddlCriteria" tabindex="8" class="form-control">
+                                        <option value="0" selected>:: Select Criteria :: </option>
+                                        <option value="1">User ID </option>
+                                        <option value="4">User MobileNo</option>
+                                        <option value="2">From User MobileNo</option>
+                                        <option value="3">From User ID</option>
+
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3 col-sm-3 col-xs-3">
+                                <div class="form-group">
+                                    <label class="lbl" for="txtSearch">Select Criteria</label>
+                                    <div class="input-group">
+                                        <input aria-describedby="txtSearchH" class="form-control" id="txtSearchH" name="txtSearch" placeholder="Enter Search" tabindex="9" type="text" value="">
+                                        <small id="txtSearchH" class="form-text text-muted d-none"></small>
+                                        <div class="input-group-append">
+                                            <button id="btnSearch" tabindex="10" class="btn btn-outline-dark" original-text="Search">Search</button>
+                                        </div>
+                                        <div class="input-group-append">
+                                            <button id="btnExport" class="btn btn-outline-success far fa-file-excel pt-2 fa-2x"></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                          
+                        </div>
+
+                    </div>
+                    <GridView></GridView>
+                </div>
+
+            </div>
+
+
+        </div>
+    </div>
+    @section scripts{
+
+        <script src="~/lib/jquery/dist/moment.min.js"></script>
+        <script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+        <script src="~/js/datepickerHelper.js"></script>
+        <script>
+            $(document).ready(function () {
+                an.autoClose = 5;
+
+                var FDate = DTPicker($('#dtFromDate'), new Date().toDateString(), function () { }, function () {
+                    $('dp').addClass('d-none');
+                    var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+                    var lastDay_f = new Date(fy, fm + 1, 0);
+
+                    var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+
+                    if (fdate > tdate) {
+                        $('#dtToDate').val($('#dtFromDate').val());
+                    } else {
+                        if (fy == ty) {
+                            var curDate = new Date(moment(new Date()).format('D MMM YYYY')), cm = curDate.getMonth();
+                            if (cm == fm) {
+                                if (curDate == fdate && fdate != tdate) {
+                                    $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                                } else if (fdate < curDate) {
+                                    curDate = curDate.setDate(curDate.getDate() - 1)
+                                    $('#dtToDate').val(moment(curDate).format('D MMM YYYY'));
+                                }
+                            }
+                            else if (tm > fm) {
+                                $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                            }
+                        } else if (fy < ty) {
+                            $('#dtToDate').val(moment(lastDay_f).format('D MMM YYYY'));
+                        }
+                    }
+                });
+                var TDate = DTPicker($('#dtToDate'), new Date().toDateString(), function () { }, function () {
+                    $('dp').addClass('d-none');
+                    var fdate = new Date($('#dtFromDate').val()), fy = fdate.getFullYear(), fm = fdate.getMonth();
+
+                    var tdate = new Date($('#dtToDate').val()), ty = tdate.getFullYear(), tm = tdate.getMonth();
+                    var firstDay_t = new Date(ty, tm, 1);
+
+                    var curDate = new Date(moment(new Date()).format('D MMM YYYY'));
+
+                    if (curDate.toString() == tdate.toString()) {
+                        $('#dtFromDate').val(moment(curDate).format('D MMM YYYY'));
+                    }
+                    else if (fdate > tdate) {
+                        $('#dtFromDate').val($('#dtToDate').val());
+                    } else {
+                        if (fy == ty) {
+                            if (tm > fm) {
+                                $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                            }
+                        } else if (fy < ty) {
+                            $('#dtFromDate').val(moment(firstDay_t).format('D MMM YYYY'));
+                        }
+                    }
+                });
+                //$('.body-content').removeClass('container').addClass('container-fluid');
+                search();
+            });
+            var search = function () {
+                preloader.load();
+                let data = {
+                    Status: $('#ddlStatus').val(),
+                    Criteria: $('#ddlCriteria').val(),
+                    CriteriaText: $('#txtSearchH').val(),
+                    CommonInt2: $('#ddlTop').val(),
+                    Todate: $('#dtToDate').val(),
+                    FromDate: $('#dtFromDate').val(),
+                    TopRows: $('#ddlTop').val()
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '/DebitFundRequestList',
+                    data: JSON.stringify(data),
+                    contentType: 'application/json',
+                    success: function (result) {
+                        $('GridView').html(result)
+                        $('[data-toggle="tooltip"]').tooltip();
+                        $(".dropdown-toggle").dropdown();
+
+                    },
+                    complete: function () {
+
+                        preloader.remove();
+                    }
+                });
+            };
+
+            $("#btnSearch").click(function () {
+                search()
+            })
+
+            $("#btnExport").click(function () {
+                let data = {
+                    Status: $('#ddlStatus').val(),
+                    Criteria: $('#ddlCriteria').val(),
+                    CriteriaText: $('#txtSearchH').val(),
+                    CommonInt2: $('#ddlTop').val(),
+                    Todate: $('#dtToDate').val(),
+                    FromDate: $('#dtFromDate').val(),
+                    TopRows: $('#ddlTop').val()
+                }
+                window.location = 'ExportDebitFundRequest?' + $.param(data )
+
+               
+            })
+
+        </script>
+    }
+

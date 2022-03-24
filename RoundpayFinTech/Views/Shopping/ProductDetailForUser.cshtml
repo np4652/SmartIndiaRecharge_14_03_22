@@ -1,0 +1,262 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.ProductDetailForUser
+@{
+    Layout = "/Views/Shared/_LayoutShopping.cshtml";
+}
+@{ int counter = 0;}
+<style>
+    .header-main .hoteline_header {
+        margin-top: -50px;
+    }
+
+    .header-main .block.block-search {
+        top: 8px;
+        margin-right: 42px;
+    }
+
+    .product-color .select-box .color-btn {
+        padding: 8px 20px;
+        background: #fff;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        color: #333;
+    }
+
+        .product-color .select-box .color-btn:hover {
+            border-color: #ff9300;
+        }
+
+    .selectedItem {
+        border-color: #ff9300 !important;
+    }
+</style>
+
+
+<main id="maincontent" class="page-main container single_product">
+    <div class="layout layout-2-col row">
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <section id="default" class="padding-top0">
+                <div class="row">
+                    <div class="large-12">
+                        <div class="xzoom-container">
+                            @if (Model.ImgList != null && Model.ImgList.Count > 0)
+                            {
+                                <img class="xzoom" id="xzoom-default" src="/image/Products/@Model.ProductID/@Model.ImgList[0]" xoriginal="/image/Products/@Model.ProductID/@Model.ImgList[0]" />
+                                <div class="xzoom-thumbs">
+                                    @foreach (var item in Model.ImgList)
+                                    {
+                                        @if (counter == 0)
+                                        {
+                                            <a href="~/image/Products/@Model.ProductID/@Model.ImgList[counter]"><img class="xzoom-gallery" width="80" src="~/image/Products/@Model.ProductID/@Model.ImgList[counter]" xpreview="/image/Products/@Model.ProductID/@Model.ImgList[counter]"></a>
+                                        }
+                                        else if (counter == 5)
+                                        {
+                                            break;
+                                        }
+                                        else
+                                        {
+                                            <a href="~/image/Products/@Model.ProductID/@Model.ImgList[counter]"><img class="xzoom-gallery" width="80" src="~/image/Products/@Model.ProductID/@Model.ImgList[counter]"></a>
+                                        }
+                                        counter++;
+                                    }
+
+                                </div>
+                            }
+                        </div>
+                    </div>
+                    <div class="large-7"></div>
+                </div>
+            </section>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-12">
+            <div class="detail-info detail-info-product-view product-info product-info-main">
+                <div class="box-inner1">
+                    <div class="page-title-wrapper product">
+                        <h1 class="page-title">
+                            <span class="base" data-ui-id="page-title-wrapper" itemprop="name">@Model.ProductName (@Model.AdditionalTitle)</span>
+                        </h1>
+                    </div>
+                    <div class="product-info-price">
+                        @*<div class="product-reviews-summary" itemscope="" itemtype="http://schema.org/AggregateRating">
+                                <div class="rating-summary">
+                                    <span class="label"><span>Rating:</span></span>
+                                    <div class="rating-result" title="100%">
+                                        <span style="width:100%"><span><span>100</span>% of <span>100</span></span></span>
+                                    </div>
+                                </div>
+                                <div class="reviews-actions">
+                                    <a class="action view" href="#">
+                                        <span>1</span>&nbsp;<span>Review</span>
+                                    </a>
+                                    <a class="action add" href="#">Add Your Review</a>
+                                </div>
+                            </div>*@
+                        <div class="price-box price-final_price" data-role="priceBox" data-product-id="9" data-price-box="product-id-9">
+                            <span class="special-price">
+                                <span class="price-container price-final_price tax weee">
+                                    <span class="price-label">Special Price</span>
+                                    <span id="product-price-9" class="price-wrapper "><span class="price">&#8377; @Model.SellingPrice</span></span>
+                                </span>
+                            </span>
+                            <span class="old-price">
+                                <span class="price-container price-final_price tax weee">
+                                    <span class="price-label">Regular Price</span>
+                                    <span id="old-price-9" class="price-wrapper "><span class="price">&#8377; @Model.MRP</span></span>
+                                </span>
+                            </span>
+                        </div>
+                        <div class="product-info-stock-sku">
+                            @if (Model.Quantity > 0)
+                            {
+                                <div class="stock available" title="Availability">
+                                    Availability: <span>In stock</span>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="stock available" title="Availability">
+                                    Availability: <span>Out of stock</span>
+                                </div>
+                            }
+
+                            <div class="product attribute sku">
+                                <strong class="type">Product Code: </strong>
+                                <div class="value" itemprop="sku">Product-009</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product attribute overview">
+                        <div class="value" itemprop="description">
+                            @Html.Raw(Model.Discription)
+                        </div>
+                    </div>
+                    @if (Model.FilterDetail.Any())
+                    {
+                        @foreach (var item in Model.FilterDetail)
+                        {
+                            <div class="product-form product-variations product-color">
+                                <label>@item.FilterName:</label>
+                                @if (item.FilterOption.Any())
+                                {
+                                    <div class="select-box">
+                                        <span>&nbsp; </span>
+                                        @*<select name="@item.FilterName" class="form-control ddlfilter">*@
+                                        @foreach (var option in item.FilterOption)
+                                        {
+                                            @if (option.IsSelected)
+                                            {
+                                                <button data-filter="@Html.Raw(option.FilterID.ToString() + "_" + option.FilterOptionID.ToString())" class="color-btn selectedItem filterOption">@option.Option</button>
+                                                @*<span>@option.Option</span>*@
+                                                @*<option data-filter="@Html.Raw(option.FilterID.ToString() + "_" + option.FilterOptionID.ToString())" value="@Html.Raw(option.FilterID.ToString() + "_" + option.FilterOptionID.ToString())" selected="selected">@option.Option</option>*@
+                                            }
+                                            else
+                                            {
+                                                <button data-filter="@Html.Raw(option.FilterID.ToString() + "_" + option.FilterOptionID.ToString())" class="color-btn filterOption">@option.Option</button>
+                                                @*<option data-filter="@Html.Raw(option.FilterID.ToString() + "_" + option.FilterOptionID.ToString())" data-filterId="@option.FilterID" value="@Html.Raw(option.FilterID.ToString() + "_" + option.FilterOptionID.ToString())">@option.Option</option>*@
+                                            }
+                                        }
+                                        @*</select>*@
+                                    </div>
+                                }
+
+                            </div>
+                        }
+                    }
+                </div>
+                <div class="attr-info">
+                    <div class="product-add-form">
+                        <div class="attr-product">
+                            <label class="label" for="qty"><span>Qty</span></label>
+                            <div class="info-qty">
+                                <a class="qty-down" href="#"><i class="fa fa-minus"></i></a>
+                                <input type="number" name="qty" id="qty" maxlength="12" value="1" title="Quantity" class="input-text qty" data-validate="{&quot;required-number&quot;:true,&quot;validate-item-quantity&quot;:{&quot;minAllowed&quot;:1,&quot;maxAllowed&quot;:126}}">
+                                <a class="qty-up" href="#"><i class="fa fa-plus"></i></a>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button type="submit" title="Add to Cart" class="action primary tocart addcart-link" id="product-addtocart-button" onclick="AddProductToCart();">
+                                <span>Add to Cart</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="product-social-extra">
+                        <a href="javascript: void(0);" onclick="AddToWishlist(@Model.ProductDetailID)" title="Add To Wishlist" class="action towishlist wishlist-link"><i class="fa fa-heart-o"></i></a>
+                        @*<a href="#" title="Add To Compare" data-post="" data-role="add-to-links" class="action tocompare compare-link"><i class="fa fa-retweet"></i></a>
+                            <a href="#" onclick="" title="Print" class="action print-link"><i class="fa fa-print"></i></a>*@
+                        <a href="#" title="Share" onclick=""><i class="fa fa-share"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="product info detailed">
+        <div class="product-tabs">
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link active" href="#details">Details </a>
+                </li>
+                @*<li class="nav-item">
+                        <a class="nav-link" href="#info">More Information </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#reviews">
+                            Reviews
+                            <span class="counter">1</span>
+                        </a>
+                    </li>*@
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div id="details" class="container tab-pane active">
+                    <div class="product attribute description">
+                        <div class="value">
+                            @Html.Raw(Model.Specification)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="divProductSimilar"></div>
+</main>
+<script>
+    var AddProductToCart = () => {
+        let q = $('#qty').val();
+        let pdID = @Model.ProductDetailID;
+        AddToCart(pdID, q);
+    };
+
+    $('.filterOption').click(function () {
+        var _val = $(this).data().filter;
+        OnFilterChange(@Model.ProductID, @Model.ProductDetailID, _val);
+    });
+
+    jQuery(document).ready(function () {
+        jQuery('.qty-up').on('click', function (event) {
+            event.preventDefault();
+            var input_ = jQuery(this).closest('.info-qty').find('#qty');
+            var qtyval = parseInt(input_.val(), 10);
+            qtyval = qtyval + 1;
+            input_.val(qtyval);
+        });
+        jQuery('.qty-down').on('click', function (event) {
+            event.preventDefault();
+            var input_ = jQuery(this).closest('.info-qty').find('#qty');
+            var qtyval = parseInt(input_.val(), 10);
+            qtyval = qtyval - 1;
+            if (qtyval > 1) {
+                input_.val(qtyval);
+            } else {
+                qtyval = 1;
+                input_.val(qtyval);
+            }
+        });
+
+        jQuery(".nav-tabs a").click(function () {
+            jQuery(this).tab('show');
+        });
+
+        getProductSimilarGrid(@Model.ProductID, @Model.ProductDetailID);
+    });
+
+</script>

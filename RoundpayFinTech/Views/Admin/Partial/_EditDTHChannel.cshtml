@@ -1,0 +1,44 @@
+﻿
+@model RoundpayFinTech.AppCode.Model.DTHChannel
+@{
+
+}
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h5 class="mb-3 text-info">Channel</h5><hr />
+    </div>
+    <div class="col-sm-12">
+        <input type="hidden" id="txtID" value="@Model.ID" />
+        <div class="form-group">
+            @{
+                var _Categories = new SelectList(Model.categories, "ID", "CategoryName");
+                var _CateoryID = Model.CategoryID;
+            }
+            <label class="lbl" for="ddlCategories">Choose Category</label>
+            <select class="form-control" id="ddlCategories" tabindex="1" asp-items="@_Categories" asp-for="@_CateoryID">
+                <option value="0"> :: Select Category :: </option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Name</label>
+            <div class="input-group">
+                <input type="text" class="form-control" id="txtChannelName" value="@Model.ChannelName" />
+                <div class="input-group-append">
+                    <input type="file" id="Imgfile" class="d-none" />
+                    <label class="btn btn-info" for="Imgfile"><i class="fa fa-upload"></i></label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div id="imgPreview"></div>
+    <div class="float-right">
+        <button class="btn btn-outline-success" id="btnSave">SAVE</button>
+    </div>
+</div>
+

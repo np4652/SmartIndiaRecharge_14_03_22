@@ -1,0 +1,75 @@
+﻿@{
+    ViewData["Title"] = "9c34176d6b9710399c3cf3128acc6b24_";
+}
+<div id="__p">
+    <div class="table-responsive">
+        <table class="table table-hover table-sm" id="tbl">
+            <thead class="shadow">
+                <tr>
+                    <th scope="col" style="width:5%;">#</th>
+                    <th scope="col" style="width:15%;">Format Type</th>
+                    <th scope="col" style="width:80%;">Keywords</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+<script>
+    $(document).ready(function () {
+        _loadPartial();
+    })
+
+    var _loadPartial = function () {
+        preloader.load();
+        $.post('/Template-Keyword-Map')
+            .done(function (result) {
+                $('tbody').html(result);
+                $('input[type="checkbox"]').click(function () {
+                    _update(this);
+                })
+            })
+            .catch(function (xhr, e, m) {
+            })
+            .fail(function (xhr) {
+                $(this).attr('checked', Is == false);
+                if (xhr.status == 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status == 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            })
+            .always(function () {
+                preloader.remove();
+            });
+    }
+
+    var _update = function (sender) {
+        var param = {
+            FormatID: $(sender).closest('tr').data().formatId,
+            KeyID: $(sender).data().keyId,
+            IsActive: $(sender).is(':checked')
+        };
+        $.post('/MapTemplateAndKey', param)
+            .done(function (result) {
+                an.title = result.statuscode == -1 ? 'Oops' : 'Success';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            })
+            .fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                })
+                .always(function () {
+                    preloader.remove();
+                })
+    }
+</script>
+}

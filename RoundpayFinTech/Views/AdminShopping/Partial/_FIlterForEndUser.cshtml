@@ -1,0 +1,141 @@
+﻿@model RoundpayFinTech.AppCode.Model.Shopping.FilterForEndUser
+@{
+    int count = 0;
+    bool IsViewMore = false;
+}
+
+@if (Model.FilterWithOptions.Any())
+{
+    <div class="drop-table">
+        <h5 class="mt-2 mr-4 pl-2 pb-2">Filters</h5>
+        <table class="table">
+            @foreach (var item in Model.FilterWithOptions)
+            {
+
+                <tr>
+                    <td>
+                        <div class="container">
+                            <span> <button class="collapsible">@item.FilterName</button></span>
+                            <div class="row FilterOptionsDiv content" style="display: none;">
+                                @if (item.FilterOption.Any())
+                                {
+                                    IsViewMore = false;
+                                    count = 0;
+                                    @foreach (var option in item.FilterOption)
+                                    {
+                                        <div class="col-sm-12">
+                                            <div class="form-inline pl-2 FilterData">
+                                                <input type="checkbox" class="btnFilterData cusfilter" data-Filter-Id="@item.FilterID" data-Option-Id="@option.ID" /> <span class="pl-2 fliter-input-data">@option.Option</span>
+                                                @*@if (count > 5 && !IsViewMore)
+                                                    {
+                                                        IsViewMore = true;
+                                                        <span style="position: absolute;top: 0px;right: 25px" class="btn-link cursor-pointer expandFilter">View More</span>
+                                                    }*@
+                                            </div>
+                                        </div>
+                                        count++;
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+            @if (Model.Brands.Any())
+            {
+                <tr>
+                    <td>
+                        <div class="container">
+                            <span> <button class="collapsible">Brands </button></span>
+                            @*<h5 class="mt-2 mr-4 pl-4">Brands</h5>*@
+                            <div class="row FilterOptionsDiv content" style="display: none;">
+                                @foreach (var brand in Model.Brands)
+                                {
+                                    <div class="col-sm-12">
+                                        <div class="form-inline pl-2 BrandData">
+                                            <input type="checkbox" class="btnBrand cusfilter" data-Brand-Id="@brand.BrandId" /> <span class="pl-2 fliter-input-data">@brand.BrandName</span>
+                                            @*@if (count > 3 && !IsViewMore)
+                                                {
+                                                    IsViewMore = true;
+                                                    <span style="position: absolute;top: 0px;right: 25px" class="btn-link cursor-pointer expandFilter">View More</span>
+                                                }*@
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+}
+<script>
+
+    var FilterDetail = [], BrandIDs = [];
+    $('.btnFilterData,.btnBrand').unbind().click(e => {
+        FilterDetail = []; BrandIDs = [];
+        $.when(
+            $('.FilterData').find('input[type="checkbox"]:checked').each(function (i) {
+                FilterDetail.push($(this).data().filterId + "_" + $(this).data().optionId);
+            }),
+            $('.BrandData').find('input[type="checkbox"]:checked').each(function (i) {
+                BrandIDs.push($(this).data().brandId);
+            })
+        ).done(function () {
+            let _ele = $(e.currentTarget).parents('#FilterGrid').data();
+            let FilterDetails = FilterDetail.toString();
+            let param = {
+                CategoryID: _ele.categoryId,
+                subCategoryID1: _ele.subcategory1Id,
+                subCategoryID2: _ele.subcategory2Id,
+                Filters: FilterDetail,
+                BrandIDs: BrandIDs.join(',')
+            };
+            FilterProduct(param);
+            // call function to return filter's partial view
+            // console.log(FilterDetails);
+            GetFilters(param.CategoryID, param.subCategoryID1, param.subCategoryID2, FilterDetails);
+        });
+    });
+
+    $('.expandFilter').unbind().click(e => {
+        let ele = $(e.currentTarget)
+        if (ele.text() !== 'Less') {
+            //$('.FilterOptionsDiv').css({ 'height': '135px', 'overflow-x': 'hidden', 'overflow': 'hidden' });
+            //$('.expandFilter').text('View More').css({ 'top': '0' });
+            ele.text('Less')
+            ele.css({ 'top': '-109px' });
+            ele.parents('.FilterOptionsDiv').css({ 'height': '198px', 'overflow-y': 'auto', 'overflow-x': 'hidden' });
+        }
+        else {
+            ele.text('View More');
+            ele.css({ 'top': '0px' });
+            ele.parents('.FilterOptionsDiv').css({ 'height': '135px', 'overflow-y': 'hidden', 'overflow-x': 'hidden' });
+        }
+    })
+
+    $(".collapsible").click(function () {
+        $(this).parents('.container').find(".content").slideToggle("300");
+    });
+
+
+</script>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function () {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
+

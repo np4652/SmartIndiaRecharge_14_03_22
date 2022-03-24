@@ -1,0 +1,406 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using RoundpayFinTech.AppCode.StaticModel;
+@model GetWhatsappContactListModel;
+@{
+    int ThemeID = Convert.ToInt32(ViewData["Theme"] ?? 0);
+    int WID = Convert.ToInt32(ViewData["WID"] ?? 0);
+}
+
+@section icon{
+    <link rel="icon" type="image/png" href="~/whatsapp/img/chat_icon.ico">
+}
+@{
+
+    ViewData["Title"] = PageTitle.Whatsapp;
+    ViewData["HTitle"] = " Chatbot";
+    <link rel="icon" type="image/png" href="~/whatsapp/img/chat_icon.ico">
+    if (ViewData["LayoutID"].ToString() == "1")
+    {
+        Layout = null;
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+            <environment include="Development">
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+                @*<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap-theme.css"/>*@
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.css" />
+                <link rel="stylesheet" href="~/css/scrollbar.css" />
+                <link rel="stylesheet" href="~/css/site.css" />
+                <link rel="stylesheet" href="~/css/table-loader.css" />
+                <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.css" />
+                <link href="~/css/reseller.css" rel="stylesheet" />
+                <link href="~/whatsapp/CSS/ChatTimer.css" rel="stylesheet" />
+                <link href="~/whatsapp/CSS/style.css" rel="stylesheet" />
+                <link href="~/whatsapp/CSS/DDSelect.css" rel="stylesheet" />
+                <link href="~/css/new-custom-css/main.css" rel="stylesheet" />
+
+                <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+            </environment>
+            <environment exclude="Development">
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+                <link rel="stylesheet" href="~/lib/bootstrap/dist/fonts/css/fontawesome-all.min.css" />
+                <link rel="stylesheet" href="~/css/scrollbar.min.css" />
+                <link rel="stylesheet" href="~/css/site.min.css" asp-append-version="true" />
+                <link rel="stylesheet" href="~/css/table-loader.min.css" />
+                <link rel="stylesheet" href="~/lib/bootstrap/calendar/datepicker/css/bootstrap-datetimepicker.min.css" />
+                <link href="~/css/reseller.min.css" rel="stylesheet" />
+                <link href="~/css/new-custom-css/main.min.css" rel="stylesheet" />
+                <link href="~/whatsapp/CSS/style.css" rel="stylesheet" />
+                <link href="~/whatsapp/CSS/DDSelect.css" rel="stylesheet" />
+                <link href="~/whatsapp/CSS/ChatTimer.css" rel="stylesheet" />
+
+                <link href="~/color-sets/@ColorSets.GetCurrentThemeSet(ThemeID,WID)/color-set.css?v=@DateTime.Now.Ticks" rel="stylesheet" />
+            </environment>
+
+        </head>
+    }
+    //else (ViewData["LayoutID"].ToString() == "0")
+    else
+    {
+        <link href="~/whatsapp/CSS/DDSelect.css" rel="stylesheet" />
+        <link rel="stylesheet" href="~/whatsapp/CSS/style.css">
+        <link href="~/whatsapp/CSS/ChatTimer.css" rel="stylesheet" />
+        <style>
+            .top-nav, .navbar {
+                font-family: Roboto,-apple-system,BlinkMacSystemFont,Helvetica Neue,Segoe UI,sans-serif !important;
+            }
+
+
+
+            .switch.switch-sm input + label {
+                min-width: calc(calc(1.5rem * .8) * 2);
+                height: calc(1.5rem * .8);
+                line-height: calc(1.5rem * .8);
+                text-indent: calc(calc(calc(1.9375rem * .8) * 2) + .5rem);
+            }
+
+                .switch.switch-sm input + label::before {
+                    width: calc(calc(1.5rem * .8) * 2);
+                }
+
+                .switch.switch-sm input + label::after {
+                    width: calc(calc(1.5rem * .8) - calc(2px * 2));
+                    height: calc(calc(1.5rem * .8) - calc(2px * 2));
+                }
+
+            .switch.switch-sm input:checked + label::after {
+                margin-left: calc(1.9375rem * .8);
+            }
+
+            #username {
+                font-size: 12px;
+            }
+
+            .chat-list-item.active {
+                background: #ebebeb !important
+            }
+
+            .dd-selected-image {
+                height: 18px;
+            }
+        </style>
+    }
+    string path = "";
+}
+<body>
+    <input type="hidden" id="hdnapcde" />
+    <div id="alertmsg"></div>
+    <div class="cus-bg"></div>
+    <div id="__p" class="raw nwhatsapp-h">
+        @{
+            string height = "height:83vh";
+        }
+        @if (ViewData["LayoutID"].ToString() == "1")
+        {
+            height = "height:99vh";
+        }
+        <div class="container-fluid" style=@height id="main-container">
+            <div class="row h-100 nwwhatsq" style="margin-right:-37px;">
+                <div class="col-12 col-sm-5 col-md-4 d-flex h-100 flex-column cus-res" id="chat-list-area" style="position:relative;">
+                    <!-- Navbar -->
+                    <div class="row d-flex flex-row align-items-center pt-2 pb-2" id="navbar">
+
+                        @*<img alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:35px; cursor:pointer;" id="display-pic" src="whatsapp/img/wauser.png">*@
+                        @*<div class="text-white font-weight-bold" id="username"><span>@data.CustomerCareName</span> @data.CustomerCareMobile</div>*@
+                        @*<div class="text-white font-weight-bold" id="username"><span>@ViewBag.CustmoreName</span></div>*@
+                        @*<div class="ml-auto"></div>*@
+                        <ul class="nav nav-tabs card-header-tabs m-0 pl-1 pr-1" id="Ultab" role="tablist">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-interest="@WhatsappTab.Inbox" onclick="_ContactSearch('',true,'@WhatsappTab.Inbox')" id="one-tab" data-toggle="tab" href="#tabInbox"
+                                   role="tab" aria-controls="One" aria-selected="true">Inbox</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-interest="@WhatsappTab.Task" id="two-tab" onclick="_ContactSearch('', true, '@WhatsappTab.Task')" data-toggle="tab" href="#tabTask" role="tab"
+                                   aria-controls="Two" aria-selected="false">Task</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-interest="@WhatsappTab.NoReply" id="three-tab" onclick="_ContactSearch('', true, '@WhatsappTab.NoReply')" data-toggle="tab" href="#tabNoReply" role="tab"
+                                   aria-controls="Three" aria-selected="false">No Reply</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-interest="@WhatsappTab.UnSeen" id="four-tab" onclick="_ContactSearch('', true, '@WhatsappTab.UnSeen')" data-toggle="tab" href="#tabUnread" role="tab"
+                                   aria-controls="Three" aria-selected="false">Unread</a>
+                            </li>
+                        </ul>
+                        <div style="margin-right:10px">
+
+                            <select class="form-control" id="ddlSenderNo">
+                                <option value="0" class="dd-selected-image"> ::Select:: </option>
+                                @foreach (var item in Model.GetWhatsappSenderNoList)
+                                {
+                                    @if (@item.ApICode == WhatsappAPICode.WATI)
+                                    {
+                                        path = "whatsapp/img/Wati.png";
+                                    }
+                                    else if (@item.ApICode == WhatsappAPICode.WATEAM)
+                                    {
+                                        path = "whatsapp/img/WATeam.png";
+                                    }
+                                    else if (@item.ApICode == WhatsappAPICode.ALERTHUB)
+                                    {
+                                        path = "whatsapp/img/AlertHub.png";
+                                    }
+                                    <option data-imagesrc="@path" style="height:10px" value="@item.ID">
+                                        @item.MobileNo
+                                    </option>
+                                }
+                            </select>
+
+                        </div>
+
+                        <div class="nav-item">
+                            <span class="switch switch-sm">
+                                @*<input type="checkbox" class="switch" tabindex="2" name="unssenmsg" id="chkUnseenMsg" />
+                                    <label for="chkUnseenMsg" title="Get All Unseen Messages"></label>*@
+                                @*<input type="checkbox" class="switch" tabindex="2" name="unssenmsg" id="chkWhatsappTasks" />
+                                    <label for="chkWhatsappTasks" title="Get All Tasks"></label>*@
+
+                            </span>
+                        </div>
+                        @if (ApplicationSetting.IsWhatsappAgent)
+                        {
+                            <div>
+                                @if (ViewData["LayoutID"].ToString() == "1")
+                                {
+                                    <a href="/WhatsAppConversationNew?ID=0" class="nav-link">
+                                        @*<a href="#!" onclick="javascript:toggleFullScreen()" class="nav-link">*@
+                                        <i class="fa fa-expand" title="Whatsapp Chat New Window" aria-hidden="true" style="color:white"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <a href="/WhatsAppConversationNew?ID=1" class="nav-link">
+                                        <i class="fa fa-expand-arrows-alt" title="Whatsapp Chat New Window" style="color:white"></i>
+                                    </a>
+                                }
+                            </div>
+                        }
+                        <div class="nav-item">
+                            <a href="#">   <i class="fa fa-refresh rotate" title="Refresh Chat Window" style="color:white" aria-hidden="true"></i></a>
+                            @*<img src="~/whatsapp/img/imgrefresh.gif" height="20px" width="20px" />*@
+                        </div>
+                        <div class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle cus-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v text-white"></i></a>
+                            <div class="dropdown-menu dropdown-menu-right" style="border-radius:2%">
+                                <a class="dropdown-item" id="lnkimptusercon" style="cursor:pointer">Import User Contacts</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row d-flex flex-row align-items-center  p-2" style="background-color:white">
+                        <input type="text" style="border-radius:22px !important" class="form-control" autocomplete="off" id="txtsearch" placeholder="Search or start new chat" />
+                    </div>
+                    <div class="row d-flex flex-row scrollbar cust-h ContacstScroll pl-2" style="background-color:white">
+                        <input type="hidden" id="hdntabdiv" />
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active p-1" id="tabInbox" role="tabpanel" aria-labelledby="one-tab">
+                                <div id="@WhatsappTab.Inbox" class="h-75">
+
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade p-1" id="tabTask" role="tabpanel" aria-labelledby="two-tab">
+                                <div id="@WhatsappTab.Task" class="h-75">
+
+                                </div>
+
+                            </div>
+                            <div class="tab-pane fade p-1" id="tabNoReply" role="tabpanel" aria-labelledby="three-tab">
+                                <div id="@WhatsappTab.NoReply" class="h-75">
+
+                                </div>
+
+                            </div>
+
+                            <div class="tab-pane fade p-1" id="tabUnread" role="tabpanel" aria-labelledby="four-tab">
+                                <div id="@WhatsappTab.UnSeen" class="h-75">
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+                <div id="chatbox" class="h-100" style="width:65%;position:relative;">
+                    <div id="sec-service">
+                      
+                    </div>
+                    <div class="csb">
+                        <div class="circleimg">
+                            @*<img src="Image/Website/@ViewData["WID"]/logo.png" height="50" class="d-inline-block align-top imgcircle" alt="@ViewData["CName"]" />*@
+                            <img src="~/whatsapp/img/chat.png" height="250" class="d-inline-block align-top imgcircle" alt="@ViewData["CName"]" />
+                        </div>
+                        <h1 class="slgn">Stay Connect With Your Customer</h1>
+                    </div>
+                    <div class="d-sm-flex flex-column col-12 col-sm-7 col-md-12 p-0 h-100" id="message-area" style="display:none!important;">
+                        @*<div class="w-100 h-100 overlay"></div>*@
+
+                        <!--Navbar-->
+                        <div class="row d-flex flex-row align-items-center pt-2 pb-2  m-0 w-100 pr-2" id="navbar">
+                            <div class="d-block d-sm-none">
+                                @*<i class="fas fa-arrow-left p-2 mr-2 text-white" style="font-size: 1.5rem; cursor: pointer;" onclick="showChatList()"></i>*@
+                            </div>
+                            <a href="#">
+                                @*<img src="~/whatsapp/images/400x400.png" alt="Profile Photo" class="img-fluid rounded-circle mr-2" style="height:50px;" id="pic">*@
+                            </a>
+                            <div class="d-flex flex-column">
+                                <div class="text-white font-weight-bold p-2" id="Sendername">
+                                    <label id="lblSendername"></label>
+                                    (<label id="lblSenderMobile"></label>)
+                                    <label id="lblapiid" style="display:none"></label>
+                                   <input type="hidden" id="hdnchatcontactid" value="0" />
+                                    <label id="lblSenderNoID" style="display:none"></label>
+                                    <input class="form-check-input" type="checkbox" style="cursor:pointer;margin-left:4px;display:none" title="Mark As Task" value=""
+                                           onchange="WhatsappTask()" id="chkMarkTask">
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-column ml-auto" style="display:none">
+                                <div id="jsTimer"></div>
+                            </div>
+                            <div class="d-flex flex-row align-items-center ml-auto">
+
+                                @*Search  chat start*@
+                                <div id="demo-2" style="display:none">
+                                    <input type="search" placeholder="Search" />
+
+                                </div>
+                                <span class="badge badge-primary spnsenderno"></span>
+                                @*Search  chat start end *@
+                                @*file send*@
+                                <label for="watsapp-chat-send-file"> <i class="fas fa-paperclip mx-3 text-white d-none d-md-block cursor-pointer"></i></label>
+                                <input type="file" id="watsapp-chat-send-file" name="browse" style="display: none">
+
+                                @*file send end*@
+                                @*logout*@
+                                <div class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle cus-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-ellipsis-v text-white"></i></a>
+                                    <div class="dropdown-menu dropdown-menu-right" style="border-radius:2%">
+                                        <a class="dropdown-item" href="#" id="logout">Logout</a>
+                                    </div>
+                                </div>
+                                @*logout end*@
+                            </div>
+                        </div>
+
+                        <!-- Messages -->
+
+                        <div class="d-flex flex-column" id="messages">
+
+                        </div>
+                        <!-- Input -->
+                        <div class="d-justify-self-end align-items-center flex-row p-3" id="input-area">
+                            <div class="row2">
+                                <textarea type="text" name="message" id="inputmsg" autocomplete="off" placeholder="Type a message" class="imsg"></textarea>
+                                <button type="submit" id="btnSave" style="border:none;font-size:30px"><i class="fas fa-paper-plane text-muted px-3" style="cursor:pointer;"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade bd-example-modal-lg modalusercontact" id="contactsyncmodal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content p-2">
+                <div class="modal-header">
+                    <h3>  <label>User Contacts</label></h3>  <button type="button" class="btn btn-secondary" data-dismiss="modal"> X </button>
+                </div>
+                <div class="p-2">
+                    <input type="text" autocomplete="off" style="border-radius:17px !important" class="form-control" id="txtusercontacts" placeholder="Type to search user contacts" />
+                </div>
+                <div id="SearchUserContatcts">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hdnsnno" />
+    <input type="hidden" id="hdnactcntct" />
+    @*Sync Contacts modaal end*@
+    <div id="dvloader">
+        <img id="loaderimage" class="dvloader" src="~/whatsapp/img/preloader.gif" />
+    </div>
+    @if (ViewData["LayoutID"].ToString() == "1")
+    {
+        <environment include="Development">
+            <script src="~/lib/jquery/dist/jquery.js"></script>
+            <script src="~/lib/jquery/dist/popper.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/dropdown.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/tooltip.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/popover.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/util.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/alert.js"></script>
+            <script src="~/lib/jquery/dist/moment.js"></script>
+            <script src="~/js/validator.js"></script>
+            <script src="~/js/site.js" asp-append-version="true"></script>
+            <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+            <script src="~/js/admin.js"></script>
+            <script src="~/whatsapp/JS/jquery.ddslick.min.js"></script>
+            <script src="~/whatsapp/JS/WhatsappChat.js"></script>
+        </environment>
+        <environment exclude="Development">
+            <script src="~/lib/jquery/dist/jquery.min.js"></script>
+            <script src="~/lib/jquery/dist/popper.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/dropdown.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/tooltip.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/popover.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/util.min.js"></script>
+            <script src="~/lib/bootstrap/dist/js/dist/alert.min.js"></script>
+            <script src="~/lib/jquery/dist/moment.min.js"></script>
+            <script src="~/js/validator.min.js"></script>
+            <script src="~/js/site.min.js" asp-append-version="true"></script>
+            <script src="~/js/AppUtility.js" asp-append-version="true"></script>
+            <script src="~/js/admin.min.js"></script>
+            <script src="~/whatsapp/JS/jquery.ddslick.min.js"></script>
+            <script src="~/whatsapp/JS/WhatsappChat.js"></script>
+        </environment>
+        <script src="~/whatsapp/JS/Timer.js"></script>
+    }
+    else
+    {
+        @section scripts{
+
+            <script src="~/whatsapp/JS/jquery.ddslick.min.js"></script>
+
+            <script src="~/whatsapp/JS/WhatsappChat.js"></script>
+
+            <script src="~/whatsapp/JS/Timer.js"></script>
+        }
+    }
+
+
+
+</body>
+
+
+
+
+
+

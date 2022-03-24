@@ -1,0 +1,287 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.EmpTarget>
+@if (Model.Any())
+{
+    <input type="hidden" id="hfEid" />
+    <div class="row">
+        <div class="col-sm-12">
+            <span class="text-monospace">
+                <label class="text-danger">*</label>
+                <small>
+                    <strong>1. IsHike -</strong>  Next Month target will set on basis or Total Achive Else target will set on basis of Current Month Target.
+                    <strong> | 2.IsEarn -</strong> Incentive will calculate on basis of total sales which may be greater than set target else incentive will calculate on Set target
+                </small>
+            </span>
+            @if (Model.Any())
+            {
+                int counter = 1;
+                <table class="table table-bordered table-striped table-hover table-sm" data-target-Type="@ApplicationSetting.TargetType" id="grid">
+                    <thead class="bg-tableth">
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Services</th>
+                            <th scope="col">DownlineTarget</th>
+                            <th scope="col">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        Target
+                                    </div>
+                                    <div class="col-md-2">
+                                        Comm
+                                    </div>
+                                    <div class="col-md-3">
+                                        Hike% & Type
+                                    </div>
+                                    <div class="col-md-5">
+                                        <input class="form-control" id="txtSearchRSD" type="text" placeholder="Search">
+                                    </div>
+                                </div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr data-item-OID="@item.OID">
+                                <td>@counter</td>
+                                <td><label class="lbl font-bold">@item.OName</label></td>
+                                <td><label class="TxtchildTarget">@item.ChildTarget</label></td>
+                                <td>
+                                    <div class="row" style="align-items:center;">
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control txttarget" placeholder="Target" value="@item.Target" />
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" class="form-control txtComm" placeholder="Commission" value="@item.Commission" />
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control txtHike" placeholder="Hike %" value="@item.HikePer" />
+                                                <div class="input-group-addon btn-group amtType btn-toggle" id="btnGroupAmtType_@Html.Raw(counter+"_"+item.ID)">
+                                                    <button class="btn btn-sm @Html.Raw(!item.AmtType?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">P</button>
+                                                    <button class="btn btn-sm @Html.Raw(item.AmtType?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">F</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <span class="switch switch-sm">
+                                                IsHike
+                                                <input type="checkbox" class="switch chkHikeOn" id="chkHikeOn_@counter" @Html.Raw(item.IsHikeOnEarned ? "checked='checked'" : "") />
+                                                <label for="chkHikeOn_@counter"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsEarn
+                                                <input type="checkbox" class="switch chkEarn" id="chkEarn_@counter" @Html.Raw(item.IsEarned ? "checked='checked'" : "") />
+                                                <label for="chkEarn_@counter"></label>
+                                            </span>
+                                            <span class="switch switch-sm">
+                                                IsGift
+                                                <input type="checkbox" class="switch chkGift" id="chkGift-@counter" @Html.Raw(item.IsGift ? "checked='checked'" : "") />
+                                                <label for="chkGift-@counter"></label>
+                                            </span>
+                                        </div>
+
+                                        @if (item.IsGift == true)
+                                        {
+                                            <div class="col-md-2 img-upload" style="padding:0;">
+                                                <span class="btn btn-sm btn-dark btnShowGift">
+                                                    <i class="fa fa-eye-slash"></i>
+                                                </span>
+                                                <input type="hidden" value="@item.ImagePath" />
+                                                <input type="file" class="form-control fUpload" id="ReUpload_@counter" style="display:none" />
+                                                <label for="ReUpload_@counter" class="btn btn-sm btn-dark">
+                                                    <span class="fa fa-upload"></span>
+                                                </label>
+                                            </div>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                            counter++;
+                        }
+                    </tbody>
+                </table>
+            }
+        </div>
+    </div>
+}
+<script>
+    $('#txtSearchRSD').focus();
+    $("#txtSearchRSD").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $('#grid tbody tr').filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+    });
+
+    $('.txttarget,.txtComm,.txtHike').numeric({
+        numericType: 'decimal',
+        maxLength: 9
+    });
+
+    $('.txttarget,.txtComm,.txtHike').change(e => updateTarget($(e.currentTarget)));
+    $('.btn-toggle').unbind().click(e => {
+        $.when($(e.currentTarget).closest('tr').find('.btn-toggle .btn').toggleClass('btn-dark btn-outline-dark active')).done(updateTarget($(e.currentTarget)));
+    });
+
+    var updateTarget = sender => {
+
+        let selected = sender.closest('tr')
+        let param = {
+            EmpID: $('#hfEid').val(),
+            OID: selected.data().itemOid,
+            Target: selected.find('.txttarget').val(),
+            Commission: selected.find('.txtComm').val(),
+            AmtType: selected.find('.amtType .active').text() == 'P' ? false : true,
+            IsEarned: selected.find('.chkEarn').is(':checked'),
+            IsGift: selected.find('.chkGift').is(':checked'),
+            HikePer: selected.find('.txtHike').val(),
+            IsHikeOnEarned: selected.find('.chkHikeOn').is(':checked'),
+            ChildTarget: selected.find('.TxtchildTarget').text()
+        };
+        if (param.Target < param.ChildTarget) {
+            an.id = "alertWarning";
+            an.title = "Warning";
+            an.content = "Target can't be lower than downline target";
+            an.alert(an.type.fail);
+            selected.find('.txttarget').val('');
+            return false
+        }
+        else {
+            /* if (param.Target > 0 && param.Commission > 0 && param.AmtType >= 0 && (param.IsEarned == true || param.IsGift == true))*/
+            preloader.load();
+            $.post('/_EmpTargetEdit', { param: param })
+                .done(result => {
+                    an.id = "talert";
+                    an.title = result.statuscode == -1 ? 'Opps!' : 'Success!';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(xhr => {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                    an.alert(-1);
+                }).always(() => preloader.remove());
+        }
+    }
+
+
+    var UploadImg = function (_id, sender) {
+        if ($('#' + _id).val() != "" && $('#' + _id) != undefined) {
+            var fileExtension = ['png', 'jpeg', 'jpg'];
+            var filename = $('#' + _id).val();
+            var extension = filename.replace(/^.*\./, '');
+            if ($.inArray(extension, fileExtension) == -1) {
+                an.title = 'Validation Warning';
+                an.content = "Please select only image files.";
+                an.alert(an.type.failed);
+                $('#' + _id).val('');
+                return false;
+            }
+
+            var param = {
+                TargetType: $('#grid').data().targetType,
+                EmpID: $('#hfEid').val(),
+                OID: $('#' + _id).closest('tr').data().itemOid
+            };
+            var formData = new FormData();
+            var fileName = "Gift_" + param.EmpID + "_" + param.OID + "_" + param.TargetType + ".png";
+            formData.append('file', $('#' + _id)[0].files[0]);
+            formData.append('fileName', fileName);
+            $.ajax({
+                type: "POST",
+                url: "/Employee/upload-GiftImg",
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function (result) {
+                    if (result.statuscode === -1) {
+                        an.title = 'Oops';
+                        an.content = result.msg;
+                        an.alert(an.type.failed);
+                    } else {
+                        an.title = 'Success';
+                        an.content = result.msg;
+                        an.alert(an.type.success);
+                        $('#' + _id).val('');
+                        if (sender != undefined) {
+                            updateTarget(sender);
+                            var _fileName = "Gift_" + param.RoleID + "_" + param.OID + "_" + param.SlabID + ".png";
+                            var i = $(this).closest('tr').index() + 1;
+                            var _html = '<div class="col-md-2 img-upload" style="padding:0;"><span class="btn btn-sm btn-dark btnShowGift"><i class="fa fa-eye-slash"></i></span> '
+                                + '<input type="hidden" value="/Image/GiftImage/' + _fileName + '"/>'
+                                + '<input type="file" class="form-control fUpload" id="ReUpload_' + i + '" style="display:none" />'
+                                + '<label for="ReUpload_' + i + '" class="btn btn-sm btn-dark">'
+                                + '<span class="fa fa-upload"></span></label></div>';
+                            $(sender).closest('.row').append(_html);
+                            $(sender).closest('tr').find('.img-upload')[0].remove();
+                            $('.btnShowGift').click(e => showGiftImg(e.currentTarget));
+                            $('.fUpload').change(e => UploadImg($(e.currentTarget).attr('id')));
+                        }
+                    }
+                },
+                error: function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.responseText;
+                    an.alert(an.type.failed);
+                }
+            })
+        }
+    }
+
+    $('.modal input:checkbox').on('change', function () {
+        $(this).not('.chkHikeOn').closest('tr').find($('.modal input:checkbox')).not('.chkHikeOn').removeAttr('checked');
+        $(this).attr('checked', 'checked')
+        if ($(this).attr('class') == 'switch chkEarn') {
+            $(this).closest('tr').find('.img-upload').remove();
+            $(this).closest('tr').find('.btnShowGift').parent().remove();
+            $(this).closest('tr').find('.img-upload').remove();
+            $(this).closest('tr').find('.chkGift').prop('checked', false);
+            updateTarget($(this));
+        }
+        if ($(this).attr('class') == 'switch chkGift') {
+            $(this).closest('tr').find('.chkEarn').prop('checked', false)
+            if ($(this).is(':checked') == true && $(this).closest('td').find('.btnShowGift').index() == -1 && $('#fUpload').index() == -1) {
+                $(this).closest('td').find('.row').append('<div class="col-md-2 img-upload">'
+                    + '<input type="file" class="form-control" id="fUpload" style="display:none"/>'
+                    + '<label for="fUpload" class="btn btn-sm btn-dark"><span class="fa fa-upload"></span></label></div>');
+
+                $('#fUpload').change(e => UploadImg('fUpload', $(e.currentTarget)));
+            }
+        }
+        if ($(this).attr('class') == 'switch chkHikeOn') {
+            updateTarget($(this));
+        }
+    })
+
+    var showGiftImg = function (sender) {
+        var param = {
+            TargetType: $('#grid').data().targetType,
+            EmpID: $('#hfEid').val(),
+            OID: $(sender).closest('tr').data().itemOid
+        };
+
+        var fileName = "Gift_" + param.EmpID + "_" + param.OID + "_" + param.TargetType + ".png";
+        var _src = '/Image/Employee/GiftImage/' + fileName;
+        var result = '<div class="col-md-12">'
+            + '<button type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>'
+            + '<h5>GIFT <u id="outlateName" class="font-italic text-info"></u></h5>'
+            + '<div class="row text-center"> <div class="col-sm-12">'
+            + '<img src="' + _src + '"/></div></div></div>'
+        $('#' + an.id).remove();
+        mdlA.id = 'showImage';
+        mdlA.content = result;
+        mdlA.options.backdrop = 'static';
+        mdlA.alert(mdlA.size.large);
+        $('#' + mdlA.id).css('background-color', 'rgba(0,0,0,0.5)');
+        $('button.close span').click(function () {
+            mdlA.dispose();
+            mdlA.id = 'mymodal';
+            $('button.close span').click(() => mdlA.dispose());
+        });
+    }
+
+
+    $('.btnShowGift').click(e => showGiftImg(e.currentTarget));
+
+    $('.fUpload').change(e => UploadImg($(e.currentTarget).attr('id')));
+</script>

@@ -1,0 +1,214 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Employee.PSTComparisionTable>
+@{
+    decimal pri1 = 0, pri2 = 0, pri3 = 0, pri4 = 0, pri5 = 0, pri6 = 0, pri7 = 0, pri8 = 0, pri9 = 0, pri10 = 0;
+    decimal sec1 = 0, sec2 = 0, sec3 = 0, sec4 = 0, sec5 = 0, sec6 = 0, sec7 = 0, sec8 = 0, sec9 = 0, sec10 = 0;
+    decimal ter1 = 0, ter2 = 0, ter3 = 0, ter4 = 0, ter5 = 0, ter6 = 0, ter7 = 0, ter8 = 0, ter9 = 0, ter10 = 0;
+}
+<style>
+    .bg-secondary {
+        background-color: #6665bd !important;
+    }
+
+    .bg-info {
+        background-color: #7574d2 !important;
+    }
+
+    .bg-success {
+        background-color: #9695f2 !important;
+    }
+</style>
+@if (Model.Any())
+{
+    <table class="table table-bordered">
+        <thead class="bg-tableth">
+            <tr>
+                <th rowspan="2">Sr</th>
+                <th rowspan="2">UserName</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-1).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-2).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-3).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-4).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-5).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-6).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-7).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-8).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-9).ToString("dd MMM yy")</th>
+                <th colspan="3" class="text-center">@DateTime.Now.AddDays(-10).ToString("dd MMM yy")</th>
+            </tr>
+            <tr>
+                <th class="text-center bg-secondary">
+                    Primary
+                </th>
+                <th class="text-center bg-info">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center  bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+                <th class="text-center bg-secondary ">
+                    Primary
+                </th>
+                <th class="text-center bg-info ">
+                    Secoundary
+                </th>
+                <th class="text-center bg-success  ">
+                    Tertiary
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int counter = 1;
+                foreach (var item in Model)
+                {
+                    <tr data-User-Id="@item.UserID">
+                        <td>@counter</td>
+                        <td>@item.UserName</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri1</td>
+                        <td class="bg-info text-white text-right">@item.Sec1</td>
+                        <td class="bg-success text-white text-right">@item.Ter1</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri2</td>
+                        <td class="bg-info text-white text-right">@item.Sec2</td>
+                        <td class="bg-success text-white text-right">@item.Ter2</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri3</td>
+                        <td class="bg-info text-white text-right">@item.Sec3</td>
+                        <td class="bg-success text-white text-right">@item.Ter3</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri4</td>
+                        <td class="bg-info text-white text-right">@item.Sec4</td>
+                        <td class="bg-success text-white text-right">@item.Ter4</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri5</td>
+                        <td class="bg-info text-white text-right">@item.Sec5</td>
+                        <td class="bg-success text-white text-right">@item.Ter5</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri6</td>
+                        <td class="bg-info text-white text-right">@item.Sec6</td>
+                        <td class="bg-success text-white text-right">@item.Ter6</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri7</td>
+                        <td class="bg-info text-white text-right">@item.Sec7</td>
+                        <td class="bg-success text-white text-right">@item.Ter7</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri8</td>
+                        <td class="bg-info text-white text-right">@item.Sec8</td>
+                        <td class="bg-success text-white text-right">@item.Ter8</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri9</td>
+                        <td class="bg-info text-white text-right">@item.Sec9</td>
+                        <td class="bg-success text-white text-right">@item.Ter9</td>
+                        <td class="bg-secondary text-white text-right">@item.Pri10</td>
+                        <td class="bg-info text-white text-right">@item.Sec10</td>
+                        <td class="bg-success text-white text-right">@item.Ter10</td>
+                    </tr>
+                    counter++;
+                    pri1 += @item.Pri1; pri2 += item.Pri2; pri3 += item.Pri3; pri4 += item.Pri4; pri5 += item.Pri5;
+                    pri6 += item.Pri6; pri7 += item.Pri7; pri8 += item.Pri8; pri9 += item.Pri9; pri10 += item.Pri10;
+                    sec1 += @item.Sec1; sec2 += item.Sec2; sec3 += item.Sec3; sec4 += item.Sec4; sec5 += item.Sec5;
+                    sec6 += item.Sec6; sec7 += item.Sec7; sec8 += item.Sec8; sec9 += item.Sec9; sec10 += item.Sec10;
+                    ter1 += @item.Ter1; ter2 += item.Ter2; ter3 += item.Ter3; ter4 += item.Ter4; ter5 += item.Ter5;
+                    ter6 += item.Ter6; ter7 += item.Ter7; ter8 += item.Ter8; ter9 += item.Ter9; ter10 += item.Ter10;
+                }
+                <tr>
+                    <td colspan="2" class="text-right">Total</td>
+                    <td class="bg-danger text-white text-right">@pri1</td>
+                    <td class="bg-danger text-white text-right">@sec1</td>
+                    <td class="bg-danger text-white text-right">@ter1</td>
+                    <td class="bg-danger text-white text-right">@pri2</td>
+                    <td class="bg-danger text-white text-right">@sec2</td>
+                    <td class="bg-danger text-white text-right">@ter2</td>
+                    <td class="bg-danger text-white text-right">@pri3</td>
+                    <td class="bg-danger text-white text-right">@sec3</td>
+                    <td class="bg-danger text-white text-right">@ter3</td>
+                    <td class="bg-danger text-white text-right">@pri4</td>
+                    <td class="bg-danger text-white text-right">@sec4</td>
+                    <td class="bg-danger text-white text-right">@ter4</td>
+                    <td class="bg-danger text-white text-right">@pri5</td>
+                    <td class="bg-danger text-white text-right">@sec5</td>
+                    <td class="bg-danger text-white text-right">@ter5</td>
+                    <td class="bg-danger text-white text-right">@pri6</td>
+                    <td class="bg-danger text-white text-right">@sec6</td>
+                    <td class="bg-danger text-white text-right">@ter6</td>
+                    <td class="bg-danger text-white text-right">@pri7</td>
+                    <td class="bg-danger text-white text-right">@sec7</td>
+                    <td class="bg-danger text-white text-right">@ter7</td>
+                    <td class="bg-danger text-white text-right">@pri8</td>
+                    <td class="bg-danger text-white text-right">@sec8</td>
+                    <td class="bg-danger text-white text-right">@ter8</td>
+                    <td class="bg-danger text-white text-right">@pri9</td>
+                    <td class="bg-danger text-white text-right">@sec9</td>
+                    <td class="bg-danger text-white text-right">@ter9</td>
+                    <td class="bg-danger text-white text-right">@pri10</td>
+                    <td class="bg-danger text-white text-right">@sec10</td>
+                    <td class="bg-danger text-white text-right">@ter10</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

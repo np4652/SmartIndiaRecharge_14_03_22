@@ -1,0 +1,515 @@
+﻿<style>
+    .overflow-hidden {
+        overflow: hidden !important
+    }
+
+    .mb-4, .my-4 {
+        margin-bottom: 1.5rem !important
+    }
+
+    .glyphicon {
+        margin-right: 4px !important; /*override*/
+    }
+
+    .pagination .glyphicon {
+        margin-right: 0px !important; /*override*/
+    }
+
+    .pagination a {
+        color: #555;
+    }
+
+    .panel ul {
+        padding: 0px;
+        margin: 0px;
+        list-style: none;
+    }
+</style>
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left pt-1"><i class="fa fa-home"></i>Dashboard</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="bg-purple row mb-0">
+            <marquee behavior="scroll"><span id="divNews" class="text-white" style="font-size: 18px;"></span></marquee>
+        </div>
+        <div class="mb-3">
+            <div class="bg-grey-light grid-margin">
+                <div class="card bg-grey-light card-det-short">
+                    <div class="row">
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-cyan">
+                                <a class="stats-left " href="/RechargeReport">
+                                    <h5>Transaction</h5>
+                                    <h4>History</h4>
+                                </a>
+                                <div class="stats-right border-cyan">
+                                    <label><i class="fas fa-file-alt tx-60 lh-0 txt-cyan op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-red">
+                                <a class="stats-left " href="/UserLedger">
+                                    <h5>Account</h5>
+                                    <h4>Ledger</h4>
+                                </a>
+                                <div class="stats-right border-red">
+                                    <label><i class="fa fa-chart-bar tx-60 lh-0 txt-red op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-yellow">
+                                <a class="stats-left " href="/MasterWL">
+                                    <h5>Purchase</h5>
+                                    <h4>History</h4>
+                                </a>
+                                <div class="stats-right border-yellow">
+                                    <label><i class="fas fa-shopping-basket tx-60 lh-0 txt-yellow op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-dark">
+                                <a class="stats-left " href="/USalesSummary">
+                                    <h5>Sales</h5>
+                                    <h4>Summary</h4>
+                                </a>
+                                <div class="stats-right border-dark">
+                                    <label><i class="fas fa-book-open tx-60 lh-0 txt-dark op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-green">
+                                <a class="stats-left " href="/UDaybook">
+                                    <h5>Day</h5>
+                                    <h4>Book</h4>
+                                </a>
+                                <div class="stats-right border-green">
+                                    <label><i class="fas fa-book tx-60 lh-0 txt-green op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+
+                        <div class="col-sm-6 col-xl-2">
+                            <div class="widget bg-blue">
+                                <a class="stats-left " href="/DMRReport">
+                                    <h5>DMT</h5>
+                                    <h4>Report</h4>
+                                </a>
+                                <div class="stats-right border-blue">
+                                    <label><i class="fas fa-rupee-sign tx-60 lh-0 txt-blue op-7"></i></label>
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="services-panel mb-4">
+            <div class="row">
+                <div class="col-9">
+                    <div class="row">
+                        <div class="col-4">
+                            <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">LMTD</div>
+                                        <div class="lmtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">MTD</div>
+                                        <div class="mtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">Today</div>
+                                        <div class="todayAmt">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="line-dmt" style="height: 150px; width:100%;background-color:white"></div>
+
+                            <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="todayCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">LMTD</div>
+                                        <div class="lmtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">MTD</div>
+                                        <div class="mtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">Today</div>
+                                        <div class="todayAmt">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="line-dmt2" style="height: 150px; width:100%;background-color:white"></div>
+
+                            <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="todayCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">LMTD</div>
+                                        <div class="lmtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">MTD</div>
+                                        <div class="mtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">Today</div>
+                                        <div class="todayAmt">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="line-dmt3" style="height: 150px; width:100%;background-color:white"></div>
+
+                            <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="todayCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-4">
+                            <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">LMTD</div>
+                                        <div class="lmtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">MTD</div>
+                                        <div class="mtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">Today</div>
+                                        <div class="todayAmt">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="line-dmt4" style="height: 150px; width:100%;background-color:white"></div>
+
+                            <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="todayCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">LMTD</div>
+                                        <div class="lmtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">MTD</div>
+                                        <div class="mtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">Today</div>
+                                        <div class="todayAmt">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="line-dmt5" style="height: 150px; width:100%;background-color:white"></div>
+
+                            <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="todayCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-4">
+                            <div class="col-sm-12 p-2 text-center" style="background: #dadada;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">LMTD</div>
+                                        <div class="lmtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">MTD</div>
+                                        <div class="mtdAmt">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="lmtd">Today</div>
+                                        <div class="todayAmt">0</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="line-dmt6" style="height: 150px; width:100%;background-color:white"></div>
+
+                            <div class="col-sm-12 p-2 text-center text-white" style="background: #3693cf;font-size: 12px;">
+                                <div class="row">
+                                    <div class="col-sm-4">
+                                        <div class="lmtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="mtdCount">0</div>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <div class="todayCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3" style="display: none;">
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card-count mb-2">
+                                <div class="card-count-left">
+                                    <i class="fa fa-chart-bar"></i>
+                                </div>
+                                <div class="card-count-right">
+                                    <span class="count_top text-dark">Today's Sales</span>
+                                    <div class="count text-pink">
+                                        <h2 class="mb-0 sales-heading">0.00</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card-count mb-2">
+                                <div class="card-count-left">
+                                    <i class="fa fa-chart-bar"></i>
+                                </div>
+                                <div class="card-count-right">
+                                    <span class="count_top text-dark">Today's Sales</span>
+                                    <div class="count text-pink">
+                                        <h2 class="mb-0 sales-heading">0.00</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card-count mb-2">
+                                <div class="card-count-left">
+                                    <i class="fa fa-chart-bar"></i>
+                                </div>
+                                <div class="card-count-right">
+                                    <span class="count_top text-dark">Today's Sales</span>
+                                    <div class="count text-pink">
+                                        <h2 class="mb-0 sales-heading">0.00</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card-count mb-2">
+                                <div class="card-count-left">
+                                    <i class="fa fa-chart-bar"></i>
+                                </div>
+                                <div class="card-count-right">
+                                    <span class="count_top text-dark">Today's Sales</span>
+                                    <div class="count text-pink">
+                                        <h2 class="mb-0 sales-heading">0.00</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="card-count mb-2">
+                                <div class="card-count-left">
+                                    <i class="fa fa-chart-bar"></i>
+                                </div>
+                                <div class="card-count-right">
+                                    <span class="count_top text-dark">Today's Sales</span>
+                                    <div class="count text-pink">
+                                        <h2 class="mb-0 sales-heading">0.00</h2>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <section id="newsSection">
+                        <!--News Section Binding will be here at runtime-->
+                    </section>
+                </div>
+            </div>
+        </div>
+
+        <div class="distr-info">
+            <div class="row">
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-3 mt-3" style="border-radius: 04px;">
+                                <div id="line-dmt7" style="height: 210px; width:100%;background-color:white"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-3" style="border-radius: 04px;">
+                                <div id="line-dmt8" style="height: 210px; width:100%;background-color:white"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card mb-3" style="border-radius: 04px;">
+                                <div id="line-dmt9" style="height: 210px; width:100%;background-color:white"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-6">
+                    <section id="asSection">
+                        <!--Account Section will be bind at runtime-->
+                    </section>
+                    <section id="tsSection">
+                        <!--Transaction Section will be bind here at runtime-->
+                    </section>
+                    <section id="dsSection">
+                        <!--Dealer Section will be bind here at runtime-->
+                    </section>
+                </div>
+
+                <div class="col-3">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section id="bannerSection">
+                                <!--Banner Slider Section will be bind here at runtime-->
+                            </section>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <section id="helpInfoSection">
+                                <!--HelpInfo Section will be bind here at runtime-->
+                            </section>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<script src="~/lib/jquery/dist/jquery.js"></script>
+<script src="~/js/chart/armchart/core.js"></script>
+<script src="~/js/chart/armchart/charts.js"></script>
+<script src="~/js/chart/armchart/themes/dataviz.js"></script>
+<script src="~/js/chart/armchart/themes/frozen.js"></script>
+<script src="~/js/chart/armchart/themes/moonrisekingdom.js"></script>
+@*<script src="~/js/chart/armchart/animated.js"></script>*@
+<script src="~/js/chart/chart-utility.js"></script>
+<script src="~/js/chart-data/recent-transaction-chart.js"></script>
+
+<script>
+    let amChartStatic = new amChartUtility().amChartUtility;
+    $(document).ready(function () {
+        recentDaysTransactionChart("line-dmt", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.none, "Last 7 Days : Recharge", { ServiceTypeID: 1 });
+        recentDaysTransactionChart("line-dmt2", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.dataviz, "Last 7 Days : Bill Payments", { ServiceTypeID: 11 });
+        recentDaysTransactionChart("line-dmt3", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.moonrisekingdom, "Last 7 Days : Money Transfer", { ServiceTypeID: 2 });
+        recentDaysTransactionChart("line-dmt4", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.none, "Last 7 Days : AEPS", { ServiceTypeID: 17 });
+        recentDaysTransactionChart("line-dmt5", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.dataviz, "Last 7 Days : Mini ATM", { ServiceTypeID: 34 });
+        recentDaysTransactionChart("line-dmt6", amChartStatic.chartType.zoomableAxis, amChartStatic.chartTheme.moonrisekingdom, "Last 7 Days : Pan Card", { ServiceTypeID: 25 });
+        recentDaysPriSecTerTransaction("line-dmt7", amChartStatic.chartType.line, amChartStatic.chartTheme.none, "Last 7 Days : Primary", { PriSecTerType: 1 });
+        recentDaysPriSecTerTransaction("line-dmt8", amChartStatic.chartType.line, amChartStatic.chartTheme.dataviz, "Last 7 Days : Secondary", { PriSecTerType: 2 });
+        recentDaysPriSecTerTransaction("line-dmt9", amChartStatic.chartType.bar, amChartStatic.chartTheme.moonrisekingdom, "Last 7 Days : Tertiary", { PriSecTerType: 3 });
+    })
+</script>

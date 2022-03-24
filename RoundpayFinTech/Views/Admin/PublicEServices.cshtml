@@ -1,0 +1,665 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.ProcModel.OperatorDetail>
+@{
+    ViewData["Title"] = "Public-E-Services";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Operator Management</li>
+            <li class="breadcrumb-item active">Public-E-Services</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i>
+                        Public-E-Services
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="container-fluid" id="lstopeartors">
+                            @Html.Partial("PES/_PESOPList", Model)
+                        </div>
+
+                        <div id="PESFields">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap-select.min.js"></script>
+    <!--on service change load fields-->
+    <script>
+        $('[data-toggle="tooltip"]').tooltip();
+        $('.selectpicker').selectpicker('refresh');
+
+        $("#ddlop").change(function () {
+            LoadFields();
+        })
+
+        $("#btnShowField").click(function () {
+            if ($("#ddlop").val() !== '0') {
+                LoadFields();
+            }
+            else {
+                var result = '<div class="text-center"><h4 class="text-danger">Please select service first !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('#btnmsgclose').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            }
+        })
+
+        var LoadFields = function () {
+            preloader.load();
+            $.post('/LoadFields', { OID: $("#ddlop").val() }, function (result) {
+                $("#PESFields").html(result);
+
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+    </script>
+    <!--on service change load fields-->
+
+    <script>
+        $("#AddFieldModal").click(function () {
+            OpenAddfieldModal();
+        })
+        $("#AddVocabModal").click(function () {
+            OpenAddvocabModal();
+        })
+        var OpenAddfieldModal = function (fldid) {
+            if ($("#ddlop").val() !== '0') {
+                preloader.load();
+                $.post('/AddFields', { id: fldid }, function (result) {
+                    resultReload(result);
+                    mdlA.content = result;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.default);
+                    $('button.close span,#mdlCancel').unbind().click(function () {
+                        mdlA.dispose();
+                    });
+                    $("#btnsavefield").unbind().click(function () {
+                        BtnSaveField();
+                    });
+                    $("#fieldType").unbind().change(function () {
+                        _ShowVocab();
+                    });
+                    if ($("#fieldType").val() == 1) {
+                        _ShowVocab();
+                    }
+                    else if ($("#fieldType").val() == 2) {
+                        _ShowVocab();
+                    }
+                })
+                    .catch(function (xhr, e, msg) {
+                        an.title = 'Oops';
+                        an.content = 'An error has been occured during request.Reload again!'
+                        an.alert(an.type.failed);
+                    })
+                    .fail(function (xhr) {
+                        if (xhr.status == 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status == 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    })
+                    .always(function () {
+                        preloader.remove();
+                    });
+            }
+            else {
+                var result = '<div class="text-center"><h4 class="text-danger">Please select service first !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('#btnmsgclose').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            }
+        }
+
+        var BtnSaveField = function () {
+            if ($("#fieldName").val() === '') {
+                $("#errmsg1").text('Field name can not be blank !');
+                return;
+            }
+            if ($("#fieldType").val() == 1) {
+                if ($("#inputtype").val() == '') {
+                    $("#errmsg3").text('Please select input type !');
+                    return;
+                }
+            }
+            if ($("#fieldType").val() == 2) {
+                if ($("#Allvocab").val() == '') {
+                    $("#errmsg4").text('Please select vocab !');
+                    return;
+                }
+            }
+
+            var model = { _ID: $("#hid_FieldID").val(), _OID: $("#ddlop").val(), _Name: $("#fieldName").val(), _FieldType: $("#fieldType").val(), _IND: $("#fieldInd").val(), _VocabID: $("#Allvocab").val() == undefined ? 0 : $("#Allvocab").val(), _MaxLength: $("#maxlength").val(), _MinLength: $("#minlength").val(), _InputType: $("#inputtype").val(), _AutoComplete: $("#ac").is(':checked'), _IsRequired: $("#isrequired").is(':checked'), _IsDisabled: $("#isdisabled").is(':checked'), _IsReadOnly: $("#isreadonly").is(':checked'), _Placeholder: $("#pholder").val(), _Label: $("#flabel").val() };
+
+
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/SaveField',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(model),
+                success: function (result) {
+                    resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        mdlA.dispose();
+                        LoadFields();
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        }
+
+        var BtnSaveVocab = function () {
+            if ($("#fieldName").val() === '') {
+                $("#errmsg1").text('Field name can not be blank !');
+                return;
+            }
+            if ($("#ddldataTypeID").val() == '0') {
+                $("#errmsg2").text('Please select field data type !');
+                return;
+            }
+
+            var model = { _ID: $("#hid_FieldID").val(), _Name: $("#vocabName").val(), _IND: $("#vocabInd").val() };
+
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/SaveVocab',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(model),
+                success: function (result) {
+                    resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        mdlA.dispose();
+                        BtnVocabMaster();
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        }
+
+        var OpenAddvocabModal = function (Id, Name, Ind) {
+            preloader.load();
+            $.post('/AddVocabModal', { id: Id, name: Name, ind: Ind }, function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'vocab';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+                $("#btnsaveVocab").unbind().click(function () {
+                    BtnSaveVocab();
+                });
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var OpenOptionModal = function (_id) {
+            preloader.load();
+            $.post('/OpenOptionModal', function (result) {
+                resultReload(result);
+                mdlA.content = result;
+                mdlA.id = 'OptionModal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('button.close span,#mdlCancel').unbind().click(function () {
+                    mdlA.dispose();
+                });
+                $("#btnsaveOption").unbind().click(function () {
+                    _SaveOption();
+                });
+                OpenOptionList(_id);/*open option list below option insert form*/
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var OpenOptionList = function (_id) {
+            preloader.load();
+            $.post('/OpenOptionList', { id: _id }, function (result) {
+                resultReload(result);
+                $("#OptionListDiv").html(result);
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+        $("#btnVocab").click(function () {
+            BtnVocabMaster();
+        })
+        var BtnVocabMaster = function () {
+            var model = { top: 50 };
+            preloader.load();
+            $.post('/LoadVocabs', function (result) {
+                $("#PESFields").html(result);
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+        var _SaveOption = function () {
+            var hid_VMID = $("#hid_VMID").val();
+            var _name = $("#OptionName").val();
+            var Ind = $("#Ind").val();
+            $("#errmsg1").text('');
+            $("#errmsg2").text('');
+            if (_name.trim() === '') {
+                $("#errmsg1").text('Please enter option name !');
+                return;
+            }
+            if (Ind.trim() === '') {
+                $("#errmsg2").text('Please enter display order !');
+                return;
+            }
+            var model = { _ID: $("#hid_ID").val(), _VMID: $("#hid_VMID").val(), _Name: $("#OptionName").val(), _IND: $("#Ind").val() }
+            if (_name !== '' && Ind !== '') {
+                preloader.load();
+                $.ajax({
+                    type: 'POST',
+                    url: '/SaveVocabOption',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify(model),
+                    success: function (result) {
+                        resultReload(result);
+                        if (result.statuscode == an.type.failed) {
+                            an.title = "Oops";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }
+                        else if (result.statuscode == an.type.success) {
+                            an.title = "Well done";
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            $("input").val('');
+                            OpenOptionList(hid_VMID);
+                        }
+                    },
+                    statusCode: {
+                        500: function () {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        },
+                        0: function () {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    },
+                    error: function (result) {
+                        checkError(result);
+                        an.title = 'Oops';
+                        an.content = 'An error occured!';
+                        an.alert(an.type.failed);
+                    },
+                    complete: function () {
+                        preloader.remove();
+                    }
+                });
+            }
+            else {
+                an.title = 'Oops';
+                an.content = 'All fields are required !';
+                an.alert(an.type.failed);
+            }
+        }
+
+        var _SaveProperties = function () {
+            var maxlength = $("#maxlength").val();
+            var minlength = $("#minlength").val();
+            var ddltype = $("#ddltype").val();
+            var ac = $("#ac").is(':checked');
+            var isrequired = $("#isrequired").is(':checked');
+            var isdisabled = $("#isdisabled").is(':checked');
+            var isreadonly = $("#isreadonly").is(':checked');
+            var pid = $("#pid").val();
+            var oid = $("#oid").val();
+            var datatypeid = $("#datatypeid").val();
+            var fieldid = $("#fieldid").val();
+            var model = { _ID: pid, _OID: oid, _FieldID: fieldid, _DataTypeID: datatypeid, _IsRequired: isrequired, _MaxLength: maxlength, _MinLength: minlength, _Type: ddltype, _AutoComplete: ac, _IsDisabled: isdisabled, _IsReadOnly: isreadonly };
+
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/SaveProperties',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(model),
+                success: function (result) {
+                    resultReload(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        $("input").val('');
+                        mdlA.dispose();
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        }
+
+        var _ShowVocab = function () {
+            if ($("#fieldType").val() == 2) {
+                $("#selectvocab").removeClass('d-none');
+                $("#propdiv").addClass('d-none');
+                _GetAllVocab();
+            }
+            else if ($("#fieldType").val() == 1 || $("#fieldType").val() == 4 || $("#fieldType").val() == 5) {
+                $("#propdiv").removeClass('d-none');
+                $("#selectvocab").addClass('d-none');
+                if ($("#fieldType").val() == 4 || $("#fieldType").val() == 5) {
+                    $('#isrequired').attr('disabled', 'disabled').attr('checked', 'checked');
+                    $('#inputtype option[value="number"]').prop('selected', true);
+                    $('#inputtype').attr('disabled', 'disabled');
+                }
+                else {
+                    $('#isrequired').removeAttr('disabled').removeAttr('checked');
+                    $('#inputtype option[value="number"]').prop('selected', false);
+                    $('#inputtype').removeAttr('disabled');
+                }
+            }
+            else {
+                $("#propdiv").addClass('d-none');
+                $("#selectvocab").addClass('d-none');
+            }
+        }
+
+        var _GetAllVocab = function () {
+            $.ajax({
+                type: 'POST',
+                url: '/GetAllVocab',
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    resultReload(result);
+                    if (result != null) {
+
+                        var options = '<option value="0">::Select Vocab::</option>';
+                        for (var i = 0; i < result.length; i++) {
+                            options += '<option value=' + result[i]._ID + '>' + result[i]._Name + '</option>';
+                        }
+                        $("#Allvocab").html(options);
+                        $("#Allvocab").val($("#hid_VMID").val());
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (result) {
+                    checkError(result);
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        }
+
+        $("#btnShowForm").click(function () {
+            if ($("#ddlop").val() !== '0') {
+                _ShowForm();
+            }
+            else {
+                var result = '<div class="text-center"><h4 class="text-info">Please select service first !</h4><br/><button class="btn btn-primary" id="btnmsgclose">Close</button></div>';
+                mdlA.content = result;
+                mdlA.id = 'mymodal';
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.default);
+                $('#btnmsgclose').unbind().click(function () {
+                    mdlA.dispose();
+                });
+            }
+        })
+
+        var _ShowForm = function () {            
+            preloader.load();
+            $.post('/ShowForm', { OID: $("#ddlop").val() }, function (result) {
+                resultReload(result);
+                $("#PESFields").html(result);
+            })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                })
+                .fail(function (xhr) {
+                    if (xhr.status == 500) {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    }
+                    if (xhr.status == 0) {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                })
+                .always(function () {
+                    preloader.remove();
+                });
+        }
+
+       
+    </script>   
+}

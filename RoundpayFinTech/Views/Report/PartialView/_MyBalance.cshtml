@@ -1,0 +1,307 @@
+﻿@using RoundpayFinTech.AppCode.StaticModel;
+@model MyBalanceViewModel
+@{var listModes = new SelectList(Model.transactionModes, "OID", "Name"); }
+    <div class="col-md-12">
+        @*<button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3><small class="text-muted">My Balance</small></h3>*@
+        <div class="btn-group btn-toggle mt-1">
+            <span class="btn btn-outline-info active">@Wallet._Prepaid</span>
+            <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.Balance</span>
+            @if (Model.moveToWalletMappings != null)
+            {
+                var walletMapForPrepaid = Model.moveToWalletMappings.Where(x => x.FromWalletID == Wallet.Prepaid).ToList();
+                if (walletMapForPrepaid.Count > 0)
+                {
+                    <select class="form-control btn-outline-info" id="ddlMove_@(Wallet.Prepaid)">
+                        @foreach (var item in walletMapForPrepaid)
+                        {
+                            <option value="@Html.Raw(item.ID+"_"+item.ToWalletID)">Move To @(item.ToWalletType)</option>
+                        }
+                    </select>
+                    <select class="form-control btn-outline-info" id="ddlTransType_@(Wallet.Prepaid)" style="display:none" asp-items="@listModes">
+                    </select>
+                    <input type="text" id="txtAmount_@(Wallet.Prepaid)" class="form-control" />
+                    <span class="btn btn-outline-info active" id="btnTransfer_@(Wallet.Prepaid)">Transfer</span>
+                }
+            }
+
+        </div>
+        <div id="lblMessage_@(Wallet.Prepaid)"></div>
+        @if (Model.userBalnace.IsUBalance)
+        {
+            <div class="btn-group btn-toggle mt-1">
+                <span class="btn btn-outline-info active">@Wallet._Utility</span>
+                <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.UBalance</span>
+                @if (Model.moveToWalletMappings != null)
+                {
+                    var walletMapForUtility = Model.moveToWalletMappings.Where(x => x.FromWalletID == Wallet.Utility).ToList();
+                    if (walletMapForUtility.Count > 0)
+                    {
+                        <select class="form-control btn-outline-info" id="ddlMove_@(Wallet.Utility)">
+                            @foreach (var item in walletMapForUtility)
+                            {
+                                <option value="@Html.Raw(item.ID+"_"+item.ToWalletID)">Move To @(item.ToWalletType)</option>
+                            }
+                        </select>
+                        <select class="form-control btn-outline-info" id="ddlTransType_@(Wallet.Utility)" style="display:none" asp-items="@listModes">
+                        </select>
+                        <input type="text" id="txtAmount_@(Wallet.Utility)" class="form-control" />
+                        <span class="btn btn-outline-info active" id="btnTransfer_@(Wallet.Utility)">Transfer</span>
+                    }
+                }
+
+            </div>
+            <div id="lblMessage_@(Wallet.Utility)"></div>
+        }
+        @if (Model.userBalnace.IsBBalance)
+        {
+            <div class="btn-group btn-toggle mt-1">
+                <span class="btn btn-outline-info active">@Wallet._Bank</span>
+                <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.BBalance</span>
+                @if (Model.moveToWalletMappings != null)
+                {
+                    var walletMapForBank = Model.moveToWalletMappings.Where(x => x.FromWalletID == Wallet.Bank).ToList();
+                    if (walletMapForBank.Count > 0)
+                    {
+                        <select class="form-control btn-outline-info" id="ddlMove_@(Wallet.Bank)">
+                            @foreach (var item in walletMapForBank)
+                            {
+                                <option value="@Html.Raw(item.ID+"_"+item.ToWalletID)">Move To @(item.ToWalletType)</option>
+                            }
+                        </select>
+                        <select class="form-control btn-outline-info" id="ddlTransType_@(Wallet.Bank)" style="display:none" asp-items="@listModes">
+                        </select>
+                        <input type="text" id="txtAmount_@(Wallet.Bank)" class="form-control" />
+                        <span class="btn btn-outline-info active" id="btnTransfer_@(Wallet.Bank)">Transfer</span>
+                    }
+                }
+
+            </div>
+            <div id="lblMessage_@(Wallet.Bank)"></div>
+        }
+        @if (Model.userBalnace.IsCBalance)
+        {
+            <div class="btn-group btn-toggle mt-1">
+                <span class="btn btn-outline-info active">@Wallet._Card</span>
+                <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.CBalance</span>
+                @if (Model.moveToWalletMappings != null)
+                {
+                    var walletMapForCard = Model.moveToWalletMappings.Where(x => x.FromWalletID == Wallet.Card).ToList();
+                    if (walletMapForCard.Count > 0)
+                    {
+                        <select class="form-control btn-outline-info" id="ddlMove_@(Wallet.Card)">
+                            @foreach (var item in walletMapForCard)
+                            {
+                                <option value="@Html.Raw(item.ID+"_"+item.ToWalletID)">Move To @(item.ToWalletType)</option>
+                            }
+                        </select>
+                        <select class="form-control btn-outline-info" id="ddlTransType_@(Wallet.Card)" style="display:none" asp-items="@listModes">
+                        </select>
+                        <input type="text" id="txtAmount_@(Wallet.Card)" class="form-control" />
+                        <span class="btn btn-outline-info active" id="btnTransfer_@(Wallet.Card)">Transfer</span>
+                    }
+                }
+
+            </div>
+            <div id="lblMessage_@(Wallet.Card)"></div>
+        }
+        @if (Model.userBalnace.IsIDBalance)
+        {
+            <div class="btn-group btn-toggle mt-1">
+                <span class="btn btn-outline-info active">@Wallet._RegID</span>
+                <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.IDBalnace</span>
+                @if (Model.moveToWalletMappings != null)
+                {
+                    var walletMapForRegID = Model.moveToWalletMappings.Where(x => x.FromWalletID == Wallet.RegID).ToList();
+                    if (walletMapForRegID.Count > 0)
+                    {
+                        <select class="form-control btn-outline-info" id="ddlMove_@(Wallet.RegID)">
+                            @foreach (var item in walletMapForRegID)
+                            {
+                                <option value="@Html.Raw(item.ID+"_"+item.ToWalletID)">Move To @(item.ToWalletType)</option>
+                            }
+                        </select>
+                        <select class="form-control btn-outline-info" id="ddlTransType_@(Wallet.RegID)" style="display:none" asp-items="@listModes">
+                        </select>
+                        <input type="text" id="txtAmount_@(Wallet.RegID)" class="form-control" />
+                        <span class="btn btn-outline-info active" id="btnTransfer_@(Wallet.RegID)">Transfer</span>
+                    }
+                }
+
+            </div>
+            <div id="lblMessage_@(Wallet.RegID)"></div>
+        }
+        @if (Model.userBalnace.IsPacakgeBalance)
+        {
+            <div class="btn-group btn-toggle mt-1">
+                <span class="btn btn-outline-info active">@Wallet._Package</span>
+                <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.PacakgeBalance</span>
+                @if (Model.moveToWalletMappings != null)
+                {
+                    var walletMapForPackage = Model.moveToWalletMappings.Where(x => x.FromWalletID == Wallet.Package).ToList();
+                    if (walletMapForPackage.Count > 0)
+                    {
+                        <select class="form-control btn-outline-info" id="ddlMove_@(Wallet.Package)">
+                            @foreach (var item in walletMapForPackage)
+                            {
+                                <option value="@Html.Raw(item.ID+"_"+item.ToWalletID)">Move To @(item.ToWalletType)</option>
+                            }
+                        </select>
+                        <select class="form-control btn-outline-info" id="ddlTransType_@(Wallet.Package)" style="display:none" asp-items="@listModes">
+                        </select>
+                        <input type="text" id="txtAmount_@(Wallet.Package)" class="form-control" />
+                        <span class="btn btn-outline-info active" id="btnTransfer_@(Wallet.Package)">Transfer</span>
+                    }
+                }
+
+            </div>
+            <div id="lblMessage_@(Wallet.Package)"></div>
+        }
+        @if (ApplicationSetting.IsMultiCycle)
+        {
+            <div class="btn-group btn-toggle mt-1" style="float:right">
+                <span class="btn btn-outline-info active" id="btnSettelment">View Settelment Cycle</span>
+            </div>
+
+        }
+        @if (ApplicationSetting.IsRealSettlement)
+        {
+            <div class="btn-group mt-1 mr-1" style="float:right">
+                <span class="btn btn-outline-info active" id="btnRealComm">View Charges</span>
+            </div>
+
+        }
+        @if (ApplicationSetting.IsAccountStatement)
+        {
+            <div class="btn-group btn-toggle mt-1">
+                <span class="btn btn-outline-info active">@Wallet._OSBalance</span>
+                <span class="btn btn-outline-info"><i class="fas fa-rupee-sign"></i>@Model.userBalnace.OSBalance</span>
+            </div>
+            <div id="lblMessage_@(Wallet._OSBalance)"></div>
+        }
+    </div>
+<script>
+    var GetTransModeDetail = function (code, w) {
+        $.ajax({
+            type: 'POST',
+            url: '/Trans-Mode',
+            data: JSON.stringify({ CommonStr2: code }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                resultReload(result);
+                var resultString = "";
+                //if (parseInt(result.min) > parseInt("0")) {
+                //    resultString += "Min Amount: " + result.min + " Rs. | ";
+                //}
+                //if (parseInt(result.max) > parseInt("0")) {
+                //    resultString += "Max Amount: " + result.max + " Rs. | ";
+                //}
+                if (parseInt(result.charge) > parseInt("0")) {
+                    resultString += "Minimum Charges for '" + result.transMode + "' is " + result.charge + " Rs.";
+                }
+                $('#lblMessage_' + w).html(resultString).css('color', 'red');
+            },
+            error: function (xhr, result) {
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(-1);
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                if (result === 'parsererror') {
+                    reload();
+                }
+            }
+        });
+    };
+    $('[id^=ddlMove_]').change(function () {
+        var moveID = $(this).attr('id');
+        var WalletID = moveID.split('_')[1];
+        var ddlMove = $(this).val();
+        if (ddlMove.split('_')[1] === "3") {
+            $('#ddlTransType_' + WalletID).css({ "display": "block" });
+            var Code = $('#ddlTransType_' + WalletID).val();
+            //GetTransModeDetail(Code, WalletID);
+        }
+        else {
+            $('#ddlTransType_' + WalletID).css({ "display": "none" });
+            $('#lblMessage_' + WalletID).html("");
+        }
+    });
+    //$('[id^=ddlTransType_]').change(function () {
+    //    var code = $(this).val();
+    //    var WalletID = $(this).attr('id').split('_')[1];
+    //    //GetTransModeDetail(code, WalletID);
+    //});
+
+    $('#btnSettelment').click(function () {
+        $.post('/View-Settelment-cycle')
+            .done(result => {
+                resultReload(result);
+                mdlA.id = 'mdlMybal';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.small);
+                $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+    });
+
+    $('#btnRealComm').click(function () {
+        $.post('/Get-realtime-Comm')
+            .done(result => {
+                resultReload(result);
+               mdlA.id = "divMore";
+                        mdlA.title = '<h5 class="text-info">Settelment Charges</h5>';
+                        mdlA.content = result;
+                        mdlA.modal(mdlA.size.large);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+    });
+
+
+
+    $('[id^=btnTransfer_]').click(function () {
+        preloader.load();
+        var btnID = $(this).attr('id').split('_')[1];
+        let ActionType = $('#ddlMove_' + btnID).val();
+        let Amount = $('#txtAmount_' + btnID).val();
+        let OID = $('#ddlTransType_' + btnID).val();
+        $.ajax({
+            type: 'POST',
+            url: '/move-to-wallet',
+            data: JSON.stringify({ CommonInt: parseInt(ActionType.split('_')[0]), CommonDecimal: parseFloat(Amount), CommonInt2: OID }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (result) {
+                preloader.remove();
+                resultReload(result);
+                an.title = result.statuscode === an.type.success ? 'Success' : 'Oops';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+                if (result.statuscode === an.type.success) {
+                    UserMyWallet();
+                }
+            },
+            error: (xhr, result) => {
+                preloader.remove();
+                an.title = "Oops! Error";
+                an.content = xhr.status === 404 ? "Requested path not find" : (xhr.status === 0 ? "Internet is not connected" : "Server error");
+                an.alert(-1);
+                btnLdr.Stop(ct.btn);
+                if (result === 'parsererror') {
+                    reload();
+                }
+            }
+        });
+    });
+    $('[id^=ddlMove_]').change();
+</script>

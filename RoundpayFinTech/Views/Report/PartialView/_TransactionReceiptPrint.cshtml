@@ -1,0 +1,163 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.ProcModel.TransactionDetail
+
+<div>
+    <header>
+        <table style="width:100%">
+            <tr>
+                <td style="text-align: center !important;" colspan="2">
+                    <img src="~/Image/iconMsg/1.png" style="width:50px;" />
+                    @if (Model.Statuscode == 1)
+                    {
+                        <h2>PENDING</h2>
+                    }
+                    else if (Model.Statuscode == 2)
+                    {
+                        <h2 class="text-success">SUCCESS</h2>
+                    }
+                </td>
+            </tr>
+            <tr>
+                <td style="width:65%"><b>@Model.CompanyName</b></td>
+                <td style="display: block; width:35%; text-align:right">
+                    <img src="~/Image/Website/@Model.WID.ToString()/logo.png" style="width: 150px;display: block;margin: auto;" />
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="address-detail">
+                        <p class="address">@Model.CompanyAddress</p>
+                        <p><b>Landline No. :</b> @Model.PhoneNoSupport</p>
+                        <p><b>Mobile No. :</b> @Model.MobileSupport</p>
+                        <p><b>Email :</b> @Model.SupportEmail</p>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </header>
+    @if (Model.IsBBPS)
+    {
+<table style="width:100%">
+    <tr>
+        <td colspan="2" style="text-align: right !important;"><img style="max-height: 65px;" src="/images/BeAssured.png"></td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiller", "Biller Name", new { })</td>
+        <td style="text-align: right !important;">@Model.OPName</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBillerID", "Biller ID", new { })</td>
+        <td style="text-align: right !important;">@Model.BillerID</td>
+    </tr>
+    <tr>
+        <td> @Html.Label("lblCustomerName", "Customer Name", new { })</td>
+        <td style="text-align: right !important;">@Model.O15</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblCustomerName", "Customer Mobile", new { })</td>
+        <td style="text-align: right !important;">@Model.CustomerMobile</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblDueDate", "Approval Number", new { })</td>
+        <td style="text-align: right !important;">@Model.LiveID</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBillDate", Model.AccountNoKey, new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.Account</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBillAmount", "Transaction ID", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.TransactionID</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiilCCF", "Bill Amount", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.RequestedAmount</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiilCCF", "Customer Convenience Fees", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.convenientFee</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiilCCF", "Total amount", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@(Model.RequestedAmount + Model.convenientFee)</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiilCCF", "Transaction Date and Time", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.EntryDate.ToString("dd MMM yyyy hh:mm:ss tt")</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiilCCF", "Payment Mode", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.O16</td>
+    </tr>
+    <tr>
+        <td>@Html.Label("lblBiilCCF", "Initiating Channel", new { @class = "lbl" })</td>
+        <td style="text-align: right !important;">@Model.O17</td>
+    </tr>
+</table>
+    }
+    else
+    {
+        <table style="width: 100%;border:1px solid #dee2e6;" class="table">
+            <thead>
+
+                <tr>
+                    <th colspan="2" style="text-align: center;border:0">
+                        <h5>TRANSACTION DETAIL</h5>
+                    </th>
+                </tr>
+                <tr colspan="2">
+                    <th class="com-logo" colspan="2">
+                        <img src="~/Image/operator/@(Model.OID+".png")" data-holder-rendered="true" style=" width:50px;float: left;" /> <span style="margin: 1.3em;float: left;">@Model.OPName</span>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><b>Account No :</b></td>
+                    <td>@Model.Account</td>
+                </tr>
+                <tr class="bg-g">
+                    <td><b>Amount :</b></td>
+                    <td>@Model.RequestedAmount</td>
+                </tr>
+                <tr>
+                    <td><b>Live Id :</b></td>
+                    <td>@Model.LiveID</td>
+                </tr>
+                <tr class="bg-g">
+                    <td><b>Transaction ID :</b></td>
+                    <td>@Model.TransactionID</td>
+                </tr>
+                <tr>
+                    <td><b>Transaction Status :</b></td>
+                    <td>@Model.Status</td>
+                </tr>
+                <tr class="bg-g">
+                    <td><b>Operator Name :</b></td>
+                    <td>@Model.OPName</td>
+                </tr>
+                <tr>
+                    <td><b>Transaction Date :</b></td>
+                    <td>@Model.EntryDate.ToString("dd-MMM-yyyy HH:mm:ss")</td>
+                </tr>
+                @if (@Model.convenientFee > 0)
+                {
+                    <tr class="bg-g">
+                        <td><b>Convenience Fees :</b></td>
+                        <td>@Model.convenientFee</td>
+                    </tr>
+                }
+                <tr>
+                    <td><b>Total :</b></td>
+                    <td><b>@(Model.RequestedAmount+ Model.convenientFee) </b></td>
+                </tr>
+            </tbody>
+        </table>
+    }
+
+
+    <div style="text-align:center">
+        <h5>Shop Detail</h5>
+        <p style="color: #636262;">Name : @Model.Name | Contact No. : @Model.MobileNo | <a href="mailto:@Model.Email" style="color: #636262;">@Model.Email</a></p>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+﻿@model bool
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h3>Bill Payament Confirmation</h3>
+
+    <div class="container-fluid pl-0 pr-0">
+        <div class="row mb-2">
+            <div class="col-md-12 float-right">
+                <img class="lbl f-w-bold text-danger float-right" style="max-height: 65px;" src="/images/avatar/bharat-billpay.png">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.Label("lblBiller", "Biller Name", new { @class = "lbl" })
+            </div>
+            <span id="lblBiller" class="col-md-8 text-right"></span>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.Label("lblBillerID", "Biller ID", new { @class = "lbl" })
+            </div>
+            <span id="lblBillerID" class="col-md-8 text-right"></span>
+        </div>
+        @if (!Model)
+        {
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("lblCustomerName", "Customer Name", new { @class = "lbl" })
+                </div>
+                <span id="lblCustomerName" class="col-md-8 text-right"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("lblDueDate", "Due Date", new { @class = "lbl" })
+                </div>
+                <span id="lblDueDate" class="col-md-8 text-right"></span>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    @Html.Label("lblBillDate", "Bill Date", new { @class = "lbl" })
+                </div>
+                <span id="lblBillDate" class="col-md-8 text-right"></span>
+            </div>
+        }
+
+        <div class="row">
+            <div class="col-md-4">
+                @Html.Label("lblPayMode", "Paymnet Mode", new { @class = "lbl" })
+            </div>
+            <span id="lblPayMode" class="col-md-8 text-right"></span>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                @Html.Label("lblBillAmount", "Bill Amount", new { @class = "lbl" })
+            </div>
+            <span id="lblBillAmount" class="col-md-8 text-right"></span>
+        </div>
+        <div class="row mt-2 mb-2">
+            <div class="col-md-12">
+                @Html.Label("lblBiilCCF", "Customer Convenience Fee", new { @class = "lbl" })
+            </div>
+            <div class="col-md-12">
+                <input type="number" min="0" max="1000" class="form-control-sm w-100" id="txtBCCF" value="0" />
+            </div>
+        </div>
+    </div>
+    <div>
+        @Html.Label("lblAmountBill", "Amount", new { @class = "lbl" })
+        <span id="lblAmountBill" class="form-control"></span>
+    </div>
+
+    <button class="btn btn-outline-dark" id="btnBPConfirm">Confirm</button>
+    <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+</div>
+<script>
+    $('#txtBCCF').change(function () {
+        let bccf = parseInt($(this).val());
+        let lblBillAmount = parseInt($('#lblBillAmount').text().trim());
+        $('#lblAmountBill').text(bccf + lblBillAmount);
+    });
+</script>

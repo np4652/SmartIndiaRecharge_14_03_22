@@ -1,0 +1,336 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel
+@using RoundpayFinTech.AppCode.StaticModel;
+@model GetWhatsappContactListModel;
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+<style>
+    .whtabgimg {
+        background-image: url('/whatsapp/img/bg-chat-img.png');
+        opacity: 0.06;
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+    }
+</style>
+<!-- Messages -->
+<input type="hidden" id="baseimg" />
+
+<div class="d-flex flex-column h-100 chatbgcolour" style="background-color:#e5ddd5; position:relative;" id="messages">
+    <div class="whtabgimg"></div>
+    <div id="MsgSendArea" class="chatbgcolour h-100">
+        <div class="align-self-end self p-1 my-1 mx-3 h-100 rounded   message-item" id="bottomscroll" style="overflow-x:hidden;overflow-y:scroll;">
+            @if (Model.WhatsappConversations != null)
+            {
+                string remainignchattime = "0";
+                string contactid = "0";
+                if (Model.WhatsappConversations.Count > 0)
+                {
+                    var m = Model.WhatsappConversations.FirstOrDefault();
+                    remainignchattime = m.RemChatTime;
+                    contactid = m.ContactId;
+                }
+                <input type="hidden" id="hdnremtime" value="@remainignchattime" />
+                <input type="hidden" id="hdncontactid" value="@contactid" />
+                int FlagRepeat = 1;
+                int seenflag = 0;
+                string Msgdate = string.Empty;
+                int i = 0;
+
+                @foreach (var waConv in Model.WhatsappConversations)
+                {
+                    i = i + 1;
+
+                    if (seenflag == 0)
+                    {
+                        @if (waConv.IsSeen == false)
+                        {
+                            @if (@waConv.UnreadMessages != 0)
+                            {
+                                <div class="col-sm-12 p-2 unreadmessagediv">
+                                    <span class="p-2 unreadmessagespan">
+                                        @waConv.UnreadMessages Unread Message
+                                    </span>
+
+                                </div>
+                                seenflag = 1;
+                            }
+                        }
+                    }
+                    @if (@waConv.MessageDate != Msgdate)
+                    {
+                        <div class="col-sm-12 p-2 datemsgdv">
+                            <span class="p-2 spndatemsg">
+                                @(waConv.MessageDate == @waConv.Cdate ? "Today" : @waConv.MessageDate)
+                            </span>
+                        </div>
+                        Msgdate = @waConv.MessageDate;
+                    }
+                    if (waConv.StatusString.ToLower() == WhatsappStatusString.Received)
+                    // @if (@waConv.CCID == 0)
+                    {
+                        FlagRepeat = 1;
+                        //text Received
+                        <div id="Quoteid@(waConv.Id)">
+                            <div class="align-self-start p-1  my-1 mx-3 rounded   message-item">
+                                @if (!string.IsNullOrEmpty(@waConv.GroupID))
+                                {
+                                    <div class="text-left incmngmsgno">@waConv.WAMobileNo</div>
+                                }
+                                <div class="row">
+                                    <div class="Custmsg u1 chat text-left p-2 m-1 " style="margin-left:6% !important">
+                                        @if (@waConv.Type.ToLower() == "text")
+                                        {
+                                            <div class="nav-item dropdown" style="float:right;margin-top: -16px;">
+                                                <a class="nav-link sngclck" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                                    <svg viewBox="0 0 18 18" width="16" height="16" class="fdsvg" style="position: absolute;top: 11px;right: 3px;">
+                                                        <path fill="currentColor" d="M3.3 4.6L9 10.3l5.7-5.7 1.6 1.6L9 13.4 1.7 6.2l1.6-1.6z"></path>
+                                                    </svg>
+                                                </a>
+                                                <div class="dropdown-menu dropdown-menu-right message-div-item ">
+                                                    @if (@waConv.APICODE == WhatsappAPICode.ALERTHUB)
+                                                    {
+                                                        var text = @waConv.Text!=""?@waConv.Text.Replace("'", "\\'"):"";
+                                                        <a class="message-dropdown-item ass" style="cursor: pointer; font-size: 12px; border-bottom:1px solid #ebe6f1;" onclick="_ReplyQuoted('@waConv.ReplyJID', '@text', '@waConv.conversationId')" id="lnkReplyQuoted">Reply</a>
+                                                    }
+                                                    <a class="message-dropdown-item ass" style="cursor: pointer; font-size: 12px; " onclick="_ForwardMessageContactSearch('', @waConv.Id,@(i))" id="lnkfdmsg">Forward Message</a>
+                                                </div>
+                                            </div>
+                                            @if (!string.IsNullOrEmpty(@waConv.QuoteMsg))
+                                            {
+                                                <a class="aquotemsg" href="#Quoteid@(waConv.QuoteMsgID)">
+                                                    <div class="quotemsgreceived">
+                                                        <div class="qname p-1 m-1">
+                                                            <span>@waConv.QuoteMobileno</span>
+                                                        </div>
+
+                                                        <div class="qmsg p-1">
+                                                            <span>@Html.Raw(@waConv.QuoteMsg)</span>
+                                                        </div>
+
+                                                    </div>
+                                                </a>
+                                            }
+                                            <div id="SentMsg@(i)" class="body m-1 mr-2" style="font-size:12px;min-width:99px;font-weight:normal">
+                                                @Html.Raw(@waConv.Text)
+                                            </div>
+                                        }
+                                        else if (@waConv.Type == "image")
+                                        {
+                                            string @imageurl = @waConv.APICODE == WhatsappAPICode.ALERTHUB ? @waConv.Data : Url.Action("GetWatsappImage", "CustomerCare", new { url = waConv.Data, ac = waConv.APICODE });
+                                            <a href="@imageurl" style="color: #4cbffe; float: right;
+                                                cursor: pointer;" download="download.png">
+                                                <i class="fa fa-download" aria-hidden="true" style="cursor:pointer;font-size:12px"></i>
+                                            </a>
+                                            <img onclick="onClick(this)" src="@imageurl" width="100%"  alt="" download />
+                                        }
+                                        else if (@waConv.Type == "video")
+                                        {
+                                            <video width="330" height="200" controls>
+                                                <source src="@Url.Action("GetWatsappVideo", "CustomerCare", new { url = waConv.Data })" type="video/mp4">
+                                            </video>
+                                            <label class="p-2" style="font-weight:normal">  @waConv.Text</label>
+                                        }
+                                        <div class="text-right" style="font-size:9px;font-weight:normal;font-family:inherit;color:gray">
+                                            <span>  @waConv.MessageTime</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-4" style="min-width:15%"></div>
+                                    <div class="col-sm-3" style="min-width:15%"></div>
+                                </div>
+                            </div>
+                        </div>
+                        //text Received end
+                    }
+                    else
+                    {
+                        //text Send
+                        if (FlagRepeat == 1)
+                        {
+                            <div class="text-right outgng">@waConv.CCName  ( @waConv.SenderNo )</div>
+                        }
+                        <div id="Quoteid@(waConv.Id)">
+                            <div class="align-self-start  text-right p-1 my-1 mx-3 rounded ">
+                                <div class="row">
+                                    <div class="col-sm-6" style="min-width:15%"></div>
+                                    <div class="col-sm-6" style="margin-left:46%">
+                                        <div class="chat2  u2 text-left p-2 m-1">
+                                            @if (@waConv.Type == "text")
+                                            {
+                                                <div id="Quoteid@(waConv.Id)"></div>
+                                                <div class="nav-item dropdown" style="float:right;margin-top: -16px;">
+                                                    <a class="nav-link fd sngclck" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                                        <svg viewBox="0 0 18 18" width="16" height="16" class="fdsvg" style="position: absolute;top: 11px;right: 3px;">
+                                                            <path fill="currentColor" d="M3.3 4.6L9 10.3l5.7-5.7 1.6 1.6L9 13.4 1.7 6.2l1.6-1.6z"></path>
+                                                        </svg>
+                                                    </a>
+                                                    <div class="dropdown-menu dropdown-menu-right message-div-item ">
+                                                        @if (@waConv.APICODE == WhatsappAPICode.ALERTHUB)
+                                                        {
+                                                            var text = @waConv.Text != "" ? @waConv.Text.Replace("'", "\\'") : "";
+                                                            <a class="message-dropdown-item ass" style="cursor: pointer; font-size: 12px; border-bottom:1px solid #ebe6f1;" onclick="_ReplyQuoted('@waConv.ReplyJID', '@text','@waConv.conversationId')" id="lnkReplyQuoted">Reply</a>
+                                                        }
+                                                        <a class="message-dropdown-item ass" style="cursor: pointer; font-size: 12px;" onclick="_ForwardMessageContactSearch('', @waConv.Id,@(i))" id="lnkfdmsg">Forward Message</a>
+                                                    </div>
+                                                </div>
+                                                <div id="SentMsg@(i)" class="body m-1  mr-2 text-left SentMsgs@(i)" style="font-size:12px;font-weight:normal;font-weight:normal;font-family:inherit;margin-top:4px !important;margin-left: 12px !important;">
+                                                    @if (!string.IsNullOrEmpty(@waConv.QuoteMsg))
+                                                    {
+                                                        <a class="aquotemsg" href="#Quoteid@(waConv.QuoteMsgID)">
+                                                            <div class="quotemsg">
+                                                                <div class="qname p-1 m-1">
+                                                                    <span>@waConv.QuoteMobileno</span>
+                                                                </div>
+
+                                                                <div class="qmsg p-1">
+                                                                    <span>@Html.Raw(@waConv.QuoteMsg)</span>
+                                                                </div>
+
+                                                            </div>
+
+                                                        </a>
+                                                    }
+
+                                                    @Html.Raw(@waConv.Text)
+                                                </div>
+                                            }
+                                            else if (@waConv.Type == "image")
+                                            {
+                                                <div id="SentMsgimage@(i)" class="body m-1 mr-2 text-left" style="font-size:12px;font-family:inherit;">
+                                                    @{
+                                                        string @imageurl = @waConv.APICODE == WhatsappAPICode.WATI ? Url.Action("GetWatsappImage", "CustomerCare", new { url = waConv.Data, ac = waConv.APICODE }) : @waConv.Data;
+                                                        <a href="@waConv.Data" style="color:#4cbffe;float:right;cursor:pointer" download="download.png" rel="noopener noreferrer">
+                                                            <i class="fa fa-download" aria-hidden="true" style="cursor:pointer;font-size:12px"></i>
+                                                        </a>
+                                                        <img src="@waConv.Data" id="Img@(i)" onclick="onClick(this)" width="395"  alt="" />
+                                                        <br />
+                                                        <label class="p-2" id="SentMsg@(i)" style="font-weight:normal">@Html.Raw(@waConv.Text)</label>
+                                                    }
+                                                </div>
+
+                                            }
+                                            else if (@waConv.Type == "video")
+                                            {
+                                                <div id="SentMsgimage@(i)" class="body m-1 mr-2 text-left" style="font-size:12px;font-family:inherit">
+                                                    @{
+                                                        string @videourl = @waConv.APICODE == WhatsappAPICode.WATI ? Url.Action("GetWatsappVideo", "CustomerCare", new { url = waConv.Data }) : @waConv.Data;
+                                                    }
+                                                    <video width="395" controls>
+                                                        <source src="@videourl" type="video/mp4">
+                                                    </video>
+                                                    <video width="395" controls>
+                                                        <source src="@videourl" type="video/mp4">
+                                                    </video>
+                                                    <label class="p-2" id="SentMsg@(i)" style="font-weight:normal"> @Html.Raw(@waConv.Text)</label>
+                                                </div>
+                                            }
+                                            <div class="text-right" style="font-size:9px;font-weight:normal;font-family:inherit;color:gray;margin-right: 8px">
+                                                @if (!string.IsNullOrEmpty(waConv.StatusString))
+                                                {
+                                                    if (waConv.StatusString.ToLower() == WhatsappStatusString.Sent)
+                                                    {
+                                                        <span> @waConv.MessageTime</span>
+                                                        <i class="far fa-check-circle"></i>
+                                                    }
+                                                    else if (waConv.StatusString.ToLower() == WhatsappStatusString.Pending)
+                                                    {
+                                                        <span>Pending</span>
+                                                        <span>  @waConv.MessageTime</span>
+                                                        <i class="fa fa-clock"></i>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>Failed</span>
+                                                        <span>  @waConv.MessageTime</span>
+                                                        <i class="far fa fa-exclamation-triangle"></i>
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span>Failed</span>
+                                                    <span>  @waConv.MessageTime</span>
+                                                    <i class="far fa fa-exclamation-triangle"></i>
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        FlagRepeat = 0;
+                    }
+                }
+            }
+        </div>
+    </div>
+</div>
+<div class="alert alert-dismissible" id="alerts" style="height:100%; background: #e6e6e6;display:none">
+    <button type="button" id="closeimg" class="closeimg" style="border: navajowhite; float: right;border-radius: 22px; cursor: pointer;"> &times;</button>
+    <div class="dvimgpreview" id="dvimgpreviewi" style="display:none">
+        <img height="250" style="margin: auto;position: relative;top: 30%;" id="container" />
+    </div>
+    <div class="dvvideopreview" style="display:none">
+        <video controls id="videopreview" height="400" width="100%">
+            <source src="" type="video/mp4">
+        </video>
+    </div>
+</div>
+
+@*image preview on click modal*@
+<img id="img02" style="width:100%;display:none">
+<div id="modal01" class="w3-modal" onclick="this.style.display='none'">
+    <span class="w3-button w3-hover-red w3-xlarge w3-display-topright">&times;</span>
+    <div class="w3-modal-content w3-animate-zoom">
+        <img id="img01" style="width:100%">
+    </div>
+</div>
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title font-bold" id="exampleModalLongTitle">Forward Message To</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+
+            <div class="col-sm-12 p-2" style="background-color:#e9ecef">
+
+                <input type="text" class="form-control ForwardMsgcontactSearch" autocomplete="off" placeholder="Search.." id="txtfdconsearch" style="border-radius:15px !important" />
+
+                <span class="switch switch-sm">
+                    <input type="checkbox" class="switch" tabindex="2" onchange="chklastconver()" id="chklastconver" />
+                    <label for="chklastconver" id="chk24conver"></label>
+                </span>
+                <span class="chkcheckall">
+                    <input type="checkbox" name="checkall" id="chkcheckall" />   Select All
+                </span>
+
+            </div>
+            <div id="modalpopup"></div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="btnclosedforward" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary ForwardMessage" id="btnForwardMessage">Forward</button>
+            </div>
+        </div>
+    </div>
+    <input type="hidden" id="hdnmessage" />
+    <input type="hidden" id="hdnmsgid" />
+    <input type="hidden" id="hdnnewmsgid" />
+</div>
+
+
+<script type="text/javascript">
+    function onClick(element) {
+        document.getElementById("img01").src = element.src;
+        document.getElementById("modal01").style.display = "block";
+    }
+    $("#chkcheckall").click(function () {
+        $('.chkforwardmessage').not(this).prop('checked', this.checked);
+    });
+</script>

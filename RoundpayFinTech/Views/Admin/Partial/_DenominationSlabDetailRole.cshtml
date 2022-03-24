@@ -1,0 +1,86 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DenomDetailByRole>
+
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" id="btnClose" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="text-success">INCENTIVE SETTING for Denomination[<i>{DENOM}</i>]</h4>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="scroll-content">
+            <div class="container">
+                <table class="table table-bordered table-striped">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            @{
+                                if (ViewBag.IsAdminDefined == true)
+                                {
+                                    <th>Role</th>
+                                }
+                            }
+                            <th>Commission</th>
+                            <td>Amount Type</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            int i = 1;
+                            foreach (var item in Model)
+                            {
+                                if (@item.IsAdminDefined == true)
+                                {
+                                    <tr data-Role-Id="@item.RoleID">
+                                        <td>@i</td>
+                                        <td><label>@item.RoleName</label></td>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="form-inline">
+                                                    <input type="text" class="form-control-sm RDtxtcomm" value="@item.Comm" />
+                                                    &nbsp;&nbsp;
+                                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw(i+"_"+item.ID)">
+                                                <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                                                <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr data-Role-Id="0">
+                                        <td>@i</td>
+                                        <td>
+                                            <div class="input-group">
+                                                <div class="form-inline">
+                                                    <input type="text" class="form-control-sm RDtxtcomm" id="txt_@item.ID" value="@item.Comm" />
+                                                    &nbsp;&nbsp;
+                                                    <i class="fas fa-info-circle ml-1 text-muted cursor-pointer" data-toggle="tooltip" data-placement="top" title="Last Modified: @item.ModifyDate"></i>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-toggle" id="btnGroupAmtType_@Html.Raw(i+"_"+item.ID)">
+                                                <button class="btn btn-sm @Html.Raw(item.AmtType==0?"btn-dark active":"btn-outline-dark")" style="border-top-left-radius:0;border-bottom-left-radius:0;">PER</button>
+                                                <button class="btn btn-sm @Html.Raw(item.AmtType==1?"btn-dark active":"btn-outline-dark")" style="border-top-right-radius:0;border-bottom-right-radius:0;">FIX</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    return;
+                                }
+                                i = i + 1;
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

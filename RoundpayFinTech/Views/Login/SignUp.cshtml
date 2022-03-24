@@ -1,0 +1,493 @@
+﻿@using Fintech.AppCode.Model
+@model LoginPageModel
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+}
+@if (Model.ThemeID != 4)
+{
+    <div class="container">
+        <div class="row">
+            <input type="hidden" id="hdnReferralID" value="@Model.referralRoleMaster.ReferralID" />
+            <div class="col-md-7 d-sm-none d-none d-md-block">
+                <div class="d-flex justify-content-left m-3">
+                    <img src="@ViewData["Host"]/Image/Website/@ViewData["WID"]/services.png" class="w-80" />
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="" style="margin-top: 1em;">
+                    <div class="d-flex flex-row-reverse h-100 ">
+                        <div class="user_card">
+                            <div class="d-flex justify-content-center">
+                                <div class="logo d-flex justify-content-center">
+                                    <img src="@ViewData["Host"]/Image/Website/@ViewData["WID"]/logo.png" style="height: 50px;" />
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center form_container">
+                                <div class="w-75">
+
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                        </div>
+                                        @Html.TextBox("txtName", null, new { @placeholder = "Name ", @class = "form-control input_user" })
+                                    </div>
+
+                                    @if (Model.IsOutletRequired)
+                                    {
+
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                            </div>
+                                            @Html.TextBox("txtOname", null, new { @placeholder = "Outlet Name", @class = "form-control" })
+                                        </div>
+                                    }
+                                    else
+                                    {
+
+                                        <div class="input-group mb-3" style="display:none">
+                                            <div class="input-group-append">
+                                                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                            </div>
+                                            @Html.TextBox("txtOname", null, new { @placeholder = "Outlet Name", @class = "form-control" })
+                                        </div>
+                                    }
+                                    @if (Model.referralRoleMaster.Roles != null)
+                                    {
+                                        @if (Model.referralRoleMaster.Roles.Count() < 2)
+                                        {
+                                            <div class="input-group mb-3" style="display:none">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><i class="fa fa-anchor"></i></span>
+                                                </div>
+                                                <select id="ddlRole" aria-describedby="roleHelp" tabindex="2" class="form-control">
+                                                    @foreach (var _roles in Model.referralRoleMaster.Roles)
+                                                    {
+                                                        <option value="@_roles.ID">@_roles.Role</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><i class="fa fa-anchor"></i></span>
+                                                </div>
+                                                <select id="ddlRole" aria-describedby="roleHelp" tabindex="2" class="form-control">
+
+                                                    @if (Model.referralRoleMaster.Roles.Count() != 1)
+                                                    {
+                                                        <option selected value="0">:: Choose Role ::</option>
+                                                        @foreach (var _roles in Model.referralRoleMaster.Roles)
+                                                        {
+                                                            <option value="@_roles.ID">@_roles.Role</option>
+                                                        }
+                                                    }
+                                                </select>
+                                            </div>
+                                        }
+                                    }
+
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fa fa-phone"></i></span>
+                                        </div>
+                                        @Html.TextBox("txtMobileNo", null, new { @placeholder = "Mobile No", @class = "form-control" })
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fa fa-envelope-open"></i></span>
+                                        </div>
+                                        @Html.TextBox("txtEmail", null, new { @placeholder = "Email", @class = "form-control" })
+                                    </div>
+
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fa fa-address-book"></i></span>
+                                        </div>
+                                        @Html.TextBox("txtAddress", null, new { @placeholder = "Address", @class = "form-control" })
+                                    </div>
+                                    <div class="input-group mb-3">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text"><i class="fa fa-globe"></i></span>
+                                        </div>
+                                        @Html.TextBox("txtPinCode", null, new { @placeholder = "Pin Code", @class = "form-control" })
+                                    </div>
+                                    <div class="form-group">
+                                        <small id="errorMsg" class="text-danger hide"></small>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center mt-2 login_container">
+                                <button id="btnSignUp" type="button" value="LOGIN" class="btn login_btn">Sign Up</button>
+                            </div>
+
+                            <div class="d-flex justify-content-center form_container">
+
+                                <div class="form-group">
+                                    <span style="cursor:pointer" class="">
+                                        Back To Login
+                                        <a href="/Login" class=""><i class=""></i>Click Here</a>
+                                    </span>
+                                </div>
+                                <div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <nav class="navbar navbar-expand-md secound-head top-nav">
+        <div class="container">
+            <div class="navbar-collapse" id="navbarSupportedContent">
+                <a class="navbar-brand logo" href="#">
+                    <img src="@(Model.Host)/Image/Website/@(Model.WID)/logo.png" />
+                </a>
+                <ul class="navbar-nav ml-auto  d-none d-sm-block">
+                    <li class="nav-item ">
+                        <div class="feature-box reverse-allres feature-box-style-2 align-items-center">
+                            <div class="feature-box-icon">
+                                <img src="@(Model.Host)/Image/Website/@(Model.WID)/@("t"+Model.ThemeID)/cc-info.png" style="width:67px;" />
+                            </div>
+                            <div class="feature-box-info">
+                                <p class="pb-0 font-weight-semibold line-height-5 text-2 mt-4">
+                                    @(Model.CustomerCareMobileNos)<br>
+                                    @(Model.CustomerPhoneNos)
+                                </p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="login-page">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-xl-10 m-auto col-sm-12 col-12">
+                    <div class="log-box">
+                        <div class="row">
+                            <div class="col-xl-7 col-sm-7 col-12 pad-right-0 d-none d-sm-block">
+                                <div class="logo-back">
+                                    <div class="slider rploginSlide">
+                                        <div class="slide_viewer">
+                                            <div class="slide_group">
+                                                @{
+                                                    if (Model.BGServiceImgURLs != null)
+                                                    {
+                                                        foreach (var item in Model.BGServiceImgURLs)
+                                                        {
+                                                            <div class="slide">
+                                                                <img class="img-fluid" src="@(item.SiteResourceUrl)" />
+                                                            </div>
+                                                        }
+                                                    }
+                                                }
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="slide_buttons"></div>
+                                </div>
+                            </div>
+                            <div class="col-xl-5 col-sm-5 col-12 pad-left-0">
+                                <div class="sign-content">
+                                    <h3>Signup </h3>
+                                    <div class="log-body">
+                                        <div class="form-group myr-top">
+                                            @Html.TextBox("txtName", null, new { @placeholder = "Name ", @class = "form-control input_user custom" })
+                                        </div>
+
+                                        @if (Model.IsOutletRequired)
+                                        {
+
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                </div>
+                                                @Html.TextBox("txtOname", null, new { @placeholder = "Outlet Name", @class = "form-control" })
+                                            </div>
+                                        }
+                                        else
+                                        {
+
+                                            <div class="input-group mb-3" style="display:none">
+                                                <div class="input-group-append">
+                                                    <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                                </div>
+                                                @Html.TextBox("txtOname", null, new { @placeholder = "Outlet Name", @class = "form-control" })
+                                            </div>
+                                        }
+                                        @if (Model.referralRoleMaster.Roles != null)
+                                        {
+                                            @if (Model.referralRoleMaster.Roles.Count() < 2)
+                                            {
+                                                <div class="input-group mb-3" style="display:none">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"><i class="fa fa-anchor"></i></span>
+                                                    </div>
+                                                    <select id="ddlRole" aria-describedby="roleHelp" tabindex="2" class="form-control">
+                                                        @foreach (var _roles in Model.referralRoleMaster.Roles)
+                                                        {
+                                                            <option value="@_roles.ID">@_roles.Role</option>
+                                                        }
+                                                    </select>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <div class="input-group mb-3">
+                                                    <div class="input-group-append">
+                                                        <span class="input-group-text"><i class="fa fa-anchor"></i></span>
+                                                    </div>
+                                                    <select id="ddlRole" aria-describedby="roleHelp" tabindex="2" class="form-control">
+
+                                                        @if (Model.referralRoleMaster.Roles.Count() != 1)
+                                                        {
+                                                            <option selected value="0">:: Choose Role ::</option>
+                                                            @foreach (var _roles in Model.referralRoleMaster.Roles)
+                                                            {
+                                                                <option value="@_roles.ID">@_roles.Role</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                            }
+                                        }
+                                        <div class="form-group myr-top">
+                                            @Html.TextBox("txtMobileNo", null, new { @placeholder = "Mobile No", @class = "form-control custom" })
+                                        </div>
+                                        <div class="form-group myr-top">
+                                            @Html.TextBox("txtEmail", null, new { @placeholder = "Email", @class = "form-control custom" })
+                                        </div>
+                                        <div class="form-group myr-top">
+                                            @Html.TextBox("txtAddress", null, new { @placeholder = "Address", @class = "form-control custom" })
+                                        </div>
+                                        <div class="form-group myr-top">
+                                            @Html.TextBox("txtPinCode", null, new { @placeholder = "Pin Code", @class = "form-control custom" })
+                                        </div>
+                                        <div class="form-group myr-top">
+                                            <small id="errorMsg" class="text-danger hide"></small>
+                                        </div>
+                                        <div class="sign-btn text-center">
+                                            <button id="btnSignUp" type="button" value="LOGIN" class="btn btn-themeSign">Sign Up</button>
+                                            <a href="/Login" class="btn btn-themeSign">Back to Login</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@section scripts{
+    @if (Model.ThemeID == 4)
+    {
+        <script type="text/javascript">
+            $('.rploginSlide').each(function () {
+                var $this = $(this);
+                var $group = $this.find('.slide_group');
+                var $slides = $this.find('.slide');
+                var bulletArray = [];
+                var currentIndex = 0;
+                var timeout;
+
+                function move(newIndex) {
+                    var animateLeft, slideLeft;
+
+                    advance();
+
+                    if ($group.is(':animated') || currentIndex === newIndex) {
+                        return;
+                    }
+
+                    bulletArray[currentIndex].removeClass('active');
+                    bulletArray[newIndex].addClass('active');
+
+                    if (newIndex > currentIndex) {
+                        slideLeft = '100%';
+                        animateLeft = '-100%';
+                    } else {
+                        slideLeft = '-100%';
+                        animateLeft = '100%';
+                    }
+
+                    $slides.eq(newIndex).css({
+                        display: 'block',
+                        left: slideLeft
+                    });
+                    $group.animate({
+                        left: animateLeft
+                    }, function () {
+                        $slides.eq(currentIndex).css({
+                            display: 'none'
+                        });
+                        $slides.eq(newIndex).css({
+                            left: 0
+                        });
+                        $group.css({
+                            left: 0
+                        });
+                        currentIndex = newIndex;
+                    });
+                }
+
+                function advance() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function () {
+                        if (currentIndex < ($slides.length - 1)) {
+                            move(currentIndex + 1);
+                        } else {
+                            move(0);
+                        }
+                    }, 4000);
+                }
+
+                $('.next_btn').on('click', function () {
+                    if (currentIndex < ($slides.length - 1)) {
+                        move(currentIndex + 1);
+                    } else {
+                        move(0);
+                    }
+                });
+
+                $('.previous_btn').on('click', function () {
+                    if (currentIndex !== 0) {
+                        move(currentIndex - 1);
+                    } else {
+                        move(3);
+                    }
+                });
+
+                $.each($slides, function (index) {
+                    var $button = $('<a class="slide_btn">•</a>');
+
+                    if (index === currentIndex) {
+                        $button.addClass('active');
+                    }
+                    $button.on('click', function () {
+                        move(index);
+                    }).appendTo('.slide_buttons');
+                    bulletArray.push($button);
+                });
+
+                advance();
+            });</script>
+    }
+
+    <script src="~/js/validator.js" asp-append-version="true"></script>
+    <script src="~/js/login.js" asp-append-version="true"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#btnSignUp').click(function () {
+
+                SignUp();
+            });
+        });
+        function SignUp() {
+            var $v = $validator;
+            errorMsg.removeClass('hide');
+            var Name = $('#txtName'), OutletName = $('#txtOname'), DdlRole = $('#ddlRole'), MobileNo = $('#txtMobileNo'), Email = $('#txtEmail'),
+                Address = $('#txtAddress'), PinCode = $('#txtPinCode'), ReferralID = $('#hdnReferralID');
+
+            if ($('#txtOname').val().trim() == '') {
+                var OutletName = $('#txtName').val()
+            }
+            else {
+                var OutletName = $('#txtOname').val()
+            }
+            var UserName = Name.val(),
+                DdlRole = DdlRole.val()
+            MobileNo = MobileNo.val(),
+                Email = Email.val(),
+                Address = Address.val(),
+                PinCode = PinCode.val(),
+                ReferralID = ReferralID.val();
+
+            var ct = {
+                nam: $('#txtName'), Oname: $('#txtOname'), mob: $('#txtMobileNo'), eml: $('#txtEmail'), rle: $('#ddlRole'), btn: $('#btnSignUp'), pnc: $('#txtPinCode'), Add: $('#txtAddress')
+            };
+            var IsE = {
+                nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100),
+                Onam: ($v.$IsNum(OutletName) || OutletName.trim() == '' || OutletName.length > 100),
+                rle: ct.rle.val() === null || ct.rle.val() == 0,
+                mob: (ct.mob.val().length !== 10 || !$v.$IsMob(ct.mob.val())),
+                eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256),
+                pnc: (!$v.$IsPincode(ct.pnc.val())),
+
+            }
+            $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(ct.Oname, 'Name is non-numeric mandatory field and length is not more than 100', IsE.Onam);
+            $v.showErrorFor(ct.rle, 'Role is required, select role from list! (<i>In case of list is empty add role first</i>)', IsE.rle);
+            $v.showErrorFor(ct.mob, 'Mobile number is mandatory field and length should be 10', IsE.mob);
+            $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(ct.pnc, 'Enter correct Pincode is mandatory field and length should be 6', IsE.pnc);
+            IsE.err = (IsE.nam || IsE.Onam || IsE.rle || IsE.mob || IsE.eml || IsE.pnc);
+            if (IsE.err) {
+                return false;
+            }
+
+            var UserCreate = {};
+            UserCreate.Name = UserName;
+            UserCreate.OutletName = OutletName;
+            UserCreate.RoleID = DdlRole;
+            UserCreate.MobileNo = MobileNo;
+            UserCreate.EmailID = Email;
+            UserCreate.Address = Address;
+            UserCreate.Pincode = PinCode;
+            UserCreate.ReferalID = ReferralID;
+
+            an.id = "myalert";
+            an.autoClose = 5;
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/Signup',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(UserCreate),
+                success: function (result) {
+                    console.log(result);
+                    if (result.statuscode == an.type.failed) {
+                        an.title = "Oops";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                    }
+                    else if (result.statuscode == an.type.success) {
+                        an.title = "Well done";
+                        an.content = result.msg;
+                        an.alert(result.statuscode);
+                        mdlA.dispose();
+                    }
+                }, statusCode: {
+                    500: function () {
+                        Alerts('Oops! Server error', AlertStatus.RED);
+                    },
+                    0: function () {
+                        Alerts('Oops! Internet Connection was broken', AlertStatus.RED);
+                    }
+                },
+                error: function (xhr, result) {
+                    Alerts(result, AlertStatus.RED);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        };
+    </script>
+}
+

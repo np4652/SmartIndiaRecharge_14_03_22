@@ -1,0 +1,31 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.TemplateFormatKeyMappingDisplay>
+@{ 
+
+}
+@if (Model.Any())
+{
+    int i = 1;
+    foreach(var item in Model)
+    {
+        <tr data-Format-Id="@item.FormatID">
+            <td>@i</td>
+            <td>@item.Messgae</td>
+            <td>
+                @foreach(var key in item.Keyswords)
+                {
+                <div  style="float:left">
+                    <div class="input-group mb-2 col-md" >
+                        <div class="input-group-prepend">
+                            <div class="input-group-text">
+                                <input type="checkbox" id="chkKey_@i" @Html.Raw(key.IsActive && key.FormatID==item.FormatID ? "checked='checked'" : "") data-Key-Id="@key.ID">
+                            </div>
+                        </div>
+                        <label class="form-control" for="chkKey_@i">@key.Name</label>
+                    </div>
+                </div>
+                }
+            </td>
+        </tr>
+        i++;
+    }
+}

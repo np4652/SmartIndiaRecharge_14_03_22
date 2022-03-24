@@ -1,0 +1,391 @@
+﻿@model LoginPageModel
+@inject Microsoft.AspNetCore.Http.IHttpContextAccessor HttpContextAccessor
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_LoginLayout.cshtml";
+    string WID = Convert.ToString(ViewData["WID"]);
+    string ThemeID = "t" + Convert.ToString(ViewData["Theme"]);
+    string appName = "";
+}
+<style>
+    #ddlFLType {
+        display: none;
+    }
+
+    .modal-header.custome {
+        display: block;
+        background-color: #3472bf;
+    }
+
+    .btn:not(:disabled):not(.disabled) {
+        cursor: pointer;
+    }
+   
+    
+    .login_container a {
+        background: #1a4b86;
+        color: #fff;
+        border-radius: 24px;
+    }
+    
+    
+
+    
+
+</style>
+<div class="container" id="container">
+    <div class="form-container sign-in-container cus-container">
+        <div class="form">
+            <div class="logo mb-3">
+                <img src="Image\Website\@WID\logo.png" />
+            </div>
+            <div class="form-group form-box" style="display:none">
+                <select id="ddlLType">
+                    <option value="1">ApplicationUser</option>
+                    <option value="2">CustomerCare</option>
+                    <option value="3">Employee</option>
+                </select>
+            </div>
+            <div class="form-group form-box">
+                @Html.TextBox("txtUser", null, new { @placeholder = "USER ID", @class = "form-control input_user" })
+            </div>
+
+            <div class="form-group form-box">
+                @Html.Password("txtPassword", null, new { @placeholder = "PASSWORD", @class = "form-control input-lg" })
+            </div>
+            <div class="form-group form-box">
+                <small id="errorMsg" class="text-danger hide"></small>
+                <span id="btnResendOTP" class="text-danger hide"></span>
+            </div>
+            <div class="form-group form-box">
+                <div class="custom-control">
+                    <span style="cursor:pointer" class="forpas" onclick="forgetPopUp()">Forgot password?</span>
+                </div>
+            </div>
+            <div class="form-group form-box">
+                <button class="button mb-4 btn form-box" id="btnLogin" onClick="btnLoadingClass; this.disabled = true; this.value = 'Sending…';" value="LOGIN">Sign In</button>
+                <span class="ghost">Don't have an account <a href="#" id="signUp"><strong>Click Here</strong></a></span>
+            </div>
+            <div class="d-flex justify-content-center mt-2 mb-5 login_container">
+                @{
+                    if (ViewData["AppName"] != null)
+                    {
+                        appName = ViewData["AppName"].ToString() != "" ? ViewData["AppName"].ToString() + ".apk" : "Recharge.apk";
+                    }
+                    else
+                    {
+                        appName = "Recharge.apk";
+                    }
+                    <a href="/apk/@appName" class="btn android_btn "><i class="fab fa-android pr-2"></i>Download</a>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="form-container sign-up-container">
+        <div class="form">
+            <div class="logo mb-3"><img src="Image\Website\@WID\logo.png" /></div>
+            <div class="d-flex justify-content-center form_container">
+                <div class="w-100 row">
+
+                    <div class="input-group mb-2">
+
+                        @Html.TextBox("txtName", null, new { @placeholder = "Name ", @class = "form-control input_user" })
+                    </div>
+
+                    <div class="input-group mb-2">
+                        <div class="input-group-append">
+                            @*<span class="input-group-text"><i class="fa fa-user"></i></span>*@
+                        </div>
+                        @Html.TextBox("txtOname", null, new { @placeholder = "Outlet Name", @class = "form-control" })
+                    </div>
+                    <div class="input-group mb-2 ">
+                        <div class="input-group-append ">
+                            @*<span class="input-group-text"><i class="fa fa-phone"></i></span>*@
+                        </div>
+                        @Html.TextBox("txtMobileNo", null, new { @placeholder = "Mobile No", @class = "form-control" })
+                    </div>
+                    <div class="input-group mb-2">
+                        <div class="input-group-append">
+                            @*<span class="input-group-text"><i class="fa fa-envelope-open"></i></span>*@
+                        </div>
+                        @Html.TextBox("txtEmail", null, new { @placeholder = "Email", @class = "form-control" })
+                    </div>
+                    <div class="input-group mb-2">
+                        <div class="input-group-append">
+                            @*<span class="input-group-text"><i class="fa fa-address-book"></i></span>*@
+                        </div>
+                        @Html.TextBox("txtAddress", null, new { @placeholder = "Address", @class = "form-control" })
+                    </div>
+                    <div class="input-group mb-2">
+                        <div class="input-group-append">
+                            @*<span class="input-group-text"><i class="fa fa-globe"></i></span>*@
+                        </div>
+                        @Html.TextBox("txtPinCode", null, new { @placeholder = "Pin Code", @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <small id="errorMsg" class="text-danger hide"></small>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group form-box">
+                <button class="button mb-4 btn form-box" id="btnSignUp">Sign Up</button>
+                <span class="ghost">Back to <a href="#" id="signIn"><strong>Login</strong></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="overlay-container">
+        <div class="overlay">
+            <div class="overlay-panel overlay-left">
+                <img src="Image\Website\@WID\@ThemeID\bg-side.png" />
+            </div>
+            <div class="overlay-panel overlay-right">
+                <img src="Image\Website\@WID\@ThemeID\bg-side.png" />
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    <script>
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add("right-panel-active");
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove("right-panel-active");
+        });
+
+        var btnLoadingClass = '<i class="fas fa-circle-notch fa-spin">Login</i>';
+
+    </script>
+    <script src="~/js/validator.js" asp-append-version="true"></script>
+    <script src="~/js/login.js" asp-append-version="true"></script>
+
+    @if (Model.ThemeID == 4)
+    {
+        <script type="text/javascript">
+            $('.rploginSlide').each(function () {
+                var $this = $(this);
+                var $group = $this.find('.slide_group');
+                var $slides = $this.find('.slide');
+                var bulletArray = [];
+                var currentIndex = 0;
+                var timeout;
+
+                function move(newIndex) {
+                    var animateLeft, slideLeft;
+
+                    advance();
+
+                    if ($group.is(':animated') || currentIndex === newIndex) {
+                        return;
+                    }
+
+                    bulletArray[currentIndex].removeClass('active');
+                    bulletArray[newIndex].addClass('active');
+
+                    if (newIndex > currentIndex) {
+                        slideLeft = '100%';
+                        animateLeft = '-100%';
+                    } else {
+                        slideLeft = '-100%';
+                        animateLeft = '100%';
+                    }
+
+                    $slides.eq(newIndex).css({
+                        display: 'block',
+                        left: slideLeft
+                    });
+                    $group.animate({
+                        left: animateLeft
+                    }, function () {
+                        $slides.eq(currentIndex).css({
+                            display: 'none'
+                        });
+                        $slides.eq(newIndex).css({
+                            left: 0
+                        });
+                        $group.css({
+                            left: 0
+                        });
+                        currentIndex = newIndex;
+                    });
+                }
+
+                function advance() {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(function () {
+                        if (currentIndex < ($slides.length - 1)) {
+                            move(currentIndex + 1);
+                        } else {
+                            move(0);
+                        }
+                    }, 4000);
+                }
+
+                $('.next_btn').on('click', function () {
+                    if (currentIndex < ($slides.length - 1)) {
+                        move(currentIndex + 1);
+                    } else {
+                        move(0);
+                    }
+                });
+
+                $('.previous_btn').on('click', function () {
+                    if (currentIndex !== 0) {
+                        move(currentIndex - 1);
+                    } else {
+                        move(3);
+                    }
+                });
+
+                $.each($slides, function (index) {
+                    var $button = $('<a class="slide_btn">•</a>');
+
+                    if (index === currentIndex) {
+                        $button.addClass('active');
+                    }
+                    $button.on('click', function () {
+                        move(index);
+                    }).appendTo('.slide_buttons');
+                    bulletArray.push($button);
+                });
+
+                advance();
+
+
+
+
+            });
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/SignIn',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode === 1)
+                        $('input').val("")
+                }, statusCode: {
+                    500: () => Alerts('Oops! Server error', AlertStatus.RED),
+                    0: () => Alerts('Oops! Internet Connection was broken', AlertStatus.RED)
+                },
+                error: function (xhr, result) {
+                    Alerts(result, AlertStatus.RED);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+                        };
+
+        </script>
+
+    }
+
+
+    <script>
+
+
+
+        $(document).ready(function () {
+            $('#btnSignUp').click(() => SignUp());
+
+
+        });
+        function SignUp() {
+
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start($('#btnSignUp'), 'Requesting...');
+
+            var $v = $validator;
+            errorMsg.removeClass('hide');
+            let modal = {
+                Name: $('#txtName'),
+                OutletName: $('#txtOname'),
+                DdlRole: $('#ddlRole'),
+                MobileNo: $('#txtMobileNo'),
+                Email: $('#txtEmail'),
+                Address: $('#txtAddress'),
+                PinCode: $('#txtPinCode'),
+                ReferralID: $('#hdnReferralID'),
+                GSTNo: $('#txtGstno'),
+                PanNo: $('#txtpannumber'),
+            };
+            let obj = {
+                Name: modal.Name.val(),
+                OutletName: modal.OutletName.val(),
+                RoleID: serverSetting.applicationSetting.IsAPIExchange ? 2 : modal.DdlRole.val(),
+                MobileNo: modal.MobileNo.val(),
+                EmailID: modal.Email.val(),
+                Address: modal.Address.val(),
+                Pincode: modal.PinCode.val(),
+                ReferralID: modal.ReferralID.val(),
+                GSTNo: modal.GSTNo.val(),
+                PanNo: modal.PanNo.val(),
+            };
+            let IsE = {
+                nam: ($v.$IsNum(obj.Name) || obj.Name.trim() == '' || obj.Name.length > 100),
+                Onam: ($v.$IsNum(obj.OutletName) || obj.OutletName.trim() == '' || obj.OutletName.length > 100),
+                rle: obj.RoleID === null || obj.RoleID == 0,
+                mob: (obj.MobileNo.length !== 10 || !$v.$IsMob(obj.MobileNo)),
+                eml: (!$v.$IsEmail(obj.EmailID) || obj.EmailID.length > 256),
+                pnc: !$v.$IsPincode(obj.Pincode),
+                gst: ((obj.GSTNo.trim() == '' && obj.PanNo.trim() == '') || (obj.GSTNo.trim() == 0 && obj.PanNo.trim() == 0))
+            };
+
+            $v.showErrorFor(modal.Name, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(modal.OutletName, 'Name is non-numeric mandatory field and length is not more than 100', IsE.Onam);
+            $v.showErrorFor(modal.DdlRole, 'Role is required, select role from list! (<i>In case of list is empty add role first</i>)', IsE.rle);
+            $v.showErrorFor(modal.MobileNo, 'Mobile number is mandatory field and length should be 10', IsE.mob);
+            $v.showErrorFor(modal.Email, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(modal.PinCode, 'Enter correct PIN code is mandatory field', IsE.pnc);
+            if (serverSetting.applicationSetting.IsAPIExchange) {
+                $v.showErrorFor(modal.GSTNo, 'Enter correct GST No is mandatory field', IsE.gst);
+            }
+            IsE.err = (IsE.nam || IsE.Onam || IsE.rle || IsE.mob || IsE.eml || IsE.pnc || IsE.gst);
+            if (IsE.err) {
+                btnLdr.Stop($('#btnSignUp'));
+                return false;
+            }
+
+            $.ajax({
+                type: 'POST',
+                url: '/Signup',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(obj),
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode === 1)
+                        $('input').val("");
+                    btnLdr.Stop($('#btnSignUp'));
+                }, statusCode: {
+                    500: () => Alerts('Oops! Server error', AlertStatus.RED),
+                    0: () => Alerts('Oops! Internet Connection was broken', AlertStatus.RED)
+                },
+                error: function (xhr, result) {
+                    Alerts(result, AlertStatus.RED);
+                    btnLdr.Stop($('#btnSignUp'));
+                },
+                complete: function () {
+                    btnLdr.Stop($('#btnSignUp'));
+                }
+            });
+        };
+    </script>
+}

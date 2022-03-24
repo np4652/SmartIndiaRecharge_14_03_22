@@ -1,0 +1,296 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.ProductDetail>
+@{
+
+}
+
+<div class="hot-deal">
+    <div class="rokan-product-heading rokan-onsale-heading">
+        <h2>Trending <span class="sup-title">Of The Day</span></h2>
+    </div>
+    <div class="hot-deal-tab-slider hot-deal-tab-slider-customcss">
+        @*<div class="countdown_block ml-auto">
+                <div class="title_countdown">Hurry Up! Offer ends in:</div>
+                <div class="super-deal-countdown" data-date="05/31/2022 13:11" data-tc-id="9970493b-0fb3-e643-f4fc-02cdd341dead"><div class="time_circles"><canvas width="40" height="26"></canvas><div class="ndeal textDiv_Days" style="top: 4px; left: 0px; width: 10px;"><span class="number">413</span><span class="text">Days</span></div><div class="ndeal textDiv_Hours" style="top: 4px; left: 10px; width: 10px;"><span class="number">1</span><span class="text">Hours</span></div><div class="ndeal textDiv_Minutes" style="top: 4px; left: 20px; width: 10px;"><span class="number">54</span><span class="text">Mins</span></div><div class="ndeal textDiv_Seconds" style="top: 4px; left: 30px; width: 10px;"><span class="number">35</span><span class="text">Secs</span></div></div></div>
+            </div>*@
+        <div class="rows">
+            <div class="deal-slider">
+                <div class="owl-slider">
+                    <div id="carousel11" class="owl-carousel">
+                        @foreach (var item in Model)
+                        {
+                            <div class="item product_row">
+                                <div class="item-product product-item">
+                                    <div class="content-item-product">
+                                        <div class="product-thumb">
+                                            <a href="/Shop/Product/@item.ProductDetailID" class="product-thumb-link">
+                                                @if (item.ImgUrlList.Count >= 2)
+                                                {
+                                                    @for (int i = 0; i < item.ImgUrlList.Count; i++)
+                                                    {
+                                                        if (i == 0)
+                                                        {
+                                                            <span class="first-thumb">
+                                                                <span class="product-image-container product-image-container-291549638011" style="width: 480px;">
+                                                                    <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                                        @*<img class="product-image-photo" src="/Shopping/img/product/27_1_1.jpg" loading="lazy" alt="Australian Certified Organic Beetroot 500g">*@
+                                                                        <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrlList[i]" loading="lazy" alt="@item.ProductName">
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        }
+                                                        else if (i == 1)
+                                                        {
+                                                            <span class="second-thumb">
+                                                                <span class="product-image-container product-image-container-291304177615" style="width: 480px;">
+                                                                    <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                                        <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrlList[i]" loading="lazy" alt="@item.ProductName">
+                                                                    </span>
+                                                                </span>
+                                                            </span>
+                                                        }
+                                                        else
+                                                        {
+                                                            break;
+                                                        }
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <span class="first-thumb">
+                                                        <span class="product-image-container product-image-container-291549638011" style="width: 480px;">
+                                                            <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                                                                @*<img class="product-image-photo" src="/Shopping/img/product/27_1_1.jpg" loading="lazy" alt="Australian Certified Organic Beetroot 500g">*@
+                                                                <img class="product-image-photo" src="~/image/Products/@item.ProductID/@item.ImgUrl" loading="lazy" alt="@item.ProductName">
+                                                            </span>
+                                                        </span>
+                                                    </span>
+                                                }
+
+                                                @*<span class="second-thumb">
+            <span class="product-image-container product-image-container-291304177615" style="width: 480px;">
+                <span class="product-image-wrapper" style="padding-bottom: 100%;">
+                    <img class="product-image-photo" src="/Shopping/img/product/27-1_1.jpg" loading="lazy" alt="Australian Certified Organic Beetroot 500g">
+                </span>
+            </span>
+        </span>*@
+                                            </a>
+                                            <div class="hot-onsale"></div>
+                                            <div class="actions-secondary">
+                                                <ul class="product-extra-link add-to-links">
+                                                    <li class="wishlist-product">
+                                                        <a href="javascript: void(0);" onclick="AddToWishlist(@item.ProductDetailID)" class="wishlist-link action towishlist" title="Add to Wishlist"></a>
+                                                    </li>
+                                                    <li class="quickview-products">
+                                                        <a href="javascript: void(0);" onclick="Quickview(@item.ProductDetailID)" class="quickview-link" title="Quick view"></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="product-info-cart">
+                                                <div class="actions-primary addcart-link">
+                                                    <button type="submit" title="Add to Cart" class="btn-add-to-cart action tocart" onclick="AddToCart(@item.ProductDetailID,1);">
+                                                        <span>Add to Cart</span>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="product-info">
+                                            <h3 class="product-name">
+                                                <a title="@item.ProductName (@item.AdditionalTitle)" href="/Shop/Product/@item.ProductDetailID" class="product-item-link">@item.ProductName (@item.AdditionalTitle)</a>
+                                            </h3>
+                                            @*<div class="product-rating">
+                                                    <div class="product-reviews-summary">
+                                                        <div class="rating-summary">
+                                                            <span class="label"><span>Rating:</span></span>
+                                                            <div class="rating-result" title="100%">
+                                                                <span style="width: 100%"><span><span>100</span>% of <span>100</span></span></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="reviews-actions">
+                                                            <a class="action view" href="australian-certified-organic-beetroot-500g.html#reviews">
+                                                                <span>2</span>&nbsp;<span>Reviews</span>
+                                                            </a>
+                                                            <a class="action add" href="australian-certified-organic-beetroot-500g.html#review-form">Add Your Review</a>
+                                                        </div>
+                                                    </div>
+                                                </div>*@
+
+                                            <div class="info-price">
+                                                <div class="price-box price-final_price" data-role="priceBox" data-product-id="1" data-price-box="product-id-1">
+                                                    <span class="special-price">
+                                                        <span class="price-container price-final_price tax weee">
+                                                            <span class="price-label">Special Price</span>
+                                                            <span data-price-amount="160" data-price-type="finalPrice" class="price-wrapper "><span class="price">&#8377; @item.SellingPrice</span></span>
+                                                        </span>
+                                                    </span>
+                                                    <span class="old-price">
+                                                        <span class="price-container price-final_price tax weee">
+                                                            <span class="price-label">Regular Price</span>
+                                                            <span data-price-amount="300" data-price-type="oldPrice" class="price-wrapper "><span class="price">&#8377; @item.MRP</span></span>
+                                                        </span>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+<script>
+    //jQuery(document).ready(function () {
+    //    jQuery('#carousel1').owlCarousel({
+    //        loop: true,
+    //        nav: true,
+    //        responsive: {
+    //            0: {
+    //                items: 1
+    //            },
+    //            600: {
+    //                items: 3
+    //            },
+    //            1000: {
+    //                items: 4
+    //            }
+    //        }
+    //    });
+    //});
+
+    jQuery(document).ready(function () {
+        //jQuery('#carousel1').owlCarousel({
+        //    loop: true,
+        //    margin: 10,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 5
+        //        }
+        //    }
+        //});
+
+        jQuery('#carousel11').owlCarousel({
+            loop: true,
+            margin: 10,
+            nav: true,
+            responsive: {
+                0: {
+                    items: 1
+                },
+                600: {
+                    items: 3
+                },
+                1000: {
+                    items: 5
+                }
+            }
+        });
+
+        //jQuery('#carousel').owlCarousel({
+        //    loop: true,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 4
+        //        }
+        //    }
+        //});
+
+        //jQuery('#carousel2').owlCarousel({
+        //    loop: true,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 4
+        //        }
+        //    }
+        //});
+        //jQuery('#carousel3').owlCarousel({
+        //    loop: true,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 4
+        //        }
+        //    }
+        //});
+
+        //jQuery('#carousel4').owlCarousel({
+        //    loop: true,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 4
+        //        }
+        //    }
+        //});
+        //jQuery('#carousel-last').owlCarousel({
+        //    loop: true,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 4
+        //        }
+        //    }
+        //});
+
+        //jQuery('#carousel5').owlCarousel({
+        //    loop: true,
+        //    nav: true,
+        //    responsive: {
+        //        0: {
+        //            items: 1
+        //        },
+        //        600: {
+        //            items: 3
+        //        },
+        //        1000: {
+        //            items: 4
+        //        }
+        //    }
+        //});
+    });
+</script>

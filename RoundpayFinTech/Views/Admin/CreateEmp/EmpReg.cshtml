@@ -1,0 +1,358 @@
+﻿@using Fintech.AppCode.StaticModel
+@using RoundpayFinTech.AppCode.Configuration;
+@using RoundpayFinTech.AppCode.StaticModel
+@{
+    ViewData["Title"] = "Employee";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">Emp Creation</li>
+
+        </ol>
+    </div>
+</div>
+
+<div id="__p" class="main-temp-body">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card mt-2">
+                <div class="card-header bg-gradientorange text-white">
+                    <div class="row">
+                        <div class="col-sm-3 line-height-34  text-monospace">
+                            <i class="fas fa-link"></i>  @ViewData["Title"]
+                        </div>
+                        <div class="col-sm-1 pr-1">
+                            <select class="form-control" id="ddlTop">
+                                <option value="10">10</option>
+                                <option value="25">25</option>
+                                <option value="50" selected>50</option>
+                                <option value="100">100</option>
+                                <option value="250">250</option>
+                                <option value="500">500</option>
+                                <option value="1000">1000</option>
+                                <option value="-1">All</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 pl-1 pr-1">
+                            <select class="form-control" id="ddlEmplRole" aria-describedby="roleHelp">
+                                <option value="0">:: Choose Role ::</option>
+                                <option value="@EmployeeRole.Sales_Head">Sales Head</option>
+                                <option value="@EmployeeRole.State_Head">State Head</option>
+                                <option value="@EmployeeRole.Cluster_Head">Cluster Head</option>
+                                <option value="@EmployeeRole.ASM">ASM</option>
+                                <option value="@EmployeeRole.TSM">TSM</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 pl-1 pr-1">
+                            <select class="form-control" id="ddlCriteria" aria-describedby="roleHelp">
+                                <option value="0">:: Choose Criteria ::</option>
+                                <option value="@Criteria.UserID">User ID</option>
+                                <option value="@Criteria.OutletMobile">Outlet Mobile</option>
+                                <option value="@Criteria.EmailID">EmailID</option>
+                                <option value="@Criteria.Name">Name</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4 pr-1 pl-1 input-group">
+                            <input type="text" id="txtSearch" class="form-control" aria-label="Text input with segmented dropdown button" placeholder="Search">
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-outline-light" id="btnSearch"><i class="fa fa-search"></i></button>
+                                <button id="btnNew" class="btn btn-outline-light pl-3 pr-3">NEW</button>
+                                <button type="button" class="btn btn-outline-light dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="btnPrefDDL">
+                                    <span class="sr-only">Toggle Dropdown for preferences</span>
+                                </button>
+                                <div class="dropdown-menu dropdown-menu-right" aria-labelledby="btnPrefDDL">
+                                    <h5 class="dropdown-header text-center">Preferences</h5>
+                                    <div class="dropdown-item">
+                                        <div class="form-inline">
+                                            <div class="col-md">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="rdoByDate" id="rdoByDate" value="0" checked>
+                                                    <label class="form-check-label" for="rdoByDate">By Date</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="rdoByDate" id="rdoByName" value="1">
+                                                    <label class="form-check-label" for="rdoByName">By Name</label>
+                                                </div>
+                                                <div class="dropdown-divider"></div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="rdoSortBy" id="rdoAsc" value="0" checked>
+                                                    <label class="form-check-label" for="rdoAsc">By Ascending</label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="rdoSortBy" id="rdoDsc" value="1">
+                                                    <label class="form-check-label" for="rdoDsc">By Descending</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body pb-1">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-condensed" id="tblUserList">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Action</th>
+                                    <th>Name</th>
+                                    <th>MobileNo</th>
+                                    <th>E-MAil ID</th>
+                                    <th>Role</th>
+                                    <th>AADHAR</th>
+                                    <th>PAN</th>
+                                    <th>Address</th>
+                                    <th>ReferralBy</th>
+                                    <th>ReportingTo</th>
+                                    <th>Password</th>
+                                    <th>IsOTP</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                    <nav aria-label="Page navigation" class="pageNavigation">
+                        <ul class="pagination justify-content-end" id="divRowCount">
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        $(document).ready(function () {
+            GetEmployee();
+            $('#btnSearch').click(() => GetEmployee());
+            $('#btnNew').click(e => userReg(e));
+        });
+
+        var userReg = e => {
+            preloader.load();
+            let element = $(e.currentTarget).closest('tr').data();
+            let EmpID = element == undefined ? 0 : element.itemId;
+            $.post('/Edit-Employee', { EmpID: EmpID })
+                .done(result => {
+                    mdlA.id = "myModel";
+                    mdlA.content = result;
+                    mdlA.alert(mdlA.size.large);
+                    $('button.close').unbind().click(() => mdlA.dispose());
+                    var btn = $('#btnCreate');
+                    btn.unbind().click(() => addEmp(btn.html()));
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+
+                })
+                .always(() => preloader.remove());
+        };
+
+        var addEmp = function (btnTxt) {
+            var ct = {
+                nam: $('#txtName'), empcode: $('#txtEmpCode'), mob: $('#txtMobile'), eml: $('#txtEmail'), rle: $('#ddlRole'), btn: $('#btnCreate'), pnc: $('#txtPinCode'), tkn: $('#txtReferal')
+            };
+            if (btnTxt !== ct.btn.html())
+                return false;
+            btnLdr.addClass = 'btn-dark';
+            btnLdr.removeClass = 'btn-outline-dark';
+            btnLdr.Start(ct.btn, 'Requesting');
+            var IsE = {
+                nam: ($v.$IsNum(ct.nam.val()) || ct.nam.val().trim() == '' || ct.nam.val().length > 100),
+                empcode: (ct.empcode.val().trim() == '' || ct.empcode.val().length > 100),
+                mob: (ct.mob.val().length !== 10 || !$v.$IsMob(ct.mob.val())),
+                eml: (!$v.$IsEmail(ct.eml.val()) || ct.eml.val().length > 256),
+                rle: ct.rle.val() === null || ct.rle.val() == 0,
+                pnc: (!$v.$IsPincode(ct.pnc.val()))
+            }
+            $v.showErrorFor(ct.nam, 'Name is non-numeric mandatory field and length is not more than 100', IsE.nam);
+            $v.showErrorFor(ct.empcode, 'EmpCode mandatory field and length is not more than 100', IsE.empcode);
+            $v.showErrorFor(ct.mob, 'Mobile number is mandatory field and length should be 10', IsE.mob);
+            $v.showErrorFor(ct.eml, 'Enter correct Email Id is mandatory field', IsE.eml);
+            $v.showErrorFor(ct.pnc, 'Enter correct Pincode is mandatory field and length should be 6', IsE.pnc);
+            $v.showErrorFor(ct.rle, 'Role is required, select role from list! (<i>In case of list is empty add role first</i>)', IsE.rle);
+            IsE.err = (IsE.nam || IsE.empcode || IsE.mob || IsE.eml || IsE.rle || IsE.pnc);
+            if (IsE.err) {
+                btnLdr.Stop(ct.btn);
+                return false;
+            }
+            var EmpInfo = {
+                Name: ct.nam.val(), EmpCode: ct.empcode.val(), MobileNo: ct.mob.val(), EmailID: ct.eml.val(), RoleID: ct.rle.val(), Pincode: ct.pnc.val(), token: ct.tkn.val(), EmpID: $('#hfdID').val()
+            };
+            an.id = 'myalert';
+            an.parent = $('#alertmsg');
+            $.ajax({
+                type: 'POST',
+                url: '/cemp',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify(EmpInfo),
+                success: result => {
+                    an.title = result.statuscode == an.type.success ? "Well done!" : "Oops! Error";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    $('#ddlRole').val(0);
+                    GetEmployee();
+                    mdlA.dispose();
+                    btnLdr.Stop(ct.btn);
+                },
+                error: xhr => {
+                    an.title = "Oops! Error";
+                    an.content = xhr.status == 404 ? "Requested path not find" : (xhr.status == 0 ? "Internet is not connected" : "Server error");
+                    an.alert(-1);
+                    btnLdr.Stop(ct.btn);
+                }
+            });
+        };
+
+        var GetEmployee = function (btnID = 1, isPageNavClicked = false) {
+            preloader.load();
+            var CommonFilter = {
+                CriteriaText: $('#txtSearch').val(),
+                SortByID: $('input[name=rdoByDate]:checked').val() === "1" ? true : false,
+                IsDesc: $('input[name=rdoSortBy]:checked').val() === "1" ? true : false,
+                RoleID: $('#ddlRole').val(),
+                Criteria: $('#ddlCriteria').val(),
+                EmployeeRole: $('#ddlEmplRole').val(),
+                TopRows: $('#ddlTop').val(),
+                btnID: btnID,
+            };
+            $.post('/Get-Employee', CommonFilter)
+                .done(result => {
+                    $('#__p tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    $('.Edit').click(e => userReg(e));
+                    //pagination(GetEmployee, isPageNavClicked);
+                    $('.showpassword').click(e => showpassword($(e.currentTarget)));
+                    $('.resendEmpP').click(e => resendEmpPass($(e.currentTarget)));
+                    $('[id^=isact_]').unbind().click(e => changeEmpsts($(e.currentTarget)));
+                    $('[id^=isotp_]').unbind().click(e => changeOtpsts($(e.currentTarget)));
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+        var showpassword = function (sender) {
+            var _id = $(sender).closest('tr').data().itemId;
+            $.post('/showEmpPass', { Id: _id })
+                .done(result => {
+                    $(sender).text(result.msg).removeClass('btn btn-outline-danger showpassword btn-sm').addClass('form-control-sm');
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+
+                });
+        };
+
+        var resendEmpPass = function (sender) {
+            var _id = $(sender).closest('tr').data().itemId;
+            var mob = $(sender).closest('tr').find('td:eq(2)').text();
+            console.log(mob);
+            $.post('/resendEmpPass', { Id: _id, MobileNo: mob })
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? 'Well Done' : 'oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                });
+        };
+
+        var changeEmpsts = function (element) {
+            an.remove();
+            let _Is = element.is(':checked') == true ? 1 : 0;
+            let _Id = element.closest('tr').data().itemId;
+            $.post('/ChangeEmpSts', { Id: _Id, Is: _Is }).done(result => {
+                an.title = result.statuscode = an.type.success ? 'WELL DONE' : 'OOPS';
+                an.content = result.msg;
+                an.alert(result.statuscode);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            });
+        };
+
+        var changeOtpsts = function (element) {
+            let _Is = element.is(':checked') == true ? 1 : 0;
+            let _Id = element.closest('tr').data().itemId;
+            $.post('/ChangeOtpSts', { Id: _Id, Is: _Is })
+                .done(result => {
+                    an.title = result.statuscode = an.type.success ? 'WELL DONE' : 'OOPS';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                });
+        };
+
+        var GetEmpByRole = sender => {
+            let selected = sender.closest('td');
+            let _id = sender.closest('tr').find('td:eq(4)').data().roleId;
+            let _Rid = selected.data().reportitoId;
+            preloader.load();
+            $.post('/SelectEmpByroleInBulk', { Id: _id })
+                .done(result => {
+                    selected.html($(`<div class="input-group">
+                                             <select class="ddlReporting"></select>
+                                             <div class="input-group-append">
+                                                <span class="btn btn-sm btn-outline-success"><i class="fa fa-check btnOk"></i></span>
+                                             </div>
+                                         </div>`));
+                    for (var i = 0; i < result.length; i++) {
+                        selected.find('.ddlReporting').append(`<option value="${result[i].empID}" ${_Rid == result[i].empID ? 'selected' : ''}>${result[i].name}</option>`);
+                    }
+                    $('.btnOk').unbind().click(e => ChangeReportingTo($(e.currentTarget)));
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        };
+
+        var ChangeReportingTo = sender => {
+            let selected = sender.closest('tr');
+            let _ReportingTo = selected.find('td .ddlReporting').val();
+            var _id = selected.data().itemId;
+            preloader.load();
+            $.post('/ChangeReportingTo', { Id: _id, ReportingTo: _ReportingTo })
+                .done(result => {
+                    an.title = result.statuscode == an.type.success ? 'Well Done' : 'oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+
+
+
+
+    </script>
+}

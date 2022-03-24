@@ -1,0 +1,76 @@
+﻿@using RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel;
+@model ShoppingHeaderMenus
+<div class="row">
+    @if (Model != null)
+    {
+        <div class="col-lg-6">
+            <div class="logo">
+                <a routerlink="" href="/">
+                    <img alt="logo" style="width:165px;" src="@Model.Logo">
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-6 cus-header-menu-padding" style="margin-top:9px">
+            <div class="collapse-menu cus-header-menu  cus-mt-0" style="margin-top: 0px;">
+                <ul class="vm-dropdown1 open show" dropdown="">
+                    <li>
+                        <a class="vm-menu cus-vm-menu" dropdowntoggle="" href="javascript:void(0);"
+                           aria-haspopup="true" aria-expanded="true">
+                            <i class="fa fa-navicon">
+                            </i><span>Shop by Category</span>
+                        </a><!---->
+                        <ul class="vm-dropdown" id="mainMenu1" style="display: none;">
+                            @foreach (var item in @Model.menus)
+                            {
+                                <li>
+                                    <a>
+                                        <i class="@item.icon"></i>@item.Name @if (@item.CategoryList != null)
+                                        {
+                                            <b class="caret"></b>
+                                        }
+                                    </a>
+                                    @if (@item.CategoryList != null)
+                                    {
+                                        <ul class="mega-menu">
+                                            @foreach (var c in @item.CategoryList)
+                                            {
+                                                <li class="megamenu-single">
+                                                    <span class="mega-menu-title"><a href="ProductList/C/@c.CategoryId"><b> @c.Name </b></a></span>
+                                                    @if (@c.Subcategory != null)
+                                                    {
+                                                        <ul>
+                                                            @foreach (var sc in @c.Subcategory)
+                                                            {
+                                                                <li>
+                                                                    <a href="ProductList/S/@sc.SubCategoryId">@sc.Name</a>
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                </li>
+                                            }
+
+                                        </ul>
+                                    }
+                                </li>
+                            }
+
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+    }
+
+</div>
+<script>
+
+
+    $(document).ready(function () {
+        $(".vm-menu").click(function () {
+            $('.vm-dropdown').toggle();
+        });
+    });
+</script>
+

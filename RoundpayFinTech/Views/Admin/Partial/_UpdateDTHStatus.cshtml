@@ -1,0 +1,123 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RoundpayFinTech.AppCode.Model.DTHSubscriptionReport;
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Update Status</h3>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12" id="">
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txtapprovaltime", "Approval Time", new { @class = "lbl" })
+                        <div class="input-group">
+                            <input aria-describedby="dtapprovaltime" class="form-control" id="dtapprovaltime" tabindex="15" type="text" value="@(string.IsNullOrEmpty(Model.ApprovalTime)?DateTime.Now.ToString("dd MMM yyyy"): Model.ApprovalTime.Substring(0,12))" />
+                            <div class="input-group-append">
+                                <input aria-describedby="dtapprovaltimeOnly" class="form-control" id="dtapprovaltimeOnly" tabindex="5" type="text" value="@(string.IsNullOrEmpty(Model.ApprovalTime)?DateTime.Now.ToString("hh:mm ff"): Model.ApprovalTime.Substring(12,8))" />
+                            </div>
+                        </div>
+                        <small id="Small3" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txttechname", "Technician Name", new { @class = "lbl" })
+                        @Html.TextBox("txttechname", Model.TechnicianName, new { @class = "form-control", @placeholder = "Enter Technician Name" })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txttechmobile", "Technician Mobile", new { @class = "lbl" })
+                        @Html.TextBox("txttechmobile", Model.TechnicianMobile, new { @class = "form-control", @placeholder = "Enter Technician Mobile", @tabindex = 1 })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtcustid", "Customer ID", new { @class = "lbl" })
+                        @Html.TextBox("txtcustid", Model.CustomerID, new { @class = "form-control", @placeholder = "Enter Customer ID", })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txtstbid", "STB ID", new { @class = "lbl" })
+                        @Html.TextBox("txtstbid", Model.STBID, new { @class = "form-control", @placeholder = "Enter STB ID", @tabindex = 1 })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtvcno", "VC No", new { @class = "lbl" })
+                        @Html.TextBox("txtvcno", Model.VCNO, new { @class = "form-control", @placeholder = "Enter VC No ", @tabindex = 1 })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txtremark", "Remark", new { @class = "lbl" })
+                        @Html.TextBox("txtremark", Model.Remark, new { @class = "form-control text-capitalize", @placeholder = "Enter Remark", @tabindex = 1 })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+                    <div class="col-sm-6">
+                        <label class="lbl" for="ddlstatus" id="Gder">Status</label>
+                        <select class="form-control" tabindex="2" id="ddlstatus" aria-describedby="helpstatus" asp-for="@Model.BookingStatus">
+                            <option value="0"> :: Select Status :: </option>
+                            <option value="1"> :: Requested :: </option>
+                            <option value="2"> :: Forward To Engineer :: </option>
+                            <option value="3"> :: Installing :: </option>
+                            <option value="4"> :: Completed :: </option>
+                            <option value="5"> :: Rejected :: </option>
+                        </select>
+                        <small id="helpstatus" class="form-text text-danger  d-none"></small>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="col-sm-6">
+                        @Html.Label("txtinstalltime", "Installation Time", new { @class = "lbl" })
+                        <div class="input-group">
+                            <input aria-describedby="dtinstalldate" class="form-control" id="dtinstalldate" tabindex="5" type="text" value="@(string.IsNullOrEmpty(Model.InstallationTime)?DateTime.Now.ToString("dd MMM yyyy"): Model.InstallationTime.Substring(0,12))" />
+                            <div class="input-group-append">
+                                <input aria-describedby="dtinstalltime" class="form-control" id="dtinstalltime" tabindex="5" type="text" value="@(string.IsNullOrEmpty(Model.InstallationTime)?DateTime.Now.ToString("hh:mm ff"): Model.InstallationTime.Substring(12,8))" />
+                            </div>
+                        </div>
+                        <small id="Small3" class="form-text text-muted d-none"></small>
+                    </div>
+                    <div class="col-sm-6">
+                        @Html.Label("txtinstallcharge", "Installtion Charges", new { @class = "lbl" })
+                        @Html.TextBox("txtinstallcharge", Model.InstalltionCharges, new { @class = "form-control text-capitalize", @placeholder = "Enter Installtion Charges", @tabindex = 1 })
+                        <input type="hidden" id="hid" value="@Model.ID" class="d-none" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" class="btn btn-outline-dark" id="btnGroupBStatus" tabindex="12">Save Status</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/lib/bootstrap/calendar/datepicker/js/bootstrap-datetimepicker.min.js"></script>
+<script src="~/js/datepickerHelper.js"></script>
+<script>
+
+    var FDate = DatePicker($('#dtapprovaltime'), new Date().toDateString(), function () { },
+        function () {
+
+        });
+
+    var tdate = TimePicker($('#dtapprovaltimeOnly'), new Date(), function () { }, function () { });
+
+
+
+    var installdate = DatePicker($('#dtinstalldate'), new Date().toDateString(), function () { },
+        function () {
+
+        });
+
+    var installdate = TimePicker($('#dtinstalltime'), new Date(), function () { }, function () { });
+
+</script>
+
+

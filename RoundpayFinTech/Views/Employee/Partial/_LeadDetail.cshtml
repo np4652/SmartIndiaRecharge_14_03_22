@@ -1,0 +1,101 @@
+﻿@using Fintech.AppCode.Model;
+@model GetinTouctListModel
+@{ int i = 0;}
+@if (Model != null)
+{
+    @if (Model.GetIntouchList != null)
+    {
+        @foreach (var data in Model.GetIntouchList)
+        {
+            <tr data-item-id="@Model.GetIntouchList[i].ID">
+                <th scope="row">@(i + 1)</th>
+                <td>@data.Name</td>
+                <td>
+                    <spna style="width:100px;text-overflow:ellipsis;display:inline-block;overflow:hidden;white-space:nowrap" data-toggle="tooltip" data-placement="top" title="@data.EmailID">@data.EmailID</spna>
+                    <i class="fa fa-copy copy" data-full-text="@data.EmailID"></i>
+                </td>
+                <td>@data.MobileNo</td>
+                <td><textarea class="form-control txtMessage" rows="2" cols="25" style="border-style:None;" disabled="disabled">@data.Message</textarea></td>
+                <td>
+                    <div>
+                        <textarea class="form-control txtRemark" rows="2" cols="25" style="border-style:None;" id="txtRemarks"></textarea>
+                    </div>
+                </td>
+                <td><textarea class="form-control" rows="2" cols="35" style="border-style:None;" disabled="disabled">@data.Remarks</textarea></td>
+                <td>
+                    <select class="form-control ddlReqStatus" id="ddlReqStatus_@i" data-item-id="data.ID" asp-for="@data.RequestStatus">
+                        <option value="Transfer">Transfer </option>
+                        <option value="Junk">Junk</option>
+                        <option value="FollowUP">FollowUP</option>
+                        <option value="Matured">Matured</option>
+                    </select>
+                </td>
+                <td>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input class="form-control form-control-sm dtNextDate" id="dtNextDate_@i" type="text" value="@Html.Raw(!string.IsNullOrEmpty(data.NextFollowupdate)?data.NextFollowupdate:DateTime.Now.ToString(" dd MMM yyyy"))">
+                        </div>
+                    </div>
+                </td>
+                <td>@data.EntryData</td>
+                <td class="text-nowrap">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="input-group">
+                                <select asp-items="@Model.CustomerCareList" class="form-contact form-control-sm ddlEmployee">
+                                    <option>:: Select One ::</option>
+                                </select>
+                                <div class="input-group-append">
+                                    <button class="btn btn-sm btn-dark btnTransfer">Transfer</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            i++;
+        }
+    }
+}
+
+<script>
+    $('[data-toggle="tooltip"]').tooltip();
+    $('.dtNextDate').datetimepicker({
+        format: 'DD MMM Y'
+    });
+    $('select[id^=ddlReqStatus_]').change(e => updateAgainstLead(e));
+
+    $('input[id^=dtNextDate_]').blur(e => updateAgainstLead(e));
+
+    $('i.copy').unbind().click(e => {
+        let cText = $(e.currentTarget).attr('data-full-text');
+        copyToClipboard(cText);
+        an.id = "anCopy";
+        an.title = "Alert";
+        an.content = "E-Mail Copied";
+        an.alert(an.type.success)
+    });
+
+    $('.btnTransfer').unbind().click(e => {
+        preloader.load();
+        let ele = $(e.currentTarget).closest('tr');
+        let param = {
+            id: ele.data().itemId,
+            TransferTo: ele.find('.ddlEmployee').val()
+        };
+        $.post('/Employee/TransferLead', param).done(result => {
+            an.id = "transferAlert";
+            an.title = result.statuscode === an.type.success ? "Well done" : "Oops";
+            an.content = result.msg;
+            an.alert(result.statuscode);
+        }).fail(xhr => {
+
+        }).always(() => preloader.remove());
+    });
+</script>
+
+
+
+
+
+

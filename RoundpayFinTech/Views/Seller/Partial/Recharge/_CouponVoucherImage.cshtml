@@ -1,0 +1,121 @@
+﻿@using Fintech.AppCode.Model;
+@using Fintech.AppCode.StaticModel;
+@using Microsoft.AspNetCore.Http
+@using Fintech.AppCode.Configuration;
+@inject IHttpContextAccessor HttpContextAccessor
+@model RoundpayFinTech.AppCode.Model.CoupanReq
+@{
+
+    var _lr = HttpContextAccessor.HttpContext.Session.GetObjectFromJson<LoginResponse>(SessionKeys.LoginResponse);
+
+}
+
+
+<div class="card-body service-card row">
+    <div class="form-group col-md-12">
+
+        <img class="lbl f-w-bold text-danger float-right" id="imgIsBPPS" style="max-height: 89px; margin-top: -81px; margin-right: -17px;" src="/images/avatar/bharat-billpay.png" />
+
+    </div>
+    <div class="form-group col-md-6" id="fg-txtAmount">
+        <input aria-describedby="AmountHelp" hidden class="form-control" id="ddlOperator_Voc" value="@Model.CoupanDetail.FirstOrDefault().OID" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="">
+        @Html.Label("txtTo", "To", new { @class = "lbl" })
+        @*<a class="lbl f-w-bold m-b-6 text-danger float-right" id="lnkSampleImg" target="_blank">View Sample Bill</a>*@
+        @Html.TextBox("txtTo", _lr.EmailID, new { @class = "form-control ", @placeholder = "Enter Email.", @aria_describedby = "MobileHelp", @tabindex = 1 })
+        <small id="MobileHelp" class="form-text text-danger  d-none"></small>
+    </div>
+
+
+
+    <div class="form-group  col-md-6">
+        @Html.Label("txtFrom", "From", new { @class = "lbl" })
+        @Html.TextBox("txtFrom", _lr.Name, new { @class = "form-control ", @placeholder = "Name", @aria_describedby = "CustomerHelp", @tabindex = 1 })
+        <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Customer</small>
+    </div>
+
+    <div class="form-group  col-md-12">
+        @Html.Label("message", "Message", new { @class = "lbl" })
+        @Html.TextArea("message", null, new { @class = "form-control ", @placeholder = "Message", @aria_describedby = "CustomerHelp", @tabindex = 1, @maxlength = "200" })
+        <small id="CustomerHelp" class="form-text text-danger  d-none">Invalid Customer</small>
+    </div>
+
+    <div class="form-group col-md-12">
+        @{
+            if (@Model.CoupanDetail != null && @Model.CoupanDetail.Count() > 0)
+            {
+                if (@Model.CoupanDetail.FirstOrDefault().Max > 0)
+                {
+                    <div class="form-group">
+                        @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                        @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1, onkeypress = "return isNumberwithoutdecimal(event)" })
+                        <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                    </div>
+
+
+                }
+                else
+                {
+                    <div class="form-group row">
+                        <input aria-describedby="AmountHelp" hidden class="form-control" id="txtAmount" value="0" name="txtAmount" placeholder="Enter Amount" tabindex="1" type="text" value="">
+                        <label class="lbl col-md-12">Select Denomination</label>
+                        <div class="col-md-12">
+                            @foreach (var itm in @Model.CoupanDetail)
+                            {
+
+                                <button type="reset" class="btn" onclick="_Setamount(@itm.DenominationID,this)" value="Reset">₹ @itm.DenominationID</button>
+
+
+                            }
+                        </div>
+                        <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                    </div>
+                }
+            }
+            else
+            {
+
+                <div class="form-group">
+                    @Html.Label("txtAmount", "Amount", new { @class = "lbl" })
+                    @Html.TextBox("txtAmount", null, new { @class = "form-control ", @placeholder = "Enter Amount", @aria_describedby = "AmountHelp", @tabindex = 1 })
+                    <small id="AmountHelp" class="form-text text-danger  d-none">Invalid Amount</small>
+                </div>
+
+
+            }
+        }
+
+
+
+    </div>
+    <div class="form-group col-md-6">
+        @Html.Label("lblQuantity", "Quantity", new { @class = "lbl" })
+        @Html.TextBox("txtQuantity", null, new { @class = "form-control ", @value = 1, @placeholder = "Quantity", @aria_describedby = "CustomerHelp1", @tabindex = 1, onkeypress = "return isNumberwithoutdecimal(event)" })
+        <small id="CustomerHelp1" class="form-text text-danger  d-none">Invalid Customer</small>
+    </div>
+
+
+    <div class="form-group col-md-12 mt-3">
+        <button class="btn btn-outline-dark" onclick="btnPay_coupon()" id="btnPay_coupon">Submit</button>
+        <button class="btn btn-dark" id="mdlCancel">Cancel</button>
+    </div>
+</div>
+
+<script>
+    function _Setamount(a, b) {
+
+        $('.btn').removeClass("btn-primary");
+        $(b).addClass("btn-primary");
+        $("#txtAmount").val(a);
+
+    }
+
+    function isNumberwithoutdecimal(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }
+        return true;
+    }
+
+</script>

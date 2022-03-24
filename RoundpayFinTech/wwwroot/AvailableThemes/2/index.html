@@ -1,0 +1,122 @@
+﻿<!DOCTYPE html>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Mobile Recharge | AEPS  | BBPS | Money Transfer |P</title>
+    <link rel="apple-touch-icon" sizes="57x57" href="/images/favicons/apple-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/images/favicons/apple-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/images/favicons/apple-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/images/favicons/apple-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/images/favicons/apple-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/images/favicons/apple-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/images/favicons/apple-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/images/favicons/apple-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/images/favicons/apple-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/images/favicons/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/images/favicons/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/images/favicons/favicon-16x16.png">
+    <link rel="manifest" href="/images/favicons/manifest.json">
+    <meta name="msapplication-TileColor" content="#ffffff">
+    <meta name="msapplication-TileImage" content="~/images/favicons/ms-icon-144x144.png">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="icon" type="image/png" href="/images/favicons/favicon.ico">
+    
+    
+        <link rel="stylesheet" href="login-3/css/bootstrap.css" />
+        <link href="login-3/css/login-style.css" rel="stylesheet" />
+        <link rel="stylesheet" href="login-3/css/fontawesome-all.css" />
+
+    
+
+</head>
+<body>
+    <div class="body" style="background-image:url(login-3/Image/bg-main-1.png);background-size:cover;height: 100%;">
+        <noscript><center><h1 class="text-danger">Javascript is disabled in your browser enable to start application</h1></center></noscript>
+        <div id="alertmsg"></div>
+        
+<div class="container">
+    <div class="row">
+        <div class="col-md-7 d-sm-none d-none d-md-block">
+            <div class="d-flex justify-content-left m-3">
+                <img src="login-3/image/services-2.png" class="w-100" />
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="h-100">
+                <div class="d-flex flex-row-reverse h-100 ">
+                    <div class="user_card">
+                        <div class="d-flex justify-content-center">
+                            <div class="logo d-flex justify-content-center">
+                                <img src="https://roundpay.net/Image/Website/1/logo.png" style="height: 50px;" />
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center form_container">
+                            <div class="w-100">
+                                <div class="input-group mb-4">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-anchor"></i></span>
+                                    </div>
+                                    <select class="custom-select" id="ddlLType">
+                                        <option value="1">ApplicationUser</option>
+                                        <option value="2">CustomerCare</option>
+                                        <option value="3">Employee</option>
+                                    </select>
+                                </div>
+                                <div class="input-group mb-4">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-user"></i></span>
+                                    </div>
+                                    <input class="form-control input_user" id="txtUser" name="txtUser" placeholder="USER ID" type="text" value="" />
+                                </div>
+
+                                <div class="input-group mb-3">
+                                    <div class="input-group-append">
+                                        <span class="input-group-text"><i class="fa fa-key"></i></span>
+                                    </div>
+                                    <input class="form-control input_pass" id="txtPassword" name="txtPassword" placeholder="PASSWORD" type="password" />
+                                </div>
+                                <div class="form-group">
+                                    <small id="errorMsg" class="text-danger hide"></small>
+                                    <span id="btnResendOTP" class="text-danger hide"></span>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-control">
+                                        <span style="cursor:pointer" class="forpas" onclick="forgetPopUp()">forget password?</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-2 login_container">
+                            <button id="btnLogin" type="button" value="LOGIN" class="btn login_btn">Login</button>
+                        </div>
+                        <div class="d-flex justify-content-center mt-2 mb-5 login_container">
+                                <a href="/apk/roundpay.apk" class="btn android_btn"><i class="fab fa-android"></i>Download</a>
+                        </div>
+                        <div class="d-flex justify-content-center form_container">
+                            <div class="form-group">
+                                <span style="cursor:pointer" class="">
+                                    Don't have an account
+                                    <a href="/SignUp" class=""><i class=""></i>Click Here</a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+        
+        
+            <script src="login-3/js/jquery.min.js"></script>
+            <script src="login-3/js/bootstrap.min.js"></script>
+        
+    </div>
+</body>
+</html>

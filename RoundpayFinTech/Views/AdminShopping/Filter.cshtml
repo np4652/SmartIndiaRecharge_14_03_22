@@ -1,0 +1,175 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel.Menu>
+@{ 
+    var cList = Model.Any() ? Model : new List<RoundpayFinTech.AppCode.Model.Shopping.WebShopping.ViewModel.Menu>();
+    var categoris = new SelectList(cList, "MainCategoryID", "Name");
+}
+@{
+    ViewData["Title"] = "Filters";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"] & Brands</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Shopping</li>
+            <li class="breadcrumb-item active">@ViewData["Title"] & Brands</li>
+        </ol>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-6">
+        <div id="__p" class="main-temp-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mt-1">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-9">
+                                        <i class="fas fa-link"></i> @ViewData["Title"] 
+                                    </div>                               
+                                    <div class="col-sm-3 text-right">
+                                        <button class="btn btn-sm btn-outline-light font-bold btnNew" data-Item-id="0"><i class="fa fa-plus-square"></i> New</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-1">
+                                <div class="row">
+                                    <div class="table-responsive" style="max-height:calc(100vh - 290px)">
+                                        <table class="table table-striped table-condensed" id="tblFilter">
+                                            <thead class="bg-tableth">
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Action</th>
+                                                    <th style="width:60%">Filter</th>
+                                                    <th>IsActive</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-6">
+        <div id="__p" class="main-temp-body">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="card mt-1">
+                            <div class="card-header bg-gradientorange text-white">
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <i class="fas fa-link"></i> Brands
+                                    </div>
+                                    <div class="col-sm-6 text-right">
+                                        <div class="input-group">
+                                            <select class="form-control form-control-sm" id="ddlCategory" asp-items="@categoris"></select>
+                                            <div class="input-group-append">
+                                                <a href="javascript:viewBrand()" class="btn btn-sm btn-outline-light" data-Item-id="0"><i class="fa fa-plus-square"></i> New</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-body pt-1">
+                                <div class="row">
+                                    <div class="table-responsive" style="max-height:calc(100vh - 280px)">
+                                        <table class="table table-striped table-condensed" id="tblBrands">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>Action</th>
+                                                    <th style="width:60%">Brand</th>
+                                                    <th>Category</th>
+                                                    <th>IsActive</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/js/Shopping/ShoppingCategory.js"></script>
+    <script>
+        $('#ddlCategory').change(() => _loadGridBrand());
+        $('#ddlCategory').append('<option value="0">All</option>');
+        $('table').fixTableHeader();
+        var AddFilter = ID => {
+            preloader.load();
+            $.post('/GetFilterByID', { FID: ID })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'AddFilter';
+                    mdlA.title = 'Filter';
+                    mdlA.modal(mdlA.size.default);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var EditBrand = ID => {
+            console.log(ID);
+            preloader.load();
+            $.post('/Brand', { Id: ID })
+                .done(result => {
+                    mdlA.content = result;
+                    mdlA.id = 'EditBrand';
+                    mdlA.title = 'Brand';
+                    mdlA.modal(mdlA.size.default);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        $('.btnNew').unbind().click(() => AddFilter(0));
+        var loadFilterGrid = () => {
+            preloader.load();
+            $.post('/GetFilter')
+                .done(result => $("#tblFilter tbody").html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+        var _loadGridBrand = () => {
+            let param = {
+                CategoryID: $('#ddlCategory').val()
+            };
+            preloader.load();
+            $.post('/GetBrands', param)
+                .done(result => $('#tblBrands').html(result))
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove())
+        };
+        (() => {
+            loadFilterGrid();
+            _loadGridBrand();
+        })();
+    </script>
+}

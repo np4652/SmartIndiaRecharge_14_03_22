@@ -1,0 +1,34 @@
+﻿<!--Add Vocab-->
+@model RoundpayFinTech.AppCode.Model.VocabMaster
+
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">×</span>
+    </button>
+    <h5 class="text-center text-info">Add Vocabs</h5>
+    <hr />
+    <input type="hidden" id="hid_FieldID" value="@Model._ID" />
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">Vocab Name</div>
+            <div class="col-md-6">
+                <input type="text" class="form-control" id="vocabName" value="@Model._Name" placeholder="Enter Vocab Name.." />
+            </div>
+        </div>
+        <div class="row mt-3">
+            <div class="col-md-6">Display Order</div>
+            <div class="col-md-6">
+                <input type="number" class="form-control" id="vocabInd" value="@Model._IND" placeholder="Enter Display Order.." />
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-md-6">
+                <button class="btn btn-success btn-block" id="btnsaveVocab"> Save</button>
+            </div>
+            <div class="col-md-6">
+                <button id="mdlCancel" class="btn btn-warning btn-block"> Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

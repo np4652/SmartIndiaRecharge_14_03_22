@@ -1,0 +1,104 @@
+﻿@model IEnumerable<RoundpayFinTech.AppCode.Model.MasterPaymentGateway>
+
+@if (Model != null && Model.Any())
+{
+    int i = 0;
+    foreach (var item in Model)
+    {
+        i++;
+        <tr data-item-id="@item.ID" , data-item-url="@item.URL" ,data-item-statuscheckurl="@item.StatusCheckURL">
+            <td>@i</td>
+            <td>@item.ID</td>
+            <td><span class="btn-link cursor-pointer btnEdit">@item.Name</span></td>
+            <td>@item.URL</td>
+            <td>@item.StatusCheckURL</td>
+            <td>@item.EntryDate</td>
+            <td>@item.ModifyDate</td>
+            <td>@item.Code</td>
+            <td>
+                <span class="switch switch-sm">
+                    @if (@item.IsUPI)
+                    {
+                        <input type="checkbox" class="switch" id="chkIsUpi_@i" checked="checked" value="@item.IsUPI" disabled>
+                        <label for="chkIsUpi_@i"></label>
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="switch" id="chkIsUpi_@i" value="@item.IsUPI" disabled>
+                        <label for="chkIsUpi_@i"></label>
+                    }
+                </span>
+            </td>
+            <td>
+
+                <span class="switch switch-sm">
+                    @if (@item.IsLive)
+                    {
+                        <input type="checkbox" class="switch" id="chkIsLive_@i" checked="checked" value="true">
+                        <label for="chkIsLive_@i"></label>
+                    }
+                    else
+                    {
+                        <input type="checkbox" class="switch" id="chkIsLive_@i" value="false">
+                        <label for="chkIsLive_@i"></label>
+                    }
+                </span>
+            </td>
+        </tr>
+    }
+}
+<script>
+    $('table').fixTableHeader();
+    $('.btnEdit').click(e => {
+        preloader.load();
+        let req = {
+            id: $(e.currentTarget).closest('tr').data().itemId
+        };
+        $.post('/_MasterPG', req)
+            .done(result => {
+                mdlA.id = 'mdlPaymentGateway';
+                mdlA.title = 'Master Payment Gateway';
+                mdlA.content = result;
+                mdlA.modal(mdlA.size.default);
+
+                $('#mdlCancel').click(function () {
+                    $("#mdlPaymentGateway").modal('hide');
+
+                })
+                $('#btnSave').click(function () {
+                    debugger;
+                    var AddData =
+                    {
+                        ID: req.id,
+                        URL: $('[name="url"]').val(),
+                        StatusCheckURL: $('[name="statuscheckurl"]').val(),
+                        IsLive: $('#chkIsLive').val()
+                    }
+                    if ($('#chkIsLive').is(":checked")) {
+                        AddData.IsLive = true
+                    }
+                    else {
+                        AddData.IsLive = false
+                    }
+                    $.post('/Admin/UpdateMPGateway', AddData)
+                        .done(function (result) {
+                            loadMasterPaymentGatway();
+                            $('#mdlPaymentGateway').modal('hide');
+                            an.title = 'Succes';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                        }).fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => preloader.remove());
+                });
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            })
+            .always(() => preloader.remove());
+
+    });
+</script>

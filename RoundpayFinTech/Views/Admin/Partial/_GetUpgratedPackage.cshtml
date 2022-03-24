@@ -1,0 +1,68 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model PackageModel
+@{
+    int i = 1;
+}
+<div class="table-responsive">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5 class="text-info text-monospace">Upgrade Package</h5><hr />
+    <table class="table table-bordered table-striped table-responsive-sm">
+        <thead class="bg-tableth">
+            <tr>
+                <th style="width:1%;">#</th>
+                <th style="width:15%;">Package</th>
+                <th>Services</th>
+                <td>Cost</td>
+                <th>Upgrade</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model.Slabs)
+            {
+                <tr data-item-id="@item.ID">
+                    <th class="align-middle">@i</th>
+                    <td class="align-middle">
+                        @item.Slab
+                    </td>
+                    <td class="align-middle">
+
+                        <div class="row ml-1">
+                            @{
+                                var services = Model.Services.Where(x => x.PackageId == item.ID && x.IsActive == true);
+                            }
+                            @foreach (var service in services)
+                            {
+                                <h5>
+                                    <span class="badge badge-secondary mr-2 text-monospace">
+                                        @service.ServiceName
+                                    </span>
+                                </h5>
+                            }
+                        </div>
+                    </td>
+                    <td class="align-middle text-nowrap"><i class="fa fa-rupee-sign"></i> @item.PackageCost/-</td>
+                    <td class="align-middle text-nowrap">
+                        @if (i == 1)
+                        {
+                            <h6 class="text-success">Current Package</h6>
+                        }
+                        else
+                        {
+                            <div class="input-group-append">
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chkUpgrade_@item.ID">
+                                    <label for="chkUpgrade_@item.ID" class="font-weight-bold lbl"></label>
+                                </span>
+
+                            </div>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,0 +1,89 @@
+﻿@using RoundpayFinTech.AppCode.Model.ProcModel;
+@model IEnumerable<RoundpayFinTech.AppCode.Model._AvailablePackage>
+@{
+    int i = 1;
+}
+<div class="table-responsive">
+    <table class="table table-bordered table-striped table-responsive-sm">
+        <thead class="bg-tableth">
+            <tr>
+                <th style="width:1%;">#</th>
+                <th style="width:15%;">Package</th>
+                <th>Services</th>
+                <td>Cost</td>
+                <th>Upgrade</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var item in Model)
+            {
+                <tr data-item-id="@item.PackageId">
+                    <th class="align-middle">@i</th>
+                    <td class="align-middle">
+                        @item.PackageName
+                    </td>
+                    <td class="align-middle">
+                        <div class="row ml-1">
+                            @foreach (var service in item.Services)
+                            {
+                                <h5>
+                                    <span class="badge badge-secondary mr-2 text-monospace">
+                                        @service.ServiceName
+                                    </span>
+                                </h5>
+                            }
+
+                        </div>
+                    </td>
+                    <td class="align-middle text-nowrap">
+                        @if (item.IsAdminDefined)
+                        {
+                            <i class="fa fa-rupee-sign"></i>
+                            @item.PackageCost<i>/-</i>
+                            @Html.Raw(!item.IsEndUser ? "<br /><span class='text-info text-monospace'>[Commission:" + item.Commission + "]</span>" : "")
+                        }
+                        else
+                        {
+                            if (item.IsEndUser)
+                            {
+                                <span>@item.PackageCost</span>
+                            }
+                            else
+                            {
+                                <div class="row">
+                                    <div class="col-sm-12">
+                                        <div class="input-group">
+                                            <div class="input-group-prepend">
+                                                <i class="fa fa-rupee-sign"></i>
+                                            </div>
+                                            <input class="form-control" type="text" id="PCom_@i" value="@item.Commission" />
+                                        </div>
+                                        <span>Received(@item.PackageCost)</span>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </td>
+                    <td class="align-middle text-nowrap">
+                        @if (i == 1)
+                        {
+                            <h6 class="text-success">Current Package</h6>
+                        }
+                        else
+                        {
+                            <div class="input-group-append">
+                                <span class="input-group-text switch switch-sm bg-white align">
+                                    <input type="checkbox" class="switch" id="chkUpgrade_@item.PackageId">
+                                    <label for="chkUpgrade_@item.PackageId" class="font-weight-bold lbl"></label>
+                                </span>
+                            </div>
+                        }
+                    </td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+</div>
+

@@ -1,0 +1,145 @@
+﻿@using Fintech.AppCode.StaticModel;
+@model RechargeReportModel
+@{
+    ViewData["Title"] = "DTH Subscriptiion Pendings";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Report</li>
+            <li class="breadcrumb-item active"> @ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="__p main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive table-sm">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblRechReport">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Action</th>
+                                        <th scope="col">TransactionID</th>
+                                        <th scope="col">RequestedDate</th>
+                                        <th scope="col">OutletName</th>
+                                        <th scope="col">Account</th>
+                                        <th scope="col" class="text-right">Opening</th>
+                                        <th scope="col" class="text-right">RequestedAmount</th>
+                                        <th scope="col" class="text-right">Amount</th>
+                                        <th scope="col" class="text-right">Balance</th>
+                                        <th scope="col" class="text-right">Commission</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">BookingStatus</th>
+                                        <th scope="col">CustomerNumber</th>
+                                        <th scope="col">CustomerName</th>
+                                        <th scope="col">Address</th>
+                                        <th scope="col">PIN</th>
+                                        <th scope="col">PackageName</th>
+                                        <th scope="col">Operator</th>
+                                        @if (Model.IsAdmin || Model.IsAPIUser)
+                                        {
+                                            <th scope="col">API</th>
+                                            <th scope="col">APIRequestID</th>
+                                        }
+                                        <th>LivID</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            loadGrid();
+        });
+
+        // $(document).ready(() => loadGrid());
+        var loadGrid = function () {
+            preloader.load();
+            $.post('/DTHSubscription-Pending')
+                .done(result => {
+                    $('table tbody').html(result);
+                      $(".a_modal").click(function () {
+                            var Serviceid = $(this).data().ispes;
+                            var td = $(this).parent("td");
+                            var tid = $(this).attr("name");
+                            var transid = $(td).find("#lbltid").val();
+                            debugger;
+                            $.post('/DTH-Deatils', { TID: tid }, function (result) {
+                                resultReload(result);
+                                $('#' + an.id).remove();
+                                mdlA.id = 'myalert';
+                                mdlA.content = result;
+                                mdlA.options.backdrop = 'static';
+                                mdlA.alert(mdlA.size.large);
+                                $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                                $("#lbltranid").text(transid);
+
+                            }).fail(xhr => {
+                                an.title = 'Oops';
+                                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                                an.alert(an.type.failed);
+                            }).always(() => preloader.remove());
+
+                        });
+                    $('[data-toggle="tooltip"]').tooltip();
+                    $('#btnstatus,tr div.dropdown-menu a.dropdown-item').on('click', function () {
+                        updateStatus(this);
+                    })
+                })
+                .fail(xhr => {
+                    an.id = "alertBox";
+                    an.title = "Oops";
+                    an.content = xhr.status == 0 ? 'Internet connection was broken' : 'Server Error';
+                    an.alert(-1);
+                }).always(() => preloader.remove());
+        };
+
+        var updateStatus = function (sender) {
+            let _ele = $(sender).closest('tr').data();
+            let param = {
+                id: _ele.itemId,
+                TransactionID: _ele.transactionId,
+                TID: _ele.itemTid
+            };
+            $.post('/UpdateDTHstatus/' + param.id)
+                .done(function (result) {
+                    resultReload(result);
+                    mdlA.content = result;
+                    mdlA.id = 'mymodal';
+                    mdlA.options.backdrop = 'static';
+                    mdlA.alert(mdlA.size.large);
+                    $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                    $('#btnGroupBStatus').on('click', () => UpdateStatus(param.id, param.TransactionID, param.TID));
+                })
+
+                .fail(xhr => {
+                    $(this).attr('checked', Is == false);
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+
+    </script>
+}
+

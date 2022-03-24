@@ -1,0 +1,17 @@
+﻿@using Fintech.AppCode.StaticModel;
+
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DTHPackage>
+@{int i = 0; }
+@foreach (var item in Model)
+{
+<div class="col-md-12">
+    <div class="form-group">
+        <label class="lbl" for="txtBamount">@item.BookingAmount</label>
+    </div>
+    <h5>Commision </h5>
+    <div class="form-group">
+        <label class="lbl" for="txtcomm">@item.Comm</label>
+    </div>
+</div>
+}
+

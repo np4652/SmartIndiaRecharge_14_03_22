@@ -1,0 +1,178 @@
+﻿@{
+    ViewData["Title"] = "MPOS Device Inventory";
+}
+
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-7 line-height-34">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-md-5 col-sm-5 col-xs-5">
+                                <div class="input-group">
+                                    <input id="txtSearch" maxlength="10" class="form-control text-left" aria-describedby="helpSearch" placeholder="Search Device/Vendor/Device Serial" />
+                                    <small id="helpSearch" class="form-text text-danger d-none"></small>
+                                    <div class="input-group-append">
+                                        <button id="btnNew" class="btn btn-default font-bold btn-sm pl-3 pr-3">NEW</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped" id="tblMPosDevice">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:1%;">#</th>
+                                        <th scope="col" style="width:4%;">Action</th>
+                                        <th scope="col" style="width:13%;">Vendor Name</th>
+                                        <th scope="col" style="width:13%;">Device Model</th>
+                                        <th scope="col" style="width:13%;">Device Serial</th>
+                                        <th scope="col" style="width:13%;">Assigned To</th>
+                                        <th scope="col" style="width:10%;">Assigned Date</th>
+                                        <th scope="col" style="width:13%;">Outlet Mapped</th>
+                                        <th scope="col" style="width:10%;">Mapped Date</th>
+                                        <th scope="col" style="width:10%;">Is Active</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            _load();
+        });
+        var _load = function () {
+            preloader.load();
+            $.post('/GetMPosDeviceList')
+                .done(function (result) {
+                    $('#tblMPosDevice tbody').html(result);
+                    $(".dropdown-toggle").dropdown();
+                    setTimeout(function () {
+                        $('#txtSearch').focus();
+                        $(".dropdown-toggle").dropdown();
+                        $("#txtSearch").on("keyup", function () {
+                            var value = $(this).val().toLowerCase();
+                            $('#tblMPosDevice tbody tr').filter(function () {
+                                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+                            });
+                        });
+                    }, 500);
+                    an.autoClose = 5;
+                    $('#btnNew,tr div.dropdown-menu a.dropdown-item').click(function () {
+                        if ($.inArray($(this).text(), ['Edit', 'NEW', 'Assign Device', 'Map Device', 'Un-Map Device', 'Un-Assign Device']) < 0) {
+                            return true;
+                        }
+                        var id = 0;
+                        if ($.inArray($(this).text(), ['Edit', 'Assign Device', 'Map Device', 'Un-Map Device', 'Un-Assign Device']) > -1) {
+                            id = $(this).closest('tr').data().itemId;
+                        }
+                        if ($.inArray($(this).text(), ['Edit', 'NEW']) > -1) {
+                            $.post('/GetMPosDeviceById', { ID: id })
+                                .done(function (result) {
+                                    mdlA.id = 'MPosDevice';
+                                    mdlA.content = result;
+                                    mdlA.alert(mdlA.size.small);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                        if ($.inArray($(this).text(), ['Assign Device']) > -1) {
+                            $.post('/MPosDeviceAssignMap', { ID: id, isMap: false })
+                                .done(function (result) {
+                                    mdlA.id = 'Assign';
+                                    mdlA.content = result;
+                                    mdlA.alert(mdlA.size.small);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken1' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                        if ($.inArray($(this).text(), ['Map Device']) > -1) {
+                            $.post('/MPosDeviceAssignMap', { ID: id, isMap: true })
+                                .done(function (result) {
+                                    mdlA.id = 'Map';
+                                    mdlA.content = result;
+                                    mdlA.alert(mdlA.size.small);
+                                    $('button.close span,#mdlCancel').click(() => mdlA.dispose());
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                        if ($.inArray($(this).text(), ['Un-Map Device']) > -1) {
+                            let param = {
+                                ID: id,
+                                DeAssign: false
+                            };
+                            $.post('/MPosDeviceUnAssignUnMap', param)
+                                .done(function (result) {
+                                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == 1) {
+                                        location.reload();
+                                    }
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                        if ($.inArray($(this).text(), ['Un-Assign Device']) > -1) {
+                            let param = {
+                                ID: id,
+                                DeAssign: true
+                            };
+                            $.post('/MPosDeviceUnAssignUnMap', param)
+                                .done(function (result) {
+                                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                                    an.content = result.msg;
+                                    an.alert(result.statuscode);
+                                    if (result.statuscode == 1) {
+                                        location.reload();
+                                    }
+                                }).fail(xhr => {
+                                    an.title = 'Oops';
+                                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                                    an.alert(an.type.failed);
+                                }).always(() => preloader.remove());
+                        }
+                    });
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                })
+                .always(() => preloader.remove());
+        }
+    </script>
+}

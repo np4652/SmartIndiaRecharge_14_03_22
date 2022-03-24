@@ -1,0 +1,71 @@
+﻿<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> Fetch Bill Summary</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Report</li>
+            <li class="breadcrumb-item active">Fetch Bill Summary</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <div class="row">
+                            <div class="col-sm-12 text-monospace">
+                                <i class="fas fa-link"></i>
+                                Fetch Bill Summary
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-1">
+                        <div class="table-responsive">
+                            <div class="table-responsive calcHeight" id="tblResponsive">
+                                <table class="table table-bordered table-striped table-condensed fixedHeader" id="tblUserList">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <td>#</td>
+                                            <td>User ID</td>
+                                            <td>Name</td>
+                                            <td>Mobile</td>
+                                            <td>Total Fetch Success</td>
+                                            <td>Total Fetch Failed</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+<script>
+
+    $(document).ready(function(){
+        FetchUserBillReport();
+    })
+    function FetchUserBillReport(){
+            var Data = {
+                ApiID : 0,
+                OpID : 0,
+                FromDate : null,
+                ToDate : null
+            }
+            $.post("FetchBillSummary", Data).done(function(result){
+                $('tbody').html(result);
+            }).fail(function(xhr){
+                an.title = "Oops";
+                an.content = "Server Error";
+                an.alert(an.type.failed);
+            })
+        }
+</script>
+}

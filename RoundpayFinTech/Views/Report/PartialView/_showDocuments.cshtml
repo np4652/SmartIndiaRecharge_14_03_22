@@ -1,0 +1,110 @@
+﻿
+@model IEnumerable<RoundpayFinTech.AppCode.Model.DocTypeMaster>
+@{
+    var ext = "";
+}
+<style>
+    .btn-doc span {
+        width: 100%;
+        border-radius: 0 !important
+    }
+
+    iframe {
+        width: 100%;
+        height: 80vh;
+    }
+
+    .img-thumbnail {
+        max-width: 500px;
+        max-height: 500px;
+        object-fit: scale-down;
+    }
+</style>
+<div class="col-md-12">
+    <button type="button" class="close" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <h5>Documents of <u id="outlateName" class="font-italic text-info"></u></h5><hr />
+    <div class="row">
+        <span style="position:absolute;right:10px;top:12%;z-index:1000" id="btnRotate">
+            <i class="fa fa-recycle fa-lg"></i>
+        </span>
+        <div class="col-sm-2 border border-info text-right" style="padding-right: 0px; padding-left: 0px; min-height: 70vh">
+            @{
+                var url = "";
+                int i = 0;
+                var status = "";
+            }
+            @foreach (var item in Model)
+            {
+                <div class="btn-doc">
+
+                    @if ((item.DocUrl ?? string.Empty).Contains("."))
+                    {
+                        ext = item.DocUrl.Split(".")[1].ToString();
+                        i = i + 1;
+                        if (i == 1)
+                        {
+                            url = "Image/KYC/" + @item.DocUrl.ToString();
+                        }
+                    }
+                    @{status = ((item.VerifyStatus == 2) ? "VERIFIED" : ((item.VerifyStatus == 3) ? "REJECTED" : "NOT VERIFIED"));}
+                    <span class="btn btn-outline-info btnShow @Html.Raw(i==1 ? "active" : "") " data-img-path="@("Image/KYC/"+item.DocUrl)" data-img-type="@ext" data-status="@status" data-remark="@item.DRemark" data-ver="@item.VerifyStatus">@item.DocName</span>
+                </div>
+            }
+        </div>
+        <div class="col-sm-10 border border-info text-center">
+            <div class="row">
+                <div class="col-sm-12 text-center" id="img-preview" style="min-height:70vh">
+                    <a href="@url" target="_blank">
+                        <img src="@url" class="img-thumbnail" />
+                    </a>
+                </div>
+            </div>
+            <div class="row text-left">
+                <div class="col-sm-2 border border-info text-info">
+                    <h6>Verify Status</h6>
+                </div>
+                <div class="col-sm-2 border border-info" id="sts">
+                </div>
+                <div class="col-sm-2 border border-info text-info">
+                    <h6>Remark</h6>
+                </div>
+                <div class="col-sm-6 border border-info" id="rem">
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    (() => {
+        $('.btnShow').on('click', e => {
+            $('.btnShow').removeClass("active");
+            $(e.currentTarget).addClass("active");
+            if ($(e.currentTarget).data().imgType == "pdf") {
+                $('#img-preview').html('<iframe src="' + $(e.currentTarget).data().imgPath + '"></iframe>')
+            }
+            else {
+                $('#img-preview').html(`<a href="${$(e.currentTarget).data().imgPath}" target="_blank">
+                                        <img src="${$(e.currentTarget).data().imgPath}" class="img-thumbnail"/></a>`);
+            }
+            $('#sts').html(`<label>${$(e.currentTarget).data().status}</label>`);
+            $('#rem').html(`<label>${$(e.currentTarget).data().remark}</label>`);
+            console.log(($(e.currentTarget).data().ver));
+            console.log(($(e.currentTarget).data().remark));
+        });
+    })();
+    var delta = 90;
+    (() => {
+        $('#btnRotate').click(e => {
+            var ele = $('.img-thumbnail');
+            ele.css('transform', 'rotate(' + delta + 'deg)');
+            delta += 90;
+        });
+    })();
+
+
+
+</script>

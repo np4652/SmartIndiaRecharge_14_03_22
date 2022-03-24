@@ -1,0 +1,332 @@
+﻿@{
+    ViewData["Title"] = "User Bulk Action";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item active">User Bulk Action</li>
+        </ol>
+    </div>
+</div>
+<div class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="form-inline sbxU row" id="sbxU">
+                        </div>
+                        <span class="text-danger">*Note: To change Introducer choose preferences Direct and select any Role</span>
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-responsive-sm" id="tblUserList">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col"><input id="chkAll" onchange="OnChkChange(this)" type="checkbox" /></th>
+                                        <th scope="col">OutletName</th>
+                                        <th scope="col">MobileNo</th>
+                                        <th>WhatsAppNumber</th>
+                                        <th class="text-nowrap">E-Mail ID</th>
+                                        <th class="text-nowrap">E-Mail Verification Status</th>
+                                        <th scope="col">Role</th>
+                                        <th class="text-right text-nowrap">Prepaid Balance</th>
+                                        <th class="text-right text-nowrap">Utility Balance</th>
+                                        <th class="text-right text-nowrap">Bank Balance</th>
+                                        <th class="text-right text-nowrap">Package Balance</th>
+                                        <th class="text-right text-nowrap">ChildBalance</th>
+                                        <th scope="col">Slab</th>
+                                        <th scope="col">IsActive</th>
+                                        <th scope="col">IsOTP</th>
+                                        <th scope="col">KYC Status</th>
+                                        <th class="text-nowrap">Package Name</th>
+                                        <th class="text-nowrap">Rental Status</th>
+                                        @if (ApplicationSetting.IsAutoBilling)
+                                        {
+                                            <th scope="col">IsAutoBilling</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts
+    {
+    <script>
+        $(document).ready(function () {
+            an.autoClose = 5;
+            userReg('');
+        });
+        function OnChangeAction(ctrID) {
+            var ctrID = $(ctrID).val();
+            $('#div_0').hide();
+            $('#div_1').hide();
+            $('#div_2').hide();
+            $('#div_8').hide();
+            $('#div_3').hide();
+            $('#div_5').hide();
+            $('#div_10').hide();
+            $('#div_17').hide();
+            if (ctrID == 7) {
+                $('#div_0').show();
+            }
+            else if (ctrID == 1 || ctrID == 3 || ctrID == 5 || ctrID == 6 || ctrID == 15) {
+                $('#div_1').show();
+            }
+            else if (ctrID == 2) {
+                $('#div_2').show();
+            }
+            else if (ctrID == 4 || ctrID == 9 || ctrID == 10 || ctrID == 11 || ctrID == 12 || ctrID == 13 || ctrID == 14) {
+                $('#div_3').show();
+            }
+            else if (ctrID == 8) {
+                $('#div_8').show();
+            }
+            else if (ctrID == 16) {
+                if ($('#ddlRole').val() == 5 || $('#ddlRole').val() == 6 || $('#ddlRole').val() == 7) {
+                    $('#div_10').show();
+                    GetEmpByRole();
+                    $('#btnChangeAssigne').click(() => { AssignUsers() });
+                }
+            }
+            else if (ctrID == 17) {
+                $('#div_17').show();
+            }
+        }
+
+        function userReg(m) {
+            preloader.load();
+            $.post('/BulkUserReff', { m: m }, function (result) {
+                resultReload(result);
+                $('#sbxU').html(result);
+                $('#btnPrefDDL').click();
+                $('#txtReferal').unbind().change(() => userReg($('#txtReferal').val()));
+                $('#ddlRole').change(() => GetUser(false));
+                GetUser(false);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        }
+
+        function GetUser(IsExport) {
+            var IsWhole = $('#rdoWhole').prop('checked');
+            var IsSelf = $('#rdoSelf').prop('checked');
+            if (IsExport === true) {
+                window.location = "/BulkUser?" + $.param({ RoleID: parseInt($('#ddlRole').val()), IsWhole: IsWhole, ReffID: $('#txtReferal').attr('token'), IsSelf: IsSelf });
+            } else {
+                preloader.load();
+                $.post('/BulkUser', { RoleID: parseInt($('#ddlRole').val()), IsWhole: IsWhole, ReffID: $('#txtReferal').attr('token'), IsSelf: IsSelf }, function (result) {
+                    resultReload(result);
+                    $('#tblUserList tbody').html(result);
+                }).fail(function (xhr) {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+            }
+        }
+
+        function OnChkChange(ctr) {
+            if (ctr.checked) {
+                $('.table-responsive input[type="checkbox"]').prop('checked', 'checked');
+            }
+            else {
+                $('.table-responsive input[type="checkbox"]').prop("checked", "");
+            }
+        }
+
+        function UnCheckedAll(ctr) {
+            if (!ctr.checked) {
+                $('#chkAll').prop("checked", "");
+            }
+        }
+
+        function ActionHit() {
+            var WID = 1;
+            var Act = $('#ddlBulkAction').val();
+            var Sts = $('#ddlStatus').val();
+            if (Act == 2) {
+                Sts = $('#ddlRental').val();
+            }
+            if ($('#ddlWallet') == undefined || $('#ddlWallet') == 'undefined') {
+                WID = $('#ddlWallet').val();
+            }
+            if (Act == 7) {
+                WID = $('#ddlDMRModel').val();
+            }
+            var users = '-1';
+            $('.table-responsive tbody input[type="checkbox"]').each(function () {
+                if (this.checked) {
+                    users += "," + $(this).closest('tr').data().itemId;
+                }
+            });
+            var BulkActionReq = { ActionID: parseInt(Act), WalletType: parseInt(WID), Amount: parseFloat($('#txtAmount').val() == '' ? 0 : $('#txtAmount').val()), Status: parseInt(Sts), Users: users, IsAll: $('#chkAll').is(':checked'), IsWhole: $('#rdoWhole').is(':checked'), Token: $('#txtReferal').attr('token'), RoleID: parseInt($('#ddlRole').val()), ToIntro: parseInt($('#txtToIntoID').val() == '' ? '0' : $('#txtToIntoID').val()) }
+            preloader.load();
+            $.ajax({
+                type: 'POST',
+                url: '/DoBulkUser',
+                data: JSON.stringify(BulkActionReq),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (result) {
+                    an.title = result.statuscode == an.type.success ? "Well done" : "Oops";
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                    if (result.statuscode == an.type.success) {
+                        GetUser(false);
+                        $('input[type="checkbox"]').prop("checked", false);
+                    }
+                },
+                statusCode: {
+                    500: function () {
+                        an.title = 'Oops';
+                        an.content = 'Server error';
+                        an.alert(an.type.failed);
+                    },
+                    0: function () {
+                        an.title = 'Oops';
+                        an.content = 'Internet Connection was broken';
+                        an.alert(an.type.failed);
+                    }
+                },
+                error: function (xhr, result) {
+                    if (result.responseText.indexOf('login.js') > -1) {
+                        rel(0);
+                        return false;
+                    }
+                    an.title = 'Oops';
+                    an.content = 'An error occured!';
+                    an.alert(an.type.failed);
+                },
+                complete: function () {
+                    preloader.remove();
+                }
+            });
+        }
+
+        function ChildBalance(ctr) {
+            var itemID = $(ctr).closest('tr').data().itemId;
+            preloader.load();
+            $.post('/ChildTotal', { ID: itemID }, function (result) {
+                resultReload(result);
+                if (result.statuscode == an.type.failed) {
+                    an.title = 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                } else {
+                    $(ctr).text(result.msg)
+                }
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => preloader.remove());
+        }
+
+        var GetEmpByRole = function () {
+            $.post('/GetAllEmplyee').done(result => {
+                $('#ddlAssignUser').empty().append('<option>:: Select Account Manager ::</option>').removeAttr('disabled');
+                for (let i = 0; i < result.length; i++) {
+                    $('#ddlAssignUser').append('<option value="' + result[i].empID + '">' + result[i].name + '</option>');
+                }
+            });
+        }
+
+        var AssignUsers = function () {
+            let count = $('input[type="checkbox"]:checked').not($('#chkAll')).length;
+            let EmpID = parseInt($('#ddlAssignUser option:selected').val());
+            $('input[type="checkbox"]:checked').not($('#chkAll')).each(function (i) {
+                let mobileNo = $(this).closest('tr').data().userMobileno;
+                $.post('/AssignUserToEmp', { EmpID: EmpID, mobileNo: mobileNo })
+                    .done(result => {
+                        if (i >= count - 1) {
+                            an.title = result.statuscode == an.type.success ? 'Well Done' : 'oops';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            $('input[type="checkbox"]').prop("checked", false);
+                        }
+                    }).fail(xhr => {
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    });
+            });
+        };
+
+        var EnableAutoBilling = function (flag) {
+            let uidList = "";
+            $('.table-responsive tbody input[type="checkbox"]').each(function () {
+                if (this.checked) {
+                    if (uidList == "") {
+                        uidList = $(this).closest('tr').data().itemId;
+                    }
+                    else {
+                        uidList += "," + $(this).closest('tr').data().itemId;
+                    }
+                }
+            });
+            if (uidList != "") {
+                if (flag == 0) {
+                    let param = {
+                        UserIdBulk: uidList,
+                        IsAutoBilling: false
+                    }
+                    preloader.load();
+                    $.post('/UpdateAutoBilling', param)
+                        .done(function (result) {
+                            location.reload();
+                            resultReload(result);
+                            an.title = result.statuscode == an.type.success ? 'Wow' : 'Oops';
+                            an.content = result.msg;
+                            an.alert(result.statuscode);
+                            an.autoClose = 5;
+                        })
+                        .fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        })
+                        .always(() => preloader.remove());
+                }
+                else {
+                    preloader.load();
+                    $.post('/AutoBillingDetailBulk', { uidList })
+                        .done(function (result) {
+                            resultReload(result);
+                            mdlA.id = 'LoadAutoBilling';
+                            mdlA.content = result;
+                            mdlA.options.backdrop = 'static';
+                            mdlA.alert(mdlA.size.small)
+                            $('button.close span,#mdlCancel').unbind().click(() => mdlA.dispose());
+                        })
+                        .fail(xhr => {
+                            an.title = 'Oops';
+                            an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                            an.alert(an.type.failed);
+                        }).always(() => {
+                            preloader.remove();
+                            location.reload();
+                        });
+                }
+            }
+            else {
+                an.title = 'Oops';
+                an.content = 'Select atleast 1 user';
+                an.alert(an.type.warning);
+            }
+        }
+    </script>
+}

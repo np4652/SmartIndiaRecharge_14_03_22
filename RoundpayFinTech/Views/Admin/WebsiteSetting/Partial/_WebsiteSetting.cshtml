@@ -1,0 +1,150 @@
+﻿@model RoundpayFinTech.AppCode.Model.WebsiteSettingModel
+@{ var DT = DateTime.Now.ToString("yyyyMMddHHmmssffff");}
+<tr>
+    <td>1</td>
+    <td>
+        <div class="text-center">
+            <img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/logo.png?@DT" alt="logo.png" />
+        </div>
+    </td>
+    <td>
+        <input type='file' id="dlogoUpload" class="d-none" />
+        <label for="dlogoUpload" class="btn btn-secondary btn-sm">Change Logo</label>
+    </td>
+</tr>
+
+<tr>
+    <td>2</td>
+    <td>
+        <div class="text-center">
+            <img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/white-logo.png?@DT" alt="logo.png" />
+        </div>
+    </td>
+    <td>
+        <input type='file' id="dwhitelogoUpload" class="d-none" />
+        <label for="dwhitelogoUpload" class="btn btn-secondary btn-sm">Change White-Logo</label>
+    </td>
+</tr>
+if(@ApplicationSetting.IsB2CEnabled)
+{
+<tr>
+    <td>2</td>
+    <td>
+        <div class="text-center">
+            <img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/B2C-logo.png?@DT" alt="logo.png" />
+        </div>
+    </td>
+    <td>
+        <input type='file' id="db2clogoUpload" class="d-none" />
+        <label for="db2clogoUpload" class="btn btn-secondary btn-sm">Change B2C-Logo</label>
+    </td>
+</tr>
+}
+<tr>
+    <td>3</td>
+    <td>
+        <div class="text-center">
+            <img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/t@(Model.websiteInfo.ThemeId)/bg-main.png?@DT" alt="bg-main.png" />
+        </div>
+    </td>
+    <td>
+        <input type='file' id="dbgmainUpload" class="d-none" />
+        <label for="dbgmainUpload" class="btn btn-secondary btn-sm">Change Background Image</label>
+    </td>
+</tr>
+@if (Model.websiteInfo.ThemeId == 4)
+{
+    <tr>
+        <td colspan="3">
+            <div class="text-center">
+                <h4 class="text-info">4. Service Images</h4>
+                <table class="mb-4 ml-4">
+                    <tbody>
+                        <tr>
+                            @{
+                                var sCount = 0;
+                                var maxID = 0;
+                            }
+                            @if (Model.BGServiceImgURLs != null)
+                            {
+                                sCount = 1;
+                                @foreach (var item in Model.BGServiceImgURLs)
+                                {
+                                    var sF = item.SiteFileName.Substring(0, item.SiteFileName.IndexOf('.'));
+                                    if (maxID < Convert.ToInt32(sF))
+                                    {
+                                        maxID = Convert.ToInt32(sF);
+                                    }
+                                    <td>
+                                        <div class="text-center mb-1">
+                                            <img class="img-thumbnail" style="width:250px;height:125px" src="@(item.SiteResourceUrl+"?"+@DT)" alt="services.png" />
+                                        </div>
+                                        <input type='file' id="btnSer_@sF" class="d-none" />
+                                        <label for="btnSer_@sF" class="btn btn-secondary btn-sm">Change</label>
+                                        <button id="btnSerRem_@sF" class="btn btn-danger btn-sm">Remove</button>
+                                    </td>
+                                    sCount = sCount + 1;
+
+                                }
+                            }
+                            @for (int i = 0; i <= 5 - sCount; i++)
+                            {
+                                <td>
+                                    <div class="text-center mb-1">
+                                        <img class="img-thumbnail" style="width:250px;height:125px" src="@(Model.websiteInfo.AbsoluteHost+"/images/no-image.png?@DT")" alt="NoImage" />
+                                    </div>
+                                    <input type='file' id="btnSer_@(maxID+i+1)" class="d-none" />
+                                    <label for="btnSer_@(maxID+i+1)" class="btn btn-info btn-sm">Upload</label>
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+}
+else
+{
+    <tr>
+        <td>4</td>
+        <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/t@(Model.websiteInfo.ThemeId)/services.png" alt="services.png" /></div></td>
+        <td>
+            <input type='file' id="dservicesUpload" class="d-none" />
+            <label for="dservicesUpload" class="btn btn-secondary btn-sm">Change Services Image</label>
+        </td>
+    </tr>
+}
+
+<tr>
+    <td>5</td>
+    <td><div class="text-center"><img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/sign.png" alt="sign.png" /></div></td>
+    <td>
+        <input type='file' id="dsignUpload" class="d-none" />
+        <label for="dsignUpload" class="btn btn-secondary btn-sm">Change Sign Image</label>
+    </td>
+</tr>
+<tr>
+    <td>6</td>
+    <td>
+        <div class="text-center">
+            <img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/CertificateFooterImage.png" alt="CertificateFooterImage.png" />
+        </div>
+    </td>
+    <td>
+        <input type='file' id="CertificateFooterImage" class="d-none" />
+        <label for="CertificateFooterImage" class="btn btn-secondary btn-sm">Change Certificate Footer</label>
+    </td>
+</tr>
+<tr>
+    <td>7</td>
+    <td>
+        <div class="text-center">
+            <img class="img-thumbnail" style="width:400px;height:200px" src="@Model.websiteInfo.AbsoluteHost/Image/Website/@Model.websiteInfo.WID/app-logo.png?@DT" alt="app-logo.png" />
+        </div>
+    </td>
+    <td>
+        <input type='file' id="_applogoChange" class="d-none" />
+        <label for="_applogoChange" class="btn btn-secondary btn-sm">Change App Logo</label>
+    </td>
+</tr>

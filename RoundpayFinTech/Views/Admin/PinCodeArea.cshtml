@@ -1,0 +1,119 @@
+﻿@model IEnumerable<Fintech.AppCode.Model.PincodeDetail>
+@{
+    ViewData["Title"] = "Pincode Area";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Pincode Area</li>
+            <li class="breadcrumb-item active">Pincode Area</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white text-monospace">
+                        <div class="row line-height-34">
+                            <div class="col-sm-9">
+                                <i class="fas fa-link"></i> Pincode Area
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group">
+                                    <input id="txtpincode" class="form-control text-left " placeholder="Search PinCode" />
+                                    <div class="input-group-append">
+                                        <button id="btnSearch" class="btn btn-default btn-sm"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblOPD">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Pincode</th>
+                                        <th scope="col">Area</th>
+                                        <th scope="col">ReachInHour</th>
+                                        <th scope="col">Expected Delivery</th>
+                                        <th scope="col">Is Delivery Off</th>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $("#btnSearch").click(function () {
+            _loadPartial($('#txtpincode').val());
+        });
+
+        var _loadPartial = function (Pcode = 0) {
+            preloader.load();
+            $.post('/_PinCodeArea', { PinCode: Pcode })
+                .done(function (result) {
+                    $('#__p tbody').html(result);
+                    $('input[id^=txthour],input[id^="txtdays"]').unbind().change(e => _update(e));
+                    $('.IsDeliveryOff').unbind().click(e => _update(e));
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 500 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+
+        var _update = e => {
+            preloader.load();
+            let ele = $(e.currentTarget).closest('tr');
+            let param = {
+                CommonInt: ele.data().itemId,
+                CommonInt2: ele.find('input[id^="txthour"]').val(),
+                CommonInt3: ele.find('input[id^="txtdays"]').val(),
+                CommonBool: ele.find('.switch').is(':checked')
+            }
+            var hidhour = $(e.currentTarget).find('input[id ^= "hidhour"]').val();
+
+            var IsE = { orcode: param.CommonInt2.trim().length > 10 };
+
+            $v.showErrorFor(ele.find('input[id^="txthour"]'), 'Invalid OP Code', IsE.orcode);
+            IsE.err = IsE.orcode;
+            if (IsE.err) {
+                return false;
+            }
+            if (param.CommonInt2 === hidhour) {
+                preloader.remove();
+                return true;
+            }
+            $.post('/_UpdatePincodehour', param)
+                .done(function (result) {
+                    resultReload(result);
+                    an.title = result.statuscode == an.type.success ? 'Success' : 'Oops';
+                    an.content = result.msg;
+                    an.alert(result.statuscode);
+                })
+                .fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        };
+
+        $(document).ready(function () {
+            $("#btnSearch").click();
+        });
+    </script>
+}
+

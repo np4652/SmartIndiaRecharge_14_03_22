@@ -1,0 +1,29 @@
+﻿@using RoundpayFinTech.AppCode.Model.DepartmentModel;
+@model Department
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h3>Department Detail</h3>
+        <hr />
+    </div>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        
+        <div class="form-group">
+            @Html.Label("txtDepartment", "Department Name", new { @class = "lbl" })
+            @Html.TextBox("txtDepartment", Model.Name, new { @class = "form-control text-capitalize", @placeholder = "Enter Department Name", @aria_describedby = "txtDeptH", @tabindex = 1 })
+            <small id="txtDeptH" class="form-text text-muted d-none">Name is mandatory</small>
+            <input type="hidden" id="hidDept" value="@Model.ID" class="d-none" />
+        </div>
+
+
+        <div class="form-group">
+            @Html.Label("txtRemark", "Remark", new { @class = "lbl" })
+            @Html.TextBox("txtRemark", Model.Remark, new { @class = "form-control", @placeholder = "Enter Remark", @aria_describedby = "actRemHelp", @tabindex = 9 })
+            <small id="actRemHelp" class="form-text text-muted d-none"></small>
+        </div>
+
+        <button type="button" class="btn btn-outline-dark" id="btnDepDetails" tabindex="12">Save Depatment</button>
+    </div>
+</div>

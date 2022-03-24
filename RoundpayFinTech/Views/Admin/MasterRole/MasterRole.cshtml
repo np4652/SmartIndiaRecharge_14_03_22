@@ -1,0 +1,59 @@
+﻿
+@{
+    ViewData["Title"] = "Master-Role";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">@ViewData["Title"]</li>
+
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white">
+                        @ViewData["Title"]
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive vh-1">
+                            <table class="table table-bordered table-striped" id="tblRole">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th style="width:1%;">#</th>                                       
+                                        <th style="width:77%">Role-Name</th>
+                                        <th>Registraion Charge</th>                                        
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>        
+    
+            (() => {
+                $.post('/_GetMasterRole')
+                    .done(function (result) {
+                        $('#tblRole tbody').html(result);
+                    })
+                    .fail(xhr => {
+                        console.log(xhr);
+                        an.title = 'Oops';
+                        an.content = xhr.status == 0 ? 'Internet Connection was broken' : 'Server error';
+                        an.alert(an.type.failed);
+                    });
+            })();
+    </script>
+}

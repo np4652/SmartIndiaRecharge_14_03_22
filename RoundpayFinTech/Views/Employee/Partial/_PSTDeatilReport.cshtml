@@ -1,0 +1,61 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@model IEnumerable<RoundpayFinTech.AppCode.Model.PSTReport>
+@{
+    int i = 1;
+}
+<style>
+    .infoTable tr td {
+        border: none !important;
+    }
+</style>
+@if (Model.Any())
+{
+    <table class="table border-0 infoTable bg-secondary text-white">
+        <thead class="bg-info">
+            <tr>
+                <th>#</th>
+                <th class="text-nowrap">Transaction Date </th>
+                <th class="text-right text-nowrap">Primary (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Secoundary (<i class="fas fa-rupee-sign"></i>)</th>
+                <th class="text-right text-nowrap">Recharge (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Money Transfer (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Bill Payment (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">AEPS (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Genral Insurance (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Shopping (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">Public E-Services (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">PSA Service (<i class="fas fa-rupee-sign"></i>) </th>
+                <th class="text-right text-nowrap">DTH Subscription (<i class="fas fa-rupee-sign"></i>) </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@item.TransactionDate</td>
+                    <td class="text-right">@item.PriAmount</td>
+                    <td class="text-right">@item.SecAmount</td>
+                    <td class="text-right">@item.Recharge</td>
+                    <td class="text-right">@item.MoneyTransfer</td>
+                    <td class="text-right">@item.BillPayment</td>
+                    <td class="text-right">@item.AEPS</td>
+                    <td class="text-right">@item.GenralInsurance</td>
+                    <td class="text-right">@item.Shopping</td>
+                    <td class="text-right">@item.EServices</td>
+                    <td class="text-right">@item.PSAService</td>
+                    <td class="text-right">@item.DTHSubscription</td>
+                </tr>
+                i++;
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <table class="table table-bordered table-striped">
+        <tr>
+            <td class="text-center">No Record Found !</td>
+        </tr>
+    </table>
+}

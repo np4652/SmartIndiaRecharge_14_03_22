@@ -1,0 +1,199 @@
+﻿@using Fintech.AppCode.HelperClass
+@model InvoiceResponseModel
+@{
+    Layout = "_LayoutInvoice";
+    ViewData["Title"] = "RCM not a invoice";
+}
+<div style="margin-top: 2em;">
+    <span class="btn btn-outline-info float-right" onclick="printdiv('div_print');">Print <i class="fas fa-print"></i></span>
+
+    <div id="div_print">
+        <h3 class="text-center">
+            <b>RCM</b>
+        </h3>
+        @if (Model.WID > 0)
+        {
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <td style="width: 50%; padding: 0 8px; border: solid 1px gainsboro;">
+                            <h6>Consignee</h6>
+                            <h5>@Model.UserOutletName</h5>
+                            <p>@Html.Raw((Model.UserAddress ?? string.Empty).Replace(",", ",<br>"))</p>
+                            <p>STATE: @Html.Raw(Model.UserState)</p>
+                            <p><small>E-mail: @Model.UserEmailID</small></p>
+
+                        </td>
+                        <td style="padding: 0; border: solid 1px gainsboro;">
+                            <table class="table no-border" style="margin-bottom: 0; border: 0;">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 50%; height: 100px; border-top: 0; border-right: 1px solid #ddd; border-left: 0;">
+                                            
+                                        </td>
+                                        <td style="border-top: 0;border-right:0;">
+                                            Date<br>
+                                            <strong>@Model.EndDate </strong>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="height: 100px; border-right: 1px solid #ddd;border-left: 0;border-bottom:0;">
+                                            Dealer Code<br>
+                                            <strong>@Model.UserID</strong>
+                                        </td>
+                                        <td style="border-right:0;border-bottom:0;">
+                                            Period
+                                            <br>
+                                            <strong>@Model.StartDate to @Model.EndDate</strong>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="width: 50%; padding-bottom: 0;">
+                            <h6>Buyer</h6>
+                            <p style="margin-bottom: 0;">
+                                <span style="font-size: 13.3333px;">
+                                    @((Model.CompanyDetail.CompanyName??string.Empty).ToUpper()) &nbsp;<br style="font-size: 13.3333px;">
+                                    @Model.CompanyDetail.CompanyAddress  &nbsp;<br style="font-size: 13.3333px;">
+                                    STATE: @Model.CompanyDetail.CompanyState &nbsp;<br style="font-size: 13.3333px;">
+                                    Telephone @Model.CompanyDetail.CompanyMobile,@Model.CompanyDetail.CompanyMobile2&nbsp;<br style="font-size: 13.3333px;">
+                                    E-Mail- @Model.CompanyDetail.CompanyEmail
+                                </span>
+                            </p>
+                        </td>
+                        <td style="padding-left: 2px;vertical-align:top">
+                            Mode/Terms of Payment
+                            <br>
+                            <strong>Advance</strong>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td colspan="2" style="padding: 0;border:0;">
+                            <table class="table table-bordered" style="margin-bottom: 0;">
+                                <thead>
+                                    <tr>
+                                        <th>Description of Good / Services</th>
+                                        <th class="text-right">Amount (INR)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @{
+                                        var _invoiceList = Model.InvoiceList.Any() ? Model.InvoiceList.FirstOrDefault() : new InvoiceResponse();
+                                        var @Disc = _invoiceList.CommAmount;
+                                        var @Net = _invoiceList.NetAmount;
+                                        var @SGST = Math.Round((Model.UserState == Model.CompanyDetail.CompanyState ? Net * 0.09M : 0), 2, MidpointRounding.AwayFromZero);
+                                        var @IGST = Math.Round((Model.UserState == Model.CompanyDetail.CompanyState ? 0 : Net * 0.18M), 2, MidpointRounding.AwayFromZero);
+                                        var @Total = Math.Round((Net + IGST + SGST + SGST), 2, MidpointRounding.AwayFromZero);
+
+                                    }
+                                    <tr>
+                                        <td>E Recharge COMMISSION</td>
+                                        <td class="text-right">@Total</td>
+
+                                    </tr>
+                                    
+
+                                    <tr style="font-weight: bold">
+                                        <td style="text-align: right"><b>Total Amount</b></td>
+                                        <td style="text-align: right">@Total</td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td style="padding-bottom: 0; border: 0;" colspan="2">
+                            <h4 style="font-weight: normal;">Amount Chargeable (in Words)</h4>
+                            <p>
+                                <strong>
+                                    @{
+                                        string substr = "0";
+                                        decimal AfterDecimal = (Total % 1);
+                                        int len = AfterDecimal.ToString().Length;
+                                        int ind = AfterDecimal.ToString().IndexOf('.');
+                                        if (AfterDecimal > 0)
+                                        {
+                                            substr = AfterDecimal.ToString().Substring(ind + 1, len - 2);
+                                        }
+
+                                        int Tot = (int)Total;
+                                        string before = ConverterHelper.O.NumberToText(Tot)+" Rupees";
+                                    }
+                                    @Html.Raw(before)
+                                    @if (AfterDecimal != 0)
+                                    {
+                                        @Html.Raw(" and "+ConverterHelper.O.NumberToText(Convert.ToInt32(substr)) + " Paise")
+                                    }
+                                </strong>
+                            </p>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+                        <td style="border-top: 0;border-right:0;">
+                            <p style="margin: 0 0 3px;">Company's GST No: <strong>@Model.CompanyDetail.CompanyGST</strong></p>
+                            <p style="margin: 0 0 3px;">Company's PAN :  <strong>@Model.CompanyDetail.CompanyPAN</strong></p>
+                            <p style="margin: 0 0 3px;">Buyer's GST No: <strong>@Model.UserGST</strong></p>
+                            <p style="margin: 0 0 3px;">Buyer's PAN :  <strong>@Model.UserPAN</strong></p>
+                        </td>
+                        
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <p>
+                                <strong>Declaration: </strong>We declare that this invoice shows the actual price of the goods described and that all particulars are true and
+                                correct. You are required to check the above invoice of your account and revert to us if you encounter any discrepancies.
+                            </p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <div>
+
+                <br />
+                <br />
+                <br />
+                <center>
+                    No record exist!
+                </center>
+
+            </div>
+        }
+        <div>
+
+            <br />
+            <br />
+            <br />
+            <center>
+                This is a Computer Generated Invoice and does not require signatures
+            </center>
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        function printdiv(printpage) {
+            var headstr = "";
+            var footstr = "";
+            var newstr = document.all.item(printpage).innerHTML;
+            var oldstr = document.body.innerHTML;
+            document.body.innerHTML = headstr + newstr + footstr;
+            window.print();
+            document.body.innerHTML = oldstr;
+            return false;
+        }
+
+    </script>
+}

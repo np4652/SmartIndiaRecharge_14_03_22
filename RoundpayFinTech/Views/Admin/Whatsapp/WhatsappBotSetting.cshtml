@@ -1,0 +1,119 @@
+﻿@{
+    ViewData["Title"] = "Whatsapp Bot Setting";
+}
+<style>
+    .whatsapp-key {
+        padding: 0.375rem 0.75rem;
+        display: inline-flex!important;
+        margin-right: 5px;
+        margin-top: 5px;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        color: #495057;
+        background-color: #ced4da;
+        background-clip: padding-box;
+        /*border: 1px solid #ced4da;*/
+        border-radius: 0.25rem;
+        transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .whatsapp-key i {
+        position: relative;
+        top: -12px;
+        left: -17px;
+    }
+    
+   
+</style>
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-2">
+                    <div class="card-header bg-gradientorange text-white pb-1 pt-1">
+                        <div class="row">
+                            <div class="col-sm-11 text-monospace">
+                                <i class="fas fa-link"></i> @ViewData["Title"]
+                            </div>
+                            <div class="col-sm-1 text-right">
+                                <a class="btn btn-light btn-sm" href="javascript:void(0)" id="btnAddKeyphrase">
+                                    <i class="fa fa-plus"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body pt-2">
+                        <div class="table-responsive vh-55-5">
+                            <whatsappBotdicList>
+                                <table class="table table-bordered table-striped">
+                                    <thead class="bg-tableth">
+                                        <tr>
+                                            <th scope="col">#</th>
+                                            <th scope="col">Keyword Phrase </th>
+                                            <th scope="col">Reply Text</th>
+                                            <th scope="col">Reply Text</th>
+                                            <th scope="col">Reply Text</th>
+                                            <th scope="col">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </whatsappBotdicList>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        var loadGrid = () => {
+            preloader.load();
+            $.post('WhatsappBotDicList')
+                .done(result => {
+                    $('whatsappBotdicList').find('tbody').html(result);
+                    $('[data-toggle="tooltip"]').tooltip();
+                })
+                .catch(function (xhr, e, msg) {
+                    an.title = 'Oops';
+                    an.content = 'An error has been occured during request.Reload again!'
+                    an.alert(an.type.failed);
+                    console.log(xhr.responseText, "\n", e, "\n", msg);
+                }).fail(xhr => {
+                    an.title = 'Oops';
+                    an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                    an.alert(an.type.failed);
+                }).always(() => preloader.remove());
+        }
+        var AddKeyphrase = (formatType = 0) => {
+            $.post('WhatsappKeyphrase', { formatType: formatType }).done(result => {
+                mdlA.id = 'mymodal';
+                mdlA.title = 'Add Key Phrase';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.modal(mdlA.size.large);
+            }).catch(function (xhr, e, msg) {
+                an.title = 'Oops';
+                an.content = 'An error has been occured during request.Reload again!'
+                an.alert(an.type.failed);
+                console.log(xhr.responseText, "\n", e, "\n", msg);
+            }).fail(xhr => {
+                an.title = 'Oops';
+                an.content = xhr.status === 0 ? 'Internet Connection was broken' : 'Server error';
+                an.alert(an.type.failed);
+            }).always(() => { });
+        }
+        loadGrid();
+        $('#btnAddKeyphrase').click(() => AddKeyphrase());
+    </script>
+}

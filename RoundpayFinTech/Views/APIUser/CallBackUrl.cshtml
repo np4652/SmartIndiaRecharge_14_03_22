@@ -1,0 +1,209 @@
+﻿@{
+    ViewData["Title"] = "Callback URL";
+}
+<div aria-label="breadcrumb" class="breadcrumb" id="page-header">
+    <div class="container-fluid">
+        <h5 class="float-left"><i class="fa fa-users"></i> @ViewData["Title"]</h5>
+        <ol class="breadcrumb float-right">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Home</a></li>
+            <li class="breadcrumb-item">Setting</li>
+            <li class="breadcrumb-item active">@ViewData["Title"]</li>
+        </ol>
+    </div>
+</div>
+<div id="__p" class="main-temp-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card mt-4">
+                    <div class="card-header bg-gradientorange text-white">
+                        <i class="fas fa-link"></i> @ViewData["Title"]
+                        <div class="float-right">  <button id="btnNew" class="btn btn-default btn-sm ">New</button></div>
+                    </div>
+                    <div class="card-body" style="">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-responsive-sm" id="tblCallbackData">
+                                <thead class="bg-tableth">
+                                    <tr>
+                                        <th scope="col" style="width:5%">#</th>
+                                        <th scope="col" style="width:5%">Action</th>
+                                        <th scope="col" style="width:15%;">CallBack Type</th>
+                                        <th scope="col" style="width:15%;">CallBack URL</th>
+                                        <th scope="col" style="width:15%;">Update URL</th>
+                                        <th scope="col" style="width:10%;">Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            GetList();
+            $("#btnNew").click(function () {
+                NewCallBack(-1);
+            });
+        });
+        var GetList = function () {
+            $.post('/CallBack-Url', {}, function (result) {
+                $('#tblCallbackData tbody').html(result);
+                $(".dropdown-toggle").dropdown();
+                $(".ddledit").click(function () {
+                    var type = $(this).attr("id").split('_')[1];
+                    NewCallBack(type);
+                });
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        };
+        var NewCallBack = function (t) {
+            $.post('callbakcu', { Type: t }, function (result) {
+                $('#' + an.id).remove();
+                mdlA.id = 'mdlCallbackCU';
+                mdlA.content = result;
+                mdlA.options.backdrop = 'static';
+                mdlA.alert(mdlA.size.large);
+                $('button.close span,#mdlCancel').click(function () {
+                    mdlA.dispose();
+                    GetList();
+                });
+                if ($("#ddltype").val().split('-')[1] != 'zero')
+                    getreplacements($("#ddltype").val().split('-')[1]);
+
+                $("#ddltype").change(function () {
+                    var val = $(this).val().split('-');
+
+                    if (val[0] == "0") {
+                        $("#lblparam").text("");
+                        $("#div_replacements").empty();
+                    }
+                    else {
+                        $("#div_replacements").empty();
+                        $("#lblparam").text("");
+                        var prm = val[1];
+                        getreplacements(prm);
+                    }
+                    if (val[0] == "3")
+                        $('#dv_UpdateURL').removeClass('d-none');
+                    else
+                        $('#dv_UpdateURL').addClass('d-none');
+                });
+                $("#btnCallBack").click(function () {
+                    $v = $validator;
+                    var cte = { type: $("#ddltype"), url: $("#txturl"), remark: $("#txtremark") }
+                    var IsE = { type: (cte.type.val().split('-')[0] == "0"), url: (cte.url.val().trim() == "") };
+                    $v.showErrorFor(cte.type, 'Select Type', IsE.type);
+                    $v.showErrorFor(cte.url, 'Enter Call Back Url', IsE.url);
+                    if (IsE.type || IsE.url) {
+                        return false;
+                    }
+                    var updateURL = '';
+                    var type = cte.type.val().split('-')[0];
+                    if (type == 3) {
+                        if ($('#txtUpdateurl').val() != '') {
+                            updateURL = $('#txtUpdateurl').val();
+                        }
+                        else {
+                            $v.showErrorFor($('#txtUpdateurl'), 'Enter Update Call Back Url', 1);
+                            return false;
+                        }
+                    }
+                    console.log(updateURL);
+                    var url = cte.url.val();
+                    $.post('/save-callback', { Type: type, URl: url, UpdateUrl: updateURL, Remark: cte.remark.val() }, function (result) {
+                        if (result.statuscode === -1) {
+                            an.title = 'Oops';
+                            an.content = result.msg;
+                            an.alert(an.type.failed);
+                        } else {                            
+                            an.title = 'Success';
+                            an.content = result.msg;
+                            an.alert(an.type.success);
+                            GetList();
+                            mdlA.dispose();
+                        }
+                    }).fail(function (xhr) {
+                        if (xhr.status === 500) {
+                            an.title = 'Oops';
+                            an.content = 'Server error';
+                            an.alert(an.type.failed);
+                        }
+                        if (xhr.status === 0) {
+                            an.title = 'Oops';
+                            an.content = 'Internet Connection was broken';
+                            an.alert(an.type.failed);
+                        }
+                    }).always(function () {
+                        preloader.remove();
+                    });
+                });
+            }).fail(function (xhr) {
+                if (xhr.status === 500) {
+                    an.title = 'Oops';
+                    an.content = 'Server error';
+                    an.alert(an.type.failed);
+                }
+                if (xhr.status === 0) {
+                    an.title = 'Oops';
+                    an.content = 'Internet Connection was broken';
+                    an.alert(an.type.failed);
+                }
+            }).always(function () {
+                preloader.remove();
+            });
+        };
+
+        var getreplacements = function (prm)
+        {
+            var arr = prm.split(' ');
+            var html = '';
+            for (var i = 0; i < arr.length; i++) {
+                html += '<div class="input-group mb-1">';
+                html += '<span class="btn btn-cyan btn-block form-control" aria-describedby="spn' + i + '">' + arr[i] + '</span>';
+                html += '<div class="input-group-append">';
+                html += '<span class="input-group-text cursor-pointer" id="spn' + i + '" data-toggle="tooltip" data-placement="top" title="' + arr[i] + '"><i class="far fa-clone"></i></span>';
+                html += '</div>';
+                html += '</div>';
+            }
+            $("#div_replacements").append(html);
+            $('[data-toggle="tooltip"]').tooltip();
+
+            var allowedCtrlForPaste = ['txturl'];
+            var lastFocusCtrl = $("#txturl");
+            $('textarea,input').focus(function () {
+                lastFocusCtrl = $(this);
+            });
+            $('span.cursor-pointer').click(function () {
+                var cText = $(this).attr('data-original-title');
+                copyToClipboard(cText);
+                an.title = 'Copied';
+                an.content = cText;
+                an.alert(an.type.info);
+                an.autoClose = 5;
+                if ($.inArray(lastFocusCtrl.attr('id'), allowedCtrlForPaste) > -1 && lastFocusCtrl.val().indexOf(cText) < 0) {
+                    pasteAtControl(lastFocusCtrl, cText);
+                }
+            });
+        };
+
+    </script>
+
+}
+

@@ -1,0 +1,46 @@
+﻿@using RoundpayFinTech.AppCode.Model;
+@model TransactionMode
+<div class="row">
+    <div class="col-md-12">
+        <button type="button" class="close" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <style>
+        .cmb-0 {
+            margin-bottom: 0.05rem !important;
+        }
+    </style>
+    <div class="col-12">
+        <h4 class="mb-0 mt-0 bg-white rounded ">Edit @Html.Raw(Model.Code) Detail</h4>
+        <hr />
+        <div class="scroll-content">
+            <div class="container">
+                <div class="form-group">
+                    @Html.Label("txtMin", "Min Amount", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtMin", Model.Min, new { @type = "number", @class = "form-control text-capitalize", @placeholder = "Enter Minimum Amount", @aria_describedby = "MinlHelp", @tabindex = 1 })
+                    </div>
+                    <small id="MinlHelp" class="form-text text-muted d-none">Minimum Amount is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtMax", "Max Amount", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtMax", Model.Max, new { @type = "number", @class = "form-control text-capitalize", @placeholder = "Enter Password", @aria_describedby = "MaxHelp", @tabindex = 1 })
+                    </div>
+                    <small id="MaxHelp" class="form-text text-muted d-none">Maximum Amount is mandatory</small>
+                </div>
+                <div class="form-group">
+                    @Html.Label("txtCharge", "Transaction Charges", new { @class = "lbl" })
+                    <div class="input-group">
+                        @Html.TextBox("txtCharge", Model.Charge, new { @type = "text", @class = "form-control text-capitalize", @placeholder = "Enter Transaction Charges", @aria_describedby = "TransHelp", @tabindex = 1 })
+                    </div>
+                    <small id="TransHelp" class="form-text text-muted d-none">Charges is mandatory</small>
+                </div>
+
+                <button type="button" class="btn btn-dark" id="btnSaveTM" tabindex="7">Save</button>
+                <button class="btn btn-danger" id="mdlCancel">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
