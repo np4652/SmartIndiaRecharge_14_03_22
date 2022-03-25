@@ -77,7 +77,7 @@ namespace RoundpayFinTech.AppCode.ThirdParty.CashFree
                 cashfreeResponse = JsonConvert.DeserializeObject<CashfreeOrderResponse>(reponse);
                 res.Statuscode = ErrorCodes.One;
                 res.Msg = "Transaction intiated";
-                res.URL = string.IsNullOrEmpty(cashfreeResponse.payment_link) ? cashfreeResponse.payment_link : pGTransactionResponse.Domain;
+                res.URL = !string.IsNullOrEmpty(cashfreeResponse.payment_link) ? cashfreeResponse.payment_link : pGTransactionResponse.Domain;
                 res.CashfreeResponse = cashfreeResponse;
                 //var reqRes = string.Concat(baseUrl, JsonConvert.SerializeObject(headers), JsonConvert.SerializeObject(cashfreeOrderRequest), "||", JsonConvert.SerializeObject(res));
                 savePGTransactionLog(pGTransactionResponse.PGID, pGTransactionResponse.TID, JsonConvert.SerializeObject(cashfreeOrderRequest), pGTransactionResponse.TransactionID, JsonConvert.SerializeObject(cashfreeResponse), RequestMode.PANEL, true, pGTransactionResponse.Amount, string.Empty);

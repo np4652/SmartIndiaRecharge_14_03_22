@@ -12,7 +12,6 @@ namespace RoundpayFinTech
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-            .UseSetting(WebHostDefaults.DetailedErrorsKey, "true")
             .UseStartup<Startup>();
     }
 }
